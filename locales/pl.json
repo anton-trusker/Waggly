@@ -1,0 +1,35 @@
+{
+  "common": {
+    "welcome": "Witamy w Pawzly",
+    "language": "Język",
+    "select_language": "Wybierz język",
+    "search_language": "Szukaj języka...",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd",
+    "hello_user": "Cześć, {{name}}"
+  },
+  "profile": {
+    "title": "Profil",
+    "account": "Konto",
+    "co_owners": "Współwłaściciele",
+    "notifications_settings": "Ustawienia powiadomień",
+    "sign_out": "Wyloguj się",
+    "sign_out_title": "Wyloguj się",
+    "sign_out_message": "Czy na pewno chcesz się wylogować?"
+  },
+  "navigation": {
+    "home": "Dom",
+    "calendar": "Kalendarz",
+    "pets": "Zwierzęta",
+    "profile": "Profil",
+    "settings": "Ustawienia"
+  },
+  "support": {
+    "title": "Pomoc",
+    "help_center": "Centrum pomocy",
+    "terms_of_service": "Warunki korzystania",
+    "privacy_policy": "Polityka prywatności"
+  }
+}

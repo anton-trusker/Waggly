@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Pawzly",
+    "slug": "pawzly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/logo.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./public/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Pawzly",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./public/logo.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.Pawzly"
+    },
+    "web": {
+      "favicon": "./public/logo.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-router",
+      "expo-web-browser",
+      "expo-localization"
+    ],
+    "scheme": "pawzly",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "45127bc1-f377-4bc0-88a2-64211edeeafc"
+      }
+    },
+    "owner": "truskerssolutions"
+  }
+}

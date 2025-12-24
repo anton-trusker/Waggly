@@ -1,0 +1,35 @@
+{
+  "common": {
+    "welcome": "Willkommen bei Pawzly",
+    "language": "Sprache",
+    "select_language": "Sprache auswählen",
+    "search_language": "Sprache suchen...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "hello_user": "Hallo, {{name}}"
+  },
+  "profile": {
+    "title": "Profil",
+    "account": "Konto",
+    "co_owners": "Mitbesitzer",
+    "notifications_settings": "Benachrichtigungseinstellungen",
+    "sign_out": "Abmelden",
+    "sign_out_title": "Abmelden",
+    "sign_out_message": "Möchten Sie sich wirklich abmelden?"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "calendar": "Kalender",
+    "pets": "Haustiere",
+    "profile": "Profil",
+    "settings": "Einstellungen"
+  },
+  "support": {
+    "title": "Support",
+    "help_center": "Hilfe-Center",
+    "terms_of_service": "Nutzungsbedingungen",
+    "privacy_policy": "Datenschutzrichtlinie"
+  }
+}

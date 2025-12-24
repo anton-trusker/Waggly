@@ -1,0 +1,4 @@
+ALTER TABLE public.documents
+ADD COLUMN IF NOT EXISTS mime_type TEXT,
+ADD COLUMN IF NOT EXISTS size_bytes INTEGER;
+

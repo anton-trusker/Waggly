@@ -1,0 +1,35 @@
+{
+  "common": {
+    "welcome": "Добро пожаловать в Pawzly",
+    "language": "Язык",
+    "select_language": "Выбрать язык",
+    "search_language": "Поиск языка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка",
+    "hello_user": "Привет, {{name}}"
+  },
+  "profile": {
+    "title": "Профиль",
+    "account": "Аккаунт",
+    "co_owners": "Совладельцы",
+    "notifications_settings": "Настройки уведомлений",
+    "sign_out": "Выйти",
+    "sign_out_title": "Выход",
+    "sign_out_message": "Вы уверены, что хотите выйти?"
+  },
+  "navigation": {
+    "home": "Главная",
+    "calendar": "Календарь",
+    "pets": "Питомцы",
+    "profile": "Профиль",
+    "settings": "Настройки"
+  },
+  "support": {
+    "title": "Поддержка",
+    "help_center": "Центр помощи",
+    "terms_of_service": "Условия обслуживания",
+    "privacy_policy": "Политика конфиденциальности"
+  }
+}
