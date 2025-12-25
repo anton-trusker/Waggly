@@ -27,7 +27,7 @@ import { supabase } from '@/lib/supabase';
 import PetProfileHeader from '@/components/features/pets/profile/PetProfileHeader';
 import OverviewTab from '@/components/features/pets/profile/OverviewTab';
 import HealthTab from '@/components/features/pets/profile/HealthTab';
-import PetGallery from '@/components/features/pets/PetGallery';
+import PetGallery from '@/components/features/pets/PetGalleryComponent';
 import PetDocuments from '@/components/features/pets/PetDocuments';
 
 type TabType = 'Overview' | 'Health' | 'Gallery' | 'Docs';
@@ -156,7 +156,7 @@ const PetDetailScreenContent = () => {
               pet={pet}
               vets={vets}
               onAddVet={() => Alert.alert("Coming Soon", "Add Vet feature implementation coming next.")}
-              onViewPassport={() => router.push('/(tabs)/pets/pet-health-passport')}
+              onViewPassport={() => Alert.alert("Coming Soon", "Pet Health Passport feature coming soon.")}
             />
             <View style={{ paddingHorizontal: 20 }}>
               <UpcomingEvents petId={pet.id} todayISO={todayISO} />
