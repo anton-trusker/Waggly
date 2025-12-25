@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
-import AddVisitModal from '@/components/desktop/modals/AddVisitModal';
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 
 export default function PetsListPage() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export default function PetsListPage() {
       )}
 
       {isMobile && <View style={{ height: 80 }} />}
-      <AddVisitModal visible={!!visitPetId} petId={visitPetId || ''} onClose={() => setVisitPetId(null)} />
+      <VisitFormModal visible={!!visitPetId} petId={visitPetId || ''} onClose={() => setVisitPetId(null)} />
     </ScrollView>
   );
 }

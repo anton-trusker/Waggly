@@ -10,10 +10,10 @@ import { useAllergies } from '@/hooks/useAllergies';
 import { useMedications } from '@/hooks/useMedications';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Pet } from '@/types';
-import AddVisitModal from '@/components/desktop/modals/AddVisitModal';
-import AddVaccinationModal from '@/components/desktop/modals/AddVaccinationModal';
-import AddTreatmentModal from '@/components/desktop/modals/AddTreatmentModal';
-import AddMedicationModal from '@/components/desktop/modals/AddMedicationModal';
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
+import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 
 export default function OverviewTab() {
   const router = useRouter();
