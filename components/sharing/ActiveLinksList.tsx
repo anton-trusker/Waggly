@@ -53,7 +53,7 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
   const renderItem = ({ item }: { item: PublicShare }) => (
     <View style={styles.card}>
       <View style={styles.iconContainer}>
-        <IconSymbol name="link" size={24} color={designSystem.colors.primary[500]} />
+        <IconSymbol android_material_icon_name="link" size={24} color={designSystem.colors.primary[500]} />
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.presetName}>
@@ -68,13 +68,13 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           onPress={() => handleCopy(item.token)}
         >
-          <IconSymbol name="content-copy" size={20} color={designSystem.colors.text.secondary} />
+          <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.text.secondary} />
         </Pressable>
         <Pressable
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           onPress={() => handleRevoke(item.id)}
         >
-          <IconSymbol name="delete-outline" size={20} color={designSystem.colors.status.error[500]} />
+          <IconSymbol android_material_icon_name="delete-outline" size={20} color={designSystem.colors.status.error[500]} />
         </Pressable>
       </View>
     </View>

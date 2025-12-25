@@ -24,9 +24,9 @@ export default function PublicShareScreen() {
 
   const fetchDetails = async () => {
     try {
-      const { data: result, error } = await supabase.rpc('get_public_pet_details', { share_token: token });
+      const { data: result, error } = await supabase.rpc('get_public_pet_details', { share_token: token } as any);
       if (error) throw error;
-      if (result && result.error) throw new Error(result.error);
+      if (result && (result as any).error) throw new Error((result as any).error);
 
       setData(result as PublicPetProfile);
     } catch (err: any) {
@@ -73,7 +73,7 @@ export default function PublicShareScreen() {
   const renderSection = (title: string, icon: string, children: React.ReactNode) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <IconSymbol name={icon as any} size={20} color={colors.primary} />
+        <IconSymbol android_material_icon_name={icon as any} size={20} color={colors.primary} />
         <Text style={styles.sectionTitle}>{title}</Text>
       </View>
       {children}
