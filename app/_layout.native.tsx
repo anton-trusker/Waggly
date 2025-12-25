@@ -1,3 +1,4 @@
+import "@/lib/i18n";
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -10,8 +11,9 @@ import {
   DarkTheme,
   DefaultTheme,
   Theme,
-  ThemeProvider,
+  ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
+import { ThemeProvider as ThemeContextProvider } from "@/contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PostHogProvider } from "posthog-react-native";
@@ -66,28 +68,30 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" animated />
-      <ThemeProvider
-        value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
-      >
-        <PostHogProvider
-          apiKey="phc_V69oo6nlMMA57eE6zWC4uyfCop2RgR6Wuh8tC1KhPbu"
-          options={{
-            host: 'https://eu.i.posthog.com',
-            enableSessionReplay: true,
-          }}
-          autocapture
+      <ThemeContextProvider>
+        <NavigationThemeProvider
+          value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
         >
-          <AuthProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(tabs)" />
-              </Stack>
-              <SystemBars style="auto" />
-            </GestureHandlerRootView>
-          </AuthProvider>
-        </PostHogProvider>
-      </ThemeProvider>
+          <PostHogProvider
+            apiKey="phc_V69oo6nlMMA57eE6zWC4uyfCop2RgR6Wuh8tC1KhPbu"
+            options={{
+              host: 'https://eu.i.posthog.com',
+              enableSessionReplay: true,
+            }}
+            autocapture
+          >
+            <AuthProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen name="(tabs)" />
+                </Stack>
+                <SystemBars style="auto" />
+              </GestureHandlerRootView>
+            </AuthProvider>
+          </PostHogProvider>
+        </NavigationThemeProvider>
+      </ThemeContextProvider>
     </>
   );
 }

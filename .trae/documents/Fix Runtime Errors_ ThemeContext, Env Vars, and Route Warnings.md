@@ -1,55 +1,49 @@
 
-# Fix Runtime Errors & Warnings
+# Fix Syntax Error and Runtime Issues
 
-## 1. Fix `useThemeContext` Error
-The error occurs because `NavigationThemeProvider` calls `useAppTheme()` but might be rendered outside of `ThemeContextProvider` in some codepaths, or the provider nesting was incorrect in `RootLayout`.
-
-**Resolution:**
-Move `ThemeContextProvider` to the very top level in `RootLayout` (and platform equivalents) so it wraps everything, including `AuthProvider`.
-
-**Files to modify:**
-- `app/_layout.tsx` (Default/iOS)
-- `app/_layout.web.tsx` (Web)
-- `app/_layout.native.tsx` (Android)
-
-**Implementation:**
-```tsx
-// Example for app/_layout.tsx
-export default function RootLayout() {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeContextProvider> {/* Move this up */}
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
-      </ThemeContextProvider>
-    </GestureHandlerRootView>
-  );
-}
+## 1. Fix Syntax Error in `_layout.web.tsx`
+The build log shows a syntax error: `Identifier 'Theme' has already been declared`.
+Looking at the file `app/_layout.web.tsx`, lines 13-14 show:
+```typescript
+  Theme,
+  Theme,
 ```
-
-## 2. Fix "Too many screens defined" Warning
-The warning `Route "onboarding" is extraneous` means there is a `Stack.Screen name="(onboarding)"` defined in the layout, but the file `app/(onboarding)/_layout.tsx` or `index.tsx` might not be exporting a valid component that matches what the router expects, or the route is being auto-generated and conflicting with the explicit stack screen.
+This is a duplicate import. Also, the imports are messy.
 
 **Resolution:**
-Remove the explicit `<Stack.Screen name="(onboarding)" />` if it's already being handled by file-based routing, or ensure the name matches exactly the folder structure. Since `(onboarding)` is a group, it should be recognized. The warning often appears if the directory exists but the route is not properly registered or if there's a typo. I will verify if `(onboarding)` needs to be in the stack or if it can be auto-discovered.
+Clean up imports in `app/_layout.web.tsx`.
+- Remove duplicate `Theme`.
+- Correctly alias `ThemeProvider` from `@react-navigation/native` to `NavigationThemeProvider`.
+- Ensure `ThemeContextProvider` is imported from `@/contexts/ThemeContext`.
+- Remove the double fragment and double StatusBar rendering.
 
-**Action:**
-- Verify `app/(onboarding)/_layout.tsx` exists and exports a valid component.
-- If it works without the explicit `Stack.Screen`, remove it to silence the warning.
+## 2. Fix `useThemeContext` Error (Carry over from previous plan)
+The error `useThemeContext must be used within a ThemeProvider` persists. The previous plan to wrap `AuthProvider` with `ThemeContextProvider` is still valid and necessary. This needs to be applied to all platform layout files.
 
-## 3. Fix "EXPO_PUBLIC_SUPABASE_ANON_KEY: Not set"
-The logs show `EXPO_PUBLIC_SUPABASE_ANON_KEY` is not set. This is critical for Supabase auth to work.
-
+## 3. Fix "Too many screens defined" Warning
+The warning `Route "onboarding" is extraneous` persists.
 **Resolution:**
-- Check `.env.local` or `.env` file.
-- Ensure the key starts with `EXPO_PUBLIC_`.
-- Restart the development server with `npx expo start --clear` to load new env vars.
+In `app/_layout.web.tsx` (and other layouts), remove the explicit `<Stack.Screen name="(onboarding)" />` if it's not needed, or ensure the directory structure matches. Given `app/(onboarding)` exists, `expo-router` should handle it. If it's a group, it might not need an explicit screen definition if it's not a direct route but a group of routes. However, usually, groups *can* be screens. The warning might be because `(onboarding)` doesn't have an `index` or `_layout` that exports a component in a way the parent stack expects, or it's being auto-generated and conflicting.
+I will check if removing it from the `Stack` screens list resolves the warning, as file-based routing will still pick it up if it's a valid route.
 
-## 4. Fix `useTranslation` Warning (Already addressed)
-We already imported `i18n` config in root layouts, so this should be resolved.
+## 4. Fix Env Vars
+The logs show `EXPO_PUBLIC_SUPABASE_ANON_KEY` is not set.
+**Resolution:**
+- Create/Verify `.env` file with `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+- Instruct user to restart dev server / rebuild.
 
-## Plan Summary
-1. **Refactor RootLayouts**: Wrap `AuthProvider` with `ThemeContextProvider` in all 3 layout files.
-2. **Fix Env Var**: Verify `.env` file content and restart server.
-3. **Clean up Routes**: Check `(onboarding)` route configuration.
+## Execution Plan
+1.  **Fix `app/_layout.web.tsx`**:
+    - Remove duplicate `Theme` import.
+    - Clean up `ThemeProvider` aliases.
+    - Fix the render structure (remove double fragments/StatusBars).
+    - Wrap `AuthProvider` with `ThemeContextProvider` (and `NavigationThemeProvider` inside that).
+2.  **Refactor `app/_layout.tsx` (Native/iOS)**:
+    - Wrap `AuthProvider` with `ThemeContextProvider`.
+    - Check/Remove `(onboarding)` screen if causing issues (or ensure it's correct).
+3.  **Refactor `app/_layout.native.tsx` (Android)**:
+    - Wrap `AuthProvider` with `ThemeContextProvider`.
+4.  **Verify `.env`**:
+    - Check if `.env` exists and has the key. If not, I can't set it for them but I can warn them.
+
+Let's start with fixing the syntax error in `_layout.web.tsx` as it's blocking the build.
