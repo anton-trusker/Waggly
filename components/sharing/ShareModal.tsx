@@ -69,11 +69,9 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
       onClose={handleClose}
       title={generatedShare ? "Share Profile" : "Create Share Link"}
       submitLabel={generatedShare ? "Done" : "Generate Link"}
-      onSubmit={generatedShare ? handleClose : handleGenerate}
-      loading={loading}
-      showCancel={!generatedShare}
+      onSubmit={async () => generatedShare ? handleClose() : handleGenerate()}
     >
-      {generatedShare ? (
+      {() => generatedShare ? (
         <View style={styles.resultContainer}>
           <View style={styles.qrContainer}>
             <QRCode
@@ -89,7 +87,7 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
             onPress={handleCopyLink}
             style={styles.copyButton}
           >
-            <IconSymbol name="content-copy" size={20} color={designSystem.colors.primary[500]} />
+            <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.primary[500]} />
             <Text style={styles.copyButtonText}> Copy Link</Text>
           </Button>
         </View>
