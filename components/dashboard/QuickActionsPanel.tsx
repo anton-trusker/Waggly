@@ -39,22 +39,8 @@ const quickActions: QuickAction[] = [
     title: 'Add Image',
     icon: 'camera',
     androidIcon: 'add-a-photo',
-    route: '/(tabs)/pets/add-image' // Ensure this route exists or update
+    route: '/(tabs)/pets/add-photos'
   },
-  {
-    id: 'document',
-    title: 'Add Document',
-    icon: 'folder',
-    androidIcon: 'folder',
-    route: '/(tabs)/pets/add-document' // Ensure this route exists
-  },
-  {
-    id: 'record',
-    title: 'Add Record',
-    icon: 'doc.text',
-    androidIcon: 'article',
-    route: '/(tabs)/pets/add-record' // Ensure this route exists
-  }
 ];
 
 export function QuickActionsPanel() {

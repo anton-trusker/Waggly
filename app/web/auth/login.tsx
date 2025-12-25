@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -11,6 +11,19 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+
+    useEffect(() => {
+        try {
+            const remembered = typeof localStorage !== 'undefined' && localStorage.getItem('remember_me') === '1';
+            setRememberMe(remembered);
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session && remembered) {
+                    router.replace('/web/dashboard' as any);
+                }
+            }).catch(() => {});
+        } catch {}
+    }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -26,6 +39,15 @@ export default function LoginPage() {
             });
 
             if (error) throw error;
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    if (rememberMe) {
+                        localStorage.setItem('remember_me', '1');
+                    } else {
+                        localStorage.removeItem('remember_me');
+                    }
+                }
+            } catch {}
             router.replace('/web/dashboard' as any);
         } catch (error: any) {
             Alert.alert('Login Failed', error.message);
@@ -36,6 +58,15 @@ export default function LoginPage() {
 
     const handleOAuthLogin = async (provider: 'google' | 'apple') => {
         try {
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    if (rememberMe) {
+                        localStorage.setItem('remember_me', '1');
+                    } else {
+                        localStorage.removeItem('remember_me');
+                    }
+                }
+            } catch {}
             const { error } = await supabase.auth.signInWithOAuth({
                 provider,
                 options: {
@@ -50,19 +81,16 @@ export default function LoginPage() {
 
     return (
         <View style={styles.container}>
-            {/* Left: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Welcome Back!"
-                    subtitle="Sign in to manage your pets' health and care"
-                />
-            </View>
-
-            {/* Right: Form */}
+            {/* Left: Form */}
             <View style={styles.formSection}>
+                {/* Logo header */}
+                <View style={styles.logoHeader}>
+                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Text style={styles.logoText}>pawzly</Text>
+                </View>
                 <View style={styles.formContainer}>
-                    <Text style={styles.heading}>Sign In</Text>
-                    <Text style={styles.subheading}>Enter your credentials to continue</Text>
+                    <Text style={styles.heading}>Welcome back</Text>
+                    <Text style={styles.subheading}>Manage your pet’s health and happiness.</Text>
 
                     {/* Email Input */}
                     <View style={styles.inputGroup}>
@@ -84,7 +112,12 @@ export default function LoginPage() {
 
                     {/* Password Input */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Password</Text>
+                        <View style={styles.labelRow}>
+                            <Text style={styles.label}>Password</Text>
+                            <TouchableOpacity onPress={() => router.push('/web/auth/forgot' as any)}>
+                                <Text style={styles.link}>Forgot Password?</Text>
+                            </TouchableOpacity>
+                        </View>
                         <View style={styles.inputWrapper}>
                             <Ionicons name="lock-closed-outline" size={20} color="#6B7280" style={styles.inputIcon} />
                             <TextInput
@@ -106,14 +139,13 @@ export default function LoginPage() {
                         </View>
                     </View>
 
-                    {/* Remember Me & Forgot Password */}
+                    {/* Remember Me */}
                     <View style={styles.row}>
-                        <TouchableOpacity style={styles.checkboxRow}>
-                            <View style={styles.checkbox} />
+                        <TouchableOpacity style={styles.checkboxRow} onPress={() => setRememberMe(!rememberMe)}>
+                            <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+                                {rememberMe && <Ionicons name="checkmark" size={14} color="#fff" />}
+                            </View>
                             <Text style={styles.checkboxLabel}>Remember me</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => router.push('/web/auth/forgot' as any)}>
-                            <Text style={styles.link}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -133,7 +165,7 @@ export default function LoginPage() {
                     {/* Divider */}
                     <View style={styles.divider}>
                         <View style={styles.dividerLine} />
-                        <Text style={styles.dividerText}>OR</Text>
+                        <Text style={styles.dividerText}>Or continue with</Text>
                         <View style={styles.dividerLine} />
                     </View>
 
@@ -163,6 +195,14 @@ export default function LoginPage() {
                     </View>
                 </View>
             </View>
+
+            {/* Right: Hero Panel */}
+            <View style={styles.heroSection}>
+                <AuthHeroPanel
+                    title="Your pet’s world, made simple and caring"
+                    subtitle="Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend."
+                />
+            </View>
         </View>
     );
 }
@@ -182,6 +222,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 48,
     },
+    logoHeader: {
+        position: 'absolute',
+        top: 24,
+        left: 24,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    logoImage: {
+        width: 32,
+        height: 32,
+    },
+    logoText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#111827',
+        textTransform: 'lowercase',
+    },
     formContainer: {
         width: '100%',
         maxWidth: 440,
@@ -200,11 +258,17 @@ const styles = StyleSheet.create({
     inputGroup: {
         marginBottom: 20,
     },
+    labelRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
     label: {
         fontSize: 14,
         fontWeight: '600',
         color: '#374151',
-        marginBottom: 8,
+        marginBottom: 0,
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -223,11 +287,10 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 14,
         color: '#111827',
-        outline: 'none' as any,
     },
     row: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         marginBottom: 24,
     },
@@ -242,6 +305,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#D1D5DB',
         borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    checkboxChecked: {
+        backgroundColor: '#6366F1',
+        borderColor: '#6366F1',
     },
     checkboxLabel: {
         fontSize: 14,

@@ -10,10 +10,10 @@ const SidebarNav: React.FC = () => {
 
     const navItems = [
         { label: 'Dashboard', icon: 'grid-outline', path: '/web/dashboard' },
-        { label: 'Plan', icon: 'calendar-outline', path: '/web/calendar' },
-        { label: 'Health', icon: 'medical-outline', path: '/web/health' },
+        { label: 'My Pets', icon: 'paw-outline', path: '/web/pets' },
+        { label: 'Calendar', icon: 'calendar-outline', path: '/web/calendar' },
         { label: 'Documents', icon: 'folder-open-outline', path: '/web/documents' },
-        { label: 'Pets', icon: 'paw-outline', path: '/web/pets' },
+        // Hidden: Vets & Clinics, Community
     ];
 
     const isActive = (path: string) => pathname?.startsWith(path);
@@ -53,21 +53,7 @@ const SidebarNav: React.FC = () => {
                 ))}
             </ScrollView>
 
-            {/* Upgrade Card */}
-            <View style={styles.upgradeCard}>
-                <View style={styles.upgradeHeader}>
-                    <View style={styles.upgradeIconContainer}>
-                        <Ionicons name="diamond-outline" size={16} color="#6366F1" />
-                    </View>
-                    <View>
-                        <Text style={styles.upgradeTitle}>Pawzly Pro</Text>
-                        <Text style={styles.upgradeSubtitle}>Manage unlimited pets</Text>
-                    </View>
-                </View>
-                <TouchableOpacity style={styles.upgradeButton}>
-                    <Text style={styles.upgradeButtonText}>Upgrade Plan</Text>
-                </TouchableOpacity>
-            </View>
+            {/* Upgrade Card hidden */}
 
             {/* Settings */}
             <TouchableOpacity

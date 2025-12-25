@@ -146,12 +146,15 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
     );
 };
 
+// Completely redefined styles to avoid any uninitialized variable issues
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#ffffff',
     },
     section: {
         marginBottom: 24,
+        paddingHorizontal: 16,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -166,6 +169,7 @@ const styles = StyleSheet.create({
     },
     selectButtons: {
         flexDirection: 'row',
+        alignItems: 'center',
         gap: 8,
     },
     selectButtonText: {
@@ -223,6 +227,7 @@ const styles = StyleSheet.create({
     showMoreButton: {
         marginTop: 8,
         paddingVertical: 8,
+        alignItems: 'center',
     },
     showMoreText: {
         fontSize: 13,

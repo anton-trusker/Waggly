@@ -90,7 +90,10 @@ export function useEvents(initialFilters?: EventFilters) {
   };
 
   const fetchEvents = useCallback(async () => {
+    console.log('🚀 Fetching events...', { user: !!user, petsLoading, filters, effectivePetIds });
+    
     if (!user) {
+      console.log('❌ No user, clearing events');
       if (isMountedRef.current) {
         setEvents([]);
         setLoading(false);
@@ -98,8 +101,19 @@ export function useEvents(initialFilters?: EventFilters) {
       return;
     }
     if (petsLoading) {
+      console.log('⏳ Pets still loading');
       return;
     }
+
+    if (effectivePetIds.length === 0) {
+      console.log('⚠️ No pets found, skipping event fetch');
+      if (isMountedRef.current) {
+        setEvents([]);
+        setLoading(false);
+      }
+      return;
+    }
+
     try {
       const types = filters.types;
       const petIds = effectivePetIds;
@@ -108,10 +122,13 @@ export function useEvents(initialFilters?: EventFilters) {
 
       // 1. Fetch Vaccinations
       if (!types || types.includes('vaccination')) {
+        console.log('🔍 Fetching vaccinations for petIds:', petIds);
         const { data: vax, error: vErr } = await (supabase
           .from('vaccinations') as any)
           .select('*')
           .in('pet_id', petIds);
+
+        console.log('📊 Vaccinations result:', { data: vax?.length, error: vErr });
 
         if (!vErr && vax) {
           (vax as Vaccination[]).forEach((v) => {
@@ -296,9 +313,10 @@ export function useEvents(initialFilters?: EventFilters) {
       }
 
       results.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+      console.log('✅ Events fetched successfully:', results.length);
       if (isMountedRef.current) setEvents(results);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error('❌ Error fetching events:', error);
       if (isMountedRef.current) setEvents([]);
     } finally {
       if (isMountedRef.current) setLoading(false);

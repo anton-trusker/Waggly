@@ -1,116 +1,75 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 
 interface AuthHeroPanelProps {
     title?: string;
     subtitle?: string;
-    imageName?: 'pets' | 'onboarding' | 'health';
+    imageUrl?: string;
 }
 
 const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
-    title = 'Welcome to Pawzly',
-    subtitle = 'Your ultimate pet care companion',
-    imageName = 'pets'
+    title = 'Your pet’s world, made simple and caring',
+    subtitle = 'Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend.',
+    imageUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCKmzQafI0lwQLzWGSp53vEZNjNuyJyB9LYgChbPGhna-8OG4YM1_7pzMqgt2onupgVxvi-9eiOQ_xu3ZX59JGdpX8QVklYPchWxP0WSOLJJ76tbs9NFXTkBi_XfhhDSJt6ejzhqwS879Xl1EMkr7Msuh1-NN5aJyebTXKbPGnZo6aER73ilwh0bHteBY7Y1xbOb0YF0iTbNEDjW3rXwSzupC67bwCYOylhCpqFzoPjJLwbTdZUGbuTPAe2J42-astBgnw7sWaoQPQ'
 }) => {
     return (
-        <LinearGradient
-            colors={['#6366F1', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.container}
-        >
-            {/* Logo */}
-            <View style={styles.logoContainer}>
-                <View style={styles.logoIcon}>
-                    <Ionicons name="paw" size={32} color="#fff" />
-                </View>
-                <Text style={styles.logoText}>Pawzly</Text>
-            </View>
-
-            {/* Content */}
-            <View style={styles.content}>
-                <View style={styles.iconWrapper}>
-                    <Ionicons name="heart-circle" size={80} color="rgba(255,255,255,0.3)" />
-                </View>
+        <View style={styles.container}>
+            <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+            <LinearGradient
+                colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.3)", "transparent"]}
+                start={{ x: 0.5, y: 1 }}
+                end={{ x: 0.5, y: 0 }}
+                style={styles.overlay}
+            />
+            <View style={styles.contentBottom}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
-
-            {/* Features */}
-            <View style={styles.features}>
-                <FeatureItem icon="calendar-outline" text="Track appointments & events" />
-                <FeatureItem icon="medical-outline" text="Manage health records" />
-                <FeatureItem icon="images-outline" text="Store photos & documents" />
-            </View>
-        </LinearGradient>
+        </View>
     );
 };
-
-const FeatureItem: React.FC<{ icon: string; text: string }> = ({ icon, text }) => (
-    <View style={styles.featureItem}>
-        <Ionicons name={icon as any} size={20} color="rgba(255,255,255,0.9)" />
-        <Text style={styles.featureText}>{text}</Text>
-    </View>
-);
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 48,
-        justifyContent: 'space-between',
+        position: 'relative',
+        backgroundColor: '#111827',
     },
-    logoContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
+    image: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        opacity: 0.8,
     },
-    logoIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        alignItems: 'center',
-        justifyContent: 'center',
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
     },
-    logoText: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: '#fff',
-    },
-    content: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    iconWrapper: {
-        marginBottom: 32,
+    contentBottom: {
+        position: 'absolute',
+        left: 48,
+        right: 48,
+        bottom: 48,
     },
     title: {
         fontSize: 40,
         fontWeight: '700',
         color: '#fff',
-        textAlign: 'center',
-        marginBottom: 16,
+        marginBottom: 12,
+        lineHeight: 48,
     },
     subtitle: {
         fontSize: 18,
-        color: 'rgba(255,255,255,0.9)',
-        textAlign: 'center',
+        color: 'rgba(255,255,255,0.85)',
         lineHeight: 28,
-    },
-    features: {
-        gap: 16,
-    },
-    featureItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    featureText: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.9)',
     },
 });
 

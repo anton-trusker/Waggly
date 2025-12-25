@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface QuickAction {
     id: string;
@@ -18,35 +18,35 @@ const QUICK_ACTIONS: QuickAction[] = [
         label: 'Book Visit',
         icon: 'calendar',
         colors: ['#6366F1', '#818CF8'],
-        route: '/web/calendar',
+        route: '/web/pets/visit/new',
     },
     {
         id: 'vaccine',
         label: 'Add Vaccine',
         icon: 'fitness',
         colors: ['#0EA5E9', '#38BDF8'],
-        route: '/web/pets',
+        route: '/web/pets/vaccination/new',
     },
     {
         id: 'meds',
         label: 'Add Meds',
         icon: 'medical',
         colors: ['#10B981', '#34D399'],
-        route: '/web/pets',
+        route: '/web/pets/treatment/new',
     },
     {
         id: 'weight',
         label: 'Add Weight',
         icon: 'scale',
         colors: ['#F59E0B', '#FBBF24'],
-        route: '/web/pets',
+        route: '/web/pets/weight/log',
     },
     {
         id: 'photo',
         label: 'Add Photo',
         icon: 'camera',
         colors: ['#EC4899', '#F472B6'],
-        route: '/web/pets',
+        route: '/web/pets/photos/add',
     },
 ];
 
@@ -62,10 +62,16 @@ const QuickActionsGrid: React.FC = () => {
             <Text style={styles.heading}>Quick Actions</Text>
             <View style={styles.grid}>
                 {QUICK_ACTIONS.map((action) => (
-                    <TouchableOpacity
+                    <Pressable
                         key={action.id}
-                        style={styles.actionCard}
+                        accessibilityRole="button"
+                        focusable
                         onPress={() => handleAction(action)}
+                        style={({ hovered, focused }) => [
+                            styles.actionCard,
+                            hovered && styles.actionCardHover,
+                            focused && styles.actionCardFocus
+                        ]}
                     >
                         <LinearGradient
                             colors={action.colors}
@@ -73,10 +79,20 @@ const QuickActionsGrid: React.FC = () => {
                             end={{ x: 1, y: 1 }}
                             style={styles.iconContainer}
                         >
-                            <Ionicons name={action.icon as any} size={24} color="#fff" />
+                            <IconSymbol
+                                android_material_icon_name={
+                                    action.id === 'visit' ? 'event' :
+                                    action.id === 'vaccine' ? 'vaccines' :
+                                    action.id === 'meds' ? 'medication' :
+                                    action.id === 'weight' ? 'monitor_weight' :
+                                    'add-a-photo'
+                                }
+                                size={24}
+                                color="#fff"
+                            />
                         </LinearGradient>
                         <Text style={styles.label}>{action.label}</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 ))}
             </View>
         </View>
@@ -92,6 +108,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
         marginBottom: 16,
+        fontFamily: 'Plus Jakarta Sans',
     },
     grid: {
         flexDirection: 'row',
@@ -101,6 +118,20 @@ const styles = StyleSheet.create({
     actionCard: {
         alignItems: 'center',
         minWidth: 100,
+        paddingVertical: 6,
+        paddingHorizontal: 4,
+        borderRadius: 12,
+    },
+    actionCardHover: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
+    },
+    actionCardFocus: {
+        borderWidth: 2,
+        borderColor: '#6366F1',
     },
     iconContainer: {
         width: 64,
@@ -120,6 +151,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#374151',
         textAlign: 'center',
+        fontFamily: 'Plus Jakarta Sans',
     },
 });
 

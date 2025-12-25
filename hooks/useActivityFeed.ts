@@ -36,7 +36,7 @@ export const useActivityFeed = (limit: number = 10) => {
                 const { data: pets } = await supabase
                     .from('pets')
                     .select('id, name, photo_url')
-                    .eq('profile_id', user.id);
+                    .eq('user_id', user.id);
 
                 if (!pets) return;
 

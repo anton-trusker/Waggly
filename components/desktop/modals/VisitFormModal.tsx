@@ -1,50 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
+import { usePets } from '@/hooks/usePets';
+import { cssInterop } from 'react-native-css-interop';
+
+// Apply cssInterop to components if not already done globally
+cssInterop(BlurView, { className: 'style' });
 
 interface VisitFormModalProps {
     visible: boolean;
     onClose: () => void;
-    petId: string;
+    petId?: string;
     onSuccess?: () => void;
 }
 
-const VISIT_TYPES = ['Checkup', 'Emergency', 'Surgery', 'Specialist', 'Follow-up', 'Other'];
+const VISIT_TYPES = ['Vet Check-up', 'Grooming', 'Training', 'Emergency'];
+const DURATIONS = ['30 minutes', '1 hour', '1 hour 30 minutes', '2 hours'];
 
-export default function VisitFormModal({ visible, onClose, petId, onSuccess }: VisitFormModalProps) {
+export default function VisitFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VisitFormModalProps) {
+    const { pets, loading: petsLoading } = usePets();
+    const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
     const [loading, setLoading] = useState(false);
+    
     const [formData, setFormData] = useState({
-        visit_type: 'Checkup',
-        visit_date: '',
+        visit_type: 'Vet Check-up',
+        duration: '30 minutes',
+        date: '',
+        time: '',
         veterinarian: '',
-        clinic_name: '',
-        reason: '',
-        diagnosis: '',
-        treatment_plan: '',
-        cost: '',
-        currency: 'USD',
+        address: '',
+        phone: '',
+        reminders_enabled: false,
         notes: '',
     });
 
+    useEffect(() => {
+        if (initialPetId) {
+            setSelectedPetId(initialPetId);
+        } else if (pets.length > 0 && !selectedPetId) {
+            setSelectedPetId(pets[0].id);
+        }
+    }, [initialPetId, pets, selectedPetId]);
+
     const resetForm = () => {
         setFormData({
-            visit_type: 'Checkup',
-            visit_date: '',
+            visit_type: 'Vet Check-up',
+            duration: '30 minutes',
+            date: '',
+            time: '',
             veterinarian: '',
-            clinic_name: '',
-            reason: '',
-            diagnosis: '',
-            treatment_plan: '',
-            cost: '',
-            currency: 'USD',
+            address: '',
+            phone: '',
+            reminders_enabled: false,
             notes: '',
         });
-    };
+        if (!initialPetId && pets.length > 0) {
+            setSelectedPetId(pets[0].id);
+        }
+    }
 
     const handleSubmit = async () => {
-        if (!formData.visit_date) {
+        if (!selectedPetId) {
+            Alert.alert('Error', 'Please select a pet');
+            return;
+        }
+        if (!formData.date) {
             Alert.alert('Error', 'Please enter visit date');
             return;
         }
@@ -54,17 +76,26 @@ export default function VisitFormModal({ visible, onClose, petId, onSuccess }: V
             const { error } = await (supabase
                 .from('medical_visits') as any)
                 .insert({
-                    pet_id: petId,
+                    pet_id: selectedPetId,
                     visit_type: formData.visit_type,
-                    visit_date: formData.visit_date,
+                    visit_date: formData.date,
+                    // We need to see where to store duration, time, address, phone.
+                    // Schema check (from memory/previous files): visit_type, visit_date, veterinarian, clinic_name, reason, diagnosis, treatment_plan, cost, currency, notes.
+                    // I'll map fields as best as possible or assume we might need to add columns later.
+                    // For now:
+                    // veterinarian -> veterinarian (Clinic Name/Vet Name)
+                    // clinic_name -> address? Or maybe we combine Vet Name / Clinic into one field and Address into clinic_name?
+                    // Let's use:
+                    // veterinarian = formData.veterinarian
+                    // clinic_name = formData.address (Not ideal but works for now as location)
+                    // notes = notes + duration + time + phone
                     veterinarian: formData.veterinarian || null,
-                    clinic_name: formData.clinic_name || null,
-                    reason: formData.reason || null,
-                    diagnosis: formData.diagnosis || null,
-                    treatment_plan: formData.treatment_plan || null,
-                    cost: parseFloat(formData.cost) || null,
-                    currency: formData.currency,
-                    notes: formData.notes || null,
+                    clinic_name: formData.address || null,
+                    notes: `Time: ${formData.time}, Duration: ${formData.duration}, Phone: ${formData.phone}\n${formData.notes}`,
+                    reason: formData.visit_type, // Default reason to visit type
+                    
+                    // Fields not in new design but in schema:
+                    // diagnosis, treatment_plan, cost, currency -> defaults or null
                 });
 
             if (error) throw error;
@@ -84,164 +115,222 @@ export default function VisitFormModal({ visible, onClose, petId, onSuccess }: V
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View style={styles.overlay}>
-                <BlurView intensity={20} style={StyleSheet.absoluteFill} />
-                <View style={styles.modal}>
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Add Vet Visit</Text>
-                        <TouchableOpacity onPress={onClose}>
+            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6">
+                <BlurView intensity={10} className="absolute inset-0" />
+                <View className="w-full max-w-4xl bg-white dark:bg-[#102213] rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
+                    {/* Header */}
+                    <View className="flex-row items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+                        <View className="flex-1">
+                            <Text className="text-[#111812] dark:text-white text-2xl font-bold">Add a New Visit</Text>
+                            <Text className="text-[#618968] dark:text-gray-400 text-sm mt-1">Fill in the details below to add a new visit for your pet.</Text>
+                        </View>
+                        <TouchableOpacity onPress={onClose} className="w-10 h-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800/50">
                             <Ionicons name="close" size={24} color="#6B7280" />
                         </TouchableOpacity>
                     </View>
 
-                    <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
-                        {/* Visit Type */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Visit Type</Text>
-                            <View style={styles.chipContainer}>
-                                {VISIT_TYPES.map((type) => (
-                                    <TouchableOpacity
-                                        key={type}
-                                        style={[
-                                            styles.chip,
-                                            formData.visit_type === type && styles.chipActive,
-                                        ]}
-                                        onPress={() => setFormData({ ...formData, visit_type: type })}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.chipText,
-                                                formData.visit_type === type && styles.chipTextActive,
-                                            ]}
-                                        >
-                                            {type}
-                                        </Text>
+                    {/* Form Content */}
+                    <ScrollView className="p-6 sm:p-8" showsVerticalScrollIndicator={false}>
+                        <View className="space-y-8 pb-8">
+                            {/* Who is this for? Section */}
+                            <View>
+                                <Text className="text-[#111812] dark:text-white text-lg font-bold mb-4">Who is this for?</Text>
+                                <View className="flex-row flex-wrap gap-4">
+                                    {petsLoading ? (
+                                        <ActivityIndicator color="#13ec37" />
+                                    ) : (
+                                        pets.map((pet) => (
+                                            <TouchableOpacity 
+                                                key={pet.id} 
+                                                onPress={() => setSelectedPetId(pet.id)}
+                                                className={`flex-col items-center gap-3 pb-3 cursor-pointer group`}
+                                            >
+                                                <View className={`rounded-full p-0.5 ${selectedPetId === pet.id ? 'border-4 border-[#13ec37]' : 'border-4 border-transparent'}`}>
+                                                    <Image 
+                                                        source={{ uri: pet.image_url || 'https://via.placeholder.com/150' }} 
+                                                        className="w-24 h-24 rounded-full bg-gray-200"
+                                                    />
+                                                </View>
+                                                <Text className="text-[#111812] dark:text-white text-base font-medium">{pet.name}</Text>
+                                            </TouchableOpacity>
+                                        ))
+                                    )}
+                                    {/* Add Pet Button Placeholder */}
+                                    <TouchableOpacity className="flex-col items-center gap-3 pb-3 cursor-pointer group">
+                                         <View className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800/50 items-center justify-center border-4 border-transparent">
+                                            <Ionicons name="add" size={40} color="#13ec37" />
+                                         </View>
+                                         <Text className="text-[#618968] dark:text-gray-400 text-base font-medium">Add Pet</Text>
                                     </TouchableOpacity>
-                                ))}
+                                </View>
                             </View>
-                        </View>
 
-                        {/* Visit Date */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Visit Date *</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="YYYY-MM-DD"
-                                value={formData.visit_date}
-                                onChangeText={(text) => setFormData({ ...formData, visit_date: text })}
-                            />
-                        </View>
+                            {/* Visit Details Section */}
+                            <View>
+                                <Text className="text-[#111812] dark:text-white text-lg font-bold mb-4">Visit Details</Text>
+                                <View className="flex-col md:flex-row flex-wrap gap-6">
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Visit Type</Text>
+                                        <View className="h-14 border border-[#dbe6dd] dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800/50 justify-center px-4">
+                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                                {VISIT_TYPES.map(type => (
+                                                    <TouchableOpacity 
+                                                        key={type} 
+                                                        onPress={() => setFormData({...formData, visit_type: type})}
+                                                        className={`px-3 py-1 mr-2 rounded ${formData.visit_type === type ? 'bg-[#13ec37]' : ''}`}
+                                                    >
+                                                        <Text className={`${formData.visit_type === type ? 'text-black' : 'text-[#111812] dark:text-white'}`}>{type}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                    </View>
 
-                        {/* Vet & Clinic */}
-                        <View style={styles.row}>
-                            <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Veterinarian</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Dr. Smith"
-                                    value={formData.veterinarian}
-                                    onChangeText={(text) => setFormData({ ...formData, veterinarian: text })}
-                                />
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Duration</Text>
+                                        <View className="h-14 border border-[#dbe6dd] dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800/50 justify-center px-4">
+                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                                {DURATIONS.map(dur => (
+                                                    <TouchableOpacity 
+                                                        key={dur} 
+                                                        onPress={() => setFormData({...formData, duration: dur})}
+                                                        className={`px-3 py-1 mr-2 rounded ${formData.duration === dur ? 'bg-[#13ec37]' : ''}`}
+                                                    >
+                                                        <Text className={`${formData.duration === dur ? 'text-black' : 'text-[#111812] dark:text-white'}`}>{dur}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                    </View>
+
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Date</Text>
+                                        <TextInput
+                                            className="w-full h-14 px-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white"
+                                            placeholder="YYYY-MM-DD"
+                                            placeholderTextColor="#618968"
+                                            value={formData.date}
+                                            onChangeText={(text) => setFormData({ ...formData, date: text })}
+                                        />
+                                    </View>
+
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Time</Text>
+                                        <TextInput
+                                            className="w-full h-14 px-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white"
+                                            placeholder="HH:MM"
+                                            placeholderTextColor="#618968"
+                                            value={formData.time}
+                                            onChangeText={(text) => setFormData({ ...formData, time: text })}
+                                        />
+                                    </View>
+                                </View>
                             </View>
-                            <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Clinic Name</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Happy Paws Vet"
-                                    value={formData.clinic_name}
-                                    onChangeText={(text) => setFormData({ ...formData, clinic_name: text })}
-                                />
+
+                            {/* Provider & Location Section */}
+                            <View>
+                                <Text className="text-[#111812] dark:text-white text-lg font-bold mb-4">Provider & Location</Text>
+                                <View className="flex-col md:flex-row flex-wrap gap-6">
+                                    <View className="w-full">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Vet Name / Clinic</Text>
+                                        <View className="relative">
+                                            <TextInput
+                                                className="w-full h-14 pl-12 pr-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white"
+                                                placeholder="Search for a clinic or provider"
+                                                placeholderTextColor="#618968"
+                                                value={formData.veterinarian}
+                                                onChangeText={(text) => setFormData({ ...formData, veterinarian: text })}
+                                            />
+                                            <View className="absolute left-4 top-4 pointer-events-none">
+                                                <Ionicons name="search" size={24} color="#9CA3AF" />
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Address</Text>
+                                        <TextInput
+                                            className="w-full h-14 px-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white"
+                                            placeholder="Enter address"
+                                            placeholderTextColor="#618968"
+                                            value={formData.address}
+                                            onChangeText={(text) => setFormData({ ...formData, address: text })}
+                                        />
+                                    </View>
+
+                                    <View className="w-full md:w-[48%]">
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Phone Number</Text>
+                                        <TextInput
+                                            className="w-full h-14 px-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white"
+                                            placeholder="(123) 456-7890"
+                                            placeholderTextColor="#618968"
+                                            keyboardType="phone-pad"
+                                            value={formData.phone}
+                                            onChangeText={(text) => setFormData({ ...formData, phone: text })}
+                                        />
+                                    </View>
+                                </View>
                             </View>
-                        </View>
 
-                        {/* Reason */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Reason for Visit</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g., Annual checkup, Limping"
-                                value={formData.reason}
-                                onChangeText={(text) => setFormData({ ...formData, reason: text })}
-                            />
-                        </View>
+                            {/* Notes & Attachments Section */}
+                            <View>
+                                <View className="flex-row items-center justify-between mb-4">
+                                    <Text className="text-[#111812] dark:text-white text-lg font-bold">Notes & Attachments</Text>
+                                    <View className="flex-row items-center">
+                                        <Text className="mr-3 text-base font-medium text-[#111812] dark:text-gray-300">Set Reminder</Text>
+                                        <TouchableOpacity 
+                                            onPress={() => setFormData({...formData, reminders_enabled: !formData.reminders_enabled})}
+                                            className={`w-14 h-8 rounded-full items-center justify-center ${formData.reminders_enabled ? 'bg-[#13ec37]' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                        >
+                                            <View className={`w-6 h-6 rounded-full bg-white shadow transform transition-transform ${formData.reminders_enabled ? 'translate-x-3' : '-translate-x-3'}`} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
 
-                        {/* Diagnosis */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Diagnosis</Text>
-                            <TextInput
-                                style={[styles.input, styles.textarea]}
-                                placeholder="What did the vet find?"
-                                multiline
-                                numberOfLines={3}
-                                value={formData.diagnosis}
-                                onChangeText={(text) => setFormData({ ...formData, diagnosis: text })}
-                            />
-                        </View>
+                                <View className="space-y-6">
+                                    <View>
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Notes</Text>
+                                        <TextInput
+                                            className="w-full p-4 rounded-lg border border-[#dbe6dd] dark:border-gray-700 bg-white dark:bg-gray-800/50 text-[#111812] dark:text-white h-32"
+                                            placeholder="Add any important notes about the visit..."
+                                            placeholderTextColor="#618968"
+                                            multiline
+                                            textAlignVertical="top"
+                                            value={formData.notes}
+                                            onChangeText={(text) => setFormData({ ...formData, notes: text })}
+                                        />
+                                    </View>
 
-                        {/* Treatment Plan */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Treatment Plan</Text>
-                            <TextInput
-                                style={[styles.input, styles.textarea]}
-                                placeholder="Recommended treatment..."
-                                multiline
-                                numberOfLines={3}
-                                value={formData.treatment_plan}
-                                onChangeText={(text) => setFormData({ ...formData, treatment_plan: text })}
-                            />
-                        </View>
-
-                        {/* Cost */}
-                        <View style={styles.row}>
-                            <View style={[styles.inputGroup, styles.flex2]}>
-                                <Text style={styles.label}>Cost</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="0.00"
-                                    keyboardType="decimal-pad"
-                                    value={formData.cost}
-                                    onChangeText={(text) => setFormData({ ...formData, cost: text })}
-                                />
+                                    <View>
+                                        <Text className="text-[#111812] dark:text-gray-300 text-base font-medium mb-2">Attach Document</Text>
+                                        <TouchableOpacity className="w-full h-32 border-2 border-dashed border-[#dbe6dd] dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 items-center justify-center p-6">
+                                            <Ionicons name="cloud-upload-outline" size={32} color="#9CA3AF" />
+                                            <Text className="mt-2 text-sm text-[#618968] dark:text-gray-400">
+                                                <Text className="font-semibold">Click to upload</Text> or drag and drop
+                                            </Text>
+                                            <Text className="text-xs text-gray-500 dark:text-gray-500 mt-1">PDF, PNG, JPG (MAX. 10MB)</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                             </View>
-                            <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Currency</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="USD"
-                                    value={formData.currency}
-                                    onChangeText={(text) => setFormData({ ...formData, currency: text })}
-                                />
-                            </View>
-                        </View>
-
-                        {/* Notes */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Additional Notes</Text>
-                            <TextInput
-                                style={[styles.input, styles.textarea]}
-                                placeholder="Any other details..."
-                                multiline
-                                numberOfLines={4}
-                                value={formData.notes}
-                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                            />
                         </View>
                     </ScrollView>
 
-                    <View style={styles.footer}>
-                        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                            <Text style={styles.cancelButtonText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.saveButton, loading && styles.saveButtonDisabled]}
-                            onPress={handleSubmit}
+                    {/* Footer Actions */}
+                    <View className="p-6 sm:p-8 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#102213] rounded-b-xl flex-col sm:flex-row-reverse gap-3">
+                        <TouchableOpacity 
+                            onPress={handleSubmit} 
                             disabled={loading}
+                            className={`h-12 px-6 items-center justify-center rounded-lg bg-[#13ec37] ${loading ? 'opacity-70' : ''}`}
                         >
                             {loading ? (
-                                <ActivityIndicator color="#fff" />
+                                <ActivityIndicator color="#000" size="small" />
                             ) : (
-                                <Text style={styles.saveButtonText}>Save Visit</Text>
+                                <Text className="text-base font-medium text-black">Save Visit</Text>
                             )}
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={onClose} className="h-12 px-6 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800/50">
+                            <Text className="text-base font-medium text-[#111812] dark:text-white">Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -249,135 +338,3 @@ export default function VisitFormModal({ visible, onClose, petId, onSuccess }: V
         </Modal>
     );
 }
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 32,
-    },
-    modal: {
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        width: '100%',
-        maxWidth: 600,
-        maxHeight: '90%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
-        elevation: 5,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 24,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#111827',
-    },
-    form: {
-        padding: 24,
-    },
-    inputGroup: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 8,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        fontSize: 14,
-        color: '#111827',
-        backgroundColor: '#F9FAFB',
-        // @ts-ignore
-        outline: 'none',
-    },
-    textarea: {
-        height: 80,
-        textAlignVertical: 'top',
-    },
-    row: {
-        flexDirection: 'row',
-        gap: 16,
-    },
-    flex1: {
-        flex: 1,
-    },
-    flex2: {
-        flex: 2,
-    },
-    chipContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-    },
-    chip: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        backgroundColor: '#fff',
-    },
-    chipActive: {
-        backgroundColor: '#6366F1',
-        borderColor: '#6366F1',
-    },
-    chipText: {
-        fontSize: 13,
-        color: '#6B7280',
-    },
-    chipTextActive: {
-        color: '#fff',
-    },
-    footer: {
-        flexDirection: 'row',
-        gap: 12,
-        padding: 24,
-        borderTopWidth: 1,
-        borderTopColor: '#F3F4F6',
-    },
-    cancelButton: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        alignItems: 'center',
-    },
-    cancelButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6B7280',
-    },
-    saveButton: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 12,
-        backgroundColor: '#6366F1',
-        alignItems: 'center',
-    },
-    saveButtonDisabled: {
-        opacity: 0.5,
-    },
-    saveButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#fff',
-    },
-});

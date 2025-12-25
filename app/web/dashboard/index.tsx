@@ -15,6 +15,7 @@ export default function DashboardPage() {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* Header removed (use global Topbar) */}
             <View style={styles.content}>
                 {/* Main Column (8/12) */}
                 <View style={styles.mainColumn}>
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '700',
         color: '#111827',
+        fontFamily: 'Plus Jakarta Sans',
     },
     badge: {
         backgroundColor: '#EEF2FF',
@@ -140,17 +142,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
     viewAllLink: {
         fontSize: 14,
         fontWeight: '600',
         color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
     loadingText: {
         fontSize: 14,
         color: '#6B7280',
         textAlign: 'center',
         paddingVertical: 40,
+        fontFamily: 'Plus Jakarta Sans',
     },
     emptyState: {
         alignItems: 'center',
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
         marginBottom: 8,
+        fontFamily: 'Plus Jakarta Sans',
     },
     emptyText: {
         fontSize: 16,
@@ -172,6 +178,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         maxWidth: 400,
         marginBottom: 24,
+        fontFamily: 'Plus Jakarta Sans',
     },
     addButton: {
         flexDirection: 'row',
@@ -186,6 +193,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#fff',
+        fontFamily: 'Plus Jakarta Sans',
     },
     petGrid: {
         flexDirection: 'row',
@@ -221,5 +229,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
 });

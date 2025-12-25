@@ -229,7 +229,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#111827',
         backgroundColor: '#F9FAFB',
-        outline: 'none' as any,
     },
     inputWrapper: {
         flexDirection: 'row',

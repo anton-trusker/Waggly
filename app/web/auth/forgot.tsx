@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -35,16 +35,13 @@ export default function ForgotPasswordPage() {
 
     return (
         <View style={styles.container}>
-            {/* Left: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Reset Your Password"
-                    subtitle="We'll send you instructions to reset your password"
-                />
-            </View>
-
-            {/* Right: Form */}
+            {/* Left: Form */}
             <View style={styles.formSection}>
+                {/* Logo header */}
+                <View style={styles.logoHeader}>
+                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Text style={styles.logoText}>pawzly</Text>
+                </View>
                 <View style={styles.formContainer}>
                     {!emailSent ? (
                         <>
@@ -125,6 +122,14 @@ export default function ForgotPasswordPage() {
                     )}
                 </View>
             </View>
+
+            {/* Right: Hero Panel */}
+            <View style={styles.heroSection}>
+                <AuthHeroPanel
+                    title="Reset Your Password"
+                    subtitle="We'll send you instructions to reset your password"
+                />
+            </View>
         </View>
     );
 }
@@ -143,6 +148,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    logoHeader: {
+        position: 'absolute',
+        top: 24,
+        left: 24,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    logoImage: {
+        width: 32,
+        height: 32,
+    },
+    logoText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#111827',
+        textTransform: 'lowercase',
     },
     formContainer: {
         width: '100%',
@@ -186,7 +209,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 14,
         color: '#111827',
-        outline: 'none' as any,
     },
     button: {
         backgroundColor: '#6366F1',

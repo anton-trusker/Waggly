@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -37,22 +37,18 @@ export default function SignupPage() {
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: email.trim(),
                 password,
+                options: {
+                    data: {
+                        first_name: firstName.trim(),
+                        last_name: lastName.trim(),
+                        full_name: `${firstName.trim()} ${lastName.trim()}`,
+                    },
+                },
             });
 
             if (authError) throw authError;
 
             if (authData.user) {
-                // Create profile
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert({
-                        user_id: authData.user.id,
-                        first_name: firstName.trim(),
-                        last_name: lastName.trim(),
-                    });
-
-                if (profileError) console.error('Profile creation error:', profileError);
-
                 router.replace('/web/onboarding/language' as any);
             }
         } catch (error: any) {
@@ -78,16 +74,13 @@ export default function SignupPage() {
 
     return (
         <View style={styles.container}>
-            {/* Left: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Join Pawzly Today"
-                    subtitle="Create an account to start caring for your pets better"
-                />
-            </View>
-
-            {/* Right: Form */}
+            {/* Left: Form */}
             <View style={styles.formSection}>
+                {/* Logo header */}
+                <View style={styles.logoHeader}>
+                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Text style={styles.logoText}>pawzly</Text>
+                </View>
                 <View style={styles.formContainer}>
                     <Text style={styles.heading}>Create Account</Text>
                     <Text style={styles.subheading}>Fill in your details to get started</Text>
@@ -208,7 +201,7 @@ export default function SignupPage() {
                     {/* Divider */}
                     <View style={styles.divider}>
                         <View style={styles.dividerLine} />
-                        <Text style={styles.dividerText}>OR</Text>
+                        <Text style={styles.dividerText}>Or continue with</Text>
                         <View style={styles.dividerLine} />
                     </View>
 
@@ -238,6 +231,14 @@ export default function SignupPage() {
                     </View>
                 </View>
             </View>
+
+            {/* Right: Hero Panel */}
+            <View style={styles.heroSection}>
+                <AuthHeroPanel
+                    title="Your pet’s world, made simple and caring"
+                    subtitle="Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend."
+                />
+            </View>
         </View>
     );
 }
@@ -256,6 +257,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    logoHeader: {
+        position: 'absolute',
+        top: 24,
+        left: 24,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    logoImage: {
+        width: 32,
+        height: 32,
+    },
+    logoText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#111827',
+        textTransform: 'lowercase',
     },
     formContainer: {
         width: '100%',
@@ -305,7 +324,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 14,
         color: '#111827',
-        outline: 'none' as any,
     },
     checkboxRow: {
         flexDirection: 'row',

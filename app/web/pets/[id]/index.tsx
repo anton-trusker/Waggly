@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
-import DocumentsTabDesktop from '@/components/desktop/pets/tabs/DocumentsTabDesktop';
-import HealthTabDesktop from '@/components/desktop/pets/tabs/HealthTabDesktop';
+import { useEvents } from '@/hooks/useEvents';
+import OverviewTab from './overview';
+import HealthTab from './health';
+import AlbumTab from './album';
+import DocumentsTab from './documents';
+import NutritionTab from './nutrition';
 
 export default function PetDetailsPage() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const petId = params.id as string;
     const { pets } = usePets();
-    const [activeTab, setActiveTab] = useState<'overview' | 'health' | 'album' | 'documents'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'health' | 'album' | 'documents' | 'nutrition'>('overview');
 
     const pet = pets.find(p => p.id === petId);
 
@@ -38,56 +42,59 @@ export default function PetDetailsPage() {
 
     return (
         <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={24} color="#6B7280" />
-                </TouchableOpacity>
-                <View style={styles.headerActions}>
-                    {canEdit && (
-                        <TouchableOpacity
-                            style={styles.actionButton}
-                            onPress={() => router.push(`/web/pets/${petId}/edit` as any)}
-                        >
-                            <Ionicons name="create-outline" size={20} color="#6366F1" />
-                            <Text style={styles.actionButtonText}>Edit</Text>
-                        </TouchableOpacity>
-                    )}
-                    <TouchableOpacity style={styles.actionButton}>
-                        <Ionicons name="share-outline" size={20} color="#6366F1" />
-                        <Text style={styles.actionButtonText}>Share</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Pet Header Card */}
+            {/* Pet Header Card - Matching Design */}
             <View style={styles.petHeader}>
                 <View style={styles.petInfo}>
-                    {pet.photo_url ? (
-                        <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
-                    ) : (
-                        <View style={styles.petPhotoPlaceholder}>
-                            <Ionicons name="paw" size={48} color="#6366F1" />
+                    <View style={styles.relative}>
+                        <View style={styles.petPhotoGradient}>
+                            {pet.photo_url ? (
+                                <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
+                            ) : (
+                                <View style={styles.petPhotoPlaceholder}>
+                                    <Ionicons name="paw" size={48} color="#6366F1" />
+                                </View>
+                            )}
                         </View>
-                    )}
+                        <View style={styles.verifiedBadge}>
+                            <Ionicons name="checkmark" size={16} color="#fff" />
+                        </View>
+                    </View>
                     <View style={styles.petMeta}>
                         <Text style={styles.petName}>{pet.name}</Text>
                         <Text style={styles.petBreed}>{pet.breed || pet.species}</Text>
                         <View style={styles.petStats}>
-                            <View style={styles.stat}>
-                                <Ionicons name="calendar" size={14} color="#6B7280" />
-                                <Text style={styles.statText}>{getAge()}</Text>
+                            <View style={styles.statBadge}>
+                                <Text style={styles.statBadgeText}>{getAge()}</Text>
                             </View>
-                            <View style={styles.stat}>
-                                <Ionicons name="male-female" size={14} color="#6B7280" />
-                                <Text style={styles.statText}>{pet.gender || 'N/A'}</Text>
+                            <View style={[styles.statBadge, styles.genderBadge]}>
+                                <Ionicons name={pet.gender === 'female' ? 'female' : 'male'} size={12} color="#EC4899" />
+                                <Text style={styles.statBadgeText}>{pet.gender || 'N/A'}</Text>
                             </View>
-                            <View style={styles.stat}>
-                                <Ionicons name="fitness" size={14} color="#6B7280" />
-                                <Text style={styles.statText}>{pet.weight ? `${pet.weight} ${pet.weight_unit}` : 'N/A'}</Text>
+                            <View style={styles.statBadge}>
+                                <Ionicons name="barbell" size={12} color="#3B82F6" />
+                                <Text style={styles.statBadgeText}>{pet.weight ? `${pet.weight} ${pet.weight_unit}` : 'N/A'}</Text>
                             </View>
                         </View>
+                        <View style={styles.locationRow}>
+                            <Ionicons name="location" size={14} color="#6B7280" />
+                            <Text style={styles.locationText}>Berlin, Germany</Text>
+                        </View>
                     </View>
+                </View>
+                <View style={styles.headerActions}>
+                    <TouchableOpacity style={styles.shareButton}>
+                        <Ionicons name="share-outline" size={20} color="#374151" />
+                        <Text style={styles.shareButtonText}>Share Profile</Text>
+                    </TouchableOpacity>
+                    {canEdit && (
+                        <TouchableOpacity
+                            style={styles.editButton}
+                            onPress={() => router.push(`/web/pets/${petId}/edit` as any)}
+                        >
+                            <Ionicons name="create-outline" size={20} color="#374151" />
+                            <Text style={styles.editButtonText}>Edit</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
 
@@ -125,51 +132,23 @@ export default function PetDetailsPage() {
                         Documents
                     </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.tab, activeTab === 'nutrition' && styles.tabActive]}
+                    onPress={() => setActiveTab('nutrition')}
+                >
+                    <Text style={[styles.tabText, activeTab === 'nutrition' && styles.tabTextActive]}>
+                        Nutrition
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             {/* Tab Content */}
             <ScrollView style={styles.tabContent}>
-                {activeTab === 'overview' && (
-                    <View style={styles.overviewTab}>
-                        <Text style={styles.sectionTitle}>Basic Information</Text>
-                        <View style={styles.infoCard}>
-                            {renderInfoRow('Species', pet.species)}
-                            {renderInfoRow('Breed', pet.breed)}
-                            {renderInfoRow('Color', pet.color)}
-                            {renderInfoRow('Date of Birth', pet.birth_date)}
-                            {renderInfoRow('Microchip', pet.chip_number)}
-                        </View>
-
-                        {/* Notes are not currently in schema, hiding for now */}
-                        {/* {pet.notes && (
-                            <>
-                                <Text style={styles.sectionTitle}>Notes</Text>
-                                <View style={styles.infoCard}>
-                                    <Text style={styles.notesText}>{pet.notes}</Text>
-                                </View>
-                            </>
-                        )} */}
-                    </View>
-                )}
-
-                {activeTab === 'health' && (
-                    <HealthTabDesktop petId={petId} />
-                )}
-
-                {activeTab === 'album' && (
-                    <View style={styles.albumTab}>
-                        <Text style={styles.sectionTitle}>Photo Album</Text>
-                        <View style={styles.emptyState}>
-                            <Ionicons name="images-outline" size={48} color="#D1D5DB" />
-                            <Text style={styles.emptyStateText}>No photos yet</Text>
-                            <Text style={styles.emptyStateSubtext}>Upload photos of your pet</Text>
-                        </View>
-                    </View>
-                )}
-
-                {activeTab === 'documents' && (
-                    <DocumentsTabDesktop petId={petId} />
-                )}
+                {activeTab === 'overview' && <OverviewTab />}
+                {activeTab === 'health' && <HealthTab />}
+                {activeTab === 'album' && <AlbumTab />}
+                {activeTab === 'documents' && <DocumentsTab />}
+                {activeTab === 'nutrition' && <NutritionTab />}
             </ScrollView>
         </View>
     );
@@ -185,10 +164,84 @@ const renderInfoRow = (label: string, value?: string | null) => {
     );
 };
 
+// Events Tab Component
+const PetEventsTab: React.FC<{ petId: string }> = ({ petId }) => {
+    const { events, loading } = useEvents({ petIds: [petId] });
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    };
+
+    const getEventIcon = (type?: string) => {
+        switch (type) {
+            case 'vaccination': return 'medical';
+            case 'treatment': return 'medkit';
+            case 'vet': return 'medical';
+            case 'grooming': return 'cut';
+            case 'walking': return 'walk';
+            case 'feeding': return 'restaurant';
+            default: return 'calendar';
+        }
+    };
+
+    const getEventColor = (type?: string) => {
+        switch (type) {
+            case 'vaccination': return '#10B981';
+            case 'treatment': return '#EC4899';
+            case 'vet': return '#6366F1';
+            case 'grooming': return '#10B981';
+            case 'walking': return '#F59E0B';
+            case 'feeding': return '#EC4899';
+            default: return '#8B5CF6';
+        }
+    };
+
+    if (loading) {
+        return (
+            <View style={styles.eventsTab}>
+                <Text style={styles.loadingText}>Loading events...</Text>
+            </View>
+        );
+    }
+
+    if (events.length === 0) {
+        return (
+            <View style={styles.eventsTab}>
+                <View style={styles.emptyState}>
+                    <Ionicons name="calendar-outline" size={48} color="#D1D5DB" />
+                    <Text style={styles.emptyStateText}>No events yet</Text>
+                    <Text style={styles.emptyStateSubtext}>Add events to track your pet's care schedule</Text>
+                </View>
+            </View>
+        );
+    }
+
+    return (
+        <View style={styles.eventsTab}>
+            {events.map((event) => (
+                <View key={event.id} style={styles.eventCard}>
+                    <View style={[styles.eventIcon, { backgroundColor: getEventColor(event.type) + '20' }]}>
+                        <Ionicons name={getEventIcon(event.type) as any} size={20} color={getEventColor(event.type)} />
+                    </View>
+                    <View style={styles.eventContent}>
+                        <Text style={styles.eventTitle}>{event.title}</Text>
+                        <Text style={styles.eventDate}>{formatDate(event.dueDate)}</Text>
+                        {event.notes && <Text style={styles.eventNotes}>{event.notes}</Text>}
+                    </View>
+                </View>
+            ))}
+        </View>
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc',
+        backgroundColor: '#f6f6f8',
     },
     loading: {
         flex: 1,
@@ -200,58 +253,59 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#6B7280',
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 24,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
-    },
-    backButton: {
-        padding: 8,
-    },
-    headerActions: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    actionButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    actionButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
-    },
     petHeader: {
         padding: 32,
         backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E7EB',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
     },
     petInfo: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 24,
     },
-    petPhoto: {
+    relative: {
+        position: 'relative',
+    },
+    petPhotoGradient: {
         width: 120,
         height: 120,
-        borderRadius: 16,
+        borderRadius: 60,
+        padding: 4,
+        backgroundColor: 'linear-gradient(135deg, #2C097F, #3B82F6)',
+    },
+    petPhoto: {
+        width: 112,
+        height: 112,
+        borderRadius: 56,
+        borderWidth: 4,
+        borderColor: '#fff',
     },
     petPhotoPlaceholder: {
-        width: 120,
-        height: 120,
-        borderRadius: 16,
+        width: 112,
+        height: 112,
+        borderRadius: 56,
         backgroundColor: '#EEF2FF',
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 4,
+        borderColor: '#fff',
+    },
+    verifiedBadge: {
+        position: 'absolute',
+        bottom: 8,
+        right: 8,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#2C097F',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: '#fff',
     },
     petMeta: {
         flex: 1,
@@ -259,7 +313,7 @@ const styles = StyleSheet.create({
     petName: {
         fontSize: 32,
         fontWeight: '700',
-        color: '#111827',
+        color: '#1F2937',
         marginBottom: 4,
     },
     petBreed: {
@@ -269,15 +323,66 @@ const styles = StyleSheet.create({
     },
     petStats: {
         flexDirection: 'row',
-        gap: 24,
+        gap: 12,
+        marginBottom: 12,
     },
-    stat: {
+    statBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        backgroundColor: '#F3F4F6',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 16,
+    },
+    genderBadge: {
+        backgroundColor: '#FCE7F3',
+    },
+    statBadgeText: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#374151',
+    },
+    locationRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
     },
-    statText: {
+    locationText: {
+        fontSize: 12,
+        color: '#6B7280',
+    },
+    headerActions: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    shareButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+        backgroundColor: '#F3F4F6',
+    },
+    shareButtonText: {
         fontSize: 14,
+        fontWeight: '500',
+        color: '#374151',
+    },
+    editButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+    },
+    editButtonText: {
+        fontSize: 14,
+        fontWeight: '500',
         color: '#374151',
     },
     tabs: {
@@ -294,7 +399,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'transparent',
     },
     tabActive: {
-        borderBottomColor: '#6366F1',
+        borderBottomColor: '#2C097F',
     },
     tabText: {
         fontSize: 14,
@@ -302,68 +407,9 @@ const styles = StyleSheet.create({
         color: '#6B7280',
     },
     tabTextActive: {
-        color: '#6366F1',
+        color: '#2C097F',
     },
     tabContent: {
         flex: 1,
-        padding: 32,
-    },
-    overviewTab: {
-        gap: 24,
-    },
-    healthTab: {
-        gap: 24,
-    },
-    albumTab: {
-        gap: 24,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 16,
-    },
-    infoCard: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    infoRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-    },
-    infoLabel: {
-        fontSize: 14,
-        color: '#6B7280',
-    },
-    infoValue: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#111827',
-    },
-    notesText: {
-        fontSize: 14,
-        color: '#374151',
-        lineHeight: 20,
-    },
-    emptyState: {
-        alignItems: 'center',
-        paddingVertical: 64,
-    },
-    emptyStateText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#9CA3AF',
-        marginTop: 16,
-    },
-    emptyStateSubtext: {
-        fontSize: 14,
-        color: '#D1D5DB',
-        marginTop: 4,
     },
 });

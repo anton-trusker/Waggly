@@ -12,8 +12,8 @@ const UpcomingCarePanel: React.FC = () => {
     const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
     const upcomingEvents = events
-        .filter(event => new Date(event.start_time) > new Date())
-        .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+        .filter(event => new Date(event.dueDate) > new Date())
+        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
         .slice(0, 5);
 
     const filteredEvents = activeFilter === 'all'
@@ -85,7 +85,7 @@ const UpcomingCarePanel: React.FC = () => {
                     <Text style={styles.emptyText}>No upcoming events</Text>
                 ) : (
                     filteredEvents.map((event) => {
-                        const { month, day } = formatDate(event.start_time);
+                        const { month, day } = formatDate(event.dueDate);
                         return (
                             <TouchableOpacity
                                 key={event.id}
@@ -111,7 +111,7 @@ const UpcomingCarePanel: React.FC = () => {
                                     {event.location && (
                                         <Text style={styles.eventLocation}>📍 {event.location}</Text>
                                     )}
-                                    <Text style={styles.eventTime}>{formatTime(event.start_time)}</Text>
+                                    <Text style={styles.eventTime}>{formatTime(event.dueDate)}</Text>
                                 </View>
 
                                 {/* Chevron */}

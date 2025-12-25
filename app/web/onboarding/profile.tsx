@@ -314,7 +314,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 14,
         color: '#111827',
-        outline: 'none' as any,
     },
     button: {
         backgroundColor: '#6366F1',

@@ -20,12 +20,11 @@ export default function WebLayout() {
                             <Stack.Screen name="dashboard" />
                             <Stack.Screen name="calendar" />
                             <Stack.Screen name="pets" />
-                            <Stack.Screen name="profile" />
+                            <Stack.Screen name="health" />
                             <Stack.Screen name="share" />
                             <Stack.Screen name="notifications" />
                             <Stack.Screen name="settings" />
                             <Stack.Screen name="documents" />
-                            <Stack.Screen name="health" />
                         </Stack>
                     </DesktopShell>
                 </AuthProvider>

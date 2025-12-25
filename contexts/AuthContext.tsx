@@ -70,6 +70,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('remember_me');
+      }
+    } catch {}
   };
 
   const resetPassword = async (email: string) => {
