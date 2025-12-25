@@ -20,8 +20,29 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "web",
 };
+
+function RootLayoutNav() {
+  const { session, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    // Auth guards can go here if needed
+  }, [loading, session]);
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
+        <Stack.Screen name="web" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+      <SystemBars style="auto" />
+    </GestureHandlerRootView>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -70,20 +91,6 @@ export default function RootLayout() {
     },
   };
 
-  const { session, loading } = useAuth();
-  const router = useRouter(); // Need useRouter, segments
-
-  useEffect(() => {
-    if (loading) return;
-
-    // Simple auth guard for web
-    // Assuming all /web routes (except auth) require session
-    // And /web/auth routes (login/signup) are for non-session
-
-    // However, the router logic is better placed in a higher order component or here if we have segments.
-    // But since we are at the root, we can just ensure we have 'web' in the stack.
-  }, [loading, session]);
-
   return (
     <>
       <StatusBar style="auto" animated />
@@ -92,14 +99,7 @@ export default function RootLayout() {
           value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
         >
           <AuthProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
-                <Stack.Screen name="web" />
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(tabs)" />
-              </Stack>
-              <SystemBars style="auto" />
-            </GestureHandlerRootView>
+            <RootLayoutNav />
           </AuthProvider>
         </NavigationThemeProvider>
       </ThemeContextProvider>
