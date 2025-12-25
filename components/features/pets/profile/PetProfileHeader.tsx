@@ -12,9 +12,10 @@ import { useRouter } from 'expo-router';
 interface PetProfileHeaderProps {
     pet: Pet;
     onEdit: () => void;
+    onShare?: () => void;
 }
 
-export default function PetProfileHeader({ pet, onEdit }: PetProfileHeaderProps) {
+export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHeaderProps) {
     const { theme, isDark } = useAppTheme();
     const router = useRouter();
 
@@ -47,14 +48,24 @@ export default function PetProfileHeader({ pet, onEdit }: PetProfileHeaderProps)
                     <IconSymbol ios_icon_name="chevron.left" android_material_icon_name="arrow-back-ios-new" size={20} color={theme.colors.text.primary} />
                 </TouchableOpacity>
 
-                {/* Logo or Title could go here */}
-
-                <TouchableOpacity
-                    style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
-                    onPress={onEdit}
-                >
-                    <IconSymbol ios_icon_name="pencil" android_material_icon_name="edit" size={20} color={colors.primary} />
-                </TouchableOpacity>
+                {/* Right Actions */}
+                <View style={styles.rightActions}>
+                    {onShare && (
+                        <TouchableOpacity
+                            style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
+                            onPress={onShare}
+                        >
+                            <IconSymbol ios_icon_name="square.and.arrow.up" android_material_icon_name="share" size={20} color={colors.primary} />
+                        </TouchableOpacity>
+                    )}
+                    
+                    <TouchableOpacity
+                        style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
+                        onPress={onEdit}
+                    >
+                        <IconSymbol ios_icon_name="pencil" android_material_icon_name="edit" size={20} color={colors.primary} />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {/* Main Profile Content */}
@@ -135,6 +146,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backdropFilter: 'blur(10px)', // iOS support for glassmorphism
+    },
+    rightActions: {
+        flexDirection: 'row',
+        gap: 8,
     },
     profileContent: {
         alignItems: 'center',

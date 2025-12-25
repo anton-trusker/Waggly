@@ -9,6 +9,9 @@ import OverviewTab from './overview';
 import HealthTab from './health';
 import AlbumTab from './album';
 import DocumentsTab from './documents';
+import ShareModal from '@/components/sharing/ShareModal';
+import ActiveLinksList from '@/components/sharing/ActiveLinksList';
+import Button from '@/components/ui/Button';
 
 export default function PetDetailsPage() {
     const router = useRouter();
@@ -17,7 +20,9 @@ export default function PetDetailsPage() {
     const { pets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
-    const [activeTab, setActiveTab] = useState<'overview' | 'health' | 'album' | 'documents'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'health' | 'album' | 'documents' | 'share'>('overview');
+    const [shareModalVisible, setShareModalVisible] = useState(false);
+    const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
 
     const pet = pets.find(p => p.id === petId);
 
@@ -60,7 +65,7 @@ export default function PetDetailsPage() {
                         </TouchableOpacity>
                         <Text style={styles.mobileHeaderTitle}>PROFILE</Text>
                         <View style={styles.mobileHeaderActions}>
-                            <TouchableOpacity style={styles.iconBtn}>
+                            <TouchableOpacity style={styles.iconBtn} onPress={() => setShareModalVisible(true)}>
                                 <Ionicons name="share-outline" size={20} color="#475569" />
                             </TouchableOpacity>
                             {canEdit && (
@@ -186,7 +191,7 @@ export default function PetDetailsPage() {
                             </View>
                         </View>
                         <View style={styles.headerActions}>
-                            <TouchableOpacity style={styles.shareButton}>
+                            <TouchableOpacity style={styles.shareButton} onPress={() => setShareModalVisible(true)}>
                                 <Ionicons name="share-outline" size={20} color="#374151" />
                                 <Text style={styles.shareButtonText}>Share Profile</Text>
                             </TouchableOpacity>
@@ -228,6 +233,14 @@ export default function PetDetailsPage() {
                                 Documents
                             </Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'share' && styles.tabActive]}
+                            onPress={() => setActiveTab('share')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'share' && styles.tabTextActive]}>
+                                Share
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Desktop Tab Content */}
@@ -236,9 +249,25 @@ export default function PetDetailsPage() {
                         {activeTab === 'health' && <HealthTab />}
                         {activeTab === 'album' && <AlbumTab />}
                         {activeTab === 'documents' && <DocumentsTab />}
+                        {activeTab === 'share' && (
+                            <View style={{ padding: 32 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                                    <Text style={{ fontSize: 20, fontWeight: '600', color: '#1F2937' }}>Active Links</Text>
+                                    <Button onPress={() => setShareModalVisible(true)}>Create New Link</Button>
+                                </View>
+                                <ActiveLinksList petId={petId} refreshTrigger={shareRefreshTrigger} />
+                            </View>
+                        )}
                     </ScrollView>
                 </>
             )}
+            
+            <ShareModal 
+                visible={shareModalVisible} 
+                onClose={() => setShareModalVisible(false)} 
+                petId={petId}
+                onLinkGenerated={() => setShareRefreshTrigger(prev => prev + 1)}
+            />
         </View>
     );
 }

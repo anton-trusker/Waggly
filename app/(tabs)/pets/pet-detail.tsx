@@ -29,8 +29,11 @@ import OverviewTab from '@/components/features/pets/profile/OverviewTab';
 import HealthTab from '@/components/features/pets/profile/HealthTab';
 import PetGallery from '@/components/features/pets/PetGalleryComponent';
 import PetDocuments from '@/components/features/pets/PetDocuments';
+import ShareModal from '@/components/sharing/ShareModal';
+import ActiveLinksList from '@/components/sharing/ActiveLinksList';
+import Button from '@/components/ui/Button';
 
-type TabType = 'Overview' | 'Health' | 'Gallery' | 'Docs';
+type TabType = 'Overview' | 'Health' | 'Gallery' | 'Docs' | 'Share';
 
 // Reuse UpcomingEvents from previous file (simplified)
 interface UpcomingEventsProps {
@@ -91,6 +94,8 @@ const PetDetailScreenContent = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>('Overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
   const todayISO = new Date().toISOString().slice(0, 10);
 
   const loadData = useCallback(async () => {
@@ -176,6 +181,13 @@ const PetDetailScreenContent = () => {
         return <PetGallery petId={pet.id} gallery={pet.photo_gallery || []} />;
       case 'Docs':
         return <PetDocuments petId={pet.id} />;
+      case 'Share':
+        return (
+          <View style={{ padding: 20 }}>
+            <Button onPress={() => setShareModalVisible(true)} style={{ marginBottom: 16 }}>Create New Link</Button>
+            <ActiveLinksList petId={pet.id} refreshTrigger={shareRefreshTrigger} />
+          </View>
+        );
       default:
         return null;
     }
@@ -197,12 +209,16 @@ const PetDetailScreenContent = () => {
         }
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        <PetProfileHeader pet={pet} onEdit={() => router.push(`/(tabs)/pets/pet-edit?id=${pet.id}`)} />
+        <PetProfileHeader 
+          pet={pet} 
+          onEdit={() => router.push(`/(tabs)/pets/pet-edit?id=${pet.id}`)} 
+          onShare={() => setShareModalVisible(true)}
+        />
 
         {/* Tabs */}
         <View style={[styles.tabsWrapper, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.primary }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsContainer}>
-            {(['Overview', 'Health', 'Gallery', 'Docs'] as TabType[]).map((tab) => (
+            {(['Overview', 'Health', 'Gallery', 'Docs', 'Share'] as TabType[]).map((tab) => (
               <TouchableOpacity
                 key={tab}
                 style={[
@@ -224,6 +240,15 @@ const PetDetailScreenContent = () => {
         </View>
 
       </ScrollView>
+
+      {pet && (
+        <ShareModal
+          visible={shareModalVisible}
+          onClose={() => setShareModalVisible(false)}
+          petId={pet.id}
+          onLinkGenerated={() => setShareRefreshTrigger(prev => prev + 1)}
+        />
+      )}
     </SafeAreaView>
   );
 };

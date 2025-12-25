@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Linking, Platform } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { colors } from '@/styles/commonStyles';
-import { designSystem, getSpacing } from '@/constants/designSystem';
+import { designSystem } from '@/constants/designSystem';
 import { PetImage } from '@/components/ui/PetImage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { formatAge } from '@/utils/dateUtils';
 import { LinearGradient } from 'expo-linear-gradient';
+import { PublicPetProfile } from '@/hooks/usePublicShare';
+import { format } from 'date-fns';
 
 export default function PublicShareScreen() {
   const { token } = useLocalSearchParams();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<PublicPetProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +29,7 @@ export default function PublicShareScreen() {
       if (error) throw error;
       if (result && result.error) throw new Error(result.error);
       
-      setData(result);
+      setData(result as PublicPetProfile);
     } catch (err: any) {
       setError(err.message || 'Failed to load pet details');
     } finally {
@@ -54,7 +56,8 @@ export default function PublicShareScreen() {
     );
   }
 
-  const { pet, owner } = data;
+  const { pet, owner, settings, details } = data;
+  const isFull = settings?.preset === 'FULL';
 
   const resolveImageUrl = (url?: string): string | undefined => {
     if (!url) return undefined;
@@ -67,6 +70,16 @@ export default function PublicShareScreen() {
   };
 
   const imageUrl = resolveImageUrl(pet.photo_url);
+
+  const renderSection = (title: string, icon: string, children: React.ReactNode) => (
+    <View style={styles.section}>
+      <View style={styles.sectionHeader}>
+        <IconSymbol name={icon as any} size={20} color={colors.primary} />
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
+      {children}
+    </View>
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -87,7 +100,7 @@ export default function PublicShareScreen() {
           
           <View style={styles.infoContainer}>
              <Text style={styles.petName}>{pet.name}</Text>
-             <Text style={styles.petSubtitle}>{pet.breed || pet.species} • {pet.age ? formatAge(new Date(pet.age)) : 'Age unknown'}</Text>
+             <Text style={styles.petSubtitle}>{pet.breed || pet.species} • {pet.date_of_birth ? formatAge(new Date(pet.date_of_birth)) : 'Age unknown'}</Text>
              
              <View style={styles.divider} />
              
@@ -100,7 +113,39 @@ export default function PublicShareScreen() {
                      <Text style={styles.statLabel}>Weight</Text>
                      <Text style={styles.statValue}>{pet.weight ? `${pet.weight} kg` : '—'}</Text>
                  </View>
+                 {pet.chip_id && (
+                    <View style={styles.stat}>
+                        <Text style={styles.statLabel}>Microchip</Text>
+                        <Text style={styles.statValue}>{pet.chip_id}</Text>
+                    </View>
+                 )}
              </View>
+
+             {isFull && details && (
+                <View style={styles.detailsContainer}>
+                    {details.vaccinations && details.vaccinations.length > 0 && renderSection('Vaccinations', 'health-and-safety', (
+                        <View style={styles.list}>
+                            {details.vaccinations.map((v, i) => (
+                                <View key={i} style={styles.listItem}>
+                                    <Text style={styles.itemTitle}>{v.vaccine}</Text>
+                                    <Text style={styles.itemDate}>Given: {format(new Date(v.date_administered), 'MMM d, yyyy')}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    ))}
+
+                    {details.medications && details.medications.length > 0 && renderSection('Medications', 'medication', (
+                        <View style={styles.list}>
+                            {details.medications.map((m, i) => (
+                                <View key={i} style={styles.listItem}>
+                                    <Text style={styles.itemTitle}>{m.name}</Text>
+                                    <Text style={styles.itemDate}>{m.dosage} • {m.frequency}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    ))}
+                </View>
+             )}
 
              <View style={styles.ownerSection}>
                  <Text style={styles.ownerLabel}>Shared by Owner</Text>
@@ -109,7 +154,7 @@ export default function PublicShareScreen() {
 
              <TouchableOpacity 
                 style={styles.installBtn}
-                onPress={() => Linking.openURL('https://mypawzly.app')} // Replace with store link later
+                onPress={() => Linking.openURL('https://mypawzly.app')}
              >
                 <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="#fff" />
                 <Text style={styles.installBtnText}>Get Pawzly App</Text>
@@ -136,12 +181,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
+    maxWidth: 600,
+    alignSelf: 'center',
+    width: '100%',
   },
   headerGradient: {
     height: 140,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 60, // Space for overlapping avatar
+    marginBottom: 60, 
   },
   imageContainer: {
     position: 'absolute',
@@ -193,6 +241,43 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
   },
+  detailsContainer: {
+    width: '100%',
+    marginBottom: 24,
+    gap: 20,
+  },
+  section: {
+    width: '100%',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  list: {
+    gap: 8,
+  },
+  listItem: {
+    backgroundColor: colors.background,
+    padding: 12,
+    borderRadius: 12,
+  },
+  itemTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  itemDate: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
   ownerSection: {
     alignItems: 'center',
     marginBottom: 32,
@@ -200,6 +285,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
+    width: '100%',
   },
   ownerLabel: {
     fontSize: 12,
