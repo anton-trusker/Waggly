@@ -2,7 +2,7 @@ import "@/lib/i18n";
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -15,7 +15,7 @@ import {
 } from "@react-navigation/native";
 import { ThemeProvider as ThemeContextProvider } from "@/contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -70,6 +70,20 @@ export default function RootLayout() {
     },
   };
 
+  const { session, loading } = useAuth();
+  const router = useRouter(); // Need useRouter, segments
+
+  useEffect(() => {
+    if (loading) return;
+
+    // Simple auth guard for web
+    // Assuming all /web routes (except auth) require session
+    // And /web/auth routes (login/signup) are for non-session
+
+    // However, the router logic is better placed in a higher order component or here if we have segments.
+    // But since we are at the root, we can just ensure we have 'web' in the stack.
+  }, [loading, session]);
+
   return (
     <>
       <StatusBar style="auto" animated />
@@ -80,6 +94,7 @@ export default function RootLayout() {
           <AuthProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
+                <Stack.Screen name="web" />
                 <Stack.Screen name="(auth)" />
                 <Stack.Screen name="(tabs)" />
               </Stack>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Pet } from '@/types';
+import { Pet, CoOwner, CoOwnerPermissions } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function usePets() {
@@ -25,38 +25,65 @@ export function usePets() {
 
       if (ownedError) throw ownedError;
 
-      // 2. Fetch co-owned pets
-      const { data: coOwnedData, error: coOwnedError } = await supabase
+      // 2. Fetch co-owner records (invitations accepted by me)
+      const { data: coOwnerRecords, error: coOwnedError } = await supabase
         .from('co_owners')
-        .select(`
-          role,
-          permissions,
-          pets:pets(*)
-        `)
-        .eq('user_id', user.id)
-        .eq('status', 'accepted'); // Only accepted invites
+        .select('*')
+        .eq('co_owner_id', user.id)
+        .eq('status', 'accepted');
 
       if (coOwnedError) throw coOwnedError;
+
+      let sharedPets: Pet[] = [];
+
+      if (coOwnerRecords && coOwnerRecords.length > 0) {
+        const records = coOwnerRecords as CoOwner[];
+        // Get all unique main_owner_ids
+        const mainOwnerIds = [...new Set(records.map(r => r.main_owner_id))];
+
+        if (mainOwnerIds.length > 0) {
+          // Fetch all pets belonging to these main owners
+          const { data: potentialSharedPets, error: sharedError } = await supabase
+            .from('pets')
+            .select('*')
+            .in('user_id', mainOwnerIds);
+
+          if (sharedError) throw sharedError;
+
+          // Filter based on permissions
+          sharedPets = (potentialSharedPets || []).filter((pet: any) => {
+            // Find the co-owner record linking me to this pet's owner
+            const relationship = records.find(r => r.main_owner_id === pet.user_id);
+            if (!relationship) return false;
+
+            const permissions = relationship.permissions as unknown as CoOwnerPermissions;
+            if (!permissions) return false;
+
+            if (permissions.scope === 'all') return true;
+            if (permissions.scope === 'selected' && Array.isArray(permissions.pet_ids)) {
+              return permissions.pet_ids.includes(pet.id);
+            }
+            return false;
+          }).map((pet: any) => {
+            const relationship = records.find(r => r.main_owner_id === pet.user_id);
+            return {
+              ...pet,
+              role: relationship?.role || 'viewer',
+              permissions: relationship?.permissions,
+            };
+          });
+        }
+      }
 
       // 3. Merge and format
       const myPets = (ownedPets || []).map(p => ({ ...p, role: 'owner' })) as Pet[];
 
-      const sharedPets = (coOwnedData || [])
-        .filter((item: any) => item.pets) // Ensure pet data exists
-        .map((item: any) => {
-          const petData = item.pets; // item.pets is the Row object
-          return {
-            ...petData,
-            role: item.role || 'viewer', // 'co-owner' or 'viewer'
-            permissions: item.permissions
-          };
-        }) as Pet[];
+      // Combine and deduplicate
+      const allPetsMap = new Map();
+      myPets.forEach(p => allPetsMap.set(p.id, p));
+      sharedPets.forEach(p => allPetsMap.set(p.id, p));
 
-      // Combine and remove duplicates (safety check)
-      const allPets = [...myPets, ...sharedPets];
-      // Optional: Logic to dedup if you invite yourself (edge case)
-
-      setPets(allPets);
+      setPets(Array.from(allPetsMap.values()));
     } catch (error) {
       console.error('Error fetching pets:', error);
     } finally {
