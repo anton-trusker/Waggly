@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Image, 
-  FlatList, 
-  ActivityIndicator,
-  Modal,
-  Dimensions
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator, Modal, Dimensions, Platform } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -54,14 +44,14 @@ export default function PetGallery({ petId, gallery }: Props) {
       if (!result.canceled && user) {
         setLoading(true);
         const uri = result.assets[0].uri;
-        
+
         // Upload
         const base64 = await FileSystem.readAsStringAsync(uri, {
           encoding: 'base64',
         });
         const fileName = `gallery_${Date.now()}.jpg`;
         const filePath = `${user.id}/${petId}/${fileName}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('pet-photos')
           .upload(filePath, decode(base64), { contentType: 'image/jpeg' });
@@ -86,14 +76,14 @@ export default function PetGallery({ petId, gallery }: Props) {
 
   const handleDeletePhoto = async (index: number) => {
     if (!user) return;
-    
+
     try {
       setImageLoading(prev => ({ ...prev, [index]: true }));
-      
+
       const newImages = images.filter((_, i) => i !== index);
       await updatePet(petId, { photo_gallery: newImages });
       setImages(newImages);
-      
+
       // Close modal if we're deleting the currently viewed image
       if (selectedImageIndex === index) {
         setModalVisible(false);
@@ -129,8 +119,8 @@ export default function PetGallery({ petId, gallery }: Props) {
       onPress={() => handleImagePress(index)}
       activeOpacity={0.8}
     >
-      <Image 
-        source={{ uri: item }} 
+      <Image
+        source={{ uri: item }}
         style={styles.image}
         onLoadStart={() => setImageLoading(prev => ({ ...prev, [index]: true }))}
         onLoadEnd={() => setImageLoading(prev => ({ ...prev, [index]: false }))}
@@ -141,7 +131,7 @@ export default function PetGallery({ petId, gallery }: Props) {
           <ActivityIndicator size="small" color={colors.primary} />
         </View>
       )}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => handleDeletePhoto(index)}
         disabled={imageLoading[index]}
@@ -189,8 +179,8 @@ export default function PetGallery({ petId, gallery }: Props) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <TouchableOpacity 
-            style={styles.modalCloseButton} 
+          <TouchableOpacity
+            style={styles.modalCloseButton}
             onPress={() => setModalVisible(false)}
           >
             <IconSymbol ios_icon_name="xmark" android_material_icon_name="close" size={24} color="#fff" />
