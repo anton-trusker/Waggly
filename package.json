@@ -29,6 +29,7 @@
     "@supabase/supabase-js": "^2.87.1",
     "@types/difflib": "^0.2.7",
     "base64-arraybuffer": "^1.0.2",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
     "difflib": "^0.2.4",
     "eas": "^0.1.0",
