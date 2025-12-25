@@ -33,7 +33,7 @@ export function useProfile() {
 
   const upsertProfile = async (values: Partial<Profile>) => {
     if (!user) return { error: { message: 'No user' } };
-    
+
     // Check if profile exists
     const existing = await supabase
       .from('profiles')
@@ -46,28 +46,28 @@ export function useProfile() {
     }
 
     if (existing.data) {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await (supabase
+        .from('profiles') as any)
         .update(values)
         .eq('user_id', user.id);
-        
+
       if (!error) {
         await fetchProfile();
       }
       return { error };
     } else {
-      const { error } = await supabase
-        .from('profiles')
-        .insert([{ 
+      const { error } = await (supabase
+        .from('profiles') as any)
+        .insert([{
           id: user.id, // Explicitly set ID to match user.id, though schema has it as separate field that defaults? 
           // Schema: id UUID PRIMARY KEY REFERENCES auth.users(id)
           // Actually, usually profile.id IS user.id. 
           // Let's check schema: id UUID PRIMARY KEY REFERENCES auth.users(id)
           // It doesn't have DEFAULT gen_random_uuid(). So we MUST provide it.
-          user_id: user.id, 
-          ...values 
+          user_id: user.id,
+          ...values
         }]);
-        
+
       if (!error) {
         await fetchProfile();
       }

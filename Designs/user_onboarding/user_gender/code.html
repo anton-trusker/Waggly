@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Onboarding - Gender</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#607AFB", "background-light": "#f5f6f8", "background-dark": "#0f1323", "surface-dark": "#1a2f20", "surface-light": "#ffffff"}, fontFamily: {sans: ["Open Sans", "sans-serif"], display: "Manrope"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto shadow-2xl overflow-hidden">
+<div class="absolute top-0 left-0 w-full z-10 px-6 pt-12 pb-4 flex items-center">
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-light/20 backdrop-blur-md text-white hover:bg-surface-light/30 transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex-1 flex justify-center">
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+<div class="w-6 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+</div>
+</div>
+<div class="w-10"></div>
+</div>
+<div class="relative w-full aspect-[4/3] max-h-[35vh] overflow-hidden rounded-b-[2.5rem] shadow-lg">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover" data-alt="Person holding a cat gently, warm lighting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBabqZtr5VQK2r38u7z_AClsy6xpUKZxUP2ZWmXLd4IK-6Tac9un1dASRTLwJKAXDF9Mi1huKNorNGApguPQ_CawzcN3PGyRu6cNf2T2Dj5ps9E4-AhupYNre54xEmBBBi9r_sw0_8xFTGhLAXjygKlhOB2ub7RXD-CcDvMgVLC2LnRbmGgisdBKYoWtwITsRSr1IYuOjbi4ilUM7I_GC-b2PRkZZ7XiJmMntLKy6hoQV_lLH_JhRxzVJc6vmEW8qyV40NAIE2asotr");'>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-background-dark/40 to-black/30"></div>
+</div>
+<div class="flex flex-col flex-1 px-6 pt-6 pb-6 justify-between -mt-4 z-10">
+<div class="flex flex-col items-center">
+<h1 class="text-3xl font-extrabold tracking-tight text-center leading-tight mb-3">
+                    How do you identify?
+                </h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal text-center max-w-[280px] leading-relaxed">
+                    We use this to personalize your experience and address you correctly.
+                </p>
+</div>
+<div class="flex flex-col gap-3 w-full mt-6" style="--radio-dot-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(19,236,73)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3ccircle cx=%278%27 cy=%278%27 r=%273%27/%3e%3c/svg%3e');">
+<label class="group relative flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-[#32673f] bg-surface-light dark:bg-surface-dark cursor-pointer transition-all hover:border-primary/50 dark:hover:border-primary/50 active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-500 dark:text-pink-400">
+<span class="material-symbols-outlined">female</span>
+</div>
+<span class="text-lg font-semibold">Female</span>
+</div>
+<div class="relative flex items-center">
+<input class="peer h-6 w-6 appearance-none rounded-full border-2 border-slate-300 dark:border-[#32673f] bg-transparent checked:border-primary checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" name="gender_select" type="radio"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary pointer-events-none transition-colors"></div>
+</div>
+</label>
+<label class="group relative flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-[#32673f] bg-surface-light dark:bg-surface-dark cursor-pointer transition-all hover:border-primary/50 dark:hover:border-primary/50 active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 dark:text-blue-400">
+<span class="material-symbols-outlined">male</span>
+</div>
+<span class="text-lg font-semibold">Male</span>
+</div>
+<div class="relative flex items-center">
+<input class="peer h-6 w-6 appearance-none rounded-full border-2 border-slate-300 dark:border-[#32673f] bg-transparent checked:border-primary checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" name="gender_select" type="radio"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary pointer-events-none transition-colors"></div>
+</div>
+</label>
+<label class="group relative flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-[#32673f] bg-surface-light dark:bg-surface-dark cursor-pointer transition-all hover:border-primary/50 dark:hover:border-primary/50 active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-500 dark:text-purple-400">
+<span class="material-symbols-outlined">transgender</span>
+</div>
+<span class="text-lg font-semibold">Non-binary</span>
+</div>
+<div class="relative flex items-center">
+<input class="peer h-6 w-6 appearance-none rounded-full border-2 border-slate-300 dark:border-[#32673f] bg-transparent checked:border-primary checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" name="gender_select" type="radio"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary pointer-events-none transition-colors"></div>
+</div>
+</label>
+<label class="group relative flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-[#32673f] bg-surface-light dark:bg-surface-dark cursor-pointer transition-all hover:border-primary/50 dark:hover:border-primary/50 active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">block</span>
+</div>
+<span class="text-lg font-semibold">Prefer not to say</span>
+</div>
+<div class="relative flex items-center">
+<input class="peer h-6 w-6 appearance-none rounded-full border-2 border-slate-300 dark:border-[#32673f] bg-transparent checked:border-primary checked:bg-[image:--radio-dot-svg] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" name="gender_select" type="radio"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary pointer-events-none transition-colors"></div>
+</div>
+</label>
+</div>
+<div class="flex flex-col gap-4 mt-auto pt-6">
+<button class="flex w-full items-center justify-center rounded-xl h-14 bg-primary text-[#112215] text-lg font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 active:scale-[0.98] transition-all shadow-[0_4px_14px_0_rgba(19,236,73,0.39)]">
+<span>Continue</span>
+<span class="material-symbols-outlined ml-2 text-xl font-bold">arrow_forward</span>
+</button>
+<button class="w-full py-2 text-slate-500 dark:text-slate-400 font-medium text-sm hover:text-slate-800 dark:hover:text-white transition-colors">
+                    Skip for now
+                </button>
+<div class="h-2 w-full"></div>
+</div>
+</div>
+</div>
+</body></html>

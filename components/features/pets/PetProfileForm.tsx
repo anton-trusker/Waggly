@@ -83,7 +83,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
       Alert.alert('Error', 'You must be logged in to edit pet');
       return;
     }
-    
+
     setLoading(true);
     try {
       let photo_url: string | undefined = pet.photo_url;
@@ -91,7 +91,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
         const uploadedUrl = await uploadPetPhoto(user.id, pet.id, photoUri, pet.photo_url || null);
         photo_url = uploadedUrl;
       }
-      
+
       const payload: Partial<Pet> = {
         name: name.trim(),
         species,
@@ -104,7 +104,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
         microchip_number: microchipNumber || undefined,
         photo_url,
       };
-      
+
       const { data, error } = await updatePet(pet.id, payload);
       if (error) {
         Alert.alert('Error', 'Failed to save changes');
@@ -206,7 +206,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
   );
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
@@ -352,7 +352,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
           {/* Identification Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr_code" size={20} color={colors.primary} />
+              <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr-code" size={20} color={colors.primary} />
               <Text style={styles.sectionTitle}>Identification</Text>
             </View>
 
@@ -390,7 +390,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
-      
+
       {/* Add extra padding when keyboard is visible */}
       <View style={{ height: 40 }} />
     </KeyboardAvoidingView>

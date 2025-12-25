@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawzly Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#8A42D8",
+            "background-light": "#F8F7FA",
+            "background-dark": "#0D0F1B",
+          },
+          fontFamily: {
+            display: ["Sora", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="mx-auto max-w-md">
+<div class="flex flex-col min-h-screen">
+<main class="flex-grow p-6 pb-24 space-y-8">
+<header class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="User avatar" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz5BH6u-8IEBJo2eqyMq6xdJvYOiPwb6l4DK6TDJaiYXiO_2XPw7pLVPeY-PctlazNTIhEwVmebqCIWmhcY_bu3iyGqu9mw00Q_CHNA4_e5_fsHsDXyjzZ2619v6wAj0iwKcO0AhMpa6On3rE_eSmS--bPPITr4oaNJ_0or3vyoFQUznViX0F9zOWbsAXZtsjFIV-XtHTB6cziw0KXn8Zfj6RJcCi1gJIE2Nko4oe1_hHgaIttNPXxVyOiSWF_ev_007_FrhHSd_pp"/>
+<span class="absolute bottom-0 right-0 block w-3 h-3 bg-green-400 rounded-full border-2 border-background-light dark:border-background-dark"></span>
+</div>
+<div>
+<p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Welcome Back</p>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">Alex Johnson</h1>
+</div>
+</div>
+<button class="p-3 rounded-full bg-gray-200/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white">Your Companions</h2>
+<button class="flex items-center justify-center w-8 h-8 rounded-full bg-green-300 text-green-900">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+<div class="flex space-x-4 overflow-x-auto pb-4 -mx-6 px-6">
+<div class="flex-shrink-0 w-40 bg-white dark:bg-slate-800/50 rounded-2xl p-3 shadow-sm">
+<div class="relative">
+<img alt="Golden Retriever named Luna" class="w-full h-36 object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv3qXZTrH-vN4_WBdsiKqHVQbpvUst-T5AECX8TNNkhpY9HW4MUeX9EYNhBn3LmDjauD7xobmh_PwFQ7XeaZECor-20XCiL7iEHdsZMUHQOI_Ub9pMJIX3k4WMqLrH19eiw01hd_nsBUpL0CbJ9b4EU7y2oP3rITn3pdhd1e05qRea9wFhtqMEQM1FPSi2XWY93q-aUx2py4-FSvIaRZPHMIyVM7sU6CaMEp2C6QjgKbDmK1Y8K55JNy8_21MK8E4wMTacrhJrd574"/>
+<div class="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full text-white text-xs">
+<span class="block w-2 h-2 bg-green-400 rounded-full"></span>
+<span>Active</span>
+</div>
+</div>
+<div class="mt-3 text-center">
+<h3 class="font-bold text-gray-900 dark:text-white">Luna</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Golden Retriever</p>
+</div>
+</div>
+<div class="flex-shrink-0 w-40 bg-white dark:bg-slate-800/50 rounded-2xl p-3 shadow-sm">
+<div class="relative">
+<img alt="Siamese cat named Milo" class="w-full h-36 object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAEeyhja7mEXlc5USYiLBU1FklTmzoa2I7ACOt5YAgDOmgKvK7BZFUeHAWgOO3tbqPEGU29SB6j_C29azNY9apD6uW73h4pr2VUAxsIcWKZwUHQng4gs5SztK-Q5rkRQ1r030POg3yEtO5xJxIlyBDMPLQgO5JFiSpw9EIk2U0AJt1hb3VJvp562URunUH6slUS0a2atMmhsEX-8q2_YHEdht8TbrHc2BdYeOajfGBF7PJ8qi4AQuX9OMjzdonkMJ931-nNhKLmrvc"/>
+<div class="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-full text-white text-xs">
+<span class="material-symbols-outlined text-sm text-yellow-400">warning</span>
+<span>Needs Meds</span>
+</div>
+</div>
+<div class="mt-3 text-center">
+<h3 class="font-bold text-gray-900 dark:text-white">Milo</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Siamese</p>
+</div>
+</div>
+<div class="flex-shrink-0 w-40 bg-white dark:bg-slate-800/50 rounded-2xl p-3 shadow-sm">
+<div class="relative">
+<img alt="Beagle named Buddy" class="w-full h-36 object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDezs7HkxvIIqoHurmxWdL9P8ZWtRPuG0jCWcg54FAiweSYyevy6wy6SKmX2KSzZkJK9T1LGuS-YEQ9YBNCWZLNfTbBViH868igGH_Ld1gzw53nbmeCntRE09Ne4_afSNtXDs2WjU4Xp85q96dzxSF6t19DboxwTRld9xznf4SIftbk2_zicaYzup9ueWbGyK4cqrpz_nbrltgh9M_cGIsUNnMYgLFOflT611BZwVmDJGSD8RDHts_h7ULBeE6yXB4Y3uwvYPAIqbS_"/>
+</div>
+<div class="mt-3 text-center">
+<h3 class="font-bold text-gray-900 dark:text-white">Buddy</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Beagle</p>
+</div>
+</div>
+</div>
+</section>
+<section class="space-y-4">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white">Quick Actions</h2>
+<div class="grid grid-cols-3 gap-4">
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">event_note</span>
+<span class="text-xs font-semibold">Add Visit</span>
+</button>
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">vaccines</span>
+<span class="text-xs font-semibold">Add Vaccine</span>
+</button>
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">medication</span>
+<span class="text-xs font-semibold">Add Treatment</span>
+</button>
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">add_a_photo</span>
+<span class="text-xs font-semibold">Add Image</span>
+</button>
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">folder</span>
+<span class="text-xs font-semibold">Add Document</span>
+</button>
+<button class="flex flex-col items-center justify-center aspect-square bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm space-y-2 text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined text-primary text-3xl">article</span>
+<span class="text-xs font-semibold">Add Record</span>
+</button>
+</div>
+</section>
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white">Upcoming Care</h2>
+<a class="text-sm font-semibold text-green-500 dark:text-green-400" href="#">View Calendar</a>
+</div>
+<div class="space-y-2">
+<div class="flex items-start gap-4">
+<div class="relative flex flex-col items-center">
+<div class="flex items-center justify-center w-10 h-10 bg-red-500/20 dark:bg-red-900/40 rounded-full text-red-500 dark:text-red-400">
+<span class="material-symbols-outlined">vaccines</span>
+</div>
+<div class="w-px h-12 bg-gray-300 dark:bg-gray-700 mt-2"></div>
+</div>
+<div class="flex-1 -mt-1 p-4 bg-white dark:bg-slate-800/50 rounded-2xl shadow-sm">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-xs font-bold text-red-500 dark:text-red-400 bg-red-500/10 px-2 py-1 rounded-full">HIGH PRIORITY</span>
+<h3 class="font-bold text-gray-900 dark:text-white mt-2">Rabies Vaccination - For Luna</h3>
+<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+<span>Tomorrow, 10:00 AM</span>
+</div>
+</div>
+<img alt="Avatar for Luna" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyeMK9MnzRh_1PKAEuzdlhB9XQg_ikbgLZjyqKKLCUmUlss5SfTs8LUHSe-qaq6zO80XcwRnMk1U3JPvC4-Rj_hAIn2csJCtTTZmnJ-D6kVxtzc6WICQiimeUsxla6S6C5drrZGoxxB_Q3vSGQcRZXIIUFjsFrvN9rdDwxn9HEvx3QgBq5zDwV8Vh9uK_XdkAbUD1kVEE4qiD9jwtotzLnio7rD-l5tMSONjenlxqTGng4_QnYjcdmFRgtLhp0ayNb3HJTKLkM9fVK"/>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="relative flex flex-col items-center">
+<div class="flex items-center justify-center w-10 h-10 bg-blue-500/20 dark:bg-blue-900/40 rounded-full text-blue-500 dark:text-blue-400">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<div class="w-px h-12 bg-gray-300 dark:bg-gray-700 mt-2"></div>
+</div>
+<div class="flex-1 flex items-center justify-between py-2">
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white">Heartworm Meds - For Milo</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Next Monday</p>
+</div>
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+<span class="material-symbols-outlined text-xl">done</span>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="relative flex flex-col items-center">
+<div class="flex items-center justify-center w-10 h-10 bg-purple-500/20 dark:bg-purple-900/40 rounded-full text-purple-500 dark:text-purple-400">
+<span class="material-symbols-outlined">content_cut</span>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-between py-2">
+<div>
+<h3 class="font-bold text-gray-900 dark:text-white">Grooming - For Luna</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Oct 24</p>
+</div>
+<button class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800">
+<div class="flex justify-around items-center h-20">
+<a class="flex flex-col items-center text-primary space-y-1 w-16" href="#">
+<div class="relative">
+<span class="material-symbols-outlined">home</span>
+<span class="absolute -top-1 -right-1 block w-2 h-2 bg-green-400 rounded-full"></span>
+</div>
+<span class="text-xs font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center text-gray-500 dark:text-gray-400 space-y-1 w-16" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="text-xs">Plan</span>
+</a>
+<button class="flex items-center justify-center w-14 h-14 rounded-full bg-primary text-white shadow-lg -translate-y-4">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<a class="flex flex-col items-center text-gray-500 dark:text-gray-400 space-y-1 w-16" href="#">
+<span class="material-symbols-outlined">health_and_safety</span>
+<span class="text-xs">Health</span>
+</a>
+<a class="flex flex-col items-center text-gray-500 dark:text-gray-400 space-y-1 w-16" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-xs">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</div>
+</body></html>

@@ -66,11 +66,11 @@ export function useWeightEntries(petId: string | null) {
         pet_id: petId,
         created_at: new Date().toISOString(),
       };
-      const { data, error } = await supabase
-              .from('weight_entries')
-              .insert([payload as WeightEntryInsert])
-              .select()
-              .single();
+      const { data, error } = await (supabase
+        .from('weight_entries') as any)
+        .insert([payload as WeightEntryInsert])
+        .select()
+        .single();
 
       if (error) {
         console.error('Error adding weight entry:', error);
@@ -88,8 +88,8 @@ export function useWeightEntries(petId: string | null) {
   const updateWeightEntry = async (entryId: string, weightData: Partial<WeightEntryUpdate>) => {
     try {
       const payload: WeightEntryUpdate = weightData;
-      const { data, error } = await supabase
-        .from('weight_entries')
+      const { data, error } = await (supabase
+        .from('weight_entries') as any)
         .update(payload as WeightEntryUpdate)
         .eq('id', entryId)
         .select()

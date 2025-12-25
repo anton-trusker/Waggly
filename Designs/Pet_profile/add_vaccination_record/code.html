@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Vaccination Record</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007BFF", // Updated blue shade from reference
+                        "primary-hover": "#0056b3",
+                        "primary-content": "#FFFFFF",
+                        "secondary": "#E0F0FF", // Lighter blue background
+                        "accent": "#06B6D4",
+                        "background-light": "#F8FAFC", // Slightly cooler grey/white
+                        "background-dark": "#18181B",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#27272A",
+                        "input-border-light": "#CBD5E1", // Clearer border
+                        "input-border-dark": "#3F3F46",
+                        "text-primary-light": "#0F172A", // Darker slate
+                        "text-primary-dark": "#FAFAFA",
+                        "text-secondary-light": "#64748B", // Slate grey
+                        "text-secondary-dark": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        "display": ["Open Sans", "sans-serif"] // Updated font family
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)",
+                        "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none
+    }
+    body {
+        min-height: max(884px, 100dvh);
+        -webkit-font-smoothing: antialiased;
+    }input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0.5;
+        cursor: pointer;
+    }
+    .dark input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col items-center justify-start text-text-primary-light dark:text-text-primary-dark">
+<div class="w-full max-w-md bg-background-light dark:bg-background-dark min-h-screen relative flex flex-col">
+<header class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl px-5 py-4 flex items-center justify-between border-b border-input-border-light/40 dark:border-input-border-dark/30">
+<button class="text-text-primary-light dark:text-text-primary-dark hover:opacity-70 transition-opacity text-[16px] font-semibold tracking-tight">
+            Cancel
+        </button>
+<h1 class="text-[17px] font-bold text-center flex-1 text-text-primary-light dark:text-text-primary-dark">Add Vaccination</h1>
+<button class="text-primary font-bold text-[16px] hover:text-primary-hover transition-colors">
+            Save
+        </button>
+</header>
+<main class="flex-1 overflow-y-auto px-5 pb-12">
+<div class="mt-6 mb-8">
+<div class="flex items-center justify-between mb-4 px-1">
+<p class="text-[13px] font-bold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">Who is this for?</p>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-2 items-start">
+<button class="flex flex-col items-center gap-2 group relative">
+<div class="h-[72px] w-[72px] rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20 ring-4 ring-primary/20 ring-offset-0 transition-all">
+<span class="material-symbols-outlined text-white text-[36px]">pets</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-white dark:bg-surface-dark rounded-full p-0.5 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[16px] block bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400">check_circle</span>
+</div>
+<p class="text-primary dark:text-primary text-sm font-bold">Rex</p>
+</button>
+<button class="flex flex-col items-center gap-2 group opacity-50 hover:opacity-100 transition-all">
+<div class="h-[72px] w-[72px] rounded-full bg-surface-light dark:bg-surface-dark border border-input-border-light dark:border-input-border-dark flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark text-[36px]">cruelty_free</span>
+</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium">Bella</p>
+</button>
+<button class="flex flex-col items-center gap-2 group opacity-50 hover:opacity-100 transition-all">
+<div class="h-[72px] w-[72px] rounded-full bg-surface-light dark:bg-surface-dark border border-input-border-light dark:border-input-border-dark flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark text-[36px]">pets</span>
+</div>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm font-medium">Max</p>
+</button>
+</div>
+</div>
+<section class="space-y-4">
+<h3 class="text-lg font-bold text-text-primary-light dark:text-text-primary-dark px-1 flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">vaccines</span>
+                Vaccine Details
+            </h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-3xl p-5 shadow-soft dark:shadow-none border border-input-border-light/60 dark:border-input-border-dark space-y-5">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Vaccine Name</label>
+<div class="relative group">
+<input class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50" placeholder="e.g. Rabies, DHPP" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Date Administered</label>
+<div class="relative group">
+<input class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none" type="date"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary-light dark:text-text-secondary-dark">
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="h-6"></div>
+<section class="space-y-4">
+<h3 class="text-lg font-bold text-text-primary-light dark:text-text-primary-dark px-1 flex items-center gap-2.5">
+<span class="material-symbols-outlined text-accent text-[20px]">medical_information</span>
+                Medical Info
+            </h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-3xl shadow-soft dark:shadow-none border border-input-border-light/60 dark:border-input-border-dark overflow-hidden divide-y divide-input-border-light/60 dark:divide-input-border-dark">
+<div class="p-5 space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Batch Number <span class="text-xs font-normal text-text-secondary-light/70">(Optional)</span></label>
+<input class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50" placeholder="e.g. A123-BC45" type="text"/>
+</div>
+<div class="p-5 bg-secondary/30 dark:bg-primary/5">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 bg-white dark:bg-surface-dark rounded-full flex items-center justify-center shadow-sm border border-input-border-light/50 dark:border-input-border-dark">
+<span class="material-symbols-outlined text-primary text-[20px]">notifications_active</span>
+</div>
+<div>
+<p class="font-bold text-[15px] text-text-primary-light dark:text-text-primary-dark">Set Reminder</p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium">Alert me when due</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-input-border-light peer-focus:outline-none rounded-full peer dark:bg-input-border-dark peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary shadow-inner"></div>
+</label>
+</div>
+<div class="relative group">
+<input class="w-full bg-white dark:bg-surface-dark border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-3.5 pl-11 text-[15px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" type="date"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors text-primary">
+<span class="material-symbols-outlined text-[20px]">event_repeat</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="h-6"></div>
+<section class="space-y-4">
+<h3 class="text-lg font-bold text-text-primary-light dark:text-text-primary-dark px-1 flex items-center gap-2.5">
+<span class="material-symbols-outlined text-pink-500 text-[20px]">account_balance_wallet</span>
+                Provider &amp; Costs
+            </h3>
+<button class="w-full flex items-center justify-between bg-gradient-to-br from-primary to-blue-600 rounded-3xl p-4 group active:scale-[0.98] transition-all shadow-lg shadow-blue-500/20 mb-4">
+<div class="flex items-center gap-3.5">
+<div class="bg-white/20 text-white p-2 rounded-xl backdrop-blur-sm">
+<span class="material-symbols-outlined text-[22px]">link</span>
+</div>
+<div class="text-left">
+<p class="font-bold text-[15px] text-white">Link Clinic Account</p>
+<p class="text-xs font-medium text-blue-100">Auto-fill vet details instantly</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-white/80 group-hover:text-white transition-colors">arrow_forward_ios</span>
+</button>
+<div class="bg-surface-light dark:bg-surface-dark rounded-3xl p-5 shadow-soft dark:shadow-none border border-input-border-light/60 dark:border-input-border-dark space-y-5">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Vet Name / Clinic</label>
+<div class="relative group">
+<input class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 pl-11 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50" placeholder="e.g. Dr. Smith" type="text"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors group-focus-within:text-primary text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-[20px]">local_hospital</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-1/3 space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Currency</label>
+<div class="relative">
+<select class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-3 py-4 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none">
+<option>USD</option>
+<option>EUR</option>
+<option>GBP</option>
+</select>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex-1 space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Total Cost</label>
+<div class="relative group">
+<input class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 pl-11 text-[16px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50" placeholder="0.00" type="number"/>
+<div class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors group-focus-within:text-primary text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark ml-1">Notes</label>
+<textarea class="w-full bg-background-light dark:bg-background-dark/50 border border-input-border-light dark:border-input-border-dark rounded-2xl px-4 py-4 text-[15px] font-medium text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 min-h-[100px] resize-none" placeholder="Any side effects or observations?"></textarea>
+</div>
+</div>
+</section>
+<div class="mt-8 mb-4">
+<div class="border-2 border-dashed border-primary/30 bg-primary/5 dark:bg-primary/10 dark:border-primary/20 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 transition-all group relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="bg-white dark:bg-surface-dark p-4 rounded-full mb-3 shadow-md shadow-primary/10 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 relative z-10">
+<span class="material-symbols-outlined text-primary text-[28px]">add_a_photo</span>
+</div>
+<p class="text-[15px] font-bold text-primary dark:text-primary-content relative z-10">Attach Record Image</p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1 relative z-10">Photo of sticker or certificate</p>
+</div>
+</div>
+<div class="h-10"></div>
+</main>
+</div>
+
+</body></html>

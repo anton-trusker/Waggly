@@ -103,7 +103,7 @@ export default function AddPetScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -124,74 +124,74 @@ export default function AddPetScreen() {
 
               <View style={styles.row}>
                 <View style={styles.col}>
-                    <Text style={styles.label}>Name <Text style={styles.required}>*</Text></Text>
-                    <TextInput
-                      style={[styles.input, errors.name && styles.inputError]}
-                      placeholder="Pet's name"
-                      placeholderTextColor={colors.textTertiary}
-                      value={name}
-                      onChangeText={setName}
-                    />
-                    {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+                  <Text style={styles.label}>Name <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[styles.input, errors.name && styles.inputError]}
+                    placeholder="Pet's name"
+                    placeholderTextColor={colors.textTertiary}
+                    value={name}
+                    onChangeText={setName}
+                  />
+                  {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
                 </View>
                 <View style={styles.col}>
-                     <EnhancedSelection
-                        label="Species"
-                        value={species}
-                        options={[
-                            { id: 'dog', label: 'Dog', icon: '🐕' },
-                            { id: 'cat', label: 'Cat', icon: '🐈' },
-                            { id: 'other', label: 'Other', icon: '🐾' }
-                        ]}
-                        onSelect={(opt) => {
-                            setSpecies(opt.id as any);
-                            setBreed(''); // Reset breed when species changes
-                        }}
-                        placeholder="Species"
-                        icon="pawprint"
-                        searchable={false}
-                    />
+                  <EnhancedSelection
+                    label="Species"
+                    value={species}
+                    options={[
+                      { id: 'dog', label: 'Dog', icon: '🐕' },
+                      { id: 'cat', label: 'Cat', icon: '🐈' },
+                      { id: 'other', label: 'Other', icon: '🐾' }
+                    ]}
+                    onSelect={(opt) => {
+                      setSpecies(opt.id as any);
+                      setBreed(''); // Reset breed when species changes
+                    }}
+                    placeholder="Species"
+                    icon="pawprint"
+                    searchable={false}
+                  />
                 </View>
               </View>
 
               <View style={styles.row}>
-                  <View style={styles.col}>
-                    {species === 'other' ? (
-                         <View>
-                            <Text style={styles.label}>Breed / Type</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g. Rabbit"
-                                value={breed}
-                                onChangeText={setBreed}
-                            />
-                         </View>
-                    ) : (
-                        <EnhancedSelection
-                            label="Breed"
-                            value={breed}
-                            options={breedOptions}
-                            onSelect={(opt) => setBreed(opt.id)}
-                            placeholder="Select breed"
-                            icon="tag"
-                            searchable
-                        />
-                    )}
-                  </View>
-                  <View style={styles.col}>
+                <View style={styles.col}>
+                  {species === 'other' ? (
+                    <View>
+                      <Text style={styles.label}>Breed / Type</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="e.g. Rabbit"
+                        value={breed}
+                        onChangeText={setBreed}
+                      />
+                    </View>
+                  ) : (
                     <EnhancedSelection
-                        label="Gender"
-                        value={gender}
-                        options={[
-                            { id: 'male', label: 'Male', icon: 'mars' },
-                            { id: 'female', label: 'Female', icon: 'venus' }
-                        ]}
-                        onSelect={(opt) => setGender(opt.id as any)}
-                        placeholder="Gender"
-                        icon="person.fill"
-                        searchable={false}
+                      label="Breed"
+                      value={breed}
+                      options={breedOptions}
+                      onSelect={(opt) => setBreed(opt.id)}
+                      placeholder="Select breed"
+                      icon="tag"
+                      searchable
                     />
-                  </View>
+                  )}
+                </View>
+                <View style={styles.col}>
+                  <EnhancedSelection
+                    label="Gender"
+                    value={gender}
+                    options={[
+                      { id: 'male', label: 'Male', icon: 'mars' },
+                      { id: 'female', label: 'Female', icon: 'venus' }
+                    ]}
+                    onSelect={(opt) => setGender(opt.id as any)}
+                    placeholder="Gender"
+                    icon="person.fill"
+                    searchable={false}
+                  />
+                </View>
               </View>
 
               <EnhancedDatePicker
@@ -213,28 +213,28 @@ export default function AddPetScreen() {
 
               <View style={styles.row}>
                 <View style={styles.col}>
-                     <EnhancedSelection
-                        label="Size"
-                        value={size}
-                        options={[
-                            { id: 'small', label: 'Small' },
-                            { id: 'medium', label: 'Medium' },
-                            { id: 'large', label: 'Large' }
-                        ]}
-                        onSelect={(opt) => setSize(opt.id as any)}
-                        placeholder="Size"
-                        icon="scalemass"
-                        searchable={false}
-                    />
+                  <EnhancedSelection
+                    label="Size"
+                    value={size}
+                    options={[
+                      { id: 'small', label: 'Small' },
+                      { id: 'medium', label: 'Medium' },
+                      { id: 'large', label: 'Large' }
+                    ]}
+                    onSelect={(opt) => setSize(opt.id as any)}
+                    placeholder="Size"
+                    icon="scalemass"
+                    searchable={false}
+                  />
                 </View>
                 <View style={styles.col}>
-                    <Text style={styles.label}>Color</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="e.g. Brown"
-                        value={color}
-                        onChangeText={setColor}
-                    />
+                  <Text style={styles.label}>Color</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. Brown"
+                    value={color}
+                    onChangeText={setColor}
+                  />
                 </View>
               </View>
 
@@ -247,35 +247,35 @@ export default function AddPetScreen() {
             {/* Identification Section */}
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr_code" size={18} color={colors.primary} />
+                <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr-code" size={18} color={colors.primary} />
                 <Text style={styles.sectionTitle}>Identification</Text>
               </View>
 
               <View>
-                  <Text style={styles.label}>Microchip Number</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter microchip number"
-                    value={microchipNumber}
-                    onChangeText={setMicrochipNumber}
-                    keyboardType="numeric"
-                  />
+                <Text style={styles.label}>Microchip Number</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter microchip number"
+                  value={microchipNumber}
+                  onChangeText={setMicrochipNumber}
+                  keyboardType="numeric"
+                />
               </View>
             </View>
-            
+
             {/* Spacer for bottom button */}
             <View style={{ height: 100 }} />
           </ScrollView>
         </TouchableWithoutFeedback>
-        
-        <BottomCTA 
-            onBack={() => router.back()} 
-            onPrimary={handleAddPet} 
-            primaryLabel="Add Pet" 
-            disabled={loading}
-            bottomOffset={Platform.OS === 'ios' ? 0 : 20} 
+
+        <BottomCTA
+          onBack={() => router.back()}
+          onPrimary={handleAddPet}
+          primaryLabel="Add Pet"
+          disabled={loading}
+          bottomOffset={Platform.OS === 'ios' ? 0 : 20}
         />
-        
+
         <LoadingOverlay visible={loading} message="Saving pet..." />
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -6,8 +6,8 @@ export type User = {
   created_at?: string;
 };
 
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Pet = Database['public']['Tables']['pets']['Row'];
+export type Profile = Database['public']['Tables']['profiles']['Row'] & { gender?: 'male' | 'female' | 'non_binary' | 'prefer_not_to_say' | null };
+export type Pet = Database['public']['Tables']['pets']['Row'] & { registry_provider?: string | null };
 export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'];
 export type Allergy = Database['public']['Tables']['allergies']['Row'];
 export type BehaviorTag = Database['public']['Tables']['behavior_tags']['Row'];
@@ -20,6 +20,14 @@ export type Event = Database['public']['Tables']['events']['Row'];
 export type Notification = Database['public']['Tables']['notifications']['Row'];
 export type Document = Database['public']['Tables']['documents']['Row'];
 export type MedicalVisit = Database['public']['Tables']['medical_visits']['Row'];
+export type EmergencyContact = {
+  id: string;
+  pet_id: string;
+  name: string;
+  phone?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
 
 export type CoOwnerPermissions = {
   scope: 'all' | 'selected';

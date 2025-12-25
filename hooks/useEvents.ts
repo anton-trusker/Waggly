@@ -4,6 +4,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePets } from '@/hooks/usePets';
 import { Pet, Vaccination, Treatment, MedicalVisit, Event as DbEvent } from '@/types';
 import { getColor } from "@/utils/designSystem";
+import { designSystem } from '@/constants/designSystem';
+
+const { colors } = designSystem;
 
 export type EventType = 'vaccination' | 'treatment' | 'vet' | 'grooming' | 'walking' | 'other';
 
@@ -105,18 +108,18 @@ export function useEvents(initialFilters?: EventFilters) {
 
       // 1. Fetch Vaccinations
       if (!types || types.includes('vaccination')) {
-        const { data: vax, error: vErr } = await supabase
-          .from('vaccinations')
+        const { data: vax, error: vErr } = await (supabase
+          .from('vaccinations') as any)
           .select('*')
           .in('pet_id', petIds);
-        
+
         if (!vErr && vax) {
           (vax as Vaccination[]).forEach((v) => {
             const petInfo = petMap[v.pet_id];
             if (!petInfo) return;
             const date = v.next_due_date || v.date_given;
             if (!withinRange(date)) return;
-            
+
             results.push({
               id: `vaccination:${v.id}`,
               petId: v.pet_id,
@@ -124,7 +127,7 @@ export function useEvents(initialFilters?: EventFilters) {
               type: 'vaccination',
               title: v.vaccine_name,
               dueDate: date,
-              priority: computePriority(v.next_due_date),
+              priority: computePriority(v.next_due_date || undefined),
               notes: v.notes || undefined,
               color: petInfo.color,
               relatedId: v.id,
@@ -135,8 +138,8 @@ export function useEvents(initialFilters?: EventFilters) {
 
       // 2. Fetch Treatments
       if (!types || types.includes('treatment')) {
-        const { data: tr, error: tErr } = await supabase
-          .from('treatments')
+        const { data: tr, error: tErr } = await (supabase
+          .from('treatments') as any)
           .select('*')
           .in('pet_id', petIds)
           .eq('is_active', true);
@@ -145,7 +148,7 @@ export function useEvents(initialFilters?: EventFilters) {
           (tr as Treatment[]).forEach((t) => {
             const petInfo = petMap[t.pet_id];
             if (!petInfo) return;
-            
+
             // Start Date
             if (t.start_date && withinRange(t.start_date)) {
               results.push({
@@ -161,7 +164,7 @@ export function useEvents(initialFilters?: EventFilters) {
                 relatedId: t.id,
               });
             }
-            
+
             // End Date
             if (t.end_date && withinRange(t.end_date)) {
               results.push({
@@ -183,8 +186,8 @@ export function useEvents(initialFilters?: EventFilters) {
 
       // 3. Fetch Medical Visits
       if (!types || types.includes('vet')) {
-        const { data: visits, error: vErr } = await supabase
-          .from('medical_visits')
+        const { data: visits, error: vErr } = await (supabase
+          .from('medical_visits') as any)
           .select('*')
           .in('pet_id', petIds);
 
@@ -215,8 +218,8 @@ export function useEvents(initialFilters?: EventFilters) {
       // We filter by pet_id in code if it's specific, but events might be general.
       // Ideally query filters by pet_id OR user_id (global).
       // For now, let's fetch all user events and filter in memory for simplicity/flexibility.
-      const { data: dbEvents, error: eErr } = await supabase
-        .from('events')
+      const { data: dbEvents, error: eErr } = await (supabase
+        .from('events') as any)
         .select('*')
         .eq('user_id', user.id);
 
@@ -224,7 +227,7 @@ export function useEvents(initialFilters?: EventFilters) {
         (dbEvents as DbEvent[]).forEach((e) => {
           // If event has a pet_id, check if it's in our filtered list
           if (e.pet_id && !petIds.includes(e.pet_id)) return;
-          
+
           // Check type filter
           // DB types: 'vet', 'grooming', 'walking', 'other'
           // Filter types: 'vet', 'grooming', 'walking', 'other', 'vaccination', 'treatment'
@@ -244,7 +247,7 @@ export function useEvents(initialFilters?: EventFilters) {
             dueDate: date,
             priority: computePriority(date),
             notes: e.description || undefined,
-            color: petInfo?.color || colors.textSecondary,
+            color: petInfo?.color || colors.text.secondary,
             relatedId: e.id,
             location: e.location || undefined,
           });
@@ -263,31 +266,31 @@ export function useEvents(initialFilters?: EventFilters) {
           const yearsToCheck = [currentYear - 1, currentYear, currentYear + 1];
 
           yearsToCheck.forEach((year) => {
-             // Handle leap years for Feb 29
-             let month = dob.getMonth();
-             let date = dob.getDate();
-             
-             // Simple check: if born Feb 29 and target year not leap, use Feb 28 or Mar 1
-             // JS Date auto-corrects overflow (e.g. Feb 29 -> Mar 1 on non-leap years)
-             const bdayDate = new Date(year, month, date);
-             const bdayStr = bdayDate.toISOString().split('T')[0];
+            // Handle leap years for Feb 29
+            let month = dob.getMonth();
+            let date = dob.getDate();
 
-             if (withinRange(bdayStr)) {
-               const age = year - dob.getFullYear();
-               if (age < 0) return; // Not born yet
+            // Simple check: if born Feb 29 and target year not leap, use Feb 28 or Mar 1
+            // JS Date auto-corrects overflow (e.g. Feb 29 -> Mar 1 on non-leap years)
+            const bdayDate = new Date(year, month, date);
+            const bdayStr = bdayDate.toISOString().split('T')[0];
 
-               results.push({
-                 id: `birthday:${pet.id}:${year}`,
-                 petId: pet.id,
-                 petName: pet.name,
-                 type: 'other',
-                 title: `${pet.name}'s Birthday`,
-                 dueDate: bdayStr,
-                 priority: 'high',
-                 notes: `Turns ${age} years old!`,
-                 color: petMap[pet.id]?.color || colors.primary,
-               });
-             }
+            if (withinRange(bdayStr)) {
+              const age = year - dob.getFullYear();
+              if (age < 0) return; // Not born yet
+
+              results.push({
+                id: `birthday:${pet.id}:${year}`,
+                petId: pet.id,
+                petName: pet.name,
+                type: 'other',
+                title: `${pet.name}'s Birthday`,
+                dueDate: bdayStr,
+                priority: 'high',
+                notes: `Turns ${age} years old!`,
+                color: petMap[pet.id]?.color || colors.primary[500],
+              });
+            }
           });
         });
       }

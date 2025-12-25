@@ -1,0 +1,345 @@
+<html class="dark" lang="en"><head><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased selection:bg-primary selection:text-white">```html
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Passport Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3b82f6", // Updated to Blue 500 to match the blue dog logo feel
+              "primary-dark": "#1d4ed8", // Blue 700
+              "secondary": "#6366f1", // Indigo 500
+              "accent-rose": "#fb7185", // Rose 400
+              "accent-blue": "#0ea5e9", // Sky 500
+              "accent-orange": "#f97316", // Orange 500
+              "background-light": "#f0f9ff", // Very light blue tint for background
+              "background-dark": "#0f172a", // Slate 900
+              "surface-dark": "#1e293b", // Slate 800
+              "surface-light": "#ffffff",
+              "surface-highlight": "#334155", // Slate 700
+            },
+            fontFamily: {
+              "display": ["Open Sans", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem", 
+              "lg": "0.5rem", 
+              "xl": "0.75rem", 
+              "2xl": "1rem", 
+              "3xl": "1.5rem",
+              "full": "9999px"
+            },
+            boxShadow: {
+              'soft': '0 4px 20px -2px rgba(59, 130, 246, 0.1)', // Blue tinted shadow
+              'glow': '0 0 15px rgba(59, 130, 246, 0.4)', // Blue glow
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .light .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .safe-pb {
+            padding-bottom: env(safe-area-inset-bottom);
+        }.logo-light { display: none; }
+        .logo-dark { display: block; }
+        .light .logo-light { display: block; }
+        .light .logo-dark { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+
+
+<div class="relative mx-auto flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-2xl">
+<header class="sticky top-0 z-40 flex items-center justify-between px-4 py-3 glass-nav transition-all duration-300">
+<button class="group flex h-10 w-10 items-center justify-center rounded-full bg-white/50 text-slate-600 hover:bg-white dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
+</button>
+<div class="flex flex-col items-center justify-center h-10">
+<img alt="App Logo" class="h-8 w-auto object-contain logo-light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANyFoZ61ZvOOzg_Jhg9YxMGA4Nmej2b__C4XHoHJK6-NuE-xDvUkC4aIKn0XWstb952YMY0BBKuBQ-4UTLrlzvD_honoa7_Z6fy6nijPbr8TA7CLM1pLuM04XJI5ZlqWKGw3JG-6VdTLYNrzqi346rdKpr1d1nhs_ZE-b2QnTN3owJ6kVINyFGB9-f6kQthLOyceJJDBYuMoHrujqRLkXNuCKu6wtW1FmIHWquQE4xm-i7p2Hi_1Gy-6Ef7lGPncF3UT-KKuMoWJI8"/>
+<img alt="App Logo" class="h-8 w-auto object-contain logo-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiAxyjfYrpquASzz56eHRjIK6YKd8IIutcc6jtHMAN62ElqV7cnv7HQMZFJVXCGfpppOTqSRBPU787raEgOt_U-TY6C16lAWOFU_HkQ0orTXNEztMu41FbuEdxKaoUxodN722NzsDUakYaTKBLfZHoysDRHoHdyoVlLAaLaIeavqP0rCIHKhqxBUUlzBiGCsHnlSFNaBXc5e_HHy9a1ywIH3ge3Ypgz4o4XwoMociJTNcgg0iDEyOKbHMExrxYiIft0Xe-v8F3_uiW"/>
+</div>
+<button class="group flex h-10 w-10 items-center justify-center rounded-full bg-white/50 text-slate-600 hover:bg-white dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[22px] group-hover:rotate-45 transition-transform duration-300">settings</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-32">
+<section class="relative px-4 pt-6 pb-4">
+<div class="absolute top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="relative flex flex-col items-center gap-5">
+<div class="relative group">
+<div class="h-32 w-32 overflow-hidden rounded-full ring-4 ring-white dark:ring-surface-dark shadow-2xl shadow-primary/30 transition-transform duration-500 hover:scale-105">
+<div class="h-full w-full bg-cover bg-center transform transition-transform duration-700 group-hover:scale-110" data-alt="Golden Retriever dog smiling outdoors" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBY_Fdgi3S91m0I22ZrAUhVmuTDOgO1y171xmwpN9kzaDC5QXMRkMtljiaFIF-wlGY1nq6DzLmTigFwbzy6i8YgrYMGpXcCZRRIZe4UoGy7FvgTwazZw_lrK7pI7LKoALr8UwX9WnvYthYHLDtfOhtxRONXXtna9vgYh_nLxEitqkHOLTZ60H5-JZz9MspqvUfCkrvVexzp8TmslGAjOXCIBmM3EYwhoaYwME9QTE85U7HE5x2upJAQc-QmNFXcztZQjywmW0iFxz-9');"></div>
+</div>
+<div class="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white shadow-lg border-[3px] border-background-light dark:border-background-dark">
+<span class="material-symbols-outlined text-[18px] font-bold">verified</span>
+</div>
+</div>
+<div class="text-center z-10">
+<h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white drop-shadow-sm">Luna</h1>
+<div class="mt-2 flex items-center justify-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+<span>Golden Retriever</span>
+<span class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span>3 Years Old</span>
+<span class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span>Female</span>
+</div>
+<button class="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 dark:bg-surface-dark dark:text-slate-200 dark:ring-white/10 dark:hover:bg-white/5">
+<span class="material-symbols-outlined text-primary text-[16px]">qr_code_2</span>
+<span>#9823-7712-AA</span>
+<span class="material-symbols-outlined text-slate-400 text-[14px]">content_copy</span>
+</button>
+</div>
+</div>
+</section>
+<section class="mt-4 px-4">
+<div class="grid grid-cols-3 gap-3">
+<button class="group relative flex flex-col items-center justify-center overflow-hidden rounded-3xl bg-surface-light p-4 shadow-soft transition-all active:scale-95 dark:bg-surface-dark border border-slate-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30">
+<div class="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-primary dark:bg-primary/20 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+</div>
+<span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">Add Record</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center overflow-hidden rounded-3xl bg-surface-light p-4 shadow-soft transition-all active:scale-95 dark:bg-surface-dark border border-slate-100 dark:border-white/5 hover:border-secondary/30 dark:hover:border-secondary/30">
+<div class="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-secondary dark:bg-secondary/20 group-hover:bg-secondary group-hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">ios_share</span>
+</div>
+<span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-secondary transition-colors">Share Vet</span>
+</button>
+<button class="group relative flex flex-col items-center justify-center overflow-hidden rounded-3xl bg-surface-light p-4 shadow-soft transition-all active:scale-95 dark:bg-surface-dark border border-slate-100 dark:border-white/5 hover:border-accent-rose/30 dark:hover:border-accent-rose/30">
+<div class="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-accent-rose dark:bg-accent-rose/20 group-hover:bg-accent-rose group-hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">picture_as_pdf</span>
+</div>
+<span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-accent-rose transition-colors">Export</span>
+</button>
+</div>
+</section>
+<section class="mt-8">
+<div class="flex items-center justify-between px-6 pb-3">
+<h3 class="text-base font-bold uppercase tracking-wide text-slate-900 dark:text-white flex items-center gap-2">
+<span class="h-2 w-2 rounded-full bg-accent-orange shadow-glow shadow-accent-orange/50"></span>
+                    Reminders
+                </h3>
+<button class="text-xs font-bold text-primary hover:text-primary-dark transition-colors">View Calendar</button>
+</div>
+<div class="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-6 no-scrollbar">
+<div class="snap-center shrink-0 w-[280px] rounded-3xl bg-surface-light dark:bg-surface-dark p-1 shadow-sm border border-slate-100 dark:border-white/5 transition-transform hover:-translate-y-1">
+<div class="relative h-full overflow-hidden rounded-[1.25rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-white/5 dark:to-white/[0.02] p-5">
+<div class="flex justify-between items-start mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-rose/10 text-accent-rose">
+<span class="material-symbols-outlined text-xl">vaccines</span>
+</div>
+<span class="rounded-lg bg-red-100 px-2.5 py-1 text-[10px] font-bold uppercase text-red-600 dark:bg-red-500/20 dark:text-red-300">3 Days Left</span>
+</div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Rabies Booster</h4>
+<div class="mt-2 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                            Downtown Vet Clinic
+                        </div>
+<div class="mt-4 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="h-6 w-6 rounded-full bg-slate-200 ring-2 ring-white dark:bg-slate-700 dark:ring-surface-dark"></div>
+</div>
+<button class="text-xs font-bold text-slate-900 dark:text-white">Details -&gt;</button>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[280px] rounded-3xl bg-surface-light dark:bg-surface-dark p-1 shadow-sm border border-slate-100 dark:border-white/5 transition-transform hover:-translate-y-1">
+<div class="relative h-full overflow-hidden rounded-[1.25rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-white/5 dark:to-white/[0.02] p-5">
+<div class="flex justify-between items-start mb-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-blue/10 text-accent-blue">
+<span class="material-symbols-outlined text-xl">content_cut</span>
+</div>
+<span class="rounded-lg bg-blue-100 px-2.5 py-1 text-[10px] font-bold uppercase text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">Tomorrow</span>
+</div>
+<h4 class="text-lg font-bold text-slate-900 dark:text-white">Grooming Session</h4>
+<div class="mt-2 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            2:00 PM - 4:00 PM
+                        </div>
+<div class="mt-4 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
+<span class="text-xs text-slate-400">Paw Spa &amp; Resort</span>
+<button class="text-xs font-bold text-slate-900 dark:text-white">Details -&gt;</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="sticky top-[70px] z-30 mb-6 px-4">
+<div class="glass-nav rounded-3xl p-3 shadow-lg ring-1 ring-white/10">
+<div class="relative mb-3">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="h-11 w-full rounded-2xl border-none bg-slate-100 pl-10 pr-4 text-sm font-semibold text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary dark:bg-black/20 dark:text-white shadow-inner" placeholder="Search vaccines, history..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar">
+<button class="shrink-0 rounded-full bg-slate-900 dark:bg-white px-5 py-2 text-xs font-bold text-white dark:text-slate-900 shadow-md">All</button>
+<button class="shrink-0 rounded-full bg-white px-5 py-2 text-xs font-bold text-slate-600 shadow-sm hover:bg-slate-50 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 ring-1 ring-slate-200 dark:ring-white/10">Vaccines</button>
+<button class="shrink-0 rounded-full bg-white px-5 py-2 text-xs font-bold text-slate-600 shadow-sm hover:bg-slate-50 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 ring-1 ring-slate-200 dark:ring-white/10">Vitals</button>
+<button class="shrink-0 rounded-full bg-white px-5 py-2 text-xs font-bold text-slate-600 shadow-sm hover:bg-slate-50 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 ring-1 ring-slate-200 dark:ring-white/10">Visits</button>
+</div>
+</div>
+</div>
+<section class="relative px-4 pb-10">
+<div class="absolute bottom-0 left-[32px] top-4 w-[2px] bg-slate-200 dark:bg-white/5"></div>
+<div class="relative mb-10 pl-12 group">
+<div class="absolute left-8 top-6 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-background-light bg-primary shadow-glow shadow-primary/50 dark:border-background-dark z-10"></div>
+<div class="mb-2 flex items-baseline justify-between pr-1">
+<p class="text-sm font-bold text-primary">Today</p>
+<span class="text-[10px] font-semibold text-slate-400">10:42 AM</span>
+</div>
+<div class="rounded-3xl bg-surface-light p-4 shadow-sm dark:bg-surface-dark border border-slate-100 dark:border-white/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full -mr-4 -mt-4"></div>
+<div class="flex items-start gap-3 relative z-10">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-primary dark:bg-primary/20">
+<span class="material-symbols-outlined text-xl">monitor_weight</span>
+</div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Weight Recorded</h4>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">28.0</span>
+<span class="text-sm font-medium text-slate-500">kg</span>
+</div>
+<div class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+<span class="material-symbols-outlined text-[12px]">trending_flat</span> 
+                                Stable vs last month
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative mb-10 pl-12 group">
+<div class="absolute left-8 top-6 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background-light bg-slate-300 dark:border-background-dark dark:bg-slate-600 z-10 group-hover:bg-secondary transition-colors"></div>
+<p class="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Oct 12, 2023</p>
+<div class="rounded-3xl bg-surface-light p-4 shadow-sm dark:bg-surface-dark border border-slate-100 dark:border-white/5">
+<div class="flex items-start gap-3">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-secondary dark:bg-secondary/20">
+<span class="material-symbols-outlined text-xl">stethoscope</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Annual Checkup</h4>
+<span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+</div>
+<p class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                                Dr. Smith • General wellness exam. Heart and lungs sound clear.
+                            </p>
+<div class="mt-3 flex gap-2">
+<div class="relative h-14 w-14 overflow-hidden rounded-xl ring-1 ring-slate-100 dark:ring-white/10">
+<div class="h-full w-full bg-cover bg-center transition-transform hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAcJ0R7lJvpPKcSohdC0PVylLTpL12jYJslyArwa2ye96nFbSTUSDEi7rI5F-YF6E7dfwBN0u14uIa5XNDVfl4rOAY0RT8GiXprUDB5qO6FpJhhbpeajKDN5vpN_1AP2GK7dU9Vdvlmfuq7ILITnSqnSM29flZlYCZ4DRURejQpY61_jCXP41xMyox9Vd06FUvFx4TUzp5fkHoYMlD_pQ3v6VmfHUwoF5Wzx2KiP6uftfMvWR4qAj4hzQVR1s6I0E-DQSI0hrAZKgBL');"></div>
+</div>
+<div class="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-50 text-xs font-bold text-slate-500 dark:bg-white/5 ring-1 ring-slate-100 dark:ring-white/10">
+                                    +2
+                                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative mb-10 pl-12 group">
+<div class="absolute left-8 top-6 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background-light bg-slate-300 dark:border-background-dark dark:bg-slate-600 z-10 group-hover:bg-accent-orange transition-colors"></div>
+<p class="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sep 01, 2023</p>
+<div class="rounded-3xl bg-surface-light p-4 shadow-sm dark:bg-surface-dark border border-slate-100 dark:border-white/5">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-orange-50 text-accent-orange dark:bg-accent-orange/20">
+<span class="material-symbols-outlined text-xl">medication</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Flea Treatment</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400">Simparica Trio • 1 Tablet</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative pl-12 group">
+<div class="absolute left-8 top-6 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background-light bg-slate-300 dark:border-background-dark dark:bg-slate-600 z-10 group-hover:bg-accent-rose transition-colors"></div>
+<p class="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Aug 15, 2023</p>
+<div class="rounded-3xl bg-surface-light p-4 shadow-sm dark:bg-surface-dark border border-slate-100 dark:border-white/5">
+<div class="flex items-start gap-3 mb-3">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-accent-rose dark:bg-accent-rose/20">
+<span class="material-symbols-outlined text-xl">vaccines</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Rabies Vaccination</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400">Valid until Aug 2024</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors group/file">
+<div class="flex items-center gap-3">
+<div class="rounded bg-white p-1 dark:bg-surface-dark shadow-sm">
+<span class="material-symbols-outlined text-accent-rose text-[20px]">description</span>
+</div>
+<div class="flex flex-col items-start">
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">Certificate.pdf</span>
+<span class="text-[10px] text-slate-400">240 KB</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover/file:text-primary transition-colors">download</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<nav class="sticky bottom-0 z-50 w-full border-t border-slate-200 bg-surface-light/95 backdrop-blur-xl dark:border-white/5 dark:bg-background-dark/95 safe-pb">
+<div class="grid grid-cols-4 h-16 relative">
+<div class="absolute top-0 left-1/4 h-0.5 w-1/4 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<a class="group flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-0.5 transition-transform">grid_view</span>
+<span class="text-[10px] font-semibold">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1.5 text-primary" href="#">
+<span class="material-symbols-outlined fill-1 text-[24px]">pets</span>
+<span class="text-[10px] font-bold">Pets</span>
+</a>
+<a class="group flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-0.5 transition-transform">ecg_heart</span>
+<span class="text-[10px] font-semibold">Health</span>
+</a>
+<a class="group flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300" href="#">
+<div class="h-6 w-6 overflow-hidden rounded-full border border-slate-300 dark:border-slate-600">
+<img alt="User" class="h-full w-full object-cover opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOO1Wysy2xHgYZx01ZbLT4KJWqNWEYMNcZEbaRuNBtCdwewpyJMPYCy-xuGOKyHN-MhyxV3jhLzu9I7sLwp7PQkcYdlu72YeN6smuNApEls8oFPg0WbvmicC4AbAhyOjo7va6XgNRlJW59uq33SjuxBGeN5fWg7IhpYpzAfPqRbystHJqTVJdja4S8lqZGYUOlLaAeLJVIxtx0ixg2Sfj2pPh5LRdSUXKC4GWpFjusaQW-V6_NoAoZ2mxAbeqkObyHM5g-uvCkan4J"/>
+</div>
+<span class="text-[10px] font-semibold">Profile</span>
+</a>
+</div>
+</nav>
+<div class="fixed bottom-24 right-5 z-50">
+<button class="group flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/30 transition-all hover:scale-105 hover:bg-primary-dark active:scale-95">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:rotate-90">add</span>
+</button>
+</div>
+</div>
+</body></html>

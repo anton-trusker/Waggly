@@ -232,7 +232,19 @@ export interface Database {
           updated_at?: string | null;
         };
       };
-      // Add other tables as needed
+      medical_history: { Row: any; Insert: any; Update: any; };
+      food: { Row: any; Insert: any; Update: any; };
+      treatments: { Row: any; Insert: any; Update: any; };
+      weight_entries: { Row: any; Insert: any; Update: any; };
+      notifications: { Row: any; Insert: any; Update: any; };
+      documents: { Row: any; Insert: any; Update: any; };
+      medical_visits: { Row: any; Insert: any; Update: any; };
+      veterinarians: { Row: any; Insert: any; Update: any; };
+      allergies: { Row: any; Insert: any; Update: any; };
+      behavior_tags: { Row: any; Insert: any; Update: any; };
+      reference_vaccinations: { Row: any; Insert: any; Update: any; };
+      reference_treatments: { Row: any; Insert: any; Update: any; };
+      reference_breeds: { Row: any; Insert: any; Update: any; };
     };
     Views: {
       [_ in never]: never;

@@ -41,27 +41,29 @@ export function usePets() {
     if (!user) return { error: { message: 'No user logged in' } };
 
     try {
-      const { error } = await supabase
-        .from('pets')
-        .insert([{ ...petData, user_id: user.id }]);
+      const { data, error } = await (supabase
+        .from('pets') as any)
+        .insert([{ ...petData, user_id: user.id }])
+        .select()
+        .single();
 
       if (error) {
         console.error('Error adding pet:', error);
-        return { error };
+        return { error, data: null };
       }
 
       await fetchPets();
-      return { error: null };
+      return { error: null, data: data as Pet };
     } catch (error) {
       console.error('Error adding pet:', error);
-      return { error };
+      return { error, data: null };
     }
   };
 
   const updatePet = async (petId: string, petData: Partial<Pet>) => {
     try {
-      const { error } = await supabase
-        .from('pets')
+      const { error } = await (supabase
+        .from('pets') as any)
         .update(petData)
         .eq('id', petId);
 

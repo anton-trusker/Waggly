@@ -47,14 +47,14 @@ export function useVaccinations(petId: string | null) {
     if (!petId) return { error: 'No pet selected' };
 
     try {
-      const { data, error } = await supabase
-        .from('vaccinations')
+      const { data, error } = await (supabase
+        .from('vaccinations') as any)
         .insert({
           ...vaccinationData,
           pet_id: petId,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        } as VaccinationInsert)
+        })
         .select()
         .single();
 
@@ -73,12 +73,12 @@ export function useVaccinations(petId: string | null) {
 
   const updateVaccination = async (vaccinationId: string, vaccinationData: Partial<VaccinationUpdate>) => {
     try {
-      const { data, error } = await supabase
-        .from('vaccinations')
+      const { data, error } = await (supabase
+        .from('vaccinations') as any)
         .update({
           ...vaccinationData,
           updated_at: new Date().toISOString(),
-        } as VaccinationUpdate)
+        })
         .eq('id', vaccinationId)
         .select()
         .single();

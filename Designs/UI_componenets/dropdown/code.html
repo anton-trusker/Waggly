@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Pet Wizard - Step 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Open+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec49",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102215",
+                        "surface-dark": "#193320",
+                        "surface-light": "#ffffff",
+                        "border-dark": "#32673f",
+                        "border-light": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Open Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) opacity(0.5);
+            cursor: pointer;
+        }
+        .light input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0) opacity(0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen flex flex-col relative overflow-hidden text-gray-900 dark:text-white selection:bg-primary selection:text-black">
+<header class="flex items-center justify-between px-4 py-3 bg-background-light dark:bg-background-dark z-10 sticky top-0">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<h2 class="text-base font-bold tracking-tight">Add Pet</h2>
+<button class="text-primary font-bold text-sm hover:opacity-80 transition-opacity">Cancel</button>
+</header>
+<div class="px-6 py-2">
+<div class="flex items-center justify-center gap-2">
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700/50"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-gray-700/50"></div>
+</div>
+<p class="text-xs text-center font-medium text-gray-400 dark:text-gray-500 mt-2 tracking-wide uppercase">Step 2 of 4</p>
+</div>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-32">
+<div class="px-6 pt-4 pb-6">
+<h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
+                Tell us more about <span class="text-primary">Luna</span>
+</h1>
+<p class="text-gray-500 dark:text-gray-400 mt-2 text-base">We need these details to personalize her care.</p>
+</div>
+<form class="px-6 space-y-6">
+<div class="group">
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 pl-1">Breed</label>
+<div class="relative">
+<select class="w-full h-14 pl-4 pr-10 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-border-dark text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Select breed</option>
+<option value="golden">Golden Retriever</option>
+<option value="lab">Labrador</option>
+<option value="poodle">Poodle</option>
+<option value="bulldog">Bulldog</option>
+<option value="mix">Mixed Breed</option>
+</select>
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-primary">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 pl-1">Gender</label>
+<div class="flex bg-gray-100 dark:bg-surface-dark p-1 rounded-xl h-14 border border-transparent dark:border-border-dark">
+<label class="flex-1 relative cursor-pointer group">
+<input class="peer sr-only" name="gender" type="radio" value="male"/>
+<div class="w-full h-full flex items-center justify-center gap-2 rounded-lg transition-all duration-200 peer-checked:bg-white dark:peer-checked:bg-[#32673f] peer-checked:shadow-sm text-gray-500 dark:text-gray-400 peer-checked:text-gray-900 dark:peer-checked:text-white hover:text-gray-700 dark:hover:text-gray-200">
+<span class="material-symbols-outlined text-[20px]">male</span>
+<span class="font-semibold text-sm">Male</span>
+</div>
+</label>
+<label class="flex-1 relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="gender" type="radio" value="female"/>
+<div class="w-full h-full flex items-center justify-center gap-2 rounded-lg transition-all duration-200 peer-checked:bg-white dark:peer-checked:bg-[#32673f] peer-checked:shadow-sm text-gray-500 dark:text-gray-400 peer-checked:text-gray-900 dark:peer-checked:text-white hover:text-gray-700 dark:hover:text-gray-200">
+<span class="material-symbols-outlined text-[20px]">female</span>
+<span class="font-semibold text-sm">Female</span>
+</div>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 pl-1">Date of Birth</label>
+<div class="relative">
+<input class="w-full h-14 pl-12 pr-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-border-dark text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="MM/DD/YYYY" type="date"/>
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 pl-1">Weight</label>
+<div class="flex items-center gap-3">
+<div class="relative flex-1">
+<input class="w-full h-14 pl-12 pr-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-border-dark text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="0.0" step="0.1" type="number"/>
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary">
+<span class="material-symbols-outlined">monitor_weight</span>
+</div>
+</div>
+<div class="flex bg-gray-100 dark:bg-surface-dark p-1 rounded-lg h-14 w-28 border border-transparent dark:border-border-dark shrink-0">
+<label class="flex-1 relative cursor-pointer">
+<input checked="" class="peer sr-only" name="unit" type="radio" value="kg"/>
+<div class="w-full h-full flex items-center justify-center rounded-md transition-all duration-200 peer-checked:bg-white dark:peer-checked:bg-[#32673f] peer-checked:shadow-sm text-gray-500 dark:text-gray-400 peer-checked:text-gray-900 dark:peer-checked:text-white text-xs font-bold">
+                                KG
+                            </div>
+</label>
+<label class="flex-1 relative cursor-pointer">
+<input class="peer sr-only" name="unit" type="radio" value="lbs"/>
+<div class="w-full h-full flex items-center justify-center rounded-md transition-all duration-200 peer-checked:bg-white dark:peer-checked:bg-[#32673f] peer-checked:shadow-sm text-gray-500 dark:text-gray-400 peer-checked:text-gray-900 dark:peer-checked:text-white text-xs font-bold">
+                                LBS
+                            </div>
+</label>
+</div>
+</div>
+<p class="text-xs text-gray-500 mt-2 pl-1">If you don't know the exact weight, an estimate is fine.</p>
+</div>
+</form>
+</main>
+<div class="fixed bottom-0 left-0 w-full p-4 bg-background-light dark:bg-background-dark/95 backdrop-blur-sm border-t border-gray-200 dark:border-white/5 z-20">
+<button class="w-full h-14 bg-primary hover:bg-[#11d842] active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-2 text-background-dark font-bold text-lg shadow-[0_0_20px_rgba(19,236,73,0.3)]">
+<span>Continue</span>
+<span class="material-symbols-outlined text-xl font-bold">arrow_forward</span>
+</button>
+</div>
+<div class="fixed inset-0 z-50 bg-background-light dark:bg-background-dark flex flex-col font-body animate-in slide-in-from-bottom-10 duration-300">
+<div class="px-4 pt-4 pb-3 bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-surface-dark shadow-[0_4px_20px_-10px_rgba(0,0,0,0.3)] z-10">
+<div class="flex items-center gap-3 mb-4">
+<button class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">Select Breed</h2>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-full h-12 pl-10 pr-3 rounded-xl border-none bg-gray-100 dark:bg-surface-dark text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-surface-dark transition-all text-base" placeholder="Search breed..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar relative">
+<div class="p-4 space-y-6">
+<section>
+<h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 pl-2">Popular Breeds</h3>
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-border-dark divide-y divide-gray-100 dark:divide-white/5">
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-semibold text-gray-900 dark:text-white text-[15px]">Golden Retriever</span>
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Labrador Retriever</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">German Shepherd</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">French Bulldog</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Poodle</span>
+</button>
+</div>
+</section>
+<section>
+<h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 pl-2">All Breeds (A-Z)</h3>
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-border-dark divide-y divide-gray-100 dark:divide-white/5">
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Affenpinscher</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Afghan Hound</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Airedale Terrier</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Akita</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Alaskan Malamute</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">American Bulldog</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Australian Shepherd</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Beagle</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Border Collie</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group">
+<span class="font-medium text-gray-700 dark:text-gray-300 text-[15px] group-hover:text-gray-900 dark:group-hover:text-white">Boxer</span>
+</button>
+</div>
+</section>
+<div class="py-4 text-center">
+<button class="text-primary font-semibold text-sm hover:underline">
+                    Can't find your breed?
+                </button>
+</div>
+<div class="h-20"></div>
+</div>
+</div>
+</div>
+
+</body></html>

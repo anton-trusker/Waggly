@@ -30,8 +30,8 @@ export function useMedicalVisits(petId: string) {
   const addVisit = async (visit: Partial<MedicalVisit>) => {
     if (!user) return { error: { message: 'No user logged in' } };
     try {
-      const { error } = await supabase
-        .from('medical_visits')
+      const { error } = await (supabase
+        .from('medical_visits') as any)
         .insert({ ...visit, pet_id: petId });
 
       if (error) throw error;

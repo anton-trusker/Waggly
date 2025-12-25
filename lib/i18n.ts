@@ -36,13 +36,12 @@ const LANGUAGE_DETECTOR = {
         return callback(savedLanguage);
       }
 
-      // 2. Check Device Language
-      const deviceLanguage = Localization.getLocales()[0]?.languageCode;
-      
-      // Check if device language is supported
-      if (deviceLanguage && Object.keys(RESOURCES).includes(deviceLanguage)) {
-        return callback(deviceLanguage);
-      }
+      // 2. Check Device Language - DISABLED to force default English
+      // const deviceLanguage = Localization.getLocales()[0]?.languageCode;
+
+      // if (deviceLanguage && Object.keys(RESOURCES).includes(deviceLanguage)) {
+      //   return callback(deviceLanguage);
+      // }
 
       // 3. Fallback to English
       return callback('en');
@@ -51,7 +50,7 @@ const LANGUAGE_DETECTOR = {
       callback('en');
     }
   },
-  init: () => {},
+  init: () => { },
   cacheUserLanguage: async (language: string) => {
     try {
       await AsyncStorage.setItem('user-language', language);
@@ -65,7 +64,7 @@ i18n
   .use(LANGUAGE_DETECTOR)
   .use(initReactI18next)
   .init({
-    compatibilityJSON: 'v3',
+    compatibilityJSON: 'v4',
     resources: RESOURCES,
     fallbackLng: 'en',
     // keySeparator: false, // Allow nested keys

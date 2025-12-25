@@ -41,8 +41,8 @@ export function useAllergies(petId: string | null) {
     if (!petId) return { error: 'No pet selected' };
 
     try {
-      const { data, error } = await supabase
-        .from('allergies')
+      const { data, error } = await (supabase
+        .from('allergies') as any)
         .insert([{ ...allergyData, pet_id: petId }])
         .select()
         .single();
@@ -62,8 +62,8 @@ export function useAllergies(petId: string | null) {
 
   const updateAllergy = async (allergyId: string, allergyData: Partial<Allergy>) => {
     try {
-      const { data, error } = await supabase
-        .from('allergies')
+      const { data, error } = await (supabase
+        .from('allergies') as any)
         .update(allergyData)
         .eq('id', allergyId)
         .select()

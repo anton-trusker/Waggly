@@ -66,8 +66,8 @@ export function useDocuments(petId: string) {
         .getPublicUrl(filePath);
 
       // 3. Insert into Table
-      const { data, error: dbError } = await supabase
-        .from('documents')
+      const { data, error: dbError } = await (supabase
+        .from('documents') as any)
         .insert({
           pet_id: petId,
           type,
@@ -110,7 +110,7 @@ export function useDocuments(petId: string) {
         const { error: storageError } = await supabase.storage
           .from('pet-documents')
           .remove([path]);
-        
+
         if (storageError) console.error('Error deleting file from storage:', storageError);
       }
 

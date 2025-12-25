@@ -41,8 +41,8 @@ export function useTreatments(petId: string | null) {
     if (!petId) return { error: 'No pet selected' };
 
     try {
-      const { data, error } = await supabase
-        .from('treatments')
+      const { data, error } = await (supabase
+        .from('treatments') as any)
         .insert([{ ...treatmentData, pet_id: petId, is_active: true }])
         .select()
         .single();
@@ -62,8 +62,8 @@ export function useTreatments(petId: string | null) {
 
   const updateTreatment = async (treatmentId: string, treatmentData: Partial<Treatment>) => {
     try {
-      const { data, error } = await supabase
-        .from('treatments')
+      const { data, error } = await (supabase
+        .from('treatments') as any)
         .update(treatmentData)
         .eq('id', treatmentId)
         .select()

@@ -19,7 +19,7 @@ export const designSystem = Object.freeze({
       800: '#003170',
       900: '#001C3D',
     },
-    
+
     // Secondary Colors - Pet-themed palette
     secondary: {
       paw: '#FF6B6B',
@@ -32,7 +32,7 @@ export const designSystem = Object.freeze({
       sunLight: '#FFF2A1',
       sunDark: '#E6CD62',
     },
-    
+
     // Neutral Colors - Enhanced grayscale
     neutral: {
       0: '#FFFFFF',
@@ -48,7 +48,7 @@ export const designSystem = Object.freeze({
       900: '#1F2937',
       1000: '#000000',
     },
-    
+
     // Semantic Colors
     success: {
       50: '#F0FDF4',
@@ -57,7 +57,7 @@ export const designSystem = Object.freeze({
       600: '#059669',
       700: '#047857',
     },
-    
+
     warning: {
       50: '#FFFBEB',
       100: '#FEF3C7',
@@ -65,7 +65,7 @@ export const designSystem = Object.freeze({
       600: '#D97706',
       700: '#B45309',
     },
-    
+
     error: {
       50: '#FEF2F2',
       100: '#FEE2E2',
@@ -73,7 +73,7 @@ export const designSystem = Object.freeze({
       600: '#DC2626',
       700: '#B91C1C',
     },
-    
+
     // Background Colors
     background: {
       primary: '#FFFFFF',
@@ -84,7 +84,7 @@ export const designSystem = Object.freeze({
         end: '#E8F4FF',
       },
     },
-    
+
     // Text Colors
     text: {
       primary: '#111827',
@@ -154,7 +154,7 @@ export const designSystem = Object.freeze({
     modal: 30,
     toast: 40,
   },
-  
+
   // Enhanced Typography System
   typography: {
     // Display Styles
@@ -176,7 +176,7 @@ export const designSystem = Object.freeze({
         lineHeight: 44,
       },
     },
-    
+
     // Headline Styles
     headline: {
       large: {
@@ -195,7 +195,7 @@ export const designSystem = Object.freeze({
         lineHeight: 32,
       },
     },
-    
+
     // Title Styles
     title: {
       large: {
@@ -216,7 +216,7 @@ export const designSystem = Object.freeze({
         letterSpacing: 0.1,
       },
     },
-    
+
     // Body Styles
     body: {
       large: {
@@ -238,7 +238,7 @@ export const designSystem = Object.freeze({
         letterSpacing: 0.4,
       },
     },
-    
+
     // Label Styles
     label: {
       large: {
@@ -260,7 +260,7 @@ export const designSystem = Object.freeze({
       },
     },
   },
-  
+
   // Icon Sizes
   iconSizes: {
     sm: 16,
@@ -331,7 +331,7 @@ export const designSystem = Object.freeze({
     '3xl': 32,
     full: 9999,
   },
-  
+
   // Shadow System
   shadows: {
     sm: {
@@ -363,7 +363,7 @@ export const designSystem = Object.freeze({
       elevation: 8,
     },
   },
-  
+
   // Animation System
   animations: {
     duration: {
@@ -379,17 +379,8 @@ export const designSystem = Object.freeze({
       easeInOut: 'ease-in-out',
     },
   },
-  
-  // Icon Sizes
-  iconSizes: {
-    xs: 16,
-    sm: 20,
-    md: 24,
-    lg: 32,
-    xl: 40,
-    '2xl': 48,
-  },
-  
+
+
   // Component-specific tokens
   components: {
     button: {
@@ -424,15 +415,15 @@ export const getSpacing = (index: number): number => {
   if (Number.isInteger(index) && index in designSystem.spacing) {
     return designSystem.spacing[index as keyof typeof designSystem.spacing] as number;
   }
-  
+
   // For fractional values, try to find the closest match
   const spacingKey = Object.keys(designSystem.spacing)
     .map(Number)
     .sort((a, b) => a - b)
     .find(key => key >= index);
-  
-  return spacingKey !== undefined 
-    ? designSystem.spacing[spacingKey as keyof typeof designSystem.spacing] as number 
+
+  return spacingKey !== undefined
+    ? designSystem.spacing[spacingKey as keyof typeof designSystem.spacing] as number
     : 0; // Fallback to 0 if no match found
 };
 

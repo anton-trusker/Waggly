@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Pet Wizard - Step 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#359EFF", "background-light": "#f5f7f8", "background-dark": "#0f1923", "surface-dark": "#193320", "border-dark": "#32673f", "text-muted": "#92c9a0"}, fontFamily: {display: "Manrope"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom radio styling for species selection cards */
+        .species-radio:checked + div {
+            border-color: #13ec49;
+            background-color: rgba(19, 236, 73, 0.1);
+            box-shadow: 0 0 0 1px #13ec49;
+        }
+        .species-radio:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .species-radio:focus-visible + div {
+            outline: 2px solid #13ec49;
+            outline-offset: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-background-dark">
+<!-- Main Container: Mobile Form Factor -->
+<div class="relative flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between px-4 py-3 shrink-0 bg-background-light dark:bg-background-dark z-10">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-dark transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] opacity-0 md:opacity-100 transition-opacity">Add New Pet</h2>
+<button class="text-[#92c9a0] text-base font-bold leading-normal tracking-[0.015em] shrink-0 hover:text-white transition-colors">Cancel</button>
+</header>
+<!-- Stepped Progress Indicator -->
+<div class="px-6 py-2 shrink-0">
+<div class="flex flex-col gap-2">
+<div class="flex gap-2 h-1.5 w-full">
+<div class="flex-1 bg-primary rounded-full shadow-[0_0_8px_rgba(19,236,73,0.4)]"></div>
+<div class="flex-1 bg-surface-dark rounded-full"></div>
+<div class="flex-1 bg-surface-dark rounded-full"></div>
+<div class="flex-1 bg-surface-dark rounded-full"></div>
+</div>
+<p class="text-xs font-bold text-text-muted uppercase tracking-wider text-center pt-1">Step 1 of 4: Basic Info</p>
+</div>
+</div>
+<!-- Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto hide-scrollbar px-6 pb-36 pt-2">
+<!-- Hero Headline -->
+<div class="py-4">
+<h1 class="text-3xl md:text-[32px] font-bold leading-tight text-slate-900 dark:text-white">
+                    Let's meet <br/>your companion.
+                </h1>
+</div>
+<!-- Avatar Uploader Component -->
+<div class="flex flex-col items-center justify-center py-6">
+<div class="relative group cursor-pointer">
+<!-- Placeholder Circle -->
+<div class="w-32 h-32 rounded-full bg-surface-dark border-2 border-dashed border-border-dark flex items-center justify-center overflow-hidden hover:border-primary hover:bg-[#1f3f28] transition-all duration-300" data-alt="Placeholder area for uploading a pet photo">
+<span class="material-symbols-outlined text-4xl text-text-muted group-hover:text-primary transition-colors">add_a_photo</span>
+</div>
+<!-- 'Add' Badge -->
+<div class="absolute bottom-0 right-0 bg-primary text-background-dark rounded-full p-2 border-4 border-background-light dark:border-background-dark flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+<p class="mt-4 text-lg font-bold text-slate-900 dark:text-white">Add Photo</p>
+</div>
+<!-- Form Fields -->
+<div class="space-y-8 mt-2">
+<!-- Pet Name Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-text-muted uppercase tracking-wider ml-1" for="petName">Pet's Name</label>
+<input class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl px-4 py-4 text-lg text-slate-900 dark:text-white placeholder-gray-400 dark:placeholder-[#92c9a0] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="petName" placeholder="e.g., Bella, Max" type="text"/>
+</div>
+<!-- Species Selection Grid -->
+<div class="space-y-3">
+<label class="block text-sm font-medium text-text-muted uppercase tracking-wider ml-1">What are they?</label>
+<div class="grid grid-cols-3 gap-3">
+<!-- Dog Option -->
+<label class="cursor-pointer relative group">
+<input checked="" class="species-radio sr-only" name="species" type="radio" value="dog"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🐶</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Dog</span>
+<!-- Checked Indicator -->
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Cat Option -->
+<label class="cursor-pointer relative group">
+<input class="species-radio sr-only" name="species" type="radio" value="cat"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🐱</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Cat</span>
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Bird Option -->
+<label class="cursor-pointer relative group">
+<input class="species-radio sr-only" name="species" type="radio" value="bird"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🦜</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Bird</span>
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Rabbit Option -->
+<label class="cursor-pointer relative group">
+<input class="species-radio sr-only" name="species" type="radio" value="rabbit"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🐰</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Rabbit</span>
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Reptile Option -->
+<label class="cursor-pointer relative group">
+<input class="species-radio sr-only" name="species" type="radio" value="reptile"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🦎</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Reptile</span>
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+<!-- Other Option -->
+<label class="cursor-pointer relative group">
+<input class="species-radio sr-only" name="species" type="radio" value="other"/>
+<div class="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark h-full transition-all duration-200 hover:border-primary/50 aspect-square">
+<span class="text-3xl mb-2 filter drop-shadow-sm">🐾</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">Other</span>
+<div class="check-icon absolute top-2 right-2 opacity-0 transform scale-75 transition-all duration-200 text-primary">
+<span class="material-symbols-outlined text-lg fill-1">check_circle</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Action -->
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-t border-gray-200 dark:border-surface-dark z-20">
+<button class="w-full bg-primary hover:bg-[#10d940] text-background-dark font-extrabold text-lg py-4 rounded-xl transition-all shadow-lg shadow-green-500/20 active:scale-[0.98] flex items-center justify-center gap-2 group">
+                Continue
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="h-4"></div> <!-- iOS Home Indicator spacing -->
+</div>
+</div>
+</body></html>

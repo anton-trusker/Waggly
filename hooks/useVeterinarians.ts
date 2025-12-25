@@ -57,8 +57,8 @@ export function useVeterinarians(petId: string | null) {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
-      const { data, error } = await supabase
-        .from('veterinarians')
+      const { data, error } = await (supabase
+        .from('veterinarians') as any)
         .insert([payload])
         .select()
         .single();
@@ -82,8 +82,8 @@ export function useVeterinarians(petId: string | null) {
         ...vetData,
         updated_at: new Date().toISOString(),
       };
-      const { data, error } = await supabase
-        .from('veterinarians')
+      const { data, error } = await (supabase
+        .from('veterinarians') as any)
         .update(payload)
         .eq('id', vetId)
         .select()

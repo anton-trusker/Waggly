@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  ActivityIndicator 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { colors } from '@/styles/commonStyles';
@@ -67,7 +67,7 @@ export default function PetHealthPassport({ petId }: { petId: string }) {
           <IconSymbol ios_icon_name="plus.circle.fill" android_material_icon_name="add" size={20} color={colors.primary} />
           <Text style={styles.sectionTitle}>{t('common.quick_actions', { defaultValue: 'Quick Actions' })}</Text>
         </View>
-        
+
         <View style={styles.quickActions}>
           <TouchableOpacity style={styles.actionButton} onPress={handleAddVisit}>
             <View style={[styles.actionIcon, { backgroundColor: '#E0F2FE' }]}>
@@ -75,7 +75,7 @@ export default function PetHealthPassport({ petId }: { petId: string }) {
             </View>
             <Text style={styles.actionLabel}>{t('pets.add_visit', { defaultValue: 'Add Visit' })}</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.actionButton} onPress={handleAddVaccination}>
             <View style={[styles.actionIcon, { backgroundColor: '#DCFCE7' }]}>
               <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="vaccines" size={24} color="#16A34A" />
@@ -98,7 +98,7 @@ export default function PetHealthPassport({ petId }: { petId: string }) {
           <IconSymbol ios_icon_name="heart.text.square" android_material_icon_name="medical-information" size={20} color={colors.primary} />
           <Text style={styles.sectionTitle}>{t('pets.health_records', { defaultValue: 'Health Records' })}</Text>
         </View>
-        
+
         <View style={styles.infoCard}>
           <Text style={styles.infoText}>{t('pets.health_records_info', { defaultValue: 'Health records will be displayed here' })}</Text>
           <Text style={styles.infoSubtext}>{t('pets.health_records_subinfo', { defaultValue: "Add visits, vaccinations, and treatments to build your pet's health history" })}</Text>
@@ -111,26 +111,26 @@ export default function PetHealthPassport({ petId }: { petId: string }) {
           <IconSymbol ios_icon_name="cross.case" android_material_icon_name="medical-services" size={20} color={colors.primary} />
           <Text style={styles.sectionTitle}>{t('pets.medical_information', { defaultValue: 'Medical Information' })}</Text>
         </View>
-        
+
         <View style={styles.infoGrid}>
           <View style={styles.infoItem}>
-            <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr_code" size={16} color={colors.textSecondary} />
+            <IconSymbol ios_icon_name="qrcode" android_material_icon_name="qr-code" size={16} color={colors.textSecondary} />
             <Text style={styles.infoLabel}>{t('pets.microchip', { defaultValue: 'Microchip' })}</Text>
             <Text style={styles.infoValue}>{pet.microchip_number || t('common.not_provided', { defaultValue: 'Not provided' })}</Text>
           </View>
-          
+
           <View style={styles.infoItem}>
             <IconSymbol ios_icon_name="tag" android_material_icon_name="label" size={16} color={colors.textSecondary} />
             <Text style={styles.infoLabel}>{t('pets.registration_id', { defaultValue: 'Registration ID' })}</Text>
             <Text style={styles.infoValue}>{pet.registration_id || t('common.not_provided', { defaultValue: 'Not provided' })}</Text>
           </View>
-          
+
           <View style={styles.infoItem}>
             <IconSymbol ios_icon_name="scalemass" android_material_icon_name="scale" size={16} color={colors.textSecondary} />
             <Text style={styles.infoLabel}>{t('pets.weight', { defaultValue: 'Weight' })}</Text>
             <Text style={styles.infoValue}>{pet.weight ? `${pet.weight} kg` : t('common.not_provided', { defaultValue: 'Not provided' })}</Text>
           </View>
-          
+
           <View style={styles.infoItem}>
             <IconSymbol ios_icon_name="checkmark.circle" android_material_icon_name="check-circle" size={16} color={colors.textSecondary} />
             <Text style={styles.infoLabel}>{t('pets.spayed_neutered', { defaultValue: 'Spayed/Neutered' })}</Text>

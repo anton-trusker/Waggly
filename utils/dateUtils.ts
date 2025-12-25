@@ -22,18 +22,18 @@ export const parseDDMMYYYY = (dateStr: string): Date | null => {
   if (!dateStr) return null;
   const parts = dateStr.split('-');
   if (parts.length !== 3) return null;
-  
+
   const day = parseInt(parts[0], 10);
   const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed in JavaScript
   const year = parseInt(parts[2], 10);
-  
+
   const date = new Date(year, month, day);
-  
+
   // Validate that the created date matches the input
   if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
     return null;
   }
-  
+
   return date;
 };
 
@@ -86,15 +86,15 @@ export const getCurrentDateISO = (): string => {
 export const calculateAgeFromDDMMYYYY = (birthDateStr: string): number | null => {
   const birthDate = parseDDMMYYYY(birthDateStr);
   if (!birthDate) return null;
-  
+
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age;
 };
 
@@ -104,10 +104,10 @@ export const calculateAgeFromDDMMYYYY = (birthDateStr: string): number | null =>
 export const isFutureDate = (dateStr: string): boolean => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return false;
-  
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   return date > today;
 };
 
@@ -117,10 +117,10 @@ export const isFutureDate = (dateStr: string): boolean => {
 export const isPastDate = (dateStr: string): boolean => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return false;
-  
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   return date < today;
 };
 
@@ -130,7 +130,7 @@ export const isPastDate = (dateStr: string): boolean => {
 export const isToday = (dateStr: string): boolean => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return false;
-  
+
   const today = new Date();
   return (
     date.getDate() === today.getDate() &&
@@ -145,10 +145,10 @@ export const isToday = (dateStr: string): boolean => {
 export const addDaysToDDMMYYYY = (dateStr: string, days: number): string => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return dateStr;
-  
+
   const newDate = new Date(date);
   newDate.setDate(date.getDate() + days);
-  
+
   return formatDateToDDMMYYYY(newDate);
 };
 
@@ -165,9 +165,9 @@ export const subtractDaysFromDDMMYYYY = (dateStr: string, days: number): string 
 export const getDaysDifference = (date1Str: string, date2Str: string): number => {
   const date1 = parseDDMMYYYY(date1Str);
   const date2 = parseDDMMYYYY(date2Str);
-  
+
   if (!date1 || !date2) return 0;
-  
+
   const timeDiff = Math.abs(date2.getTime() - date1.getTime());
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 };
@@ -178,11 +178,11 @@ export const getDaysDifference = (date1Str: string, date2Str: string): number =>
  */
 export const formatDateForDisplay = (dateStr: string): string => {
   if (!dateStr) return '';
-  
+
   if (isToday(dateStr)) return 'Today';
   if (isToday(addDaysToDDMMYYYY(dateStr, 1))) return 'Yesterday';
   if (isToday(subtractDaysFromDDMMYYYY(dateStr, 1))) return 'Tomorrow';
-  
+
   return dateStr;
 };
 
@@ -192,7 +192,7 @@ export const formatDateForDisplay = (dateStr: string): string => {
 export const getFirstDayOfMonth = (dateStr: string): string => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return dateStr;
-  
+
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
   return formatDateToDDMMYYYY(firstDay);
 };
@@ -203,7 +203,55 @@ export const getFirstDayOfMonth = (dateStr: string): string => {
 export const getLastDayOfMonth = (dateStr: string): string => {
   const date = parseDDMMYYYY(dateStr);
   if (!date) return dateStr;
-  
+
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   return formatDateToDDMMYYYY(lastDay);
+};
+
+/**
+ * Formats age from a Date object into human-readable format
+ * Returns formats like "2 years 3 months", "6 months", "3 weeks", or "5 days"
+ */
+export const formatAge = (birthDate: Date): string => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+
+  // Calculate total difference in milliseconds
+  const diffMs = today.getTime() - birth.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // For very young pets (less than 8 weeks)
+  if (diffDays < 56) {
+    if (diffDays < 14) {
+      return diffDays === 1 ? '1 day' : `${diffDays} days`;
+    }
+    const weeks = Math.floor(diffDays / 7);
+    return weeks === 1 ? '1 week' : `${weeks} weeks`;
+  }
+
+  // Calculate years and months
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+
+  // Adjust if birthday hasn't occurred this year
+  if (months < 0 || (months === 0 && today.getDate() < birth.getDate())) {
+    years--;
+    months += 12;
+  }
+
+  // Adjust months if day hasn't occurred this month
+  if (today.getDate() < birth.getDate()) {
+    months--;
+  }
+
+  // Format output
+  if (years === 0) {
+    return months === 1 ? '1 month' : `${months} months`;
+  } else if (months === 0) {
+    return years === 1 ? '1 year' : `${years} years`;
+  } else {
+    const yearStr = years === 1 ? '1 year' : `${years} years`;
+    const monthStr = months === 1 ? '1 month' : `${months} months`;
+    return `${yearStr} ${monthStr}`;
+  }
 };
