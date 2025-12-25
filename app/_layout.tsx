@@ -1,3 +1,4 @@
+import '@/lib/i18n';
 import React, { useEffect } from 'react';
 import { Stack, useSegments, useRouter } from 'expo-router';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -100,9 +101,7 @@ function RootLayoutNav() {
   }, [session, segments]);
 
   return (
-    <ThemeContextProvider>
-      <NavigationThemeProvider />
-    </ThemeContextProvider>
+    <NavigationThemeProvider />
   );
 }
 
@@ -128,7 +127,7 @@ function NavigationThemeProvider() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
@@ -140,9 +139,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
+      <ThemeContextProvider>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </ThemeContextProvider>
     </GestureHandlerRootView>
   );
 }
