@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { cssInterop } from 'react-native-css-interop';
-import AddressFormSection from './AddressFormSection';
+import PetSelector from './shared/PetSelector';
+import SmartAddressInput from './shared/SmartAddressInput';
+import UniversalDatePicker from './shared/UniversalDatePicker';
+import RichTextInput from './shared/RichTextInput';
 
 // Apply cssInterop to components if not already done globally
 cssInterop(BlurView, { className: 'style' });
@@ -17,7 +20,7 @@ interface VaccinationFormModalProps {
     onSuccess?: () => void;
 }
 
-const CURRENCIES = ['EUR', 'USD', 'GBP'];
+const COMMON_VACCINES = ['Rabies', 'DHPP', 'Bordetella', 'Leptospirosis', 'Lyme', 'FVRCP', 'FeLV'];
 
 export default function VaccinationFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VaccinationFormModalProps) {
     const { pets, loading: petsLoading } = usePets();
@@ -27,12 +30,10 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
     const [formData, setFormData] = useState({
         vaccine_name: '',
         date_given: new Date().toISOString().split('T')[0],
-        batch_number: '',
-        reminders_enabled: false,
         next_due_date: '',
+        batch_number: '',
         
-        // Provider & Costs
-        provider: '', // Clinic Name
+        provider: '',
         address: '',
         city: '',
         state: '',
@@ -42,6 +43,7 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         cost: '',
         currency: 'EUR',
         notes: '',
+        reminders_enabled: true,
     });
 
     useEffect(() => {
@@ -56,9 +58,8 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         setFormData({
             vaccine_name: '',
             date_given: new Date().toISOString().split('T')[0],
-            batch_number: '',
-            reminders_enabled: false,
             next_due_date: '',
+            batch_number: '',
             provider: '',
             address: '',
             city: '',
@@ -68,11 +69,42 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             cost: '',
             currency: 'EUR',
             notes: '',
+            reminders_enabled: true,
         });
         if (!initialPetId && pets.length > 0) {
             setSelectedPetId(pets[0].id);
         }
     }
+
+    const handleRepeatLast = async () => {
+        if (!selectedPetId) return;
+        setLoading(true);
+        try {
+            const { data } = await supabase
+                .from('vaccinations')
+                .select('*')
+                .eq('pet_id', selectedPetId)
+                .order('date', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (data) {
+                setFormData(prev => ({
+                    ...prev,
+                    vaccine_name: data.name || prev.vaccine_name,
+                    provider: data.provider || prev.provider,
+                    currency: data.currency || prev.currency,
+                }));
+                Alert.alert('Auto-Filled', 'Details from the last vaccination have been applied.');
+            } else {
+                Alert.alert('Info', 'No previous vaccinations found.');
+            }
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async () => {
         if (!selectedPetId) {
@@ -86,32 +118,21 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
 
         setLoading(true);
         try {
-            // 1. Insert Vaccination
-            const { data: vacData, error } = await (supabase
+            const { error } = await (supabase
                 .from('vaccinations') as any)
                 .insert({
                     pet_id: selectedPetId,
-                    vaccine_name: formData.vaccine_name,
-                    date_given: formData.date_given || null,
+                    name: formData.vaccine_name,
+                    date: formData.date_given,
                     next_due_date: formData.reminders_enabled ? (formData.next_due_date || null) : null,
                     batch_number: formData.batch_number || null,
                     provider: formData.provider || null,
-                    cost: parseFloat(formData.cost) || null,
+                    cost: formData.cost ? parseFloat(formData.cost) : null,
                     currency: formData.currency,
                     notes: formData.notes || null,
-                    // Note: We might want to store full address in a JSONB field or separate columns if schema permits.
-                    // For now, we'll append address details to notes or assume provider field is enough for basic usage.
-                    // Ideally, we should update the schema to support address fields.
-                    // Assuming we can append to notes for now to save the data without schema migration in this step:
-                    // Or we just save it if columns exist.
-                })
-                .select()
-                .single();
+                });
 
             if (error) throw error;
-
-            // 2. If reminder is set, create an event (optional, logic usually handled by triggers or app logic)
-            // ...
 
             Alert.alert('Success', 'Vaccination added successfully');
             resetForm();
@@ -131,7 +152,6 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
                 <BlurView intensity={20} className="absolute inset-0" />
                 <View className="w-full max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
-                    {/* Header */}
                     <View className="flex-row items-center justify-between px-6 py-5 border-b border-[#2C2C2E]">
                         <TouchableOpacity onPress={onClose}>
                             <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
@@ -142,45 +162,19 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                         </TouchableOpacity>
                     </View>
 
-                    {/* Form Content */}
                     <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
                         <View className="space-y-8 pb-8">
                             
-                            {/* Who is this for? */}
-                            <View>
-                                <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">WHO IS THIS FOR?</Text>
-                                <View className="flex-row flex-wrap gap-4">
-                                    {petsLoading ? (
-                                        <ActivityIndicator color="#0A84FF" />
-                                    ) : (
-                                        pets.map((pet) => (
-                                            <TouchableOpacity 
-                                                key={pet.id} 
-                                                onPress={() => setSelectedPetId(pet.id)}
-                                                className="items-center gap-2"
-                                            >
-                                                <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
-                                                    {pet.image_url ? (
-                                                        <Image source={{ uri: pet.image_url }} className="w-14 h-14 rounded-full" />
-                                                    ) : (
-                                                        <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
-                                                    )}
-                                                    {selectedPetId === pet.id && (
-                                                        <View className="absolute -bottom-1 -right-1 bg-[#22C55E] rounded-full p-0.5 border-2 border-[#1C1C1E]">
-                                                            <Ionicons name="checkmark" size={12} color="white" />
-                                                        </View>
-                                                    )}
-                                                </View>
-                                                <Text className={`text-sm font-medium ${selectedPetId === pet.id ? 'text-[#0A84FF]' : 'text-[#6B7280]'}`}>
-                                                    {pet.name}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))
-                                    )}
-                                </View>
-                            </View>
+                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
-                            {/* Vaccine Details */}
+                            <TouchableOpacity 
+                                onPress={handleRepeatLast}
+                                className="flex-row items-center justify-center gap-2 bg-[#2C2C2E] py-3 rounded-xl border border-[#374151]"
+                            >
+                                <Ionicons name="reload" size={16} color="#0A84FF" />
+                                <Text className="text-[#0A84FF] font-medium">Repeat Last Vaccination</Text>
+                            </TouchableOpacity>
+
                             <View>
                                 <View className="flex-row items-center gap-2 mb-4">
                                     <Ionicons name="medkit" size={20} color="#0A84FF" />
@@ -197,108 +191,71 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                             value={formData.vaccine_name}
                                             onChangeText={(text) => setFormData({ ...formData, vaccine_name: text })}
                                         />
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row mt-3">
+                                            {COMMON_VACCINES.map(v => (
+                                                <TouchableOpacity
+                                                    key={v}
+                                                    onPress={() => setFormData({...formData, vaccine_name: v})}
+                                                    className="bg-[#1C1C1E] border border-[#374151] px-3 py-1.5 rounded-lg mr-2"
+                                                >
+                                                    <Text className="text-white text-xs">{v}</Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </ScrollView>
                                     </View>
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Date Administered</Text>
-                                        <View className="relative">
-                                            <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                                placeholder="YYYY-MM-DD"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.date_given}
-                                                onChangeText={(text) => setFormData({ ...formData, date_given: text })}
-                                            />
-                                            <View className="absolute right-4 top-3.5 pointer-events-none">
-                                                <Ionicons name="calendar" size={20} color="#6B7280" />
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
 
-                            {/* Medical Info */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
-                                    <Ionicons name="medical" size={20} color="#06B6D4" />
-                                    <Text className="text-white text-lg font-bold">Medical Info</Text>
-                                </View>
-                                
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                    <UniversalDatePicker 
+                                        label="Date Administered"
+                                        value={formData.date_given}
+                                        onChange={(text) => setFormData({...formData, date_given: text})}
+                                    />
+
                                     <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Batch Number <Text className="text-[#4B5563]">(Optional)</Text></Text>
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Batch / Lot Number</Text>
                                         <TextInput
                                             className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                            placeholder="e.g. A123-BC45"
+                                            placeholder="Optional"
                                             placeholderTextColor="#4B5563"
                                             value={formData.batch_number}
                                             onChangeText={(text) => setFormData({ ...formData, batch_number: text })}
                                         />
                                     </View>
+                                </View>
+                            </View>
 
-                                    {/* Reminder Toggle */}
-                                    <View className="flex-row items-center justify-between py-2">
-                                        <View className="flex-row items-center gap-3">
-                                            <View className="w-8 h-8 rounded-full bg-[#1C1C1E] items-center justify-center">
-                                                <Ionicons name="notifications" size={16} color="#0A84FF" />
-                                            </View>
-                                            <View>
-                                                <Text className="text-white text-sm font-bold">Set Reminder</Text>
-                                                <Text className="text-[#9CA3AF] text-xs">Alert me when due</Text>
-                                            </View>
-                                        </View>
+                            <View>
+                                <View className="flex-row items-center gap-2 mb-4">
+                                    <Ionicons name="notifications" size={20} color="#F59E0B" />
+                                    <Text className="text-white text-lg font-bold">Reminders</Text>
+                                </View>
+                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                    <View className="flex-row items-center justify-between">
+                                        <Text className="text-white font-medium">Set Next Due Date</Text>
                                         <Switch
                                             value={formData.reminders_enabled}
                                             onValueChange={(val) => setFormData({ ...formData, reminders_enabled: val })}
                                             trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
-                                            thumbColor={'#FFFFFF'}
                                         />
                                     </View>
-
                                     {formData.reminders_enabled && (
-                                        <View>
-                                            <View className="relative">
-                                                <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                                    placeholder="Next Due Date (YYYY-MM-DD)"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={formData.next_due_date}
-                                                    onChangeText={(text) => setFormData({ ...formData, next_due_date: text })}
-                                                />
-                                                <View className="absolute right-4 top-3.5 pointer-events-none">
-                                                    <Ionicons name="calendar" size={20} color="#6B7280" />
-                                                </View>
-                                            </View>
-                                        </View>
+                                        <UniversalDatePicker 
+                                            label="Next Due Date"
+                                            value={formData.next_due_date}
+                                            onChange={(text) => setFormData({...formData, next_due_date: text})}
+                                        />
                                     )}
                                 </View>
                             </View>
 
-                            {/* Provider & Costs */}
                             <View>
                                 <View className="flex-row items-center gap-2 mb-4">
-                                    <Ionicons name="wallet" size={20} color="#EC4899" />
-                                    <Text className="text-white text-lg font-bold">Provider & Costs</Text>
+                                    <Ionicons name="location" size={20} color="#EC4899" />
+                                    <Text className="text-white text-lg font-bold">Provider & Cost</Text>
                                 </View>
-
-                                {/* Link Account Button */}
-                                <TouchableOpacity className="bg-[#0A84FF] rounded-xl p-4 flex-row items-center justify-between mb-4">
-                                    <View className="flex-row items-center gap-3">
-                                        <View className="w-8 h-8 rounded-full bg-white/20 items-center justify-center">
-                                            <Ionicons name="link" size={18} color="white" />
-                                        </View>
-                                        <View>
-                                            <Text className="text-white text-sm font-bold">Link Clinic Account</Text>
-                                            <Text className="text-white/80 text-xs">Auto-fill vet details instantly</Text>
-                                        </View>
-                                    </View>
-                                    <Ionicons name="chevron-forward" size={20} color="white" />
-                                </TouchableOpacity>
-                                
                                 <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <AddressFormSection
-                                        isDark={true}
-                                        locationName={formData.provider}
-                                        setLocationName={(text) => setFormData({...formData, provider: text})}
+                                    <SmartAddressInput
+                                        providerName={formData.provider}
+                                        setProviderName={(text) => setFormData({...formData, provider: text})}
                                         address={formData.address}
                                         setAddress={(text) => setFormData({...formData, address: text})}
                                         city={formData.city}
@@ -310,68 +267,36 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         country={formData.country}
                                         setCountry={(text) => setFormData({...formData, country: text})}
                                     />
-
                                     <View className="flex-row gap-4">
                                         <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
-                                            <View className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-                                                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="p-2">
-                                                    {CURRENCIES.map(curr => (
-                                                        <TouchableOpacity 
-                                                            key={curr}
-                                                            onPress={() => setFormData({...formData, currency: curr})}
-                                                            className={`px-3 py-2 rounded-lg mr-2 ${formData.currency === curr ? 'bg-[#3A3A3C]' : ''}`}
-                                                        >
-                                                            <Text className={`text-sm font-bold ${formData.currency === curr ? 'text-white' : 'text-[#6B7280]'}`}>
-                                                                {curr}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </ScrollView>
-                                            </View>
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Cost</Text>
+                                            <TextInput
+                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                placeholder="0.00"
+                                                keyboardType="numeric"
+                                                placeholderTextColor="#4B5563"
+                                                value={formData.cost}
+                                                onChangeText={(text) => setFormData({...formData, cost: text})}
+                                            />
                                         </View>
                                         <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Total Cost</Text>
-                                            <View className="relative">
-                                                <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl pl-10 pr-4 py-3 text-white text-base"
-                                                    placeholder="0.00"
-                                                    placeholderTextColor="#4B5563"
-                                                    keyboardType="numeric"
-                                                    value={formData.cost}
-                                                    onChangeText={(text) => setFormData({ ...formData, cost: text })}
-                                                />
-                                                <View className="absolute left-3 top-3.5 pointer-events-none">
-                                                    <Ionicons name="cash-outline" size={20} color="#6B7280" />
-                                                </View>
-                                            </View>
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                            <TextInput
+                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                value={formData.currency}
+                                                onChangeText={(text) => setFormData({...formData, currency: text})}
+                                            />
                                         </View>
-                                    </View>
-
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Notes</Text>
-                                        <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl p-4 text-white text-base min-h-[100px]"
-                                            placeholder="Any side effects or observations?"
-                                            placeholderTextColor="#4B5563"
-                                            multiline
-                                            textAlignVertical="top"
-                                            value={formData.notes}
-                                            onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                                        />
                                     </View>
                                 </View>
                             </View>
 
-                            {/* Attach Record Image */}
-                            <TouchableOpacity className="border border-dashed border-[#0A84FF] bg-[#0A84FF]/10 rounded-3xl p-8 items-center justify-center gap-2">
-                                <View className="w-12 h-12 rounded-full bg-[#0A84FF]/20 items-center justify-center">
-                                    <Ionicons name="camera" size={24} color="#0A84FF" />
-                                </View>
-                                <Text className="text-white font-bold text-base">Attach Record Image</Text>
-                                <Text className="text-[#9CA3AF] text-sm">Photo of sticker or certificate</Text>
-                            </TouchableOpacity>
-
+                            <RichTextInput
+                                label="Notes / Side Effects"
+                                placeholder="Any reactions?"
+                                value={formData.notes}
+                                onChangeText={(text) => setFormData({...formData, notes: text})}
+                            />
                         </View>
                     </ScrollView>
                 </View>

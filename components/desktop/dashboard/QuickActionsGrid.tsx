@@ -9,7 +9,7 @@ interface QuickAction {
     label: string;
     icon: string;
     colors: string[];
-    route: string;
+    route?: string; // Optional now, as we might use ID
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
@@ -18,45 +18,49 @@ const QUICK_ACTIONS: QuickAction[] = [
         label: 'Book Visit',
         icon: 'calendar_today',
         colors: ['#6366F1', '#818CF8'],
-        route: '/web/pets/visit/new',
     },
     {
         id: 'vaccine',
         label: 'Add Vaccine',
         icon: 'vaccines',
         colors: ['#0EA5E9', '#38BDF8'],
-        route: '/web/pets/vaccination/new',
     },
     {
         id: 'meds',
         label: 'Add Meds',
         icon: 'medication',
         colors: ['#10B981', '#34D399'],
-        route: '/web/pets/treatment/new',
     },
     {
         id: 'weight',
         label: 'Add Weight',
         icon: 'monitor_weight',
         colors: ['#F59E0B', '#FBBF24'],
-        route: '/web/pets/weight/log',
     },
     {
         id: 'photo',
         label: 'Add Photo',
         icon: 'add_a_photo',
         colors: ['#EC4899', '#F472B6'],
-        route: '/web/pets/photos/add',
+        route: '/web/pets/photos/add', // Keep route for non-modal actions if any
     },
 ];
 
-const QuickActionsGrid: React.FC = () => {
+interface QuickActionsGridProps {
+    onActionPress?: (id: string) => void;
+}
+
+const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) => {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
 
     const handleAction = (action: QuickAction) => {
-        router.push(action.route as any);
+        if (onActionPress) {
+            onActionPress(action.id);
+        } else if (action.route) {
+            router.push(action.route as any);
+        }
     };
 
     const ActionItem = ({ action }: { action: QuickAction }) => (

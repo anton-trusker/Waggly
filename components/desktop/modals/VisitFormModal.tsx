@@ -5,7 +5,10 @@ import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { cssInterop } from 'react-native-css-interop';
-import AddressFormSection from './AddressFormSection';
+import PetSelector from './shared/PetSelector';
+import SmartAddressInput from './shared/SmartAddressInput';
+import UniversalDatePicker from './shared/UniversalDatePicker';
+import RichTextInput from './shared/RichTextInput';
 
 // Apply cssInterop to components if not already done globally
 cssInterop(BlurView, { className: 'style' });
@@ -17,8 +20,13 @@ interface VisitFormModalProps {
     onSuccess?: () => void;
 }
 
-const VISIT_TYPES = ['Vet Check-up', 'Grooming', 'Training', 'Emergency'];
-const DURATIONS = ['30 minutes', '1 hour', '1 hour 30 minutes', '2 hours'];
+const VISIT_TYPES = ['Routine Check-up', 'Emergency Visit', 'Vaccination', 'Specialist', 'Dental', 'Surgery', 'Lab Work', 'Other'];
+const URGENCY_LEVELS = [
+    { label: 'Routine', value: 'routine', color: '#10B981' },
+    { label: 'Urgent', value: 'urgent', color: '#FBBF24' },
+    { label: 'Emergency', value: 'emergency', color: '#EF4444' },
+];
+const COMMON_SYMPTOMS = ['Vomiting', 'Diarrhea', 'Limping', 'Ear Infection', 'Eye Discharge', 'Fever', 'Loss of Appetite', 'Coughing'];
 
 export default function VisitFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VisitFormModalProps) {
     const { pets, loading: petsLoading } = usePets();
@@ -26,22 +34,28 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
     const [loading, setLoading] = useState(false);
     
     const [formData, setFormData] = useState({
-        visit_type: 'Vet Check-up',
-        duration: '30 minutes',
+        visit_type: 'Routine Check-up',
+        urgency: 'routine',
         date: new Date().toISOString().split('T')[0],
         time: '',
-        reminders_enabled: false,
         
         // Provider & Location
-        provider: '', // Vet Name / Clinic
+        provider: '', // Clinic Name
         address: '',
         city: '',
         state: '',
         zip: '',
         country: '',
-        phone: '',
         
+        reason: '',
+        symptoms: [] as string[],
+        diagnosis: '',
         notes: '',
+        
+        cost: '',
+        currency: 'EUR',
+        
+        follow_up_date: '',
     });
 
     useEffect(() => {
@@ -54,24 +68,67 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
     const resetForm = () => {
         setFormData({
-            visit_type: 'Vet Check-up',
-            duration: '30 minutes',
+            visit_type: 'Routine Check-up',
+            urgency: 'routine',
             date: new Date().toISOString().split('T')[0],
             time: '',
-            reminders_enabled: false,
             provider: '',
             address: '',
             city: '',
             state: '',
             zip: '',
             country: '',
-            phone: '',
+            reason: '',
+            symptoms: [],
+            diagnosis: '',
             notes: '',
+            cost: '',
+            currency: 'EUR',
+            follow_up_date: '',
         });
         if (!initialPetId && pets.length > 0) {
             setSelectedPetId(pets[0].id);
         }
     }
+
+    const toggleSymptom = (symptom: string) => {
+        if (formData.symptoms.includes(symptom)) {
+            setFormData({...formData, symptoms: formData.symptoms.filter(s => s !== symptom)});
+        } else {
+            setFormData({...formData, symptoms: [...formData.symptoms, symptom]});
+        }
+    };
+
+    const handleRepeatLast = async () => {
+        if (!selectedPetId) return;
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('medical_visits')
+                .select('*')
+                .eq('pet_id', selectedPetId)
+                .order('date', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (data) {
+                setFormData(prev => ({
+                    ...prev,
+                    provider: data.clinic_name || '',
+                    address: data.clinic_address || '',
+                    visit_type: data.visit_type || prev.visit_type,
+                    currency: data.currency || prev.currency,
+                }));
+                Alert.alert('Auto-Filled', 'Details from the last visit have been applied.');
+            } else {
+                Alert.alert('Info', 'No previous visits found for this pet.');
+            }
+        } catch (err) {
+            console.log('Error fetching last visit:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async () => {
         if (!selectedPetId) {
@@ -90,11 +147,17 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                 .insert({
                     pet_id: selectedPetId,
                     visit_type: formData.visit_type,
-                    visit_date: formData.date,
-                    veterinarian: formData.provider || null,
-                    clinic_name: formData.address || null, // Mapping address to clinic_name as per previous logic, or update schema ideally
-                    notes: `Time: ${formData.time}, Duration: ${formData.duration}, Phone: ${formData.phone}\n${formData.notes}`,
-                    reason: formData.visit_type, 
+                    urgency: formData.urgency,
+                    date: formData.date,
+                    reason: formData.reason || formData.visit_type,
+                    symptoms: formData.symptoms,
+                    diagnosis: formData.diagnosis,
+                    clinic_name: formData.provider,
+                    clinic_address: formData.address, // We might want to store full JSON address if schema allows
+                    notes: formData.notes,
+                    cost: formData.cost ? parseFloat(formData.cost) : null,
+                    currency: formData.currency,
+                    follow_up_date: formData.follow_up_date || null,
                 });
 
             if (error) throw error;
@@ -122,7 +185,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                         <TouchableOpacity onPress={onClose}>
                             <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-lg font-bold">Add a New Visit</Text>
+                        <Text className="text-white text-lg font-bold">Add New Visit</Text>
                         <TouchableOpacity onPress={handleSubmit} disabled={loading}>
                             <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
                         </TouchableOpacity>
@@ -132,47 +195,16 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                     <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
                         <View className="space-y-8 pb-8">
                             
-                            {/* Who is this for? */}
-                            <View>
-                                <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">WHO IS THIS FOR?</Text>
-                                <View className="flex-row flex-wrap gap-4">
-                                    {petsLoading ? (
-                                        <ActivityIndicator color="#0A84FF" />
-                                    ) : (
-                                        pets.map((pet) => (
-                                            <TouchableOpacity 
-                                                key={pet.id} 
-                                                onPress={() => setSelectedPetId(pet.id)}
-                                                className="items-center gap-2"
-                                            >
-                                                <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
-                                                    {pet.image_url ? (
-                                                        <Image source={{ uri: pet.image_url }} className="w-14 h-14 rounded-full" />
-                                                    ) : (
-                                                        <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
-                                                    )}
-                                                    {selectedPetId === pet.id && (
-                                                        <View className="absolute -bottom-1 -right-1 bg-[#22C55E] rounded-full p-0.5 border-2 border-[#1C1C1E]">
-                                                            <Ionicons name="checkmark" size={12} color="white" />
-                                                        </View>
-                                                    )}
-                                                </View>
-                                                <Text className={`text-sm font-medium ${selectedPetId === pet.id ? 'text-[#0A84FF]' : 'text-[#6B7280]'}`}>
-                                                    {pet.name}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))
-                                    )}
-                                    
-                                    {/* Add Pet Button */}
-                                    <TouchableOpacity className="items-center gap-2">
-                                        <View className="w-16 h-16 rounded-full items-center justify-center bg-[#2C2C2E] border border-dashed border-[#4B5563]">
-                                            <Ionicons name="add" size={32} color="#0A84FF" />
-                                        </View>
-                                        <Text className="text-sm font-medium text-[#0A84FF]">Add Pet</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                            
+                            {/* Smart Action: Repeat Last */}
+                            <TouchableOpacity 
+                                onPress={handleRepeatLast}
+                                className="flex-row items-center justify-center gap-2 bg-[#2C2C2E] py-3 rounded-xl border border-[#374151]"
+                            >
+                                <Ionicons name="reload" size={16} color="#0A84FF" />
+                                <Text className="text-[#0A84FF] font-medium">Repeat Last Visit Details</Text>
+                            </TouchableOpacity>
 
                             {/* Visit Details */}
                             <View>
@@ -182,7 +214,30 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 </View>
                                 
                                 <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    {/* Visit Type Pills */}
+                                    {/* Urgency Selector */}
+                                    <View className="flex-row gap-2 mb-2">
+                                        {URGENCY_LEVELS.map((level) => (
+                                            <TouchableOpacity
+                                                key={level.value}
+                                                onPress={() => setFormData({...formData, urgency: level.value})}
+                                                className={`flex-1 py-2 items-center rounded-lg border ${
+                                                    formData.urgency === level.value 
+                                                    ? `bg-[${level.color}]/20 border-[${level.color}]` 
+                                                    : 'border-[#374151]'
+                                                }`}
+                                                style={{ 
+                                                    backgroundColor: formData.urgency === level.value ? `${level.color}20` : 'transparent',
+                                                    borderColor: formData.urgency === level.value ? level.color : '#374151'
+                                                }}
+                                            >
+                                                <Text style={{ color: formData.urgency === level.value ? level.color : '#9CA3AF' }} className="font-bold text-xs uppercase">
+                                                    {level.label}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+
+                                    {/* Visit Type */}
                                     <View>
                                         <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Visit Type</Text>
                                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -204,59 +259,56 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         </ScrollView>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Duration</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                                            {DURATIONS.map(dur => (
-                                                <TouchableOpacity
-                                                    key={dur}
-                                                    onPress={() => setFormData({...formData, duration: dur})}
-                                                    className={`px-4 py-2 rounded-full mr-2 border ${
-                                                        formData.duration === dur 
-                                                        ? 'bg-[#0A84FF] border-[#0A84FF]' 
-                                                        : 'bg-transparent border-[#4B5563]'
-                                                    }`}
-                                                >
-                                                    <Text className={`text-sm font-medium ${formData.duration === dur ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {dur}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </ScrollView>
+                                    <UniversalDatePicker 
+                                        label="Date"
+                                        value={formData.date}
+                                        onChange={(text) => setFormData({...formData, date: text})}
+                                    />
+
+                                    <RichTextInput
+                                        label="Reason for Visit"
+                                        placeholder="e.g. Annual check-up, ear infection..."
+                                        value={formData.reason}
+                                        onChangeText={(text) => setFormData({...formData, reason: text})}
+                                        minHeight={60}
+                                    />
+                                </View>
+                            </View>
+
+                            {/* Symptoms */}
+                            <View>
+                                <View className="flex-row items-center gap-2 mb-4">
+                                    <Ionicons name="pulse" size={20} color="#EF4444" />
+                                    <Text className="text-white text-lg font-bold">Symptoms & Diagnosis</Text>
+                                </View>
+                                
+                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                    <View className="flex-row flex-wrap gap-2">
+                                        {COMMON_SYMPTOMS.map(symptom => (
+                                            <TouchableOpacity
+                                                key={symptom}
+                                                onPress={() => toggleSymptom(symptom)}
+                                                className={`px-3 py-1.5 rounded-lg border ${
+                                                    formData.symptoms.includes(symptom)
+                                                    ? 'bg-[#EF4444]/20 border-[#EF4444]'
+                                                    : 'border-[#374151]'
+                                                }`}
+                                            >
+                                                <Text className={`text-xs font-medium ${
+                                                    formData.symptoms.includes(symptom) ? 'text-[#EF4444]' : 'text-[#9CA3AF]'
+                                                }`}>
+                                                    {symptom}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Date</Text>
-                                            <View className="relative">
-                                                <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                                    placeholder="YYYY-MM-DD"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={formData.date}
-                                                    onChangeText={(text) => setFormData({ ...formData, date: text })}
-                                                />
-                                                <View className="absolute right-3 top-3.5 pointer-events-none">
-                                                    <Ionicons name="calendar" size={18} color="#6B7280" />
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Time</Text>
-                                            <View className="relative">
-                                                <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                                    placeholder="HH:MM"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={formData.time}
-                                                    onChangeText={(text) => setFormData({ ...formData, time: text })}
-                                                />
-                                                <View className="absolute right-3 top-3.5 pointer-events-none">
-                                                    <Ionicons name="time" size={18} color="#6B7280" />
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
+                                    <RichTextInput
+                                        label="Diagnosis / Assessment"
+                                        placeholder="What did the vet say?"
+                                        value={formData.diagnosis}
+                                        onChangeText={(text) => setFormData({...formData, diagnosis: text})}
+                                    />
                                 </View>
                             </View>
 
@@ -268,10 +320,9 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 </View>
                                 
                                 <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <AddressFormSection
-                                        isDark={true}
-                                        locationName={formData.provider}
-                                        setLocationName={(text) => setFormData({...formData, provider: text})}
+                                    <SmartAddressInput
+                                        providerName={formData.provider}
+                                        setProviderName={(text) => setFormData({...formData, provider: text})}
                                         address={formData.address}
                                         setAddress={(text) => setFormData({...formData, address: text})}
                                         city={formData.city}
@@ -283,50 +334,35 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         country={formData.country}
                                         setCountry={(text) => setFormData({...formData, country: text})}
                                     />
-
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Phone Number</Text>
-                                        <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
-                                            placeholder="(123) 456-7890"
-                                            placeholderTextColor="#4B5563"
-                                            keyboardType="phone-pad"
-                                            value={formData.phone}
-                                            onChangeText={(text) => setFormData({ ...formData, phone: text })}
-                                        />
-                                    </View>
                                 </View>
                             </View>
 
-                            {/* Notes & Attachments */}
+                            {/* Cost */}
                             <View>
-                                <View className="flex-row items-center justify-between mb-4">
-                                    <View className="flex-row items-center gap-2">
-                                        <Ionicons name="document-text" size={20} color="#F59E0B" />
-                                        <Text className="text-white text-lg font-bold">Notes & Attachments</Text>
-                                    </View>
+                                <View className="flex-row items-center gap-2 mb-4">
+                                    <Ionicons name="cash" size={20} color="#10B981" />
+                                    <Text className="text-white text-lg font-bold">Cost</Text>
                                 </View>
-
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Notes</Text>
+                                <View className="bg-[#2C2C2E] rounded-2xl p-4 flex-row gap-4">
+                                    <View className="flex-1">
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Total Cost</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl p-4 text-white text-base min-h-[100px]"
-                                            placeholder="Add any important notes about the visit..."
+                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            placeholder="0.00"
                                             placeholderTextColor="#4B5563"
-                                            multiline
-                                            textAlignVertical="top"
-                                            value={formData.notes}
-                                            onChangeText={(text) => setFormData({ ...formData, notes: text })}
+                                            keyboardType="numeric"
+                                            value={formData.cost}
+                                            onChangeText={(text) => setFormData({...formData, cost: text})}
                                         />
                                     </View>
-
-                                    {/* Attach Record Image */}
-                                    <TouchableOpacity className="border border-dashed border-[#0A84FF] bg-[#0A84FF]/10 rounded-xl p-6 items-center justify-center gap-2">
-                                        <Ionicons name="cloud-upload" size={24} color="#0A84FF" />
-                                        <Text className="text-white font-bold text-sm">Click to upload <Text className="text-[#9CA3AF] font-normal">or drag and drop</Text></Text>
-                                        <Text className="text-[#9CA3AF] text-xs">PDF, PNG, JPG (MAX. 10MB)</Text>
-                                    </TouchableOpacity>
+                                    <View className="flex-1">
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                        <TextInput
+                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            value={formData.currency}
+                                            onChangeText={(text) => setFormData({...formData, currency: text})}
+                                        />
+                                    </View>
                                 </View>
                             </View>
 

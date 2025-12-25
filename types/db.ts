@@ -267,36 +267,98 @@ export interface Database {
                     id: string
                     pet_id: string
                     date: string
+                    visit_type: string // Added
+                    urgency: string | null // Added
                     reason: string
+                    symptoms: string[] | null // Added
+                    diagnosis: string | null // Added
                     clinic_name: string | null
+                    clinic_address: string | null // Added
                     vet_name: string | null
                     notes: string | null
                     cost: number | null
                     currency: string | null
+                    follow_up_date: string | null // Added
                     created_at: string
                 }
                 Insert: {
                     id?: string
                     pet_id: string
                     date: string
+                    visit_type?: string // Added
+                    urgency?: string | null // Added
                     reason: string
+                    symptoms?: string[] | null // Added
+                    diagnosis?: string | null // Added
                     clinic_name?: string | null
+                    clinic_address?: string | null // Added
                     vet_name?: string | null
                     notes?: string | null
                     cost?: number | null
                     currency?: string | null
+                    follow_up_date?: string | null // Added
                     created_at?: string
                 }
                 Update: {
                     id?: string
                     pet_id?: string
                     date?: string
+                    visit_type?: string // Added
+                    urgency?: string | null // Added
                     reason?: string
+                    symptoms?: string[] | null // Added
+                    diagnosis?: string | null // Added
                     clinic_name?: string | null
+                    clinic_address?: string | null // Added
                     vet_name?: string | null
                     notes?: string | null
                     cost?: number | null
                     currency?: string | null
+                    follow_up_date?: string | null // Added
+                    created_at?: string
+                }
+            }
+            health_metrics: { // New Table
+                Row: {
+                    id: string
+                    pet_id: string
+                    date: string
+                    weight: number | null
+                    weight_unit: string | null
+                    temperature: number | null
+                    temperature_unit: string | null
+                    heart_rate: number | null
+                    respiratory_rate: number | null
+                    body_condition_score: number | null
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    date: string
+                    weight?: number | null
+                    weight_unit?: string | null
+                    temperature?: number | null
+                    temperature_unit?: string | null
+                    heart_rate?: number | null
+                    respiratory_rate?: number | null
+                    body_condition_score?: number | null
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    date?: string
+                    weight?: number | null
+                    weight_unit?: string | null
+                    temperature?: number | null
+                    temperature_unit?: string | null
+                    heart_rate?: number | null
+                    respiratory_rate?: number | null
+                    body_condition_score?: number | null
+                    notes?: string | null
                     created_at?: string
                 }
             }

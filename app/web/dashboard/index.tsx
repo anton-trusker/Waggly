@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,11 +9,45 @@ import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPa
 import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
 import { usePets } from '@/hooks/usePets';
 
+// New Modal Imports
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
+import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
+
 export default function DashboardPage() {
     const router = useRouter();
     const { pets, loading } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 1024; // Treat tablet as mobile/stacked layout for now or define stricter breakpoint
+
+    // Modal States
+    const [visitOpen, setVisitOpen] = useState(false);
+    const [vaccinationOpen, setVaccinationOpen] = useState(false);
+    const [treatmentOpen, setTreatmentOpen] = useState(false);
+    const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
+
+    const handleQuickAction = (actionId: string) => {
+        switch (actionId) {
+            case 'visit':
+                setVisitOpen(true);
+                break;
+            case 'vaccine':
+                setVaccinationOpen(true);
+                break;
+            case 'meds':
+                setTreatmentOpen(true);
+                break;
+            case 'weight':
+                setHealthMetricsOpen(true);
+                break;
+            case 'photo':
+                router.push('/web/pets/photos/add' as any);
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -75,7 +109,7 @@ export default function DashboardPage() {
                     </View>
 
                     {/* Quick Actions */}
-                    <QuickActionsGrid />
+                    <QuickActionsGrid onActionPress={handleQuickAction} />
 
                     {/* Upcoming Care */}
                     <UpcomingCarePanel />
@@ -92,6 +126,15 @@ export default function DashboardPage() {
             </View>
             {/* Add padding bottom for mobile nav */}
             {isMobile && <View style={{ height: 80 }} />}
+
+            {/* Modals */}
+            <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
+            <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
+            <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
+            <HealthMetricsModal 
+                visible={healthMetricsOpen} 
+                onClose={() => setHealthMetricsOpen(false)} 
+            />
         </ScrollView>
     );
 }
