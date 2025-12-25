@@ -4,7 +4,7 @@ import { usePublicShare, PublicShare } from '@/hooks/usePublicShare';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import * as Clipboard from 'expo-clipboard';
-import { format } from 'date-fns';
+import { formatDateFriendly } from '@/utils/dateUtils';
 
 interface ActiveLinksListProps {
   petId: string;
@@ -38,9 +38,9 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
       "Are you sure you want to revoke this link? It will no longer be accessible.",
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Revoke", 
-          style: "destructive", 
+        {
+          text: "Revoke",
+          style: "destructive",
           onPress: async () => {
             await revokeLink(id);
             fetchLinks();
@@ -60,18 +60,18 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
           {item.settings.preset === 'FULL' ? 'Full Profile' : 'Basic Info'}
         </Text>
         <Text style={styles.date}>
-          Created {format(new Date(item.created_at), 'MMM d, yyyy')}
+          Created {formatDateFriendly(new Date(item.created_at))}
         </Text>
       </View>
       <View style={styles.actionsContainer}>
-        <Pressable 
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} 
+        <Pressable
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           onPress={() => handleCopy(item.token)}
         >
           <IconSymbol name="content-copy" size={20} color={designSystem.colors.text.secondary} />
         </Pressable>
-        <Pressable 
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} 
+        <Pressable
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           onPress={() => handleRevoke(item.id)}
         >
           <IconSymbol name="delete-outline" size={20} color={designSystem.colors.status.error[500]} />

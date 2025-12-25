@@ -255,3 +255,20 @@ export const formatAge = (birthDate: Date): string => {
     return `${yearStr} ${monthStr}`;
   }
 };
+
+/**
+ * Formats a Date to a friendly string like "Jan 5, 2024"
+ * This is a native alternative to date-fns format() to avoid bundling issues
+ */
+export const formatDateFriendly = (date: Date | string, options?: Intl.DateTimeFormatOptions): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return '';
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  };
+
+  return d.toLocaleDateString('en-US', options || defaultOptions);
+};

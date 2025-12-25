@@ -6,10 +6,9 @@ import { colors } from '@/styles/commonStyles';
 import { designSystem } from '@/constants/designSystem';
 import { PetImage } from '@/components/ui/PetImage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { formatAge } from '@/utils/dateUtils';
+import { formatAge, formatDateFriendly } from '@/utils/dateUtils';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PublicPetProfile } from '@/hooks/usePublicShare';
-import { format } from 'date-fns';
 
 export default function PublicShareScreen() {
   const { token } = useLocalSearchParams();
@@ -28,7 +27,7 @@ export default function PublicShareScreen() {
       const { data: result, error } = await supabase.rpc('get_public_pet_details', { share_token: token });
       if (error) throw error;
       if (result && result.error) throw new Error(result.error);
-      
+
       setData(result as PublicPetProfile);
     } catch (err: any) {
       setError(err.message || 'Failed to load pet details');
@@ -50,7 +49,7 @@ export default function PublicShareScreen() {
       <View style={styles.center}>
         <Text style={styles.errorText}>{error || 'Pet not found or link expired'}</Text>
         <TouchableOpacity style={styles.homeBtn} onPress={() => router.replace('/')}>
-            <Text style={styles.homeBtnText}>Go Home</Text>
+          <Text style={styles.homeBtnText}>Go Home</Text>
         </TouchableOpacity>
       </View>
     );
@@ -83,84 +82,84 @@ export default function PublicShareScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-       <View style={styles.card}>
-          <LinearGradient
-             colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
-             style={styles.headerGradient}
-          >
-             <View style={styles.imageContainer}>
-                <PetImage
-                    source={imageUrl ? { uri: imageUrl } : undefined}
-                    size={120}
-                    borderRadius={60}
-                    fallbackEmoji={pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐈' : '🐾'}
-                />
-             </View>
-          </LinearGradient>
-          
-          <View style={styles.infoContainer}>
-             <Text style={styles.petName}>{pet.name}</Text>
-             <Text style={styles.petSubtitle}>{pet.breed || pet.species} • {pet.date_of_birth ? formatAge(new Date(pet.date_of_birth)) : 'Age unknown'}</Text>
-             
-             <View style={styles.divider} />
-             
-             <View style={styles.row}>
-                 <View style={styles.stat}>
-                     <Text style={styles.statLabel}>Gender</Text>
-                     <Text style={styles.statValue}>{pet.gender || '—'}</Text>
-                 </View>
-                 <View style={styles.stat}>
-                     <Text style={styles.statLabel}>Weight</Text>
-                     <Text style={styles.statValue}>{pet.weight ? `${pet.weight} kg` : '—'}</Text>
-                 </View>
-                 {pet.chip_id && (
-                    <View style={styles.stat}>
-                        <Text style={styles.statLabel}>Microchip</Text>
-                        <Text style={styles.statValue}>{pet.chip_id}</Text>
-                    </View>
-                 )}
-             </View>
-
-             {isFull && details && (
-                <View style={styles.detailsContainer}>
-                    {details.vaccinations && details.vaccinations.length > 0 && renderSection('Vaccinations', 'health-and-safety', (
-                        <View style={styles.list}>
-                            {details.vaccinations.map((v, i) => (
-                                <View key={i} style={styles.listItem}>
-                                    <Text style={styles.itemTitle}>{v.vaccine}</Text>
-                                    <Text style={styles.itemDate}>Given: {format(new Date(v.date_administered), 'MMM d, yyyy')}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    ))}
-
-                    {details.medications && details.medications.length > 0 && renderSection('Medications', 'medication', (
-                        <View style={styles.list}>
-                            {details.medications.map((m, i) => (
-                                <View key={i} style={styles.listItem}>
-                                    <Text style={styles.itemTitle}>{m.name}</Text>
-                                    <Text style={styles.itemDate}>{m.dosage} • {m.frequency}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    ))}
-                </View>
-             )}
-
-             <View style={styles.ownerSection}>
-                 <Text style={styles.ownerLabel}>Shared by Owner</Text>
-                 <Text style={styles.ownerName}>{owner.name}</Text>
-             </View>
-
-             <TouchableOpacity 
-                style={styles.installBtn}
-                onPress={() => Linking.openURL('https://mypawzly.app')}
-             >
-                <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="#fff" />
-                <Text style={styles.installBtnText}>Get Pawzly App</Text>
-             </TouchableOpacity>
+      <View style={styles.card}>
+        <LinearGradient
+          colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
+          style={styles.headerGradient}
+        >
+          <View style={styles.imageContainer}>
+            <PetImage
+              source={imageUrl ? { uri: imageUrl } : undefined}
+              size={120}
+              borderRadius={60}
+              fallbackEmoji={pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐈' : '🐾'}
+            />
           </View>
-       </View>
+        </LinearGradient>
+
+        <View style={styles.infoContainer}>
+          <Text style={styles.petName}>{pet.name}</Text>
+          <Text style={styles.petSubtitle}>{pet.breed || pet.species} • {pet.date_of_birth ? formatAge(new Date(pet.date_of_birth)) : 'Age unknown'}</Text>
+
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <View style={styles.stat}>
+              <Text style={styles.statLabel}>Gender</Text>
+              <Text style={styles.statValue}>{pet.gender || '—'}</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statLabel}>Weight</Text>
+              <Text style={styles.statValue}>{pet.weight ? `${pet.weight} kg` : '—'}</Text>
+            </View>
+            {pet.chip_id && (
+              <View style={styles.stat}>
+                <Text style={styles.statLabel}>Microchip</Text>
+                <Text style={styles.statValue}>{pet.chip_id}</Text>
+              </View>
+            )}
+          </View>
+
+          {isFull && details && (
+            <View style={styles.detailsContainer}>
+              {details.vaccinations && details.vaccinations.length > 0 && renderSection('Vaccinations', 'health-and-safety', (
+                <View style={styles.list}>
+                  {details.vaccinations.map((v, i) => (
+                    <View key={i} style={styles.listItem}>
+                      <Text style={styles.itemTitle}>{v.vaccine}</Text>
+                      <Text style={styles.itemDate}>Given: {formatDateFriendly(new Date(v.date_administered))}</Text>
+                    </View>
+                  ))}
+                </View>
+              ))}
+
+              {details.medications && details.medications.length > 0 && renderSection('Medications', 'medication', (
+                <View style={styles.list}>
+                  {details.medications.map((m, i) => (
+                    <View key={i} style={styles.listItem}>
+                      <Text style={styles.itemTitle}>{m.name}</Text>
+                      <Text style={styles.itemDate}>{m.dosage} • {m.frequency}</Text>
+                    </View>
+                  ))}
+                </View>
+              ))}
+            </View>
+          )}
+
+          <View style={styles.ownerSection}>
+            <Text style={styles.ownerLabel}>Shared by Owner</Text>
+            <Text style={styles.ownerName}>{owner.name}</Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.installBtn}
+            onPress={() => Linking.openURL('https://mypawzly.app')}
+          >
+            <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="#fff" />
+            <Text style={styles.installBtnText}>Get Pawzly App</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
     height: 140,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 60, 
+    marginBottom: 60,
   },
   imageContainer: {
     position: 'absolute',
