@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Pet, Vaccination, Treatment } from '@/types';

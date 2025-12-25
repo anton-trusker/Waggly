@@ -11,6 +11,8 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
+const IS_IOS = typeof Platform !== 'undefined' && Platform.OS === 'ios';
+
 // Calculate image size for 4 columns with proper spacing
 const IMAGE_SIZE = (screenWidth - 48) / 4; // 48 = 16*2 padding + 16 spacing (4*4)
 
@@ -358,7 +360,7 @@ const styles = StyleSheet.create({
   },
   modalDeleteButton: {
     position: 'absolute',
-    bottom: 50,
+    bottom: IS_IOS ? 50 : 30,
     backgroundColor: colors.error,
     paddingHorizontal: 16,
     paddingVertical: 10,
