@@ -1,3 +1,4 @@
+import "@/lib/i18n";
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -10,8 +11,10 @@ import {
   DarkTheme,
   DefaultTheme,
   Theme,
-  ThemeProvider,
+  Theme,
+  ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
+import { ThemeProvider as ThemeContextProvider } from "@/contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -71,19 +74,24 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" animated />
-      <ThemeProvider
-        value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
-      >
-        <AuthProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-            <SystemBars style="auto" />
-          </GestureHandlerRootView>
-        </AuthProvider>
-      </ThemeProvider>
+      <>
+        <StatusBar style="auto" animated />
+        <ThemeContextProvider>
+          <NavigationThemeProvider
+            value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
+          >
+            <AuthProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen name="(tabs)" />
+                </Stack>
+                <SystemBars style="auto" />
+              </GestureHandlerRootView>
+            </AuthProvider>
+          </NavigationThemeProvider>
+        </ThemeContextProvider>
+      </>
     </>
   );
 }

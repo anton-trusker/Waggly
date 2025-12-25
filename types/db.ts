@@ -64,6 +64,41 @@ export interface Database {
           place_id?: string | null;
         };
       };
+      co_owners: {
+        Row: {
+          id: string;
+          created_at: string | null;
+          updated_at: string | null;
+          pet_id: string;
+          owner_id: string;
+          co_owner_id: string | null;
+          co_owner_email: string;
+          status: string;
+          invite_token: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+          pet_id: string;
+          owner_id: string; // The primary owner who sent the invite
+          co_owner_id?: string | null; // Null until accepted
+          co_owner_email: string;
+          status?: string; // default 'pending'
+          invite_token?: string | null;
+        };
+        Update: {
+          id?: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+          pet_id?: string;
+          owner_id?: string;
+          co_owner_id?: string | null;
+          co_owner_email?: string;
+          status?: string;
+          invite_token?: string | null;
+        };
+      };
       pets: {
         Row: {
           id: string;
