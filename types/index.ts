@@ -11,6 +11,7 @@ export type Pet = Database['public']['Tables']['pets']['Row'] & {
   registry_provider?: string | null;
   blood_type?: string;
   address_json?: any; // JSONB
+  role?: 'owner' | 'co-owner' | 'viewer';
 };
 export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'] & {
   type?: 'clinic' | 'emergency' | 'specialist';
@@ -72,3 +73,7 @@ export type CoOwner = {
 
 export type VaccinationStatus = 'up-to-date' | 'due-soon' | 'overdue';
 export type TreatmentStatus = 'active' | 'completed' | 'upcoming';
+
+export type Medication = Database['public']['Tables']['medications']['Row'];
+export type SharedLink = Database['public']['Tables']['shared_links']['Row'];
+export type ActivityLog = Database['public']['Tables']['activity_logs']['Row'];

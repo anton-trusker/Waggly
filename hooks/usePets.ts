@@ -16,16 +16,47 @@ export function usePets() {
     }
 
     try {
-      const { data, error } = await supabase
+      // 1. Fetch owned pets
+      const { data: ownedPets, error: ownedError } = await supabase
         .from('pets')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching pets:', error);
-      } else {
-        setPets(data || []);
-      }
+      if (ownedError) throw ownedError;
+
+      // 2. Fetch co-owned pets
+      const { data: coOwnedData, error: coOwnedError } = await supabase
+        .from('co_owners')
+        .select(`
+          role,
+          permissions,
+          pets:pets(*)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'accepted'); // Only accepted invites
+
+      if (coOwnedError) throw coOwnedError;
+
+      // 3. Merge and format
+      const myPets = (ownedPets || []).map(p => ({ ...p, role: 'owner' })) as Pet[];
+
+      const sharedPets = (coOwnedData || [])
+        .filter((item: any) => item.pets) // Ensure pet data exists
+        .map((item: any) => {
+          const petData = item.pets; // item.pets is the Row object
+          return {
+            ...petData,
+            role: item.role || 'viewer', // 'co-owner' or 'viewer'
+            permissions: item.permissions
+          };
+        }) as Pet[];
+
+      // Combine and remove duplicates (safety check)
+      const allPets = [...myPets, ...sharedPets];
+      // Optional: Logic to dedup if you invite yourself (edge case)
+
+      setPets(allPets);
     } catch (error) {
       console.error('Error fetching pets:', error);
     } finally {

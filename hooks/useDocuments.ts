@@ -5,11 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import * as FileSystem from 'expo-file-system/legacy';
 import { decode } from 'base64-arraybuffer';
 
-export function useDocuments(petId: string) {
+export function useDocuments(petId?: string) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const isMountedRef = useRef(true);
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -18,17 +19,31 @@ export function useDocuments(petId: string) {
   }, []);
 
   const fetchDocuments = useCallback(async () => {
-    if (!user || !petId) return;
+    if (!user) return;
     if (isMountedRef.current) setLoading(true);
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('documents')
-        .select('*')
-        .eq('pet_id', petId)
+        .select('*, pets:pet_id(name)') // Fetch pet name via foreign key
         .order('created_at', { ascending: false });
 
+      if (petId) {
+        query = query.eq('pet_id', petId);
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
-      if (isMountedRef.current) setDocuments(data || []);
+
+      // Transform data to include petName flatly if needed, or just keep as is
+      // TypeScript might need assertion or manual type fix since 'pets' is a joined property
+      const formattedData = (data || []).map((doc: any) => ({
+        ...doc,
+        petName: doc.pets?.name || 'Unknown Pet',
+        uploadedAt: new Date(doc.created_at).toLocaleDateString() // Simple formatting
+      }));
+
+      if (isMountedRef.current) setDocuments(formattedData);
     } catch (error) {
       console.error('Error fetching documents:', error);
     } finally {
@@ -36,8 +51,13 @@ export function useDocuments(petId: string) {
     }
   }, [user, petId]);
 
-  const uploadDocument = async (uri: string, type: Document['type'], fileName: string, metadata?: any, mimeType?: string) => {
+  const uploadDocument = async (uri: string, type: Document['type'], fileName: string, metadata?: any, mimeType?: string, targetPetId?: string) => {
     if (!user) return { error: { message: 'No user logged in' } };
+
+    // Use targetPetId if provided, otherwise fail if hook was initialized without petId
+    const finalPetId = targetPetId || petId;
+    if (!finalPetId) return { error: { message: 'Pet ID is required for upload' } };
+
     if (isMountedRef.current) setLoading(true);
 
     try {
@@ -50,7 +70,7 @@ export function useDocuments(petId: string) {
       // Path: userId/petId/timestamp-filename
       const timestamp = new Date().getTime();
       const cleanFileName = fileName.replace(/[^a-zA-Z0-9.]/g, '_');
-      const filePath = `${user.id}/${petId}/${timestamp}-${cleanFileName}`;
+      const filePath = `${user.id}/${finalPetId}/${timestamp}-${cleanFileName}`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('pet-documents')
@@ -69,7 +89,7 @@ export function useDocuments(petId: string) {
       const { data, error: dbError } = await (supabase
         .from('documents') as any)
         .insert({
-          pet_id: petId,
+          pet_id: finalPetId,
           type,
           file_url: publicUrl,
           file_name: fileName,

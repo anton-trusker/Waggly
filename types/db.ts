@@ -1,294 +1,701 @@
-// Generated types for Supabase Database
-
 export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: Json | undefined }
+    | Json[]
 
 export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: {
-          id: string;
-          user_id: string;
-          first_name: string | null;
-          last_name: string | null;
-          country_code: string | null;
-          language_code: string | null;
-          date_of_birth: string | null;
-          photo_url: string | null;
-          notification_prefs: Json | null;
-          created_at: string | null;
-          updated_at: string | null;
-          address: string | null;
-          location_lat: number | null;
-          location_lng: number | null;
-          place_id: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          first_name?: string | null;
-          last_name?: string | null;
-          country_code?: string | null;
-          language_code?: string | null;
-          date_of_birth?: string | null;
-          photo_url?: string | null;
-          notification_prefs?: Json | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-          address?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          first_name?: string | null;
-          last_name?: string | null;
-          country_code?: string | null;
-          language_code?: string | null;
-          date_of_birth?: string | null;
-          photo_url?: string | null;
-          notification_prefs?: Json | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-          address?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-        };
-      };
-      co_owners: {
-        Row: {
-          id: string;
-          created_at: string | null;
-          updated_at: string | null;
-          pet_id: string;
-          owner_id: string;
-          co_owner_id: string | null;
-          co_owner_email: string;
-          status: string;
-          invite_token: string | null;
-        };
-        Insert: {
-          id?: string;
-          created_at?: string | null;
-          updated_at?: string | null;
-          pet_id: string;
-          owner_id: string; // The primary owner who sent the invite
-          co_owner_id?: string | null; // Null until accepted
-          co_owner_email: string;
-          status?: string; // default 'pending'
-          invite_token?: string | null;
-        };
-        Update: {
-          id?: string;
-          created_at?: string | null;
-          updated_at?: string | null;
-          pet_id?: string;
-          owner_id?: string;
-          co_owner_id?: string | null;
-          co_owner_email?: string;
-          status?: string;
-          invite_token?: string | null;
-        };
-      };
-      pets: {
-        Row: {
-          id: string;
-          created_at: string | null;
-          name: string;
-          species: string;
-          breed: string | null;
-          date_of_birth: string | null;
-          weight: number | null;
-          weight_unit: string | null;
-          profile_id: string;
-          photo_url: string | null;
-          gender: string | null;
-          is_spayed_neutered: boolean | null;
-          microchip_number: string | null;
-          notes: string | null;
-          size: string | null;
-          color: string | null;
-          registration_id: string | null;
-          photo_gallery: string[] | null;
-          age_approximate: string | null;
-        };
-        Insert: {
-          id?: string;
-          created_at?: string | null;
-          name: string;
-          species: string;
-          breed?: string | null;
-          date_of_birth?: string | null;
-          weight?: number | null;
-          weight_unit?: string | null;
-          profile_id: string;
-          photo_url?: string | null;
-          gender?: string | null;
-          is_spayed_neutered?: boolean | null;
-          microchip_number?: string | null;
-          notes?: string | null;
-          size?: string | null;
-          color?: string | null;
-          registration_id?: string | null;
-          photo_gallery?: string[] | null;
-          age_approximate?: string | null;
-        };
-        Update: {
-          id?: string;
-          created_at?: string | null;
-          name?: string;
-          species?: string;
-          breed?: string | null;
-          date_of_birth?: string | null;
-          weight?: number | null;
-          weight_unit?: string | null;
-          profile_id?: string;
-          photo_url?: string | null;
-          gender?: string | null;
-          is_spayed_neutered?: boolean | null;
-          microchip_number?: string | null;
-          notes?: string | null;
-          size?: string | null;
-          color?: string | null;
-          registration_id?: string | null;
-          photo_gallery?: string[] | null;
-          age_approximate?: string | null;
-        };
-      };
-      events: {
-        Row: {
-          id: string;
-          user_id: string;
-          pet_id: string | null;
-          title: string;
-          description: string | null;
-          start_time: string;
-          end_time: string | null;
-          type: string | null;
-          location: string | null;
-          location_lat: number | null;
-          location_lng: number | null;
-          place_id: string | null;
-          created_at: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          pet_id?: string | null;
-          title: string;
-          description?: string | null;
-          start_time: string;
-          end_time?: string | null;
-          type?: string | null;
-          location?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          pet_id?: string | null;
-          title?: string;
-          description?: string | null;
-          start_time?: string;
-          end_time?: string | null;
-          type?: string | null;
-          location?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-      };
-      vaccinations: {
-        Row: {
-          id: string;
-          pet_id: string;
-          vaccine_name: string;
-          category: string;
-          date_given: string;
-          next_due_date: string | null;
-          dose_number: number | null;
-          administering_vet: string | null;
-          notes: string | null;
-          location: string | null;
-          location_lat: number | null;
-          location_lng: number | null;
-          place_id: string | null;
-          created_at: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          pet_id: string;
-          vaccine_name: string;
-          category?: string;
-          date_given: string;
-          next_due_date?: string | null;
-          dose_number?: number | null;
-          administering_vet?: string | null;
-          notes?: string | null;
-          location?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          pet_id?: string;
-          vaccine_name?: string;
-          category?: string;
-          date_given?: string;
-          next_due_date?: string | null;
-          dose_number?: number | null;
-          administering_vet?: string | null;
-          notes?: string | null;
-          location?: string | null;
-          location_lat?: number | null;
-          location_lng?: number | null;
-          place_id?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-      };
-      medical_history: { Row: any; Insert: any; Update: any; };
-      food: { Row: any; Insert: any; Update: any; };
-      treatments: { Row: any; Insert: any; Update: any; };
-      weight_entries: { Row: any; Insert: any; Update: any; };
-      notifications: { Row: any; Insert: any; Update: any; };
-      documents: { Row: any; Insert: any; Update: any; };
-      medical_visits: { Row: any; Insert: any; Update: any; };
-      veterinarians: { Row: any; Insert: any; Update: any; };
-      allergies: { Row: any; Insert: any; Update: any; };
-      behavior_tags: { Row: any; Insert: any; Update: any; };
-      reference_vaccinations: { Row: any; Insert: any; Update: any; };
-      reference_treatments: { Row: any; Insert: any; Update: any; };
-      reference_breeds: { Row: any; Insert: any; Update: any; };
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-  };
+    public: {
+        Tables: {
+            activity_logs: {
+                Row: {
+                    id: string
+                    profile_id: string
+                    pet_id: string | null
+                    activity_type: 'weight' | 'visit' | 'vaccination' | 'treatment' | 'document' | 'photo' | 'medication'
+                    activity_data: Json | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    profile_id: string
+                    pet_id?: string | null
+                    activity_type: string
+                    activity_data?: Json | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    profile_id?: string
+                    pet_id?: string | null
+                    activity_type?: string
+                    activity_data?: Json | null
+                    created_at?: string
+                }
+            }
+            allergies: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    name: string
+                    severity: string | null
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    name: string
+                    severity?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    name?: string
+                    severity?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+            }
+            behavior_tags: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    tag: string
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    tag: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    tag?: string
+                    created_at?: string
+                }
+            }
+            co_owners: {
+                Row: {
+                    id: string
+                    main_owner_id: string
+                    co_owner_id: string | null
+                    co_owner_email: string
+                    status: string
+                    role: string
+                    permissions: Json | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    main_owner_id: string
+                    co_owner_id?: string | null
+                    co_owner_email: string
+                    status: string
+                    role?: string
+                    permissions?: Json | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    main_owner_id?: string
+                    co_owner_id?: string | null
+                    co_owner_email?: string
+                    status?: string
+                    role?: string
+                    permissions?: Json | null
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            documents: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    name: string
+                    type: string
+                    url: string
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    name: string
+                    type: string
+                    url: string
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    name?: string
+                    type?: string
+                    url?: string
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            events: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    title: string
+                    description: string | null
+                    event_type: string
+                    start_date: string
+                    end_date: string | null
+                    is_all_day: boolean
+                    location: string | null
+                    location_place_id: string | null
+                    cost: number | null
+                    currency: string | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    title: string
+                    description?: string | null
+                    event_type: string
+                    start_date: string
+                    end_date?: string | null
+                    is_all_day?: boolean
+                    location?: string | null
+                    location_place_id?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    title?: string
+                    description?: string | null
+                    event_type?: string
+                    start_date?: string
+                    end_date?: string | null
+                    is_all_day?: boolean
+                    location?: string | null
+                    location_place_id?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            food: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    name: string
+                    brand: string | null
+                    type: string | null
+                    amount: string | null
+                    frequency: string | null
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    name: string
+                    brand?: string | null
+                    type?: string | null
+                    amount?: string | null
+                    frequency?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    name?: string
+                    brand?: string | null
+                    type?: string | null
+                    amount?: string | null
+                    frequency?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+            }
+            medical_history: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    condition: string
+                    diagnosed_date: string | null
+                    status: string
+                    treatment: string | null
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    condition: string
+                    diagnosed_date?: string | null
+                    status: string
+                    treatment?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    condition?: string
+                    diagnosed_date?: string | null
+                    status?: string
+                    treatment?: string | null
+                    notes?: string | null
+                    created_at?: string
+                }
+            }
+            medical_visits: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    date: string
+                    reason: string
+                    clinic_name: string | null
+                    vet_name: string | null
+                    notes: string | null
+                    cost: number | null
+                    currency: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    date: string
+                    reason: string
+                    clinic_name?: string | null
+                    vet_name?: string | null
+                    notes?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    date?: string
+                    reason?: string
+                    clinic_name?: string | null
+                    vet_name?: string | null
+                    notes?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                }
+            }
+            medications: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    name: string
+                    dosage_value: number | null
+                    dosage_unit: string | null
+                    frequency: string | null
+                    start_date: string | null
+                    end_date: string | null
+                    reminders_enabled: boolean
+                    cost: number | null
+                    currency: string | null
+                    notes: string | null
+                    attachments: string[] | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    name: string
+                    dosage_value?: number | null
+                    dosage_unit?: string | null
+                    frequency?: string | null
+                    start_date?: string | null
+                    end_date?: string | null
+                    reminders_enabled?: boolean
+                    cost?: number | null
+                    currency?: string | null
+                    notes?: string | null
+                    attachments?: string[] | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    name?: string
+                    dosage_value?: number | null
+                    dosage_unit?: string | null
+                    frequency?: string | null
+                    start_date?: string | null
+                    end_date?: string | null
+                    reminders_enabled?: boolean
+                    cost?: number | null
+                    currency?: string | null
+                    notes?: string | null
+                    attachments?: string[] | null
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            notifications: {
+                Row: {
+                    id: string
+                    user_id: string
+                    title: string
+                    message: string
+                    type: string
+                    read: boolean
+                    data: Json | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id: string
+                    title: string
+                    message: string
+                    type: string
+                    read?: boolean
+                    data?: Json | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    title?: string
+                    message?: string
+                    type?: string
+                    read?: boolean
+                    data?: Json | null
+                    created_at?: string
+                }
+            }
+            pets: {
+                Row: {
+                    id: string
+                    owner_id: string
+                    name: string
+                    species: string
+                    breed: string | null
+                    birth_date: string | null
+                    gender: string | null
+                    weight: number | null
+                    weight_unit: string | null
+                    color: string | null
+                    chip_number: string | null
+                    photo_url: string | null
+                    registry_provider: string | null
+                    blood_type: string | null
+                    address_json: Json | null
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id?: string
+                    owner_id: string
+                    name: string
+                    species: string
+                    breed?: string | null
+                    birth_date?: string | null
+                    gender?: string | null
+                    weight?: number | null
+                    weight_unit?: string | null
+                    color?: string | null
+                    chip_number?: string | null
+                    photo_url?: string | null
+                    registry_provider?: string | null
+                    blood_type?: string | null
+                    address_json?: Json | null
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    owner_id?: string
+                    name?: string
+                    species?: string
+                    breed?: string | null
+                    birth_date?: string | null
+                    gender?: string | null
+                    weight?: number | null
+                    weight_unit?: string | null
+                    color?: string | null
+                    chip_number?: string | null
+                    photo_url?: string | null
+                    registry_provider?: string | null
+                    blood_type?: string | null
+                    address_json?: Json | null
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            profiles: {
+                Row: {
+                    id: string
+                    email: string
+                    first_name: string | null
+                    last_name: string | null
+                    photo_url: string | null
+                    country: string | null
+                    date_of_birth: string | null
+                    onboarding_completed: boolean
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    id: string
+                    email: string
+                    first_name?: string | null
+                    last_name?: string | null
+                    photo_url?: string | null
+                    country?: string | null
+                    date_of_birth?: string | null
+                    onboarding_completed?: boolean
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    id?: string
+                    email?: string
+                    first_name?: string | null
+                    last_name?: string | null
+                    photo_url?: string | null
+                    country?: string | null
+                    date_of_birth?: string | null
+                    onboarding_completed?: boolean
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
+            shared_links: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    token: string
+                    profile_id: string
+                    expires_at: string | null
+                    view_count: number
+                    is_active: boolean
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    token: string
+                    profile_id: string
+                    expires_at?: string | null
+                    view_count?: number
+                    is_active?: boolean
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    token?: string
+                    profile_id?: string
+                    expires_at?: string | null
+                    view_count?: number
+                    is_active?: boolean
+                    created_at?: string
+                }
+            }
+            treatments: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    type: string
+                    notes: string | null
+                    date: string
+                    is_active: boolean
+                    dosage_value: number | null
+                    dosage_unit: string | null
+                    frequency: string | null
+                    provider: string | null
+                    cost: number | null
+                    currency: string | null
+                    next_due_date: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    type: string
+                    notes?: string | null
+                    date: string
+                    is_active?: boolean
+                    dosage_value?: number | null
+                    dosage_unit?: string | null
+                    frequency?: string | null
+                    provider?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    next_due_date?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    type?: string
+                    notes?: string | null
+                    date?: string
+                    is_active?: boolean
+                    dosage_value?: number | null
+                    dosage_unit?: string | null
+                    frequency?: string | null
+                    provider?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    next_due_date?: string | null
+                    created_at?: string
+                }
+            }
+            vaccinations: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    name: string
+                    date: string
+                    next_due_date: string | null
+                    notes: string | null
+                    dose_number: number | null
+                    provider: string | null
+                    batch_number: string | null
+                    cost: number | null
+                    currency: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    name: string
+                    date: string
+                    next_due_date?: string | null
+                    notes?: string | null
+                    dose_number?: number | null
+                    provider?: string | null
+                    batch_number?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    name?: string
+                    date?: string
+                    next_due_date?: string | null
+                    notes?: string | null
+                    dose_number?: number | null
+                    provider?: string | null
+                    batch_number?: string | null
+                    cost?: number | null
+                    currency?: string | null
+                    created_at?: string
+                }
+            }
+            veterinarians: {
+                Row: {
+                    id: string
+                    name: string
+                    clinic_name: string | null
+                    phone: string | null
+                    email: string | null
+                    address: string | null
+                    type: string | null
+                    location_lat: number | null
+                    location_lng: number | null
+                    place_id: string | null
+                    city: string | null
+                    zip_code: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    name: string
+                    clinic_name?: string | null
+                    phone?: string | null
+                    email?: string | null
+                    address?: string | null
+                    type?: string | null
+                    location_lat?: number | null
+                    location_lng?: number | null
+                    place_id?: string | null
+                    city?: string | null
+                    zip_code?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    name?: string
+                    clinic_name?: string | null
+                    phone?: string | null
+                    email?: string | null
+                    address?: string | null
+                    type?: string | null
+                    location_lat?: number | null
+                    location_lng?: number | null
+                    place_id?: string | null
+                    city?: string | null
+                    zip_code?: string | null
+                    created_at?: string
+                }
+            }
+            weight_entries: {
+                Row: {
+                    id: string
+                    pet_id: string
+                    weight: number
+                    unit: string
+                    date: string
+                    notes: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    pet_id: string
+                    weight: number
+                    unit: string
+                    date: string
+                    notes?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    pet_id?: string
+                    weight?: number
+                    unit?: string
+                    date?: string
+                    notes?: string | null
+                    created_at?: string
+                }
+            }
+        }
+        Views: {
+            [_ in never]: never
+        }
+        Functions: {
+            [_ in never]: never
+        }
+        Enums: {
+            [_ in never]: never
+        }
+        CompositeTypes: {
+            [_ in never]: never
+        }
+    }
 }
