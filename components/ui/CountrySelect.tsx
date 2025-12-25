@@ -1,5 +1,5 @@
 import React from 'react';
-import { COUNTRIES } from '@/data/countries';
+import { COUNTRIES } from '@/constants/countries';
 import SearchableSelect from './SearchableSelect';
 
 type Props = {

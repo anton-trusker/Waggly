@@ -7,8 +7,30 @@ export type User = {
 };
 
 export type Profile = Database['public']['Tables']['profiles']['Row'] & { gender?: 'male' | 'female' | 'non_binary' | 'prefer_not_to_say' | null };
-export type Pet = Database['public']['Tables']['pets']['Row'] & { registry_provider?: string | null };
-export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'];
+export type Pet = Database['public']['Tables']['pets']['Row'] & {
+  registry_provider?: string | null;
+  blood_type?: string;
+  address_json?: any; // JSONB
+};
+export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'] & {
+  type?: 'clinic' | 'emergency' | 'specialist';
+  location_lat?: number;
+  location_lng?: number;
+  place_id?: string;
+  city?: string;
+  zip_code?: string;
+};
+export type Condition = {
+  id: string;
+  pet_id: string;
+  name: string;
+  status: 'active' | 'resolved' | 'recurring';
+  diagnosed_date: string;
+  resolved_date?: string;
+  notes?: string;
+  severity?: 'mild' | 'moderate' | 'severe';
+  treatment_plan?: string;
+};
 export type Allergy = Database['public']['Tables']['allergies']['Row'];
 export type BehaviorTag = Database['public']['Tables']['behavior_tags']['Row'];
 export type MedicalHistory = Database['public']['Tables']['medical_history']['Row'];

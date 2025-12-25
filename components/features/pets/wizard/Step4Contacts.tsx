@@ -112,122 +112,129 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                         ios_icon_name="checkmark.circle.fill"
                         android_material_icon_name="check"
                         size={20}
+                        color={colors.neutral[0]}
+                    />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
 
-                        const styles= StyleSheet.create({
-                        container: {
-                        flex: 1,
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
     },
-                    scrollContent: {
-                        paddingHorizontal: 24,
-                    paddingTop: 16,
+    scrollContent: {
+        paddingHorizontal: 24,
+        paddingTop: 16,
     },
-                    headerSection: {
-                        marginBottom: 20,
+    headerSection: {
+        marginBottom: 20,
     },
-                    title: {
-                        ...designSystem.typography.title.large,
-                        color: designSystem.colors.text.primary,
-                    marginBottom: 6,
-                    lineHeight: 34,
+    title: {
+        ...designSystem.typography.title.large,
+        color: designSystem.colors.text.primary,
+        marginBottom: 6,
+        lineHeight: 34,
     },
-                    subtitle: {
-                        ...designSystem.typography.body.medium,
-                        color: designSystem.colors.text.secondary,
+    subtitle: {
+        ...designSystem.typography.body.medium,
+        color: designSystem.colors.text.secondary,
     },
-                    formSection: {
-                        gap: 20,
+    formSection: {
+        gap: 20,
     },
-                    sectionHeader: {
-                        flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 12,
-                    paddingBottom: 12,
-                    borderBottomWidth: 1,
-                    borderBottomColor: designSystem.colors.neutral[200],
-                    marginBottom: 8,
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        paddingBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: designSystem.colors.neutral[200],
+        marginBottom: 8,
     },
-                    sectionIcon: {
-                        width: 32,
-                    height: 32,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+    sectionIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-                    sectionTitle: {
-                        ...designSystem.typography.title.medium,
-                        color: designSystem.colors.text.primary,
+    sectionTitle: {
+        ...designSystem.typography.title.medium,
+        color: designSystem.colors.text.primary,
     },
-                    inputGroup: {
-                        gap: 8,
+    inputGroup: {
+        gap: 8,
     },
-                    label: {
-                        ...designSystem.typography.label.small,
-                        color: designSystem.colors.text.secondary,
-                    letterSpacing: 1,
-                    fontWeight: '700',
+    label: {
+        ...designSystem.typography.label.small,
+        color: designSystem.colors.text.secondary,
+        letterSpacing: 1,
+        fontWeight: '700',
     },
-                    optional: {
-                        fontWeight: '400',
-                    color: designSystem.colors.text.tertiary,
-                    fontSize: 12,
+    optional: {
+        fontWeight: '400',
+        color: designSystem.colors.text.tertiary,
+        fontSize: 12,
     },
-                    inputContainer: {
-                        position: 'relative',
+    inputContainer: {
+        position: 'relative',
     },
-                    inputIcon: {
-                        position: 'absolute',
-                    left: 16,
-                    top: 18,
-                    zIndex: 1,
+    inputIcon: {
+        position: 'absolute',
+        left: 16,
+        top: 18,
+        zIndex: 1,
     },
-                    input: {
-                        backgroundColor: designSystem.colors.neutral[0],
-                    borderWidth: 1,
-                    borderColor: designSystem.colors.neutral[200],
-                    borderRadius: 12,
-                    paddingHorizontal: 16,
-                    paddingLeft: 48,
-                    paddingVertical: 16,
-                    fontSize: 16,
-                    color: designSystem.colors.text.primary,
-                    ...designSystem.shadows.sm,
+    input: {
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingLeft: 48,
+        paddingVertical: 16,
+        fontSize: 16,
+        color: designSystem.colors.text.primary,
+        ...designSystem.shadows.sm,
     },
-                    inputError: {
-                        backgroundColor: designSystem.colors.neutral[0],
-                    borderWidth: 1,
-                    borderColor: designSystem.colors.neutral[200],
-                    borderRadius: 12,
-                    paddingHorizontal: 16,
-                    paddingLeft: 48,
-                    paddingVertical: 16,
-                    fontSize: 16,
-                    color: designSystem.colors.text.primary,
-                    ...designSystem.shadows.sm,
+    inputError: {
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingLeft: 48,
+        paddingVertical: 16,
+        fontSize: 16,
+        color: designSystem.colors.text.primary,
+        ...designSystem.shadows.sm,
     },
-                    footer: {
-                        position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    padding: 16,
-                    backgroundColor: designSystem.colors.background.primary,
-                    borderTopWidth: 1,
-                    borderTopColor: designSystem.colors.neutral[100],
-                    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 16,
+        backgroundColor: designSystem.colors.background.primary,
+        borderTopWidth: 1,
+        borderTopColor: designSystem.colors.neutral[100],
+        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
     },
-                    continueButton: {
-                        backgroundColor: designSystem.colors.primary[500],
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingVertical: 16,
-                    borderRadius: 12,
-                    gap: 8,
-                    ...designSystem.shadows.md,
+    continueButton: {
+        backgroundColor: designSystem.colors.primary[500],
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 16,
+        borderRadius: 12,
+        gap: 8,
+        ...designSystem.shadows.md,
     },
-                    continueButtonText: {
-                        ...designSystem.typography.title.medium,
-                        color: designSystem.colors.neutral[0],
-                    fontWeight: '800',
+    continueButtonText: {
+        ...designSystem.typography.title.medium,
+        color: designSystem.colors.neutral[0],
+        fontWeight: '800',
     },
 });

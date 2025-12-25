@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { colors } from '@/styles/commonStyles';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface QuickAction {
   id: string;
   title: string;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: string; // Using IconSymbol names
+  androidIcon: string;
   route: string;
 }
 
@@ -15,68 +16,87 @@ const quickActions: QuickAction[] = [
   {
     id: 'visit',
     title: 'Add Visit',
-    icon: 'hospital-box',
+    icon: 'note.text',
+    androidIcon: 'event-note',
     route: '/(tabs)/pets/add-visit'
-  },
-  {
-    id: 'treatment',
-    title: 'Add Treatment',
-    icon: 'medication',
-    route: '/(tabs)/pets/add-treatment'
   },
   {
     id: 'vaccine',
     title: 'Add Vaccine',
-    icon: 'needle',
+    icon: 'cross.vial', // approx
+    androidIcon: 'vaccines',
     route: '/(tabs)/pets/add-vaccination'
   },
   {
-    id: 'weight',
-    title: 'Log Weight',
-    icon: 'weight',
-    route: '/(tabs)/pets/log-weight'
+    id: 'treatment',
+    title: 'Add Treatment',
+    icon: 'pills',
+    androidIcon: 'medication',
+    route: '/(tabs)/pets/add-treatment'
   },
   {
-    id: 'event',
-    title: 'Add Event',
-    icon: 'calendar-plus',
-    route: '/(tabs)/calendar/add-event'
+    id: 'image',
+    title: 'Add Image',
+    icon: 'camera',
+    androidIcon: 'add-a-photo',
+    route: '/(tabs)/pets/add-image' // Ensure this route exists or update
+  },
+  {
+    id: 'document',
+    title: 'Add Document',
+    icon: 'folder',
+    androidIcon: 'folder',
+    route: '/(tabs)/pets/add-document' // Ensure this route exists
+  },
+  {
+    id: 'record',
+    title: 'Add Record',
+    icon: 'doc.text',
+    androidIcon: 'article',
+    route: '/(tabs)/pets/add-record' // Ensure this route exists
   }
 ];
 
 export function QuickActionsPanel() {
+  const { colors } = useAppTheme();
+
   const handleActionPress = (route: string) => {
-    router.push(route);
+    // Basic route check logic or directly push if all routes are safe
+    router.push(route as any);
+  };
+
+  const dynamicStyles = {
+    title: { color: colors.text.primary },
+    card: {
+      backgroundColor: colors.background.tertiary, // card background
+      // shadow logic could vary
+    },
+    text: { color: colors.text.primary } // or gray-800/200 logic
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <Text style={[styles.sectionTitle, dynamicStyles.title]}>Quick Actions</Text>
+      <View style={styles.gridContainer}>
         {quickActions.map((action) => (
-          <View key={action.id} style={styles.actionItemContainer}>
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => handleActionPress(action.route)}
-              activeOpacity={0.7}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <MaterialCommunityIcons
-                name={action.icon}
-                size={40}
-                color={colors.primary}
-              />
-            </TouchableOpacity>
-            <Text style={styles.actionTitle} numberOfLines={2}>
+          <TouchableOpacity
+            key={action.id}
+            style={[styles.actionCard, dynamicStyles.card]}
+            onPress={() => handleActionPress(action.route)}
+            activeOpacity={0.7}
+          >
+            <IconSymbol
+              ios_icon_name={action.icon as any}
+              android_material_icon_name={action.androidIcon as any}
+              size={32}
+              color={colors.primary[500]}
+            />
+            <Text style={[styles.actionTitle, dynamicStyles.text]}>
               {action.title}
             </Text>
-          </View>
+          </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -86,42 +106,33 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
     marginBottom: 16,
-    paddingHorizontal: 0,
   },
-  scrollContainer: {
-    paddingHorizontal: 0,
-    gap: 8,
-  },
-  actionItemContainer: {
-    alignItems: 'center',
-    width: 60,
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16, // tailwind gap-4 approx
+    justifyContent: 'space-between',
   },
   actionCard: {
-    width: 45,
-    height: 45,
-    borderRadius: 10,
-    backgroundColor: colors.card,
+    width: '30%', // Grid cols 3 approx
+    aspectRatio: 1,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 8,
+    gap: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-    paddingHorizontal: 0,
-    minWidth: 48,
-    minHeight: 48,
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   actionTitle: {
-    fontSize: 10,
+    fontSize: 12, // text-xs font-semibold
     fontWeight: '600',
-    color: colors.text,
     textAlign: 'center',
-    marginTop: 4,
-    lineHeight: 12,
   },
 });

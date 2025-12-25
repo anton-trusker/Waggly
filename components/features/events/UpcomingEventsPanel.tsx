@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useEvents } from '@/hooks/useEvents';
 import { router } from 'expo-router';
 import { useLocale } from '@/hooks/useLocale';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import { PetImage } from '@/components/ui/PetImage';
 
 interface UpcomingEventsPanelProps {
   petId?: string;
@@ -13,84 +14,101 @@ interface UpcomingEventsPanelProps {
 
 export default function UpcomingEventsPanel({ petId, showAll = false }: UpcomingEventsPanelProps) {
   const { t } = useLocale();
-  const [filterType, setFilterType] = useState<'all' | 'vaccination' | 'visit' | 'treatment'>('all');
+  const { colors } = useAppTheme();
+  // We can keep the filter logic or simplify it based on the design which is just "Upcoming Care" list
+  // The design shows a list without visible filters, but filters are good UX. Let's keep them if they fit or just show list.
+  // The design doesn't explicitly show filters, just a list. I'll stick to a list for now to match the "timeline" look closely.
+
   const { events, loading, error, refresh } = useEvents({
     petIds: petId ? [petId] : [],
-    startDate: showAll ? undefined : new Date().toISOString().slice(0, 10),
+    startDate: new Date().toISOString().slice(0, 10),
     endDate: undefined,
     types: undefined,
   });
 
   const upcomingEvents = useMemo(() => {
     const now = new Date();
-    return events.filter(event => new Date(event.dueDate) >= now);
+    return events.filter(event => new Date(event.dueDate) >= now).slice(0, 5); // Limit to 5 for dashboard
   }, [events]);
-
-  const filteredEvents = useMemo(() => {
-    if (filterType === 'all') return upcomingEvents;
-    if (filterType === 'visit') return upcomingEvents.filter(e => e.type === 'vet');
-    return upcomingEvents.filter(e => e.type === filterType);
-  }, [upcomingEvents, filterType]);
 
   const handleRetry = useCallback(() => {
     refresh();
   }, [refresh]);
 
+  // Dynamic styles
+  const dynamicStyles = {
+    title: { color: colors.text.primary },
+    link: { color: colors.success[500] }, // green
+    card: { backgroundColor: colors.background.tertiary }, // white/dark-slate
+    textPrimary: { color: colors.text.primary },
+    textSecondary: { color: colors.text.secondary },
+    timelineLine: { backgroundColor: colors.neutral[200] },
+  };
+
   if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{t('events.failed_to_load', { defaultValue: 'Failed to load events' })}</Text>
-        <TouchableOpacity onPress={handleRetry} style={styles.retryButton}>
-          <Text style={styles.retryButtonText}>{t('common.retry', { defaultValue: 'Retry' })}</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    // keeping simplistic error view for now
+    return null;
+  }
+
+  if (loading && events.length === 0) {
+    return <ActivityIndicator size="small" color={colors.primary[500]} />;
+  }
+
+  if (upcomingEvents.length === 0) {
+    return null; // Don't show section if empty
   }
 
   return (
-    <View style={styles.sectionCard}>
-      <View style={styles.sectionHeader}>
-        <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={18} color={colors.primary} />
-        <Text style={styles.sectionTitle}>{t('events.upcoming_events', { defaultValue: 'Upcoming Events' })}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={[styles.title, dynamicStyles.title]}>{t('events.upcoming_care', { defaultValue: 'Upcoming Care' })}</Text>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/calendar')}>
+          <Text style={[styles.link, dynamicStyles.link]}>View Calendar</Text>
+        </TouchableOpacity>
       </View>
-      
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        contentContainerStyle={styles.filterRow}
-      >
-        {(['all', 'vaccination', 'visit', 'treatment'] as const).map(t => (
-          <TouchableOpacity 
-            key={t} 
-            style={[styles.filterChip, filterType === t && styles.filterChipActive]}
-            onPress={() => setFilterType(t)}
-          >
-            <Text style={[styles.filterChipText, filterType === t && styles.filterChipTextActive]}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      
-      {loading && events.length === 0 ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
-      ) : filteredEvents.length === 0 ? (
-        <Text style={styles.emptyText}>{t('events.no_upcoming', { defaultValue: 'No upcoming events found' })}</Text>
-      ) : (
-        <View>
-          {filteredEvents.map((e, index) => {
-            const date = new Date(e.dueDate);
-            const currentYear = new Date().getFullYear();
-            const eventYear = date.getFullYear();
-            const showYear = eventYear !== currentYear;
-            
-            return (
+
+      <View style={styles.list}>
+        {upcomingEvents.map((e, index) => {
+          const date = new Date(e.dueDate);
+          const isLast = index === upcomingEvents.length - 1;
+
+          // Icon logic
+          let iconName = 'calendar';
+          let iconColor = colors.primary[500];
+          let iconBg = colors.primary[50];
+
+          if (e.type === 'vaccination') {
+            iconName = 'cross.vial'; // approx
+            iconColor = colors.error[500]; // Red for medical/high priority often
+            iconBg = colors.error[50];
+          } else if (e.type === 'treatment') {
+            iconName = 'pills';
+            iconColor = colors.primary[500]; // Blue/Purple
+            iconBg = colors.primary[50];
+          } else if (e.type === 'grooming') {
+            iconName = 'scissors';
+            iconColor = '#A855F7'; // Purple
+            iconBg = '#F3E8FF';
+          }
+
+          return (
+            <View key={e.id} style={styles.timelineItem}>
+              <View style={styles.timelineLeft}>
+                <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
+                  <IconSymbol
+                    ios_icon_name={iconName as any}
+                    android_material_icon_name="event" // generic fallback or map properly
+                    size={20}
+                    color={iconColor}
+                  />
+                </View>
+                {!isLast && <View style={[styles.timelineLine, dynamicStyles.timelineLine]} />}
+              </View>
+
               <TouchableOpacity
-                key={e.id}
-                style={[styles.eventItem, index === filteredEvents.length - 1 && { borderBottomWidth: 0 }]}
+                style={[styles.eventCard, dynamicStyles.card]}
                 onPress={() => {
+                  // Navigate to detail
                   if (e.relatedId) {
                     if (e.type === 'vaccination') {
                       router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${e.relatedId}`);
@@ -101,164 +119,126 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
                     }
                   }
                 }}
+                activeOpacity={0.7}
               >
-                <View style={styles.eventDateBox}>
-                  <Text style={styles.eventDay}>{date.getDate()}</Text>
-                  <Text style={styles.eventMonth}>{date.toLocaleString('default', { month: 'short' })}</Text>
-                  {showYear && <Text style={styles.eventYear}>{eventYear}</Text>}
-                </View>
-                <View style={styles.eventContent}>
-                  <Text style={styles.eventTitle}>{e.title}</Text>
-                  <View style={styles.eventMetaRow}>
-                    <View style={[styles.eventTypeTag, { backgroundColor: e.type === 'vaccination' ? '#DCFCE7' : e.type === 'treatment' ? '#F3E8FF' : '#E0F2FE' }]}>
-                      <Text style={[styles.eventTypeText, { color: e.type === 'vaccination' ? '#16A34A' : e.type === 'treatment' ? '#9333EA' : '#0284C7' }]}>
-                        {e.type === 'vet' ? 'Visit' : e.type.charAt(0).toUpperCase() + e.type.slice(1)}
+                <View style={styles.cardHeader}>
+                  <View>
+                    {/* High Priority Badge - mock logic */}
+                    {e.type === 'vaccination' && (
+                      <View style={styles.priorityBadge}>
+                        <Text style={styles.priorityText}>HIGH PRIORITY</Text>
+                      </View>
+                    )}
+                    <Text style={[styles.eventTitle, dynamicStyles.textPrimary]}>{e.title}</Text>
+                    <View style={styles.metaRow}>
+                      <IconSymbol ios_icon_name="calendar" android_material_icon_name="calendar-today" size={14} color={colors.text.tertiary} />
+                      <Text style={[styles.eventTime, dynamicStyles.textSecondary]}>
+                        {date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </Text>
                     </View>
                   </View>
+                  {/* Pet Avatar if available */}
+                  {/* Assuming we might have pet photo url in event or need to fetch. 
+                             For now, let's use a small placeholder or skip if not in event data easily.
+                             The generic hook returns standard event structure.
+                          */}
                 </View>
-                <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={16} color={colors.textSecondary} />
               </TouchableOpacity>
-            );
-          })}
-        </View>
-      )}
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionCard: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
+  container: {
+    marginBottom: 24,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  filterRow: {
-    marginBottom: 16,
-    gap: 8,
-    paddingHorizontal: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginRight: 8,
-  },
-  filterChipActive: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
-  },
-  filterChipText: {
-    fontSize: 13,
-    color: colors.textSecondary,
-  },
-  filterChipTextActive: {
-    color: colors.card,
-  },
-  loadingContainer: {
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    textAlign: 'center',
-    color: colors.textSecondary,
-    marginTop: 16,
-  },
-  errorContainer: {
-    padding: 20,
-    backgroundColor: colors.errorLight,
-    borderRadius: 8,
-    margin: 16,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: colors.error,
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  retryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: colors.primary,
-    borderRadius: 4,
-  },
-  retryButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-  },
-  eventItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  eventDateBox: {
-    width: 50,
-    height: 60,
-    borderRadius: 12,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginRight: 12,
-  },
-  eventDay: {
+  title: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.primary,
   },
-  eventMonth: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-  },
-  eventYear: {
-    fontSize: 9,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  eventContent: {
-    flex: 1,
-  },
-  eventTitle: {
-    fontSize: 15,
+  link: {
+    fontSize: 14,
     fontWeight: '600',
-    color: colors.text,
-    marginBottom: 2,
   },
-  eventMetaRow: {
+  list: {
+    gap: 0,
+  },
+  timelineItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 4,
+    alignItems: 'flex-start',
+    gap: 12,
   },
-  eventTypeTag: {
+  timelineLeft: {
+    alignItems: 'center',
+    width: 40,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  timelineLine: {
+    width: 1,
+    flex: 1, // fill height
+    minHeight: 40, // ensure visible if content is short
+    backgroundColor: '#E5E7EB',
+    marginTop: -4, // tuck under icon slightly
+    marginBottom: -4,
+  },
+  eventCard: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  priorityBadge: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)', // red-500/10
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: 100,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
   },
-  eventTypeText: {
-    fontSize: 11,
-    fontWeight: '600',
+  priorityText: {
+    color: '#EF4444', // red-500
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
-})
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  eventTime: {
+    fontSize: 13,
+  },
+});

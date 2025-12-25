@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawzly - Pet Health Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102210",
+                        "surface-dark": "#1A2E1A",
+                        "surface-darker": "#112211"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+            padding-bottom: 80px;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-white">
+<header class="sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+<div class="flex items-center justify-between px-4 h-14">
+<button class="flex items-center justify-center size-10 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">Profile</h1>
+<div class="flex items-center gap-1 -mr-2">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between px-4 mt-1">
+<button class="flex-1 pb-3 text-sm font-semibold text-slate-500 dark:text-slate-400 border-b-2 border-transparent transition-colors hover:text-slate-900 dark:hover:text-white">Overview</button>
+<button class="flex-1 pb-3 text-sm font-bold text-slate-900 dark:text-primary border-b-2 border-slate-900 dark:border-primary">Health</button>
+<button class="flex-1 pb-3 text-sm font-semibold text-slate-500 dark:text-slate-400 border-b-2 border-transparent transition-colors hover:text-slate-900 dark:hover:text-white">Album</button>
+<button class="flex-1 pb-3 text-sm font-semibold text-slate-500 dark:text-slate-400 border-b-2 border-transparent transition-colors hover:text-slate-900 dark:hover:text-white">Documents</button>
+</div>
+</header>
+<main class="flex flex-col gap-6 pt-6">
+<section class="flex flex-col items-center px-4 text-center">
+<div class="relative mb-4">
+<div class="size-28 rounded-full p-1 bg-white dark:bg-surface-dark shadow-xl ring-1 ring-black/5 dark:ring-white/10">
+<img alt="Pet Avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLMULzYHKe6Sj_KedlZwroZA22Dw8phosQpfW2DwrR_YMV0iAFQ16AmCzNCzdDVzVnlObUGqGvBzIGT2eOK46sZlFuBtjMp3RTnI_06cb3UTM8Tl1bYUITnN9hNQRr53gUiP9AWem4Idt96HzQy2Xm0eKG4jTEilWZrVQOmghppmwHJP_PO2Vr7Y5MnvCWTameJmtyYEaYjMSidgKhA0x1wLJaIo9Kcvr6vR__gidNGjxcpy6Bz6OQLg-CBuhTMiEJ5CXKDbGwchvg"/>
+</div>
+<div class="absolute bottom-1 right-1 bg-primary text-black size-7 rounded-full flex items-center justify-center border-2 border-white dark:border-surface-dark shadow-sm">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+<h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Bruno</h2>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">Golden Retriever</p>
+<div class="flex items-center gap-3 mt-3 px-4 py-1.5 bg-white dark:bg-surface-dark rounded-full border border-black/5 dark:border-white/5 shadow-sm">
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">4 Yrs</span>
+<span class="size-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">Male</span>
+<span class="size-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">32 kg</span>
+</div>
+</section>
+<div class="flex flex-col gap-6 px-4 pb-8 border-t border-black/5 dark:border-white/5 pt-6">
+<div class="flex gap-3">
+<div class="relative flex-1">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+<input class="w-full bg-white dark:bg-surface-dark border-none rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary shadow-sm ring-1 ring-black/5 dark:ring-white/5 dark:text-white placeholder-slate-400 outline-none" placeholder="Search treatments..." type="text"/>
+</div>
+<button class="bg-white dark:bg-surface-dark size-11 shrink-0 rounded-xl flex items-center justify-center shadow-sm ring-1 ring-black/5 dark:ring-white/5 text-slate-700 dark:text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-1">
+<button class="px-4 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold whitespace-nowrap shadow-sm">All</button>
+<button class="px-4 py-2 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-bold whitespace-nowrap">Medications</button>
+<button class="px-4 py-2 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-bold whitespace-nowrap">Procedures</button>
+<button class="px-4 py-2 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-bold whitespace-nowrap">Therapies</button>
+</div>
+<button class="w-full py-4 bg-primary text-slate-900 rounded-2xl font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform font-bold">add</span>
+                Add New Treatment
+            </button>
+<div class="space-y-8">
+<div>
+<div class="flex items-center justify-between mb-3 px-1">
+<h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Medications</h3>
+<span class="text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2.5 py-1 rounded-md">2 Active</span>
+</div>
+<div class="flex flex-col gap-3">
+<div class="group relative overflow-hidden bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm ring-1 ring-black/5 dark:ring-white/5 flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/20 shrink-0 size-14 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="text-base font-bold text-slate-900 dark:text-white truncate">Apoquel</h4>
+<button class="text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">5mg • Twice Daily</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-white/5 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                        8:00 AM
+                                     </div>
+<div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-white/5 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                        8:00 PM
+                                     </div>
+</div>
+</div>
+</div>
+<div class="group relative overflow-hidden bg-white dark:bg-surface-dark rounded-2xl p-4 shadow-sm ring-1 ring-black/5 dark:ring-white/5 flex items-center gap-4">
+<div class="flex items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-900/20 shrink-0 size-14 text-orange-600 dark:text-orange-400">
+<span class="material-symbols-outlined">medication_liquid</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="text-base font-bold text-slate-900 dark:text-white truncate">Heartgard Plus</h4>
+<button class="text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">1 Chew • Monthly</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center gap-1.5 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px]">event</span>
+                                        Next: 15 Oct
+                                     </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4 px-1">
+<h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Treatments History</h3>
+<button class="flex items-center text-xs font-bold text-primary">
+                            Sort by Date 
+                            <span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+<div class="relative pl-4 space-y-6">
+<div class="absolute left-[27px] top-3 bottom-8 w-0.5 bg-slate-200 dark:bg-white/10"></div>
+<div class="relative flex gap-4 items-start">
+<div class="z-10 mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-surface-dark border-2 border-slate-200 dark:border-white/20 text-slate-500 dark:text-slate-400 shadow-sm">
+<div class="size-2 rounded-full bg-slate-400 dark:bg-slate-600"></div>
+</div>
+<div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-2xl ring-1 ring-black/5 dark:ring-white/5 shadow-sm">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-[18px] block">dentistry</span>
+</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Dental Cleaning</h4>
+</div>
+<span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">12 Oct</span>
+</div>
+<div class="pl-[38px]">
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Pawzly Vet Clinic • Dr. Smith</p>
+<div class="text-xs bg-slate-50 dark:bg-white/5 p-2.5 rounded-xl text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        Routine cleaning completed. Mild gingivitis noted on upper molars.
+                                    </div>
+</div>
+</div>
+</div>
+<div class="relative flex gap-4 items-start">
+<div class="z-10 mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-surface-dark border-2 border-slate-200 dark:border-white/20 text-slate-500 dark:text-slate-400 shadow-sm">
+<div class="size-2 rounded-full bg-slate-400 dark:bg-slate-600"></div>
+</div>
+<div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-2xl ring-1 ring-black/5 dark:ring-white/5 shadow-sm">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-[18px] block">healing</span>
+</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Post-Op Checkup</h4>
+</div>
+<span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">05 Sep</span>
+</div>
+<div class="pl-[38px]">
+<p class="text-xs text-slate-500 dark:text-slate-400">Happy Tails • Dr. Brown</p>
+</div>
+</div>
+</div>
+<div class="relative flex gap-4 items-start">
+<div class="z-10 mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-surface-dark border-2 border-slate-200 dark:border-white/20 text-slate-500 dark:text-slate-400 shadow-sm">
+<div class="size-2 rounded-full bg-slate-400 dark:bg-slate-600"></div>
+</div>
+<div class="flex-1 bg-white dark:bg-surface-dark p-4 rounded-2xl ring-1 ring-black/5 dark:ring-white/5 shadow-sm">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-[18px] block">cut</span>
+</span>
+<h4 class="text-sm font-bold text-slate-900 dark:text-white">Dewclaw Removal</h4>
+</div>
+<span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">28 Aug</span>
+</div>
+<div class="pl-[38px]">
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Pawzly Vet Clinic • Surgery</p>
+<div class="text-xs bg-slate-50 dark:bg-white/5 p-2.5 rounded-xl text-slate-600 dark:text-slate-300 leading-relaxed">
+                                         Healed well. Stitches removed. Patient is recovering nicely.
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-surface-darker border-t border-slate-200 dark:border-white/5 pb-safe z-50">
+<div class="flex items-center justify-around h-16 px-2">
+<button class="flex flex-col items-center justify-center w-16 h-full gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+<span class="text-[10px] font-medium">Plan</span>
+</button>
+<button class="flex items-center justify-center -mt-6">
+<div class="size-14 rounded-full bg-primary text-black flex items-center justify-center shadow-lg shadow-primary/30 border-4 border-background-light dark:border-background-dark transform transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</div>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">monitor_heart</span>
+<span class="text-[10px] font-medium">Health</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full gap-1 text-primary dark:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px] fill-current">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</div>
+<div class="h-5 w-full bg-white dark:bg-surface-darker"></div>
+</nav>
+
+</body></html>

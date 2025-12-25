@@ -8,16 +8,16 @@ export const designSystem = Object.freeze({
   colors: {
     // Primary Colors - Enhanced Blue Palette
     primary: {
-      50: '#E3F2FF',
-      100: '#CCE7FF',
-      200: '#99D6FF',
-      300: '#66C5FF',
-      400: '#33B4FF',
-      500: '#0A84FF', // Main primary
-      600: '#0062D6',
-      700: '#0047A3',
-      800: '#003170',
-      900: '#001C3D',
+      50: '#F0F6FF',
+      100: '#E0EDFF',
+      200: '#C2DBFF',
+      300: '#94C0FF',
+      400: '#607AFB', // New Brand Primary (used as main in design)
+      500: '#607AFB', // Main primary mapped to design
+      600: '#4B62D6',
+      700: '#384CB0',
+      800: '#28388A',
+      900: '#1A2666',
     },
 
     // Secondary Colors - Pet-themed palette
@@ -76,12 +76,12 @@ export const designSystem = Object.freeze({
 
     // Background Colors
     background: {
-      primary: '#FFFFFF',
-      secondary: '#FAFAFA',
+      primary: '#f5f6f8', // Updated from design
+      secondary: '#FFFFFF',
       tertiary: '#F5F5F5',
       gradient: {
-        start: '#A8D5FF',
-        end: '#E8F4FF',
+        start: '#E3F2FF',
+        end: '#FFFFFF',
       },
     },
 

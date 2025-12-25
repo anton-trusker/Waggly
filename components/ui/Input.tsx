@@ -1,38 +1,64 @@
-import React from 'react';
-import { TextInput, TextInputProps, StyleSheet } from 'react-native';
-import { colors } from '@/styles/commonStyles';
+import { TextInput, TextInputProps, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import FormField from './FormField';
 import { useLocale } from '@/hooks/useLocale';
+import { IconSymbol } from './IconSymbol';
+import { useState } from 'react';
 
 type Props = TextInputProps & {
   label?: string;
   error?: string;
   required?: boolean;
+  isPassword?: boolean;
 };
 
-export default function Input({ label, error, required, style, placeholder, ...props }: Props) {
+export default function Input({ label, error, required, style, placeholder, isPassword, ...props }: Props) {
   const { t } = useLocale();
+  const { colors } = useAppTheme();
+  const [isSecure, setIsSecure] = useState(isPassword);
+
   return (
     <FormField label={label} error={error} required={required}>
-      <TextInput
-        style={[styles.input, style]}
-        placeholderTextColor={colors.textSecondary}
-        placeholder={placeholder ? t(placeholder, { defaultValue: placeholder }) : undefined}
-        {...props}
-      />
+      <View style={[styles.container, {
+        backgroundColor: colors.background.tertiary, // Use tertiary (white/dark gray)
+        borderColor: error ? colors.status.error[500] : colors.border.primary,
+      }]}>
+        <TextInput
+          style={[styles.input, { color: colors.text.primary }, style]}
+          placeholderTextColor={colors.text.tertiary}
+          placeholder={placeholder ? t(placeholder, { defaultValue: placeholder }) : undefined}
+          secureTextEntry={isPassword ? isSecure : props.secureTextEntry}
+          {...props}
+        />
+        {isPassword && (
+          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.toggle}>
+            <IconSymbol
+              android_material_icon_name={isSecure ? 'visibility' : 'visibility-off'}
+              size={20}
+              color={colors.text.secondary}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </FormField>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    height: 44,
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
     borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
-    backgroundColor: colors.card,
+    borderRadius: 12,
     paddingHorizontal: 12,
-    color: colors.text,
-    fontSize: 15,
   },
+  input: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
+  },
+  toggle: {
+    padding: 4,
+  }
 });

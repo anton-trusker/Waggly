@@ -3,7 +3,7 @@ node_modules/
 
 .git/
 .expo/
-
+designs/
 dist/
 web-build/
 expo-env.d.ts

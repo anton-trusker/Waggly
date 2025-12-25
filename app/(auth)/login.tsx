@@ -1,211 +1,145 @@
-
 import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
-  ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { colors, commonStyles } from '@/styles/commonStyles';
-import { designSystem } from '@/constants/designSystem';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import Input from '@/components/ui/Input';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
-import BetaBadge from '@/components/ui/BetaBadge';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showLoginForm, setShowLoginForm] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; auth?: string }>({});
-  const { signIn, session, loading: authLoading } = useAuth();
-
-  // Redirect if already authenticated
-  React.useEffect(() => {
-    if (session && !authLoading) {
-      router.replace('/(tabs)/(home)');
-    }
-  }, [session, authLoading]);
+  const { signIn, session } = useAuth();
+  const { colors, isDark } = useAppTheme();
 
   const handleLogin = async () => {
-    const nextErrors: typeof errors = {};
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!email.trim() || !emailRegex.test(email.trim())) {
-      nextErrors.email = 'Enter a valid email';
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
     }
-    if (!password.trim()) {
-      nextErrors.password = 'Password is required';
-    }
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
     setLoading(true);
-    const { error } = await signIn(email.trim(), password);
+    const { error } = await signIn(email, password);
     setLoading(false);
-
     if (error) {
-      setErrors((e) => ({ ...e, auth: error.message || 'Invalid email or password' }));
+      Alert.alert('Login Failed', error.message);
     } else {
       router.replace('/(tabs)/(home)');
     }
   };
 
-  if (authLoading) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  if (showLoginForm) {
-    return (
-      <View style={styles.container}>
-        <LinearGradient
-          colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
-          style={styles.gradient}
-        >
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.content}
-            showsVerticalScrollIndicator={false}
-          >
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => setShowLoginForm(false)}
-            >
-              <Text style={styles.backText}>‹ Back</Text>
-            </TouchableOpacity>
-
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Welcome Back</Text>
-              <Text style={styles.subtitle}>
-                Sign in to continue managing your pet&apos;s health
-              </Text>
-
-              <Input
-                label="Email"
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={(t) => { setEmail(t); if (errors.email) setErrors((e)=>({...e,email:undefined})); }}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                editable={!loading}
-                accessibilityLabel="Email"
-              />
-              {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-              <Input
-                label="Password"
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={(t) => { setPassword(t); if (errors.password) setErrors((e)=>({...e,password:undefined})); }}
-                secureTextEntry
-                editable={!loading}
-                accessibilityLabel="Password"
-              />
-              {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-              <TouchableOpacity
-                style={styles.forgotPassword}
-                onPress={() => router.push('/(auth)/forgot-password')}
-              >
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-              </TouchableOpacity>
-
-              {errors.auth && <Text style={styles.errorText}>{errors.auth}</Text>}
-
-              <EnhancedButton
-                title="Sign In"
-                variant="primary"
-                size="lg"
-                onPress={handleLogin}
-                loading={loading}
-                fullWidth={true}
-                style={styles.button}
-              />
-            </View>
-          </ScrollView>
-          </KeyboardAvoidingView>
-        </LinearGradient>
-        <LoadingOverlay visible={loading} message="Signing in..." />
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
-        style={styles.gradient}
-      >
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.illustrationContainer}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+          <View style={styles.imageContainer}>
+            {/* Using the image from design or placeholder */}
             <Image
-              source={require('@/assets/images/image 8276.png')}
-              style={styles.illustration}
-              resizeMode="contain"
+              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuTVMEMHuEIPq00WTY1X1jvzd7VG7GPA2j34f2PJi_t_6NmJj8BTT8xijkJE8p2OOjlaYhGmgYK7UyUV4Erb_KO8JnD5zBo3-pP2HWjbLVhiWGeeiAK2pGvv8xUzk4-qFO4ObBgm3GdJajlYIhLI4wdV3_QodWslo1e3XH8lYiSroWAYvE95-h3QFMGzBZLXpXCgkmscbPfjfssYS8CB3ziFhWBJl6VRKjPbZfFdEnaeuEPmjzhogs1WzdYc7E7X_afbGbdQaGBA9K' }}
+              style={styles.headerImage}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', colors.background.primary]}
+              start={{ x: 0.5, y: 0.6 }}
+              end={{ x: 0.5, y: 1 }}
+              style={styles.imageGradient}
             />
           </View>
 
           <View style={styles.formContainer}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                <Text style={[styles.title, { marginBottom: 0 }]}>Welcome to Pawzly</Text>
-                <BetaBadge />
+            <Text style={[styles.title, { color: colors.text.primary }]}>Welcome back to Pawzly</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Manage your pet's health and happiness.</Text>
+
+            <View style={styles.inputs}>
+              <Input
+                label="Email Address"
+                placeholder="name@example.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View>
+                <Input
+                  label="Password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  isPassword
+                />
+                <TouchableOpacity
+                  style={styles.forgotPassword}
+                  onPress={() => router.push('/(auth)/forgot-password')}
+                >
+                  <Text style={[styles.forgotPasswordText, { color: colors.primary[500] }]}>Forgot Password?</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text style={styles.subtitle}>
-              Connecting kind people who care about animals — together we make a difference
-            </Text>
 
-            <EnhancedButton
-              title="Create Account"
-              variant="primary"
-              size="lg"
-              onPress={() => router.push('/(auth)/signup')}
-              disabled={loading}
-              fullWidth={true}
-              style={styles.button}
-            />
+            <View style={styles.actions}>
+              <EnhancedButton
+                title="Log In"
+                onPress={handleLogin}
+                loading={loading}
+                fullWidth
+              />
 
-            <EnhancedButton
-              title="Sign In"
-              variant="secondary"
-              size="lg"
-              onPress={() => setShowLoginForm(true)}
-              disabled={loading}
-              fullWidth={true}
-              style={styles.button}
-            />
+              <TouchableOpacity style={[styles.faceIdButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                <IconSymbol android_material_icon_name="face" size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            </View>
 
-            {/* Social login hidden for now */}
+            <View style={styles.socialSection}>
+              <View style={styles.divider}>
+                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
+                <Text style={[styles.orText, { color: colors.text.secondary, backgroundColor: colors.background.primary }]}>Or continue with</Text>
+                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
+              </View>
 
-            <Text style={styles.terms}>
-              By creating new account, you agree to our{'\n'}
-              <Text style={styles.termsLink}>Terms of Services</Text> &{' '}
-              <Text style={styles.termsLink}>Privacy Policy</Text>
-            </Text>
+              <View style={styles.socialButtons}>
+                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                  <IconSymbol android_material_icon_name="apple" size={24} color={colors.text.primary} />
+                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Apple</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                  {/* Google Icon SVG or Placeholder - utilizing a simple text or icon for now */}
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>G</Text>
+                  </View>
+                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Google</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.footer}>
+              <Text style={[styles.footerText, { color: colors.text.secondary }]}>Don't have an account? </Text>
+              <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
+                <Text style={[styles.signUpLink, { color: colors.primary[500] }]}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
         </ScrollView>
-        </KeyboardAvoidingView>
-      </LinearGradient>
+      </KeyboardAvoidingView>
+      <LoadingOverlay visible={loading} />
     </View>
   );
 }
@@ -214,118 +148,116 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  gradient: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
+  scrollContent: {
     flexGrow: 1,
-    paddingTop: 60,
     paddingBottom: 40,
   },
-  backButton: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 28,
-    color: colors.primary,
-    fontWeight: '300',
-  },
-  illustrationContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 40,
-    marginBottom: 40,
-  },
-  illustration: {
+  imageContainer: {
     width: '100%',
     height: 300,
+    position: 'relative',
+  },
+  headerImage: {
+    width: '100%',
+    height: '100%',
+  },
+  imageGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
   },
   formContainer: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingHorizontal: 24,
-    paddingTop: 32,
-    paddingBottom: 40,
-    minHeight: 400,
+    paddingHorizontal: 20,
+    marginTop: -20, // Overlap slightly or just sit below
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 28, // 32px in design, scaled down slightly for mobile or use 32
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 8,
+    fontFamily: Platform.select({ ios: 'Manrope-Bold', android: 'sans-serif-bold' }), // Fallback
   },
   subtitle: {
-    fontSize: 15,
-    color: colors.textSecondary,
+    fontSize: 16,
     textAlign: 'center',
-    lineHeight: 22,
     marginBottom: 32,
+    fontFamily: Platform.select({ ios: 'Manrope-Regular', android: 'sans-serif' }),
   },
-  inputContainer: {
-    marginBottom: 16,
+  inputs: {
+    gap: 16,
+    marginBottom: 24,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginTop: 8,
-    marginBottom: 16,
   },
   forgotPasswordText: {
-    color: colors.primary,
     fontSize: 14,
     fontWeight: '600',
   },
-  button: {
-    width: '100%',
-    marginBottom: designSystem.spacing[3],
+  actions: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+  },
+  faceIdButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialSection: {
+    marginTop: 24,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    justifyContent: 'center',
+    marginBottom: 16,
+    position: 'relative',
+    height: 20,
   },
-  dividerLine: {
+  line: {
     flex: 1,
     height: 1,
-    backgroundColor: colors.border,
   },
-  dividerText: {
-    marginHorizontal: 16,
-    color: colors.textSecondary,
-    fontSize: 13,
+  orText: {
+    paddingHorizontal: 12,
+    fontSize: 14,
+    position: 'absolute',
+    // centering handled by flex container if we remove absolute, but absolute helps with background covering the line
+    zIndex: 1,
   },
   socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-    marginBottom: 24,
+    gap: 12,
   },
   socialButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
   },
-  socialIcon: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
+  socialButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
-  terms: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 18,
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
   },
-  termsLink: {
-    color: colors.primary,
+  footerText: {
+    fontSize: 14,
+  },
+  signUpLink: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

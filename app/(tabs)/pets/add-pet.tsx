@@ -24,6 +24,7 @@ import EnhancedSelection from '@/components/ui/EnhancedSelection';
 import BottomCTA from '@/components/ui/BottomCTA';
 import { parseDDMMYYYY, isFutureDate } from '@/utils/dateUtils';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AppHeader from '@/components/layout/AppHeader';
 
 export default function AddPetScreen() {
   const [name, setName] = useState('');

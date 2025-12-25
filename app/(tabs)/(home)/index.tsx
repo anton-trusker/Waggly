@@ -1,243 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
+  RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import { router } from 'expo-router';
-import { colors } from '@/styles/commonStyles';
 import { usePets } from '@/hooks/usePets';
-import { useAuth } from '@/contexts/AuthContext';
-import { useProfile } from '@/hooks/useProfile';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PetQuickViewModal from '@/components/features/pets/PetQuickViewModal';
 import { QuickActionsPanel } from '@/components/dashboard/QuickActionsPanel';
-import { PetImage } from '@/components/ui/PetImage';
-import { Pet } from '@/types';
-import { homeStyles as styles } from '@/components/styles/homeStyles';
-import { useEvents } from '@/hooks/useEvents';
 import UpcomingEventsPanel from '@/components/features/events/UpcomingEventsPanel';
-import AppHeader from '@/components/layout/AppHeader';
-import { supabase } from '@/lib/supabase';
 import PWAInstallPrompt from '@/components/features/pwa/PWAInstallPrompt';
+import HomeHeader from '@/components/dashboard/HomeHeader';
+import DashboardPetCard from '@/components/dashboard/DashboardPetCard';
+import NoPetsState from '@/components/dashboard/NoPetsState';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import { Pet } from '@/types';
 
 export default function HomeScreen() {
-  const { user } = useAuth();
-  const { profile } = useProfile();
-  const { pets } = usePets();
-  const { events } = useEvents();
+  const { pets, refresh: refreshPets, loading: petsLoading } = usePets();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const { colors } = useAppTheme();
 
-  const nextEvent = events.length > 0 ? events[0] : null;
-  const nextVaccination = events.find(e => e.type === 'vaccination');
-
-  // Debug logging for images - disabled for production
-  // useEffect(() => {
-  //   console.log('=== HOME SCREEN IMAGE DEBUG ===');
-  //   console.log('User profile avatar_url:', profile?.avatar_url);
-  //   console.log('Pets data:', pets.map(pet => ({
-  //     id: pet.id,
-  //     name: pet.name,
-  //     avatar_url: pet.avatar_url,
-  //     species: pet.species
-  //   })));
-  //   console.log('================================');
-  // }, [profile, pets]);
-
-  const getUserFirstName = () => {
-    if (profile?.first_name) {
-      return profile.first_name;
-    }
-    if (profile?.full_name) {
-      return profile.full_name.split(' ')[0];
-    }
-    if (user?.email) {
-      return user.email.split('@')[0];
-    }
-    return 'User';
-  };
-  
-  const resolveImageUrl = (url?: string): string | undefined => {
-    if (!url) return undefined;
-    if (/^https?:\/\//.test(url)) return url;
-    if (url.startsWith('user-photos/')) {
-      const { data } = supabase.storage.from('user-photos').getPublicUrl(url);
-      return data.publicUrl;
-    }
-    if (url.startsWith('pet-photos/')) {
-      const { data } = supabase.storage.from('pet-photos').getPublicUrl(url);
-      return data.publicUrl;
-    }
-    return url;
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refreshPets();
+    // In a real app, we'd also refresh events here via a global refresh or by triggering event hook refresh
+    setRefreshing(false);
   };
 
-  const getPetImageUri = (pet: any): string | undefined => {
-    return resolveImageUrl(pet?.photo_url || pet?.avatar_url || undefined);
+  const dynamicStyles = {
+    container: { backgroundColor: colors.background.primary },
+    sectionTitle: { color: colors.text.primary },
+    addButton: { backgroundColor: colors.success[300] } // green-300 light
   };
 
-  const getProfileImageUri = (): string | undefined => {
-    return resolveImageUrl(profile?.photo_url || profile?.avatar_url || undefined);
-  };
-
-  if (pets.length === 0) {
+  if (pets.length === 0 && !petsLoading) {
     return (
-      <View style={styles.container}>
-        <LinearGradient
-          colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
-          style={styles.emptyGradient}
+      <SafeAreaView style={[styles.container, dynamicStyles.container]}>
+        <HomeHeader />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          <View style={styles.emptyHeader}>
-            <View style={styles.userInfo}>
-            <View style={styles.avatar}>
-              <PetImage
-                source={getProfileImageUri() ? { uri: getProfileImageUri()! } : undefined}
-                size={48}
-                borderRadius={24}
-                fallbackEmoji={getUserFirstName().charAt(0).toUpperCase()}
-                style={styles.avatarImage}
-              />
-            </View>
-            <View>
-              <Text style={styles.userName}>Hello, {getUserFirstName()}</Text>
-            </View>
-            </View>
-            <TouchableOpacity style={styles.notificationButton}>
-              <IconSymbol
-                ios_icon_name="bell.fill"
-                android_material_icon_name="notifications"
-                size={24}
-                color={colors.text}
-              />
-              <View style={styles.notificationBadge} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.emptyContent}>
-            <Image
-              source={require('@/assets/images/image 8276.png')}
-              style={styles.emptyIllustration}
-              resizeMode="contain"
-            />
-            <Text style={styles.emptyTitle}>Create your pet's{'\n'}digital passport</Text>
-            <Text style={styles.emptySubtitle}>
-              Add your pet to unlock health tracking, reminders, and a complete record of their wellbeing
-            </Text>
-            <TouchableOpacity
-              style={styles.addPetButton}
-              onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
-            >
-              <Text style={styles.addPetButtonText}>Add Pet</Text>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-      </View>
+          <NoPetsState />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <AppHeader showGreeting />
-      <PWAInstallPrompt />
-
+    <SafeAreaView style={[styles.container, dynamicStyles.container]}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <View style={styles.petsSection}>
-          <Text style={styles.sectionTitle}>Your Pets</Text>
+        <HomeHeader />
+        <PWAInstallPrompt />
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Your Companions</Text>
+            <TouchableOpacity
+              style={[styles.addButton, dynamicStyles.addButton]}
+              onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
+            >
+              <IconSymbol ios_icon_name="plus" android_material_icon_name="add" size={20} color="#14532d" />
+            </TouchableOpacity>
+          </View>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.petsScroll}
           >
-            {pets.map((pet, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.petAvatar}
-                onPress={() => setSelectedPet(pet)}
-              >
-                <View style={[styles.petAvatarCircle, index === 0 && styles.petAvatarActive]}>
-                  <PetImage
-                    source={getPetImageUri(pet) ? { uri: getPetImageUri(pet)! } : undefined}
-                    size={60}
-                    borderRadius={30}
-                    fallbackEmoji={pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐈' : '🐾'}
-                    style={styles.petAvatarImage}
-                  />
-                  {pet.user_id !== user?.id && (
-                    <View style={styles.sharedBadge}>
-                      <IconSymbol
-                        ios_icon_name="person.2.fill"
-                        android_material_icon_name="group"
-                        size={12}
-                        color="#fff"
-                      />
-                    </View>
-                  )}
-                </View>
-                <Text style={[styles.petAvatarName, index === 0 && styles.petAvatarNameActive]}>
-                  {pet.name}
-                </Text>
-              </TouchableOpacity>
+            {pets.map(pet => (
+              <DashboardPetCard
+                key={pet.id}
+                pet={pet}
+                onPress={setSelectedPet}
+              />
             ))}
-            <TouchableOpacity
-              style={styles.petAvatar}
-              onPress={() => router.push('/(tabs)/pets/add-pet')}
-            >
-              <View style={styles.addPetCircle}>
-                <Text style={styles.addPetIcon}>+</Text>
-              </View>
-              <Text style={styles.petAvatarName}>Add new</Text>
-            </TouchableOpacity>
           </ScrollView>
         </View>
 
-        {/* Quick Actions Panel */}
-        <QuickActionsPanel />
-
-        <View style={styles.cardsRow}>
-          <TouchableOpacity
-            style={styles.smallCard}
-            onPress={() => router.push('/(tabs)/pets')}
-          >
-            <Text style={styles.smallCardTitle}>Health Card</Text>
-            <Text style={styles.smallCardSubtitle}>
-              {nextVaccination 
-                ? `Next vac: ${new Date(nextVaccination.dueDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` 
-                : 'No vaccines due'}
-            </Text>
-            <View style={styles.smallCardIcon}>
-              <IconSymbol
-                ios_icon_name="heart.fill"
-                android_material_icon_name="favorite"
-                size={32}
-                color={colors.primary}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.smallCard}>
-            <Text style={styles.smallCardTitle}>ID Passport</Text>
-            <Text style={styles.smallCardSubtitle}>Documents</Text>
-            <View style={styles.smallCardIcon}>
-              <IconSymbol
-                ios_icon_name="doc.fill"
-                android_material_icon_name="description"
-                size={32}
-                color={colors.primary}
-              />
-            </View>
-          </TouchableOpacity>
+        <View style={styles.section}>
+          <QuickActionsPanel />
         </View>
 
-        <UpcomingEventsPanel />
+        <View style={styles.section}>
+          <UpcomingEventsPanel />
+        </View>
 
+        <View style={{ height: 100 }} />
       </ScrollView>
+
       {selectedPet && (
         <PetQuickViewModal
           pet={selectedPet}
@@ -245,6 +109,44 @@ export default function HomeScreen() {
           onClose={() => setSelectedPet(null)}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  section: {
+    marginBottom: 24,
+    paddingHorizontal: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  addButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  petsScroll: {
+    paddingRight: 20, // To allow scrolling the last item fully into view with margin
+    gap: 0,
+  },
+});
+

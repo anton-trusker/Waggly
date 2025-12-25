@@ -24,18 +24,19 @@ import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import { parseDDMMYYYY } from '@/utils/dateUtils';
 import AppHeader from '@/components/layout/AppHeader';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
+import BottomCTA from '@/components/ui/BottomCTA';
 
 export default function AddVisitScreen() {
   const { petId: initialPetId } = useLocalSearchParams<{ petId: string }>();
   const { user } = useAuth();
   const { pets } = usePets();
-  
+
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
-  const [locationDetails, setLocationDetails] = useState<{lat: number, lng: number, placeId: string} | null>(null);
+  const [locationDetails, setLocationDetails] = useState<{ lat: number, lng: number, placeId: string } | null>(null);
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
@@ -178,13 +179,13 @@ export default function AddVisitScreen() {
   );
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <AppHeader title="Add Visit" showBack />
-      
+
       <TouchableWithoutFeedback onPress={() => {
         Keyboard.dismiss();
         setShowPlaceDropdown(false);
@@ -200,15 +201,15 @@ export default function AddVisitScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>For Pet</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
-                {pets.map(pet => (
-                    <TouchableOpacity 
-                        key={pet.id} 
-                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
-                        onPress={() => setSelectedPetId(pet.id)}
-                    >
-                        <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
-                    </TouchableOpacity>
-                ))}
+              {pets.map(pet => (
+                <TouchableOpacity
+                  key={pet.id}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                  onPress={() => setSelectedPetId(pet.id)}
+                >
+                  <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </View>
 
@@ -285,20 +286,20 @@ export default function AddVisitScreen() {
             )}
           </View>
 
-          
+
 
           {/* Add extra space for fixed button */}
           <View style={{ height: 100 }} />
         </ScrollView>
       </TouchableWithoutFeedback>
-      
-      <BottomCTA 
-        onBack={() => router.back()} 
-        onPrimary={handleAddVisit} 
-        primaryLabel="Add Visit" 
-        disabled={loading} 
+
+      <BottomCTA
+        onBack={() => router.back()}
+        onPrimary={handleAddVisit}
+        primaryLabel="Add Visit"
+        disabled={loading}
       />
-      
+
       <LoadingOverlay visible={loading} message="Saving visit..." />
     </KeyboardAvoidingView>
   );

@@ -22,12 +22,12 @@ export const darkTheme = {
 
         // Background Colors
         background: {
-            primary: '#000000', // AMOLED Black or very dark gray
-            secondary: '#111827',
-            tertiary: '#1F2937',
+            primary: '#0f1323', // Updated from design
+            secondary: '#1A2342', // Slightly lighter
+            tertiary: '#111827',
             gradient: {
-                start: '#001C3D',
-                end: '#003170',
+                start: '#0f1323',
+                end: '#1A2666',
             },
         },
 

@@ -1,140 +1,154 @@
-
 import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
-  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+  TouchableOpacity,
+  Alert
 } from 'react-native';
-import Input from '@/components/ui/Input';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { colors, commonStyles } from '@/styles/commonStyles';
-import { designSystem } from '@/constants/designSystem';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import Input from '@/components/ui/Input';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; confirm?: string; auth?: string }>({});
-  const { signUp, signIn } = useAuth();
+  const { signUp } = useAuth();
+  const { colors } = useAppTheme();
 
   const handleSignup = async () => {
-    const nextErrors: typeof errors = {};
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!email.trim() || !emailRegex.test(email.trim())) {
-      nextErrors.email = 'Enter a valid email';
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
     }
-    if (!password.trim()) {
-      nextErrors.password = 'Password is required';
-    } else if (password.length < 8) {
-      nextErrors.password = 'Password must be at least 8 characters';
-    }
-    if (confirmPassword !== password) {
-      nextErrors.confirm = 'Passwords do not match';
-    }
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
-    setLoading(true);
-    const { error } = await signUp(email.trim(), password);
-    if (error) {
-      setLoading(false);
-      setErrors((e) => ({ ...e, auth: error.message || 'Signup failed' }));
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
       return;
     }
 
-    // Attempt auto-login and navigate to dashboard
-    const loginResult = await signIn(email.trim(), password);
+    setLoading(true);
+    // signUp implementation handles profile creation optionally or we redirect to onboarding
+    const { error, data } = await signUp(email, password);
     setLoading(false);
-    if (!loginResult.error) {
-      router.replace('/(onboarding)/language-selection' as any);
+
+    if (error) {
+      Alert.alert('Signup Failed', error.message);
     } else {
-      setErrors((e) => ({ ...e, auth: 'Please verify your email, then sign in.' }));
+      // Check if auto-signed in or needs verification
+      if (data?.session) {
+        router.replace('/(onboarding)/language-selection'); // Go to onboarding
+      } else {
+        Alert.alert('Success', 'Please check your email to verify your account.');
+        router.replace('/(auth)/login');
+      }
     }
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backText}>‹ Back</Text>
-        </TouchableOpacity>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        <View style={styles.header}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join Pawzly and start tracking your pet&apos;s health</Text>
-        </View>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuTVMEMHuEIPq00WTY1X1jvzd7VG7GPA2j34f2PJi_t_6NmJj8BTT8xijkJE8p2OOjlaYhGmgYK7UyUV4Erb_KO8JnD5zBo3-pP2HWjbLVhiWGeeiAK2pGvv8xUzk4-qFO4ObBgm3GdJajlYIhLI4wdV3_QodWslo1e3XH8lYiSroWAYvE95-h3QFMGzBZLXpXCgkmscbPfjfssYS8CB3ziFhWBJl6VRKjPbZfFdEnaeuEPmjzhogs1WzdYc7E7X_afbGbdQaGBA9K' }}
+              style={styles.headerImage}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['transparent', colors.background.primary]}
+              start={{ x: 0.5, y: 0.6 }}
+              end={{ x: 0.5, y: 1 }}
+              style={styles.imageGradient}
+            />
+          </View>
 
-        <View style={styles.form}>
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(t) => { setEmail(t); if (errors.email) setErrors((e)=>({...e,email:undefined})); }}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            editable={!loading}
-            accessibilityLabel="Email"
-          />
-          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          <View style={styles.formContainer}>
+            <Text style={[styles.title, { color: colors.text.primary }]}>Create your account</Text>
+            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Join our community of pet lovers today.</Text>
 
-          <Input
-            label="Password"
-            placeholder="Create a password"
-            value={password}
-            onChangeText={(t) => { setPassword(t); if (errors.password) setErrors((e)=>({...e,password:undefined})); }}
-            secureTextEntry
-            editable={!loading}
-            accessibilityLabel="Password"
-          />
-          {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            <View style={styles.inputs}>
+              <Input
+                label="Email Address"
+                placeholder="name@example.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
 
-          <Input
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChangeText={(t) => { setConfirmPassword(t); if (errors.confirm) setErrors((e)=>({...e,confirm:undefined})); }}
-            secureTextEntry
-            editable={!loading}
-            accessibilityLabel="Confirm password"
-          />
-          {errors.confirm && <Text style={styles.errorText}>{errors.confirm}</Text>}
+              <Input
+                label="Password"
+                placeholder="Create a password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                isPassword
+              />
 
-          {errors.auth && <Text style={styles.errorText}>{errors.auth}</Text>}
+              <Input
+                label="Confirm Password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                isPassword
+              />
+            </View>
 
-          <EnhancedButton
-            title="Sign Up"
-            variant="primary"
-            size="lg"
-            onPress={handleSignup}
-            loading={loading}
-            fullWidth={true}
-            style={styles.button}
-          />
+            <View style={styles.actions}>
+              <EnhancedButton
+                title="Sign Up"
+                onPress={handleSignup}
+                loading={loading}
+                fullWidth
+              />
+            </View>
 
-          <Text style={styles.terms}>
-            By creating an account, you agree to our{'\n'}
-            <Text style={styles.termsLink}>Terms of Services</Text> &{' '}
-            <Text style={styles.termsLink}>Privacy Policy</Text>
-          </Text>
-        </View>
-      </ScrollView>
-      <LoadingOverlay visible={loading} message="Creating account..." />
+            <View style={styles.socialSection}>
+              <View style={styles.divider}>
+                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
+                <Text style={[styles.orText, { color: colors.text.secondary, backgroundColor: colors.background.primary }]}>Or sign up with</Text>
+                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
+              </View>
+
+              <View style={styles.socialButtons}>
+                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                  <IconSymbol android_material_icon_name="apple" size={24} color={colors.text.primary} />
+                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Apple</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>G</Text>
+                  </View>
+                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Google</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.footer}>
+              <Text style={[styles.footerText, { color: colors.text.secondary }]}>Already have an account? </Text>
+              <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
+                <Text style={[styles.signUpLink, { color: colors.primary[500] }]}>Log In</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <LoadingOverlay visible={loading} />
     </View>
   );
 }
@@ -142,61 +156,98 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.card,
   },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
+  scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
     paddingBottom: 40,
   },
-  backButton: {
-    marginBottom: 24,
+  imageContainer: {
+    width: '100%',
+    height: 300,
+    position: 'relative',
   },
-  backText: {
-    fontSize: 28,
-    color: colors.primary,
-    fontWeight: '300',
+  headerImage: {
+    width: '100%',
+    height: '100%',
   },
-  header: {
-    marginBottom: 32,
+  imageGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+  },
+  formContainer: {
+    paddingHorizontal: 20,
+    marginTop: -20,
   },
   title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 28,
+    fontWeight: '800',
+    textAlign: 'center',
     marginBottom: 8,
+    fontFamily: Platform.select({ ios: 'Manrope-Bold', android: 'sans-serif-bold' }),
   },
   subtitle: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-  form: {
-    width: '100%',
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  button: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  errorText: {
-    color: colors.error,
-    marginTop: 4,
-  },
-  terms: {
-    fontSize: 12,
-    color: colors.textSecondary,
+    fontSize: 16,
     textAlign: 'center',
-    lineHeight: 18,
+    marginBottom: 32,
+    fontFamily: Platform.select({ ios: 'Manrope-Regular', android: 'sans-serif' }),
+  },
+  inputs: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  actions: {
     marginTop: 8,
   },
-  termsLink: {
-    color: colors.primary,
+  socialSection: {
+    marginTop: 24,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    position: 'relative',
+    height: 20,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+  },
+  orText: {
+    paddingHorizontal: 12,
+    fontSize: 14,
+    position: 'absolute',
+    zIndex: 1,
+  },
+  socialButtons: {
+    gap: 12,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
+  },
+  socialButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  footerText: {
+    fontSize: 14,
+  },
+  signUpLink: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

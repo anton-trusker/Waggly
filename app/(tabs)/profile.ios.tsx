@@ -55,7 +55,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account</Text>
-          
+
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuItemText}>Edit Profile</Text>
             <Text style={styles.menuItemArrow}>›</Text>
@@ -63,6 +63,11 @@ export default function ProfileScreen() {
 
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuItemText}>Notifications Settings</Text>
+            <Text style={styles.menuItemArrow}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/settings/appearance')}>
+            <Text style={styles.menuItemText}>Appearance</Text>
             <Text style={styles.menuItemArrow}>›</Text>
           </TouchableOpacity>
 
@@ -74,7 +79,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>
-          
+
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuItemText}>Help Center</Text>
             <Text style={styles.menuItemArrow}>›</Text>

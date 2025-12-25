@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Platform, ScrollView, Modal, KeyboardAvoidingView } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { useLocale } from '@/hooks/useLocale';
 import Radio from '@/components/ui/Radio';
@@ -53,7 +53,7 @@ export default function DropdownSearchList({ items, placeholder = 'Search', load
     if (!query) return [];
     const q = query.toLowerCase();
     const results = items.filter(i => i.toLowerCase().includes(q)).sort((a, b) => a.localeCompare(b));
-    
+
     // If the exact query is not in the results, we can treat it as a potential custom value
     // We don't add it to 'results' directly here to keep sections clean, 
     // but we will handle it in the rendering logic or a separate 'custom' section.
@@ -120,87 +120,87 @@ export default function DropdownSearchList({ items, placeholder = 'Search', load
         onRequestClose={() => setShowList(false)}
       >
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>{t(placeholder, { defaultValue: placeholder })}</Text>
-                    <TouchableOpacity onPress={() => setShowList(false)}>
-                        <Text style={styles.closeText}>{t('common.close', { defaultValue: 'Close' })}</Text>
-                    </TouchableOpacity>
-                </View>
-                
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        ref={inputRef}
-                        style={styles.searchInput}
-                        placeholder={t('common.search', { defaultValue: 'Search...' })}
-                        placeholderTextColor={colors.textSecondary}
-                        value={query}
-                        onChangeText={handleTextChange}
-                        autoFocus={true}
-                    />
-                    {query.length > 0 && (
-                        <TouchableOpacity
-                            style={styles.clearButton}
-                            onPress={() => { setQuery(''); onSelect(''); }}
-                        >
-                            <Text style={styles.clearText}>×</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-
-                {loading && (
-                    <View style={styles.loading}>
-                        <ActivityIndicator size="small" color={colors.primary} />
-                    </View>
-                )}
-
-                <ScrollView
-                    style={styles.list}
-                    contentContainerStyle={styles.listContent}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    {showCustomOption && (
-                        <TouchableOpacity
-                            style={[styles.itemRow, styles.customOption]}
-                            onPress={() => { onSelect(query); setShowList(false); }}
-                        >
-                            <View style={styles.itemLeft}>
-                                <Text style={styles.itemLabel}>
-                                Use "{query}"
-                                <Text style={styles.customTag}> (Custom)</Text>
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-
-                    {sections.map((section) => (
-                        <View key={section.title}>
-                            <View style={styles.sectionHeader}>
-                                <Text style={styles.sectionTitle}>{section.title}</Text>
-                            </View>
-                            {section.data.map((item, itemIndex) => (
-                                <TouchableOpacity
-                                    key={`${item}-${itemIndex}`}
-                                    style={styles.itemRow}
-                                    onPress={() => { onSelect(item); setQuery(item); setShowList(false); }}
-                                >
-                                    <View style={styles.itemLeft}>{renderHighlighted(item)}</View>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    ))}
-                    
-                    {hasMore && !loadingMore && (
-                        <TouchableOpacity onPress={onLoadMore} style={styles.loadMoreButton}>
-                            <Text style={styles.loadMoreText}>{t('common.load_more', { defaultValue: 'Load more' })}</Text>
-                        </TouchableOpacity>
-                    )}
-                    
-                    {loadingMore && (
-                        <View style={styles.loadingMore}><ActivityIndicator size="small" color={colors.primary} /></View>
-                    )}
-                </ScrollView>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{t(placeholder, { defaultValue: placeholder })}</Text>
+              <TouchableOpacity onPress={() => setShowList(false)}>
+                <Text style={styles.closeText}>{t('common.close', { defaultValue: 'Close' })}</Text>
+              </TouchableOpacity>
             </View>
+
+            <View style={styles.searchContainer}>
+              <TextInput
+                ref={inputRef}
+                style={styles.searchInput}
+                placeholder={t('common.search', { defaultValue: 'Search...' })}
+                placeholderTextColor={colors.textSecondary}
+                value={query}
+                onChangeText={handleTextChange}
+                autoFocus={true}
+              />
+              {query.length > 0 && (
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={() => { setQuery(''); onSelect(''); }}
+                >
+                  <Text style={styles.clearText}>×</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {loading && (
+              <View style={styles.loading}>
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            )}
+
+            <ScrollView
+              style={styles.list}
+              contentContainerStyle={styles.listContent}
+              keyboardShouldPersistTaps="handled"
+            >
+              {showCustomOption && (
+                <TouchableOpacity
+                  style={[styles.itemRow, styles.customOption]}
+                  onPress={() => { onSelect(query); setShowList(false); }}
+                >
+                  <View style={styles.itemLeft}>
+                    <Text style={styles.itemLabel}>
+                      Use "{query}"
+                      <Text style={styles.customTag}> (Custom)</Text>
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+
+              {sections.map((section) => (
+                <View key={section.title}>
+                  <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>{section.title}</Text>
+                  </View>
+                  {section.data.map((item, itemIndex) => (
+                    <TouchableOpacity
+                      key={`${item}-${itemIndex}`}
+                      style={styles.itemRow}
+                      onPress={() => { onSelect(item); setQuery(item); setShowList(false); }}
+                    >
+                      <View style={styles.itemLeft}>{renderHighlighted(item)}</View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ))}
+
+              {hasMore && !loadingMore && (
+                <TouchableOpacity onPress={onLoadMore} style={styles.loadMoreButton}>
+                  <Text style={styles.loadMoreText}>{t('common.load_more', { defaultValue: 'Load more' })}</Text>
+                </TouchableOpacity>
+              )}
+
+              {loadingMore && (
+                <View style={styles.loadingMore}><ActivityIndicator size="small" color={colors.primary} /></View>
+              )}
+            </ScrollView>
+          </View>
         </KeyboardAvoidingView>
       </Modal>
     </View>

@@ -7,14 +7,13 @@ import { supabase } from '@/lib/supabase';
 import { Alert } from 'react-native';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
+import { ThemeProvider as ThemeContextProvider } from '@/contexts/ThemeContext';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 function RootLayoutNav() {
   const { session, user } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
 
   // Handle Deep Linking
   useEffect(() => {
@@ -101,13 +100,25 @@ function RootLayoutNav() {
   }, [session, segments]);
 
   return (
-    <ThemeProvider value={theme}>
+    <ThemeContextProvider>
+      <NavigationThemeProvider />
+    </ThemeContextProvider>
+  );
+}
+
+function NavigationThemeProvider() {
+  const { isDark } = useAppTheme();
+  // We can still use React Navigation's themes if we want, or make custom ones
+  const navigationTheme = isDark ? DarkTheme : DefaultTheme;
+
+  return (
+    <ThemeProvider value={navigationTheme}>
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : designSystem.colors.background.primary,
+            backgroundColor: isDark ? '#000' : designSystem.colors.background.primary,
           },
-          headerTintColor: colorScheme === 'dark' ? '#fff' : designSystem.colors.text.primary,
+          headerTintColor: isDark ? '#fff' : designSystem.colors.text.primary,
           headerTitleStyle: {
             fontWeight: '600',
           },

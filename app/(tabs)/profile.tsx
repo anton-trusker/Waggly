@@ -69,7 +69,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
-          
+
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/edit')}>
             <Text style={styles.menuItemText}>{t('profile.edit_profile')}</Text>
             <Text style={styles.menuItemArrow}>›</Text>
@@ -82,6 +82,11 @@ export default function ProfileScreen() {
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/notifications')}>
             <Text style={styles.menuItemText}>{t('profile.notifications_settings')}</Text>
+            <Text style={styles.menuItemArrow}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/settings/appearance')}>
+            <Text style={styles.menuItemText}>Appearance</Text>
             <Text style={styles.menuItemArrow}>›</Text>
           </TouchableOpacity>
 
@@ -99,7 +104,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('support.title')}</Text>
-          
+
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuItemText}>{t('support.help_center')}</Text>
             <Text style={styles.menuItemArrow}>›</Text>
