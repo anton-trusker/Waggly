@@ -9,9 +9,10 @@ interface WeightModalProps {
     onClose: () => void;
     petId: string;
     existingEntry?: WeightEntry | null; // If provided, edit mode
+    onSuccess?: () => void;
 }
 
-export default function WeightModal({ visible, onClose, petId, existingEntry }: WeightModalProps) {
+export default function WeightModal({ visible, onClose, petId, existingEntry, onSuccess }: WeightModalProps) {
     const { addWeightEntry, updateWeightEntry } = useWeightEntries(petId);
     const [loading, setLoading] = useState(false);
 
@@ -61,6 +62,7 @@ export default function WeightModal({ visible, onClose, petId, existingEntry }: 
 
         setLoading(false);
         if (!result.error) {
+            onSuccess?.();
             onClose();
         }
     };

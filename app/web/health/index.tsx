@@ -4,6 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
 import { useHealthDashboard, HealthEvent } from '@/hooks/useHealthDashboard';
 import { useRouter } from 'expo-router';
+import HealthEventSelectorModal from '@/components/desktop/modals/HealthEventSelectorModal';
+import PetSelectorModal from '@/components/desktop/modals/PetSelectorModal';
+import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
+import WeightModal from '@/components/desktop/modals/WeightModal';
 
 export default function HealthDashboard() {
     const router = useRouter();
@@ -50,9 +57,59 @@ export default function HealthDashboard() {
         );
     };
 
+    const [targetPetId, setTargetPetId] = useState<string | null>(null);
+    const [modals, setModals] = useState({
+        petSelector: false,
+        eventSelector: false,
+        vaccination: false,
+        visit: false,
+        treatment: false,
+        medication: false,
+        weight: false,
+    });
+
+    const handleLogHealthEvent = () => {
+        if (selectedPetId && selectedPetId !== 'all') {
+            setTargetPetId(selectedPetId);
+            setModals({ ...modals, eventSelector: true });
+        } else {
+            setModals({ ...modals, petSelector: true });
+        }
+    };
+
+    const handlePetSelect = (petId: string) => {
+        setTargetPetId(petId);
+        setModals({ ...modals, petSelector: false, eventSelector: true });
+    };
+
+    const handleEventSelect = (type: 'vaccination' | 'visit' | 'treatment' | 'weight' | 'medication') => {
+        setModals({
+            ...modals,
+            eventSelector: false,
+            [type]: true,
+        });
+    };
+
+    const handleSuccess = () => {
+        refresh();
+    };
+
+    const closeAllModals = () => {
+        setModals({
+            petSelector: false,
+            eventSelector: false,
+            vaccination: false,
+            visit: false,
+            treatment: false,
+            medication: false,
+            weight: false,
+        });
+        // Don't reset targetPetId immediately to avoid UI flicker slightly, or do it
+    };
+
     return (
         <View style={styles.container}>
-            {/* Header */}
+            {/* ... Header ... */}
             <View style={styles.header}>
                 <View>
                     <Text style={styles.title}>Health Dashboard</Text>
@@ -62,8 +119,7 @@ export default function HealthDashboard() {
                     <TouchableOpacity style={styles.actionButton} onPress={() => refresh()}>
                         <Ionicons name="refresh" size={20} color="#6B7280" />
                     </TouchableOpacity>
-                    {/* Add Log Button placeholder */}
-                    <TouchableOpacity style={styles.primaryButton} onPress={() => { }}>
+                    <TouchableOpacity style={styles.primaryButton} onPress={handleLogHealthEvent}>
                         <Ionicons name="add" size={20} color="#fff" />
                         <Text style={styles.primaryButtonText}>Log Health Event</Text>
                     </TouchableOpacity>
@@ -177,6 +233,54 @@ export default function HealthDashboard() {
 
                 </ScrollView>
             </View>
+
+            {/* Modals */}
+            <PetSelectorModal
+                visible={modals.petSelector}
+                onClose={() => setModals({ ...modals, petSelector: false })}
+                onSelect={handlePetSelect}
+            />
+
+            <HealthEventSelectorModal
+                visible={modals.eventSelector}
+                onClose={() => setModals({ ...modals, eventSelector: false })}
+                onSelect={handleEventSelect}
+            />
+
+            {targetPetId && (
+                <>
+                    <VaccinationFormModal
+                        visible={modals.vaccination}
+                        onClose={closeAllModals}
+                        petId={targetPetId}
+                        onSuccess={handleSuccess}
+                    />
+                    <VisitFormModal
+                        visible={modals.visit}
+                        onClose={closeAllModals}
+                        petId={targetPetId}
+                        onSuccess={handleSuccess}
+                    />
+                    <TreatmentFormModal
+                        visible={modals.treatment}
+                        onClose={closeAllModals}
+                        petId={targetPetId}
+                        onSuccess={handleSuccess}
+                    />
+                    <MedicationFormModal
+                        visible={modals.medication}
+                        onClose={closeAllModals}
+                        petId={targetPetId}
+                        onSuccess={handleSuccess}
+                    />
+                    <WeightModal
+                        visible={modals.weight}
+                        onClose={closeAllModals}
+                        petId={targetPetId}
+                        onSuccess={handleSuccess}
+                    />
+                </>
+            )}
         </View>
     );
 }

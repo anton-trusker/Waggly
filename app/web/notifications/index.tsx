@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vec tors';
+import { Ionicons } from '@expo/vector-icons';
 
 const NOTIFICATION_TYPES = ['All', 'Health', 'Events', 'Social', 'System'];
 
