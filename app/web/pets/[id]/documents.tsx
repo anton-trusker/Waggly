@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, Pressable, TextInput } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function DocumentsTab() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   const { pets } = usePets();
   const { documents } = useDocuments(id);
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,16 +18,15 @@ export default function DocumentsTab() {
   const [selectedTime, setSelectedTime] = useState('Last 6 Months');
 
   const pet = pets?.find(p => p.id === id);
-  if (!pet) return null;
-
+  
   // Mock document types and icons
   const documentTypes = {
-    'Vaccines': { icon: 'vaccines', color: 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400' },
-    'Lab Report': { icon: 'biotech', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
-    'Invoice': { icon: 'receipt_long', color: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' },
-    'Prescription': { icon: 'prescriptions', color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' },
-    'Insurance': { icon: 'health_and_safety', color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' },
-    'Other': { icon: 'folder', color: 'bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-400' },
+    'Vaccines': { icon: 'vaccines', color: '#DB2777', bgColor: '#FCE7F3' },
+    'Lab Report': { icon: 'biotech', color: '#2563EB', bgColor: '#DBEAFE' },
+    'Invoice': { icon: 'receipt_long', color: '#059669', bgColor: '#D1FAE5' },
+    'Prescription': { icon: 'prescriptions', color: '#9333EA', bgColor: '#F3E8FF' },
+    'Insurance': { icon: 'health_and_safety', color: '#EA580C', bgColor: '#FFEDD5' },
+    'Other': { icon: 'folder', color: '#6B7280', bgColor: '#F3F4F6' },
   };
 
   const formatDate = (dateString: string) => {
@@ -35,7 +38,7 @@ export default function DocumentsTab() {
     return documentTypes[type as keyof typeof documentTypes] || documentTypes['Other'];
   };
 
-  // Mock documents data - in real app this would come from useDocuments hook
+  // Mock documents data
   const mockDocuments = [
     {
       id: '1',
@@ -87,138 +90,423 @@ export default function DocumentsTab() {
     }
   ];
 
-  const allDocs = documents || mockDocuments;
+  const allDocs = (documents && documents.length > 0) ? documents : mockDocuments;
+  
+  // Filter logic
+  const filteredDocs = allDocs.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          doc.clinic?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = selectedType === 'All Types' || doc.type === selectedType;
+    return matchesSearch && matchesType;
+  });
+
+  const renderActionTile = (label: string, icon: string, color: string, bgColor: string, onPress: () => void) => (
+    <TouchableOpacity 
+      style={[styles.actionTile, isMobile && styles.actionTileMobile]} 
+      onPress={onPress}
+    >
+      <View style={[styles.actionIconBox, { backgroundColor: bgColor }, isMobile && styles.actionIconBoxMobile]}>
+        <IconSymbol android_material_icon_name={icon as any} size={isMobile ? 24 : 28} color={color} />
+      </View>
+      <Text style={[styles.actionLabel, isMobile && styles.actionLabelMobile]}>{label}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView className="flex-1 bg-background-light dark:bg-background-dark">
-      <View className="p-4 lg:p-8">
-        <View className="max-w-7xl mx-auto space-y-6">
-          {/* Header */}
-          <View className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <Text className="text-xl font-bold text-text-light dark:text-text-dark">All Documents ({allDocs.length})</Text>
-            <View className="flex gap-3 w-full md:w-auto">
-              <Pressable 
-                onPress={() => router.push(`/web/pets/documents/scan?petId=${id}`)}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-50 dark:hover:bg-slate-800 text-text-light dark:text-text-dark rounded-xl font-medium shadow-sm transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                <IconSymbol name="document_scanner" className="text-primary group-hover:scale-110 transition-transform" size={20} />
-                <Text>Scan Doc</Text>
-              </Pressable>
-              <Pressable 
-                onPress={() => router.push(`/web/pets/documents/upload?petId=${id}`)}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium shadow-lg shadow-primary/25 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                <IconSymbol name="upload_file" className="group-hover:scale-110 transition-transform" size={20} />
-                <Text>Upload File</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Search and Filters */}
-          <View className="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm border border-border-light dark:border-border-dark flex flex-col md:flex-row gap-4 items-center">
-            {/* Search Input */}
-            <View className="relative flex-1 w-full">
-              <IconSymbol name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-light dark:text-muted-dark" size={20} />
-              <TextInput
-                className="w-full pl-10 pr-4 py-2.5 bg-background-light dark:bg-slate-800/50 border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm transition-colors dark:placeholder-gray-500 text-text-light dark:text-text-dark"
-                placeholder="Search by title, clinic or date..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-            </View>
-
-            {/* Type Filter */}
-            <View className="flex gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-              <View className="px-4 py-2.5 bg-background-light dark:bg-slate-800/50 border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-light dark:text-text-dark cursor-pointer min-w-[140px]">
-                <Text>{selectedType}</Text>
-              </View>
-              <View className="px-4 py-2.5 bg-background-light dark:bg-slate-800/50 border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-light dark:text-text-dark cursor-pointer min-w-[140px]">
-                <Text>{selectedTime}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Documents List */}
-          <View className="grid grid-cols-1 gap-3">
-            {allDocs.map((document) => {
-              const iconConfig = getDocumentIcon(document.type);
-              return (
-                <View 
-                  key={document.id} 
-                  className="bg-card-light dark:bg-card-dark rounded-xl p-4 md:p-5 shadow-sm border border-border-light dark:border-border-dark hover:border-primary/50 dark:hover:border-primary/50 transition-colors group"
-                >
-                  <View className="flex items-center gap-4">
-                    <View className={`w-12 h-12 rounded-lg ${iconConfig.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                      <IconSymbol name={iconConfig.icon} size={24} />
-                    </View>
-
-                    <View className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                      {/* Document Name and Type */}
-                      <View className="md:col-span-4">
-                        <Text className="text-base font-bold text-text-light dark:text-text-dark truncate">
-                          {document.name}
-                        </Text>
-                        <Text className="text-xs text-muted-light dark:text-muted-dark font-medium mt-0.5 uppercase tracking-wide">
-                          {document.type}
-                        </Text>
-                      </View>
-
-                      {/* Date */}
-                      <View className="md:col-span-3">
-                        <View className="flex items-center gap-2 text-sm text-text-light dark:text-text-dark">
-                          <IconSymbol name="calendar_today" size={16} className="text-muted-light dark:text-muted-dark" />
-                          <Text>{formatDate(document.date)}</Text>
-                        </View>
-                      </View>
-
-                      {/* Clinic/Provider */}
-                      <View className="md:col-span-5">
-                        <View className="flex items-center gap-2 text-sm text-text-light dark:text-text-dark">
-                          {document.type === 'Invoice' ? (
-                            <IconSymbol name="attach_money" size={16} className="text-muted-light dark:text-muted-dark" />
-                          ) : (
-                            <IconSymbol name="local_hospital" size={16} className="text-muted-light dark:text-muted-dark" />
-                          )}
-                          <Text>{document.clinic}</Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    {/* Action Buttons */}
-                    <View className="flex items-center gap-1 md:gap-2 pl-2 border-l border-border-light dark:border-border-dark ml-2 md:ml-4">
-                      <Pressable 
-                        className="p-2 text-muted-light dark:text-muted-dark hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                        title="View"
-                      >
-                        <IconSymbol name="visibility" size={20} />
-                      </Pressable>
-                      <Pressable 
-                        className="p-2 text-muted-light dark:text-muted-dark hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                        title="Download"
-                      >
-                        <IconSymbol name="download" size={20} />
-                      </Pressable>
-                      <View className="relative group/more">
-                        <Pressable className="p-2 text-muted-light dark:text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                          <IconSymbol name="more_vert" size={20} />
-                        </Pressable>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-
-          {/* Load More Button */}
-          <View className="flex justify-center pt-4">
-            <Pressable className="text-sm font-medium text-muted-light dark:text-muted-dark hover:text-primary transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-              <Text>Load more documents</Text>
-              <IconSymbol name="expand_more" size={16} />
-            </Pressable>
+    <View style={styles.container}>
+      {/* Desktop Header & Actions */}
+      {!isMobile && (
+        <View style={styles.desktopHeader}>
+          <Text style={styles.sectionTitle}>All Documents ({filteredDocs.length})</Text>
+          <View style={styles.desktopActions}>
+            <TouchableOpacity 
+              style={styles.desktopBtnSecondary}
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}&mode=scan` as any)}
+            >
+              <IconSymbol android_material_icon_name="document_scanner" size={20} color="#6366F1" />
+              <Text style={styles.desktopBtnTextSecondary}>Scan Doc</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.desktopBtnPrimary}
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}&mode=upload` as any)}
+            >
+              <IconSymbol android_material_icon_name="upload_file" size={20} color="#fff" />
+              <Text style={styles.desktopBtnTextPrimary}>Upload File</Text>
+            </TouchableOpacity>
           </View>
         </View>
+      )}
+
+      {/* Mobile Actions */}
+      {isMobile && (
+        <View style={styles.mobileActionsContainer}>
+          {renderActionTile('Scan Doc', 'document_scanner', '#6366F1', '#E0E7FF', () => router.push(`/web/pets/documents/add?petId=${id}&mode=scan` as any))}
+          {renderActionTile('Upload', 'upload_file', '#059669', '#D1FAE5', () => router.push(`/web/pets/documents/add?petId=${id}&mode=upload` as any))}
+          {renderActionTile('Auto-Fill', 'auto_fix_high', '#EA580C', '#FFEDD5', () => {})}
+        </View>
+      )}
+
+      {/* Filters */}
+      <View style={[styles.filterContainer, isMobile && styles.filterContainerMobile]}>
+        <View style={styles.searchBox}>
+          <IconSymbol android_material_icon_name="search" size={20} color="#9CA3AF" />
+          <TextInput 
+            style={styles.searchInput}
+            placeholder="Search by title, clinic or date..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#9CA3AF"
+          />
+        </View>
+        
+        {!isMobile && (
+          <View style={styles.filterRow}>
+            <View style={styles.filterChip}>
+              <Text style={styles.filterChipText}>{selectedType}</Text>
+              <IconSymbol android_material_icon_name="expand_more" size={16} color="#6B7280" />
+            </View>
+            <View style={styles.filterChip}>
+              <Text style={styles.filterChipText}>{selectedTime}</Text>
+              <IconSymbol android_material_icon_name="expand_more" size={16} color="#6B7280" />
+            </View>
+          </View>
+        )}
       </View>
-    </ScrollView>
+
+      {/* Documents List */}
+      <View style={[styles.listContainer, isMobile && styles.listContainerMobile]}>
+        {filteredDocs.map((doc) => {
+          const iconConfig = getDocumentIcon(doc.type);
+          return (
+            <TouchableOpacity key={doc.id} style={styles.docCard}>
+              <View style={[styles.docIconBox, { backgroundColor: iconConfig.bgColor }]}>
+                <IconSymbol android_material_icon_name={iconConfig.icon as any} size={24} color={iconConfig.color} />
+              </View>
+              
+              <View style={styles.docContent}>
+                <View style={styles.docHeader}>
+                  <Text style={styles.docName} numberOfLines={1}>{doc.name}</Text>
+                  {doc.amount && <Text style={styles.docAmount}>{doc.amount}</Text>}
+                </View>
+                
+                <View style={styles.docMetaRow}>
+                  <Text style={styles.docType}>{doc.type}</Text>
+                  <Text style={styles.docDot}>•</Text>
+                  <Text style={styles.docDate}>{formatDate(doc.date)}</Text>
+                </View>
+                
+                <View style={styles.docFooter}>
+                  <View style={styles.docClinic}>
+                    <IconSymbol android_material_icon_name="local_hospital" size={12} color="#9CA3AF" />
+                    <Text style={styles.docClinicText} numberOfLines={1}>{doc.clinic}</Text>
+                  </View>
+                  {doc.size && <Text style={styles.docSize}>{doc.size}</Text>}
+                </View>
+              </View>
+              
+              {!isMobile && (
+                <View style={styles.docActions}>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSymbol android_material_icon_name="visibility" size={20} color="#6B7280" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSymbol android_material_icon_name="download" size={20} color="#6B7280" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.iconBtn}>
+                    <IconSymbol android_material_icon_name="more_vert" size={20} color="#6B7280" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+        
+        {filteredDocs.length === 0 && (
+          <View style={styles.emptyState}>
+            <IconSymbol android_material_icon_name="folder_open" size={48} color="#D1D5DB" />
+            <Text style={styles.emptyStateText}>No documents found</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Mobile FAB (if needed, though designs say Action Tiles at top) */}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: '#F6F6F8', // Match OverviewTab bg
+  },
+  // Desktop Header
+  desktopHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  desktopActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  desktopBtnSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  desktopBtnTextSecondary: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  desktopBtnPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#6366F1',
+    borderRadius: 12,
+    shadowColor: '#6366F1',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  desktopBtnTextPrimary: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+  },
+
+  // Mobile Actions
+  mobileActionsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 24,
+  },
+  actionTile: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  actionTileMobile: {
+    padding: 12,
+    gap: 8,
+  },
+  actionIconBox: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionIconBoxMobile: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  actionLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  actionLabelMobile: {
+    fontSize: 12,
+  },
+
+  // Filters
+  filterContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterContainerMobile: {
+    padding: 12,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    marginBottom: 16,
+  },
+  searchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#1F2937',
+  },
+  filterRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    height: 44,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterChipText: {
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '500',
+  },
+
+  // List
+  listContainer: {
+    gap: 12,
+  },
+  listContainerMobile: {
+    paddingBottom: 24,
+  },
+  docCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  docIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  docContent: {
+    flex: 1,
+    gap: 4,
+  },
+  docHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  docName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    flex: 1,
+    marginRight: 8,
+  },
+  docAmount: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  docMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  docType: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#4B5563',
+    textTransform: 'uppercase',
+  },
+  docDot: {
+    fontSize: 12,
+    color: '#9CA3AF',
+  },
+  docDate: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  docFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  docClinic: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    flex: 1,
+  },
+  docClinicText: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  docSize: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontFamily: 'monospace',
+  },
+  docActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingLeft: 16,
+    borderLeftWidth: 1,
+    borderLeftColor: '#F3F4F6',
+  },
+  iconBtn: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#F9FAFB',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 48,
+    gap: 16,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    fontWeight: '500',
+  },
+});

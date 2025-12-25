@@ -14,7 +14,7 @@ export default function DashboardPetCard({ pet, onPress }: DashboardPetCardProps
     const { colors } = useAppTheme();
 
     const dynamicStyles = {
-        card: { backgroundColor: colors.background.tertiary }, // Or secondary, depending on contrast needs
+        card: { backgroundColor: colors.background.secondary }, // White for contrast
         name: { color: colors.text.primary },
         breed: { color: colors.text.secondary },
     };
@@ -85,21 +85,21 @@ export default function DashboardPetCard({ pet, onPress }: DashboardPetCardProps
 
 const styles = StyleSheet.create({
     card: {
-        width: 160,
-        borderRadius: 16,
-        padding: 12,
-        marginRight: 16,
+        width: 100, // Minimized width
+        borderRadius: 12,
+        padding: 6,
+        marginRight: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
-        elevation: 2,
+        elevation: 1,
     },
     imageContainer: {
         position: 'relative',
         width: '100%',
-        height: 144,
-        borderRadius: 12,
+        height: 90, // Minimized height
+        borderRadius: 8,
         overflow: 'hidden',
     },
     image: {
@@ -108,35 +108,37 @@ const styles = StyleSheet.create({
     },
     statusBadge: {
         position: 'absolute',
-        top: 8,
-        left: 8,
+        top: 4,
+        left: 4,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
+        paddingHorizontal: 4,
+        paddingVertical: 2,
         borderRadius: 100,
-        gap: 6,
-        backdropFilter: 'blur(4px)', // Won't work on RN native directly, but good intent
+        gap: 3,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     statusDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
     },
     statusText: {
-        fontSize: 12,
-        fontWeight: '500',
+        fontSize: 9, // Smaller text
+        fontWeight: '600',
     },
     infoContainer: {
-        marginTop: 12,
+        marginTop: 6,
         alignItems: 'center',
     },
     name: {
-        fontSize: 16,
+        fontSize: 12, // Compact name
         fontWeight: '700',
-        marginBottom: 2,
+        marginBottom: 0,
     },
     breed: {
-        fontSize: 12,
+        fontSize: 10,
+        opacity: 0.7,
+        textAlign: 'center',
     },
 });

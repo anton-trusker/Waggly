@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
@@ -12,12 +12,14 @@ import { usePets } from '@/hooks/usePets';
 export default function DashboardPage() {
     const router = useRouter();
     const { pets, loading } = usePets();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 1024; // Treat tablet as mobile/stacked layout for now or define stricter breakpoint
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             {/* Header removed (use global Topbar) */}
-            <View style={styles.content}>
-                {/* Main Column (8/12) */}
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
+                {/* Main Column */}
                 <View style={styles.mainColumn}>
                     {/* Your Pets Section */}
                     <View style={styles.section}>
@@ -51,15 +53,15 @@ export default function DashboardPage() {
                                 </TouchableOpacity>
                             </View>
                         ) : (
-                            <View style={styles.petGrid}>
+                            <View style={[styles.petGrid, isMobile && styles.petGridMobile]}>
                                 {pets.slice(0, 3).map((pet) => (
-                                    <View key={pet.id} style={styles.petCardWrapper}>
+                                    <View key={pet.id} style={[styles.petCardWrapper, isMobile && styles.petCardWrapperMobile]}>
                                         <PetCardDesktop pet={pet} />
                                     </View>
                                 ))}
                                 {pets.length < 3 && (
                                     <TouchableOpacity
-                                        style={styles.addPetCard}
+                                        style={[styles.addPetCard, isMobile && styles.addPetCardMobile]}
                                         onPress={() => router.push('/web/pets/add' as any)}
                                     >
                                         <View style={styles.addPetIconContainer}>
@@ -79,8 +81,8 @@ export default function DashboardPage() {
                     <UpcomingCarePanel />
                 </View>
 
-                {/* Sidebar Column (4/12) */}
-                <View style={styles.sidebarColumn}>
+                {/* Sidebar Column */}
+                <View style={[styles.sidebarColumn, isMobile && styles.sidebarColumnMobile]}>
                     {/* Priority Alerts */}
                     <PriorityAlertsPanel />
 
@@ -88,6 +90,8 @@ export default function DashboardPage() {
                     <ActivityFeedTimeline />
                 </View>
             </View>
+            {/* Add padding bottom for mobile nav */}
+            {isMobile && <View style={{ height: 80 }} />}
         </ScrollView>
     );
 }
@@ -105,12 +109,20 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         width: '100%',
     },
+    contentMobile: {
+        flexDirection: 'column',
+        padding: 16,
+        gap: 24,
+    },
     mainColumn: {
         flex: 2,
     },
     sidebarColumn: {
         flex: 1,
         minWidth: 320,
+    },
+    sidebarColumnMobile: {
+        minWidth: '100%',
     },
     section: {
         marginBottom: 32,
@@ -200,12 +212,18 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 20,
     },
+    petGridMobile: {
+        flexDirection: 'column',
+    },
     petCardWrapper: {
-        width: 'calc(33.333% - 14px)' as any,
+        width: '31%', // calc replacement
         minWidth: 250,
     },
+    petCardWrapperMobile: {
+        width: '100%',
+    },
     addPetCard: {
-        width: 'calc(33.333% - 14px)' as any,
+        width: '31%',
         minWidth: 250,
         backgroundColor: '#fff',
         borderRadius: 16,
@@ -215,6 +233,10 @@ const styles = StyleSheet.create({
         borderStyle: 'dashed',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    addPetCardMobile: {
+        width: '100%',
+        paddingVertical: 32,
     },
     addPetIconContainer: {
         width: 80,
@@ -229,6 +251,59 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    actionsContainer: {
+        marginBottom: 32,
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#111827',
+        marginBottom: 16,
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    grid: {
+        flexDirection: 'row',
+        gap: 16,
+        flexWrap: 'wrap',
+    },
+    actionCard: {
+        alignItems: 'center',
+        minWidth: 100,
+        paddingVertical: 6,
+        paddingHorizontal: 4,
+        borderRadius: 12,
+    },
+    actionCardHover: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
+    },
+    actionCardFocus: {
+        borderWidth: 2,
+        borderColor: '#6366F1',
+    },
+    iconContainer: {
+        width: 64,
+        height: 64,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#374151',
+        textAlign: 'center',
         fontFamily: 'Plus Jakarta Sans',
     },
 });

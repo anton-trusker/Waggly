@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import WizardStepBasicInfo from '@/components/desktop/pets/wizard/WizardStepBasicInfo';
@@ -16,6 +16,9 @@ export default function AddPetPage() {
     const { user } = useAuth();
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
+
     const [formData, setFormData] = useState({
         // Basic Info
         name: '',
@@ -88,9 +91,9 @@ export default function AddPetPage() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Header */}
-                <View style={styles.header}>
+                <View style={[styles.header, isMobile && styles.headerMobile]}>
                     <Text style={styles.title}>Add New Pet</Text>
                     <TouchableOpacity onPress={() => router.back()}>
                         <Ionicons name="close" size={24} color="#6B7280" />
@@ -98,7 +101,7 @@ export default function AddPetPage() {
                 </View>
 
                 {/* Progress Stepper */}
-                <View style={styles.stepper}>
+                <View style={[styles.stepper, isMobile && styles.stepperMobile]}>
                     {STEPS.map((step, index) => (
                         <View key={index} style={styles.stepperItem}>
                             <View style={styles.stepperLine}>
@@ -130,6 +133,7 @@ export default function AddPetPage() {
                                     </Text>
                                 )}
                             </View>
+                            {/* Hide stepper labels on very small screens if needed, or keep them small */}
                             <Text
                                 style={[
                                     styles.stepperLabel,
@@ -203,11 +207,17 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: 32,
     },
+    contentMobile: {
+        padding: 16,
+    },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 32,
+    },
+    headerMobile: {
+        marginBottom: 24,
     },
     title: {
         fontSize: 28,
@@ -218,6 +228,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 40,
         position: 'relative',
+    },
+    stepperMobile: {
+        marginBottom: 24,
     },
     stepperItem: {
         flex: 1,
@@ -276,48 +289,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 16,
         overflow: 'hidden',
-    },
-    stepScroll: {
-        flex: 1,
-        padding: 32,
-    },
-    stepTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 8,
-    },
-    stepSubtitle: {
-        fontSize: 16,
-        color: '#6B7280',
-        marginBottom: 32,
-    },
-    nextButton: {
-        backgroundColor: '#6366F1',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginTop: 24,
-    },
-    nextButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
-    },
-    submitButton: {
-        backgroundColor: '#10B981',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginTop: 24,
-    },
-    submitButtonDisabled: {
-        opacity: 0.5,
-    },
-    submitButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
     },
     footer: {
         marginTop: 24,

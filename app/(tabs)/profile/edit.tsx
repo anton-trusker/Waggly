@@ -27,6 +27,10 @@ export default function EditProfileScreen() {
   const canSave = useMemo(() => firstName.trim().length > 0 && lastName.trim().length > 0, [firstName, lastName]);
   const [address, setAddress] = useState<string | undefined>(undefined);
   const [locationDetails, setLocationDetails] = useState<{ lat: number; lng: number; placeId: string; name: string } | null>(null);
+  const [phone, setPhone] = useState<string | undefined>(undefined);
+  const [bio, setBio] = useState<string | undefined>(undefined);
+  const [gender, setGender] = useState<string | undefined>(undefined);
+  const [website, setWebsite] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (profile) {
@@ -37,6 +41,11 @@ export default function EditProfileScreen() {
       setDob(profile.date_of_birth || undefined);
       setPhoto(profile.photo_url || null);
       setAddress(profile.address || undefined);
+      setPhone(profile.phone || undefined);
+      setBio(profile.bio || undefined);
+      setGender(profile.gender || undefined);
+      setWebsite(profile.website || undefined);
+      
       if (profile.location_lat != null && profile.location_lng != null && profile.place_id) {
         setLocationDetails({
           lat: profile.location_lat,
@@ -68,6 +77,10 @@ export default function EditProfileScreen() {
         location_lat: locationDetails?.lat || null,
         location_lng: locationDetails?.lng || null,
         place_id: locationDetails?.placeId || null,
+        phone: phone?.trim() || null,
+        bio: bio?.trim() || null,
+        gender: gender || null,
+        website: website?.trim() || null,
       });
       if (error) {
         setSaving(false);
@@ -112,23 +125,69 @@ export default function EditProfileScreen() {
             value={lastName}
             onChangeText={setLastName}
           />
-          <CountrySelect value={country} onChange={setCountry} />
-          <LanguageSelect value={language} onChange={setLanguage} label={t('common.language')} />
-          <DateInput value={dob} onChange={setDob} />
-          <LocationAutocomplete
-            label={t('profile.address')}
-            value={address}
-            onChangeText={(text) => setAddress(text)}
-            onPlaceSelected={(details) => {
-              setAddress(details.address);
-              setLocationDetails({
-                lat: details.lat,
-                lng: details.lng,
-                placeId: details.placeId,
-                name: details.name,
-              });
-            }}
-          />
+          
+          <View style={styles.inputGroup}>
+            <Text style={styles.sectionTitle}>{t('profile.personal_info')}</Text>
+            <DateInput value={dob} onChange={setDob} />
+            <Input
+              label={t('profile.gender')}
+              placeholder={t('profile.select_gender')}
+              value={gender || ''}
+              onChangeText={setGender}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.sectionTitle}>{t('profile.contact_info')}</Text>
+            <Input
+              label={t('profile.phone')}
+              placeholder={t('profile.enter_phone')}
+              value={phone || ''}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
+            />
+            <Input
+              label={t('profile.website')}
+              placeholder={t('profile.enter_website')}
+              value={website || ''}
+              onChangeText={setWebsite}
+              keyboardType="url"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.sectionTitle}>{t('profile.location')}</Text>
+            <CountrySelect value={country} onChange={setCountry} />
+            <LanguageSelect value={language} onChange={setLanguage} label={t('common.language')} />
+            <LocationAutocomplete
+              label={t('profile.address')}
+              value={address}
+              onChangeText={(text) => setAddress(text)}
+              onPlaceSelected={(details) => {
+                setAddress(details.address);
+                setLocationDetails({
+                  lat: details.lat,
+                  lng: details.lng,
+                  placeId: details.placeId,
+                  name: details.name,
+                });
+              }}
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.sectionTitle}>{t('profile.about')}</Text>
+            <Input
+              label={t('profile.bio')}
+              placeholder={t('profile.enter_bio')}
+              value={bio || ''}
+              onChangeText={setBio}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
           <TouchableOpacity style={[buttonStyles.primary, styles.button]} onPress={onSave} disabled={saving || !canSave}>
             {saving ? <ActivityIndicator color="#fff" /> : <Text style={buttonStyles.textWhite}>{t('common.save')}</Text>}
           </TouchableOpacity>
@@ -149,5 +208,15 @@ const styles = StyleSheet.create({
   textInput: {
     height: 44, borderWidth: 1, borderColor: colors.border, borderRadius: 10,
     backgroundColor: colors.card, paddingHorizontal: 12, color: colors.text,
+  },
+  inputGroup: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+    marginTop: 8,
   },
 });

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import CalendarGridDesktop from '@/components/desktop/calendar/CalendarGridDesktop';
 import CalendarFilters from '@/components/desktop/calendar/CalendarFilters';
 import MiniCalendar from '@/components/desktop/calendar/MiniCalendar';
@@ -7,6 +7,8 @@ import { useEvents } from '@/hooks/useEvents';
 
 export default function CalendarPage() {
     const { events } = useEvents();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 1024;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedPets, setSelectedPets] = useState<string[]>([]);
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -53,9 +55,9 @@ export default function CalendarPage() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Main Calendar Area (70%) */}
-                <View style={styles.mainArea}>
+                <View style={[styles.mainArea, isMobile && styles.mainAreaMobile]}>
                     <CalendarGridDesktop
                         events={filteredEvents}
                         onDateClick={handleDateClick}
@@ -64,7 +66,7 @@ export default function CalendarPage() {
                 </View>
 
                 {/* Sidebar (30%) */}
-                <View style={styles.sidebar}>
+                <View style={[styles.sidebar, isMobile && styles.sidebarMobile]}>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         {/* Mini Calendar */}
                         <View style={styles.sidebarSection}>
@@ -86,6 +88,7 @@ export default function CalendarPage() {
                     </ScrollView>
                 </View>
             </View>
+            {isMobile && <View style={{ height: 80 }} />}
         </View>
     );
 }
@@ -104,12 +107,25 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         width: '100%',
     },
+    contentMobile: {
+        flexDirection: 'column',
+        padding: 16,
+    },
     mainArea: {
         flex: 7,
+    },
+    mainAreaMobile: {
+        flex: 0,
+        minHeight: 400, // Ensure calendar has some height
     },
     sidebar: {
         flex: 3,
         minWidth: 300,
+    },
+    sidebarMobile: {
+        flex: 0,
+        width: '100%',
+        minWidth: 'auto' as any,
     },
     sidebarSection: {
         marginBottom: 24,

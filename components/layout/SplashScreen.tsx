@@ -5,7 +5,7 @@ import { designSystem, getSpacing } from '@/constants/designSystem';
 
 export default function SplasScreen() {
   const source = Platform.OS === 'web'
-    ? { uri: '/logo.png' }
+    ? { uri: '/favicon.ico' }
     : require('@/public/logo.png');
 
   return (

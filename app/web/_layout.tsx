@@ -5,7 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import ResponsiveShell from '@/components/layout/ResponsiveShell';
 
 export default function WebLayout() {
     return (
@@ -13,7 +13,7 @@ export default function WebLayout() {
             <StatusBar style="auto" />
             <ThemeProvider>
                 <AuthProvider>
-                    <DesktopShell>
+                    <ResponsiveShell>
                         <Stack screenOptions={{ headerShown: false }}>
                             <Stack.Screen name="auth" />
                             <Stack.Screen name="onboarding" />
@@ -26,7 +26,7 @@ export default function WebLayout() {
                             <Stack.Screen name="settings" />
                             <Stack.Screen name="documents" />
                         </Stack>
-                    </DesktopShell>
+                    </ResponsiveShell>
                 </AuthProvider>
             </ThemeProvider>
         </GestureHandlerRootView>

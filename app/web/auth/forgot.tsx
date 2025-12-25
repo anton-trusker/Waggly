@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -10,6 +10,8 @@ export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const handleResetPassword = async () => {
         if (!email) {
@@ -34,12 +36,12 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Form */}
-            <View style={styles.formSection}>
+            <View style={[styles.formSection, isMobile && styles.formSectionMobile]}>
                 {/* Logo header */}
                 <View style={styles.logoHeader}>
-                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Image source={{ uri: '/favicon.ico' }} style={styles.logoImage} />
                     <Text style={styles.logoText}>pawzly</Text>
                 </View>
                 <View style={styles.formContainer}>
@@ -124,12 +126,14 @@ export default function ForgotPasswordPage() {
             </View>
 
             {/* Right: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Reset Your Password"
-                    subtitle="We'll send you instructions to reset your password"
-                />
-            </View>
+            {!isMobile && (
+                <View style={styles.heroSection}>
+                    <AuthHeroPanel
+                        title="Reset Your Password"
+                        subtitle="We'll send you instructions to reset your password"
+                    />
+                </View>
+            )}
         </View>
     );
 }
@@ -138,6 +142,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
+    },
+    containerMobile: {
+        flexDirection: 'column',
     },
     heroSection: {
         flex: 1,
@@ -148,6 +155,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    formSectionMobile: {
+        padding: 24,
     },
     logoHeader: {
         position: 'absolute',

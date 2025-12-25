@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 
 const SidebarNav: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
+    const { user } = useAuth();
+    const { profile } = useProfile();
 
     const navItems = [
         { label: 'Dashboard', icon: 'grid-outline', path: '/web/dashboard' },
@@ -17,19 +20,13 @@ const SidebarNav: React.FC = () => {
     ];
 
     const isActive = (path: string) => pathname?.startsWith(path);
+    const userName = profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : user?.email?.split('@')[0] || 'User';
 
     return (
         <View style={styles.sidebar}>
             {/* Logo */}
             <View style={styles.logoContainer}>
-                <LinearGradient
-                    colors={['#6366F1', '#EC4899']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.logoIcon}
-                >
-                    <Ionicons name="paw" size={20} color="#fff" />
-                </LinearGradient>
+                <Image source={{ uri: '/favicon.ico' }} style={styles.logoIcon} />
                 <Text style={styles.logoText}>Pawzly</Text>
             </View>
 
@@ -53,16 +50,25 @@ const SidebarNav: React.FC = () => {
                 ))}
             </ScrollView>
 
-            {/* Upgrade Card hidden */}
-
-            {/* Settings */}
-            <TouchableOpacity
-                style={styles.settingsButton}
-                onPress={() => router.push('/web/settings' as any)}
-            >
-                <Ionicons name="settings-outline" size={20} color="#6B7280" />
-                <Text style={styles.navLabel}>Settings</Text>
-            </TouchableOpacity>
+            {/* User Profile Card (Bottom) */}
+            <View style={styles.userCardContainer}>
+                <TouchableOpacity style={styles.userCard} onPress={() => router.push('/web/settings')}>
+                    {profile?.photo_url ? (
+                        <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+                    ) : (
+                        <View style={styles.avatarPlaceholder}>
+                            <Text style={styles.avatarText}>
+                                {userName.charAt(0).toUpperCase()}
+                            </Text>
+                        </View>
+                    )}
+                    <View style={styles.userInfo}>
+                        <Text style={styles.userName} numberOfLines={1}>{userName}</Text>
+                        <Text style={styles.userRole}>Pro Member</Text>
+                    </View>
+                    <Ionicons name="settings-outline" size={16} color="#9CA3AF" />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -74,6 +80,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderRightColor: '#E5E7EB',
         flexDirection: 'column',
+        height: '100%',
     },
     logoContainer: {
         height: 80,
@@ -125,53 +132,48 @@ const styles = StyleSheet.create({
         color: '#6366F1',
         fontWeight: '600',
     },
-    upgradeCard: {
-        margin: 16,
+    userCardContainer: {
         padding: 16,
-        backgroundColor: '#1e293b',
-        borderRadius: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#E5E7EB',
     },
-    upgradeHeader: {
+    userCard: {
         flexDirection: 'row',
+        alignItems: 'center',
         gap: 12,
-        marginBottom: 12,
+        padding: 12,
+        borderRadius: 12,
+        backgroundColor: '#F9FAFB',
     },
-    upgradeIconContainer: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
+    avatarPlaceholder: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#6366F1',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    upgradeTitle: {
-        fontSize: 14,
-        fontWeight: '700',
+    avatarText: {
+        fontSize: 16,
+        fontWeight: '600',
         color: '#fff',
     },
-    upgradeSubtitle: {
-        fontSize: 12,
-        color: '#94a3b8',
+    userInfo: {
+        flex: 1,
     },
-    upgradeButton: {
-        backgroundColor: '#fff',
-        paddingVertical: 8,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    upgradeButtonText: {
+    userName: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1e293b',
+        color: '#111827',
     },
-    settingsButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
-        paddingHorizontal: 32,
-        paddingVertical: 16,
-        borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+    userRole: {
+        fontSize: 12,
+        color: '#6B7280',
     },
 });
 

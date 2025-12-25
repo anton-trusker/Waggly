@@ -4,6 +4,7 @@ import { Document } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import * as FileSystem from 'expo-file-system/legacy';
 import { decode } from 'base64-arraybuffer';
+import { Platform } from 'react-native';
 
 export function useDocuments(petId?: string) {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -33,12 +34,19 @@ export function useDocuments(petId?: string) {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        throw error;
+      }
+
+      console.log('Fetched documents:', data);
 
       // Transform data to include petName flatly if needed, or just keep as is
       // TypeScript might need assertion or manual type fix since 'pets' is a joined property
       const formattedData = (data || []).map((doc: any) => ({
         ...doc,
+        name: doc.file_name, // Map file_name to name for compatibility
+        url: doc.file_url, // Map file_url to url for compatibility
         petName: doc.pets?.name || 'Unknown Pet',
         uploadedAt: new Date(doc.created_at).toLocaleDateString() // Simple formatting
       }));
@@ -61,20 +69,28 @@ export function useDocuments(petId?: string) {
     if (isMountedRef.current) setLoading(true);
 
     try {
-      // 1. Read file
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: 'base64',
-      });
-
-      // 2. Upload to Storage
-      // Path: userId/petId/timestamp-filename
       const timestamp = new Date().getTime();
       const cleanFileName = fileName.replace(/[^a-zA-Z0-9.]/g, '_');
       const filePath = `${user.id}/${finalPetId}/${timestamp}-${cleanFileName}`;
+      
+      let uploadBody;
+      
+      if (Platform.OS === 'web') {
+          // On web, fetch the blob from the URI (which is usually a blob: URL)
+          const response = await fetch(uri);
+          uploadBody = await response.blob();
+      } else {
+          // On mobile, read as base64
+          const base64 = await FileSystem.readAsStringAsync(uri, {
+            encoding: 'base64',
+          });
+          uploadBody = decode(base64);
+      }
 
+      // 2. Upload to Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('pet-documents')
-        .upload(filePath, decode(base64), {
+        .upload(filePath, uploadBody, {
           contentType: mimeType || 'application/octet-stream',
           upsert: false,
         });

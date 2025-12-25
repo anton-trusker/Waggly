@@ -81,8 +81,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingVertical: 16,
-        paddingTop: 60, // Adjust for status bar if needed, or use SafeAreaView parent
+        paddingVertical: 12, // Reduced vertical padding
     },
     leftSection: {
         flexDirection: 'row',
@@ -96,29 +95,28 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: '#4ADE80', // Green-400
+        width: 10,  // Smaller dot
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: '#4ADE80',
         borderWidth: 2,
-        // borderColor set dynamically
     },
     welcomeText: {
-        fontSize: 12,
-        fontWeight: '500',
+        fontSize: 10, // Smaller text
+        fontWeight: '600',
         letterSpacing: 0.5,
         textTransform: 'uppercase',
+        marginBottom: 2,
     },
     nameText: {
-        fontSize: 20,
+        fontSize: 16, // Smaller heading
         fontWeight: '700',
     },
     notificationButton: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 40, // Smaller button
+        height: 40,
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor set dynamically
     },
 });

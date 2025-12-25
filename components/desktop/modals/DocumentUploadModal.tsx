@@ -11,6 +11,7 @@ interface DocumentUploadModalProps {
     visible: boolean;
     onClose: () => void;
     petId?: string;
+    initialFile?: File | null;
 }
 
 const DOCUMENT_TYPES = [
@@ -23,7 +24,7 @@ const DOCUMENT_TYPES = [
     { id: 'other', label: 'Other', icon: 'document-text' },
 ];
 
-export default function DocumentUploadModal({ visible, onClose, petId }: DocumentUploadModalProps) {
+export default function DocumentUploadModal({ visible, onClose, petId, initialFile }: DocumentUploadModalProps) {
     const { uploadDocument } = useDocuments(petId); // petId might be undefined
     const { pets } = usePets(); // Fetch pets for selection
     const [loading, setLoading] = useState(false);
@@ -39,6 +40,25 @@ export default function DocumentUploadModal({ visible, onClose, petId }: Documen
         if (petId) setSelectedPetId(petId);
         else if (pets.length > 0 && !selectedPetId) setSelectedPetId(pets[0].id);
     }, [petId, pets]);
+
+    // Handle initial file from drag & drop
+    React.useEffect(() => {
+        if (initialFile && visible) {
+            const asset = {
+                uri: URL.createObjectURL(initialFile),
+                name: initialFile.name,
+                mimeType: initialFile.type,
+                size: initialFile.size,
+            };
+            setFile(asset as any);
+            setName(initialFile.name);
+        } else if (!visible) {
+            // Reset when closed
+            setFile(null);
+            setName('');
+            setNotes('');
+        }
+    }, [initialFile, visible]);
 
     const handlePickFile = async () => {
         try {

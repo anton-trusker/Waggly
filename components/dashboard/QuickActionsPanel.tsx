@@ -23,13 +23,13 @@ const quickActions: QuickAction[] = [
   {
     id: 'vaccine',
     title: 'Add Vaccine',
-    icon: 'cross.vial', // approx
+    icon: 'cross.vial',
     androidIcon: 'vaccines',
     route: '/(tabs)/pets/add-vaccination'
   },
   {
     id: 'treatment',
-    title: 'Add Treatment',
+    title: 'Add Meds',
     icon: 'pills',
     androidIcon: 'medication',
     route: '/(tabs)/pets/add-treatment'
@@ -40,6 +40,20 @@ const quickActions: QuickAction[] = [
     icon: 'camera',
     androidIcon: 'add-a-photo',
     route: '/(tabs)/pets/add-photos'
+  },
+  {
+    id: 'document',
+    title: 'Add File',
+    icon: 'doc',
+    androidIcon: 'folder',
+    route: '/(tabs)/pets/add-document' // Ensure this route exists or redirect to details->docs
+  },
+  {
+    id: 'record',
+    title: 'Add Record',
+    icon: 'doc.text',
+    androidIcon: 'article',
+    route: '/(tabs)/pets/add-record' // Placeholder or generic wizard
   },
 ];
 
@@ -54,10 +68,11 @@ export function QuickActionsPanel() {
   const dynamicStyles = {
     title: { color: colors.text.primary },
     card: {
-      backgroundColor: colors.background.tertiary, // card background
-      // shadow logic could vary
+      backgroundColor: colors.background.secondary, // White background for contrast
+      borderWidth: 1,
+      borderColor: colors.border.primary, // Subtle border
     },
-    text: { color: colors.text.primary } // or gray-800/200 logic
+    text: { color: colors.text.primary }
   };
 
   return (
@@ -71,12 +86,14 @@ export function QuickActionsPanel() {
             onPress={() => handleActionPress(action.route)}
             activeOpacity={0.7}
           >
-            <IconSymbol
-              ios_icon_name={action.icon as any}
-              android_material_icon_name={action.androidIcon as any}
-              size={32}
-              color={colors.primary[500]}
-            />
+            <View style={[styles.iconCircle, { backgroundColor: colors.primary[50] }]}>
+              <IconSymbol
+                ios_icon_name={action.icon as any}
+                android_material_icon_name={action.androidIcon as any}
+                size={24} // Smaller icon
+                color={colors.primary[600]} // Darker primary for contrast
+              />
+            </View>
             <Text style={[styles.actionTitle, dynamicStyles.text]}>
               {action.title}
             </Text>
@@ -94,31 +111,39 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 16,
+    marginBottom: 12, // Tighter spacing
   },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16, // tailwind gap-4 approx
-    justifyContent: 'space-between',
+    gap: 12, // Consistent gap
+    justifyContent: 'flex-start',
   },
   actionCard: {
-    width: '30%', // Grid cols 3 approx
-    aspectRatio: 1,
-    borderRadius: 16,
+    width: '14%', // Fits 4 columns (approx 80px on standard mobile)
+    aspectRatio: 0.9, // Slightly taller/squarish
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 8,
-    gap: 8,
+    padding: 2, // Minimal padding
+    gap: 4, // Tighter gap
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
   },
+  iconCircle: {
+    width: 32, // Tighter circle around 24px icon
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   actionTitle: {
-    fontSize: 12, // text-xs font-semibold
+    fontSize: 10,
     fontWeight: '600',
     textAlign: 'center',
+    lineHeight: 12, // Tight line height for multiline wrapping
   },
 });

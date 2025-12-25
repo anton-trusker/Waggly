@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { signIn } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
-
-    useEffect(() => {
-        try {
-            const remembered = typeof localStorage !== 'undefined' && localStorage.getItem('remember_me') === '1';
-            setRememberMe(remembered);
-            supabase.auth.getSession().then(({ data: { session } }) => {
-                if (session && remembered) {
-                    router.replace('/web/dashboard' as any);
-                }
-            }).catch(() => {});
-        } catch {}
-    }, []);
+    const [loading, setLoading] = useState(false);
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -33,21 +23,7 @@ export default function LoginPage() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email: email.trim(),
-                password,
-            });
-
-            if (error) throw error;
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    if (rememberMe) {
-                        localStorage.setItem('remember_me', '1');
-                    } else {
-                        localStorage.removeItem('remember_me');
-                    }
-                }
-            } catch {}
+            await signIn(email, password);
             router.replace('/web/dashboard' as any);
         } catch (error: any) {
             Alert.alert('Login Failed', error.message);
@@ -56,153 +32,117 @@ export default function LoginPage() {
         }
     };
 
-    const handleOAuthLogin = async (provider: 'google' | 'apple') => {
-        try {
-            try {
-                if (typeof localStorage !== 'undefined') {
-                    if (rememberMe) {
-                        localStorage.setItem('remember_me', '1');
-                    } else {
-                        localStorage.removeItem('remember_me');
-                    }
-                }
-            } catch {}
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider,
-                options: {
-                    redirectTo: window.location.origin + '/web/dashboard',
-                },
-            });
-            if (error) throw error;
-        } catch (error: any) {
-            Alert.alert('OAuth Error', error.message);
-        }
-    };
-
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Form */}
-            <View style={styles.formSection}>
+            <View style={[styles.formSection, isMobile && styles.formSectionMobile]}>
                 {/* Logo header */}
                 <View style={styles.logoHeader}>
-                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Image source={{ uri: '/favicon.ico' }} style={styles.logoImage} />
                     <Text style={styles.logoText}>pawzly</Text>
                 </View>
+                
                 <View style={styles.formContainer}>
                     <Text style={styles.heading}>Welcome back</Text>
-                    <Text style={styles.subheading}>Manage your pet’s health and happiness.</Text>
+                    <Text style={styles.subheading}>Please enter your details to sign in.</Text>
+
+                    {/* Social Login Buttons */}
+                    <View style={styles.socialButtons}>
+                        <TouchableOpacity style={styles.socialButton}>
+                            <Ionicons name="logo-google" size={20} color="#000" />
+                            <Text style={styles.socialButtonText}>Google</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.socialButton}>
+                            <Ionicons name="logo-apple" size={20} color="#000" />
+                            <Text style={styles.socialButtonText}>Apple</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.divider}>
+                        <View style={styles.dividerLine} />
+                        <Text style={styles.dividerText}>OR</Text>
+                        <View style={styles.dividerLine} />
+                    </View>
 
                     {/* Email Input */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Email</Text>
+                        <Text style={styles.label}>Email Address</Text>
                         <View style={styles.inputWrapper}>
                             <Ionicons name="mail-outline" size={20} color="#6B7280" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
-                                placeholder="your@email.com"
+                                placeholder="Enter your email"
                                 placeholderTextColor="#9CA3AF"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
-                                autoComplete="email"
                             />
                         </View>
                     </View>
 
                     {/* Password Input */}
                     <View style={styles.inputGroup}>
-                        <View style={styles.labelRow}>
-                            <Text style={styles.label}>Password</Text>
-                            <TouchableOpacity onPress={() => router.push('/web/auth/forgot' as any)}>
-                                <Text style={styles.link}>Forgot Password?</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <Text style={styles.label}>Password</Text>
                         <View style={styles.inputWrapper}>
                             <Ionicons name="lock-closed-outline" size={20} color="#6B7280" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your password"
                                 placeholderTextColor="#9CA3AF"
+                                secureTextEntry={!showPassword}
                                 value={password}
                                 onChangeText={setPassword}
-                                secureTextEntry={!showPassword}
-                                autoComplete="password"
                             />
                             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <Ionicons
-                                    name={showPassword ? "eye-off-outline" : "eye-outline"}
-                                    size={20}
-                                    color="#6B7280"
-                                />
+                                <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color="#6B7280" />
                             </TouchableOpacity>
                         </View>
                     </View>
 
-                    {/* Remember Me */}
-                    <View style={styles.row}>
-                        <TouchableOpacity style={styles.checkboxRow} onPress={() => setRememberMe(!rememberMe)}>
-                            <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-                                {rememberMe && <Ionicons name="checkmark" size={14} color="#fff" />}
-                            </View>
+                    <View style={styles.rowBetween}>
+                        <View style={styles.checkboxRow}>
+                            <TouchableOpacity style={styles.checkbox}>
+                                <Ionicons name="checkmark" size={12} color="#fff" />
+                            </TouchableOpacity>
                             <Text style={styles.checkboxLabel}>Remember me</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => router.push('/web/auth/forgot' as any)}>
+                            <Text style={styles.forgotPassword}>Forgot password?</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Sign In Button */}
-                    <TouchableOpacity
-                        style={[styles.button, loading && styles.buttonDisabled]}
+                    <TouchableOpacity 
+                        style={[styles.button, loading && styles.buttonDisabled]} 
                         onPress={handleLogin}
                         disabled={loading}
                     >
                         {loading ? (
                             <ActivityIndicator color="#fff" />
                         ) : (
-                            <Text style={styles.buttonText}>Sign In</Text>
+                            <Text style={styles.buttonText}>Sign in</Text>
                         )}
                     </TouchableOpacity>
 
-                    {/* Divider */}
-                    <View style={styles.divider}>
-                        <View style={styles.dividerLine} />
-                        <Text style={styles.dividerText}>Or continue with</Text>
-                        <View style={styles.dividerLine} />
-                    </View>
-
-                    {/* OAuth Buttons */}
-                    <TouchableOpacity
-                        style={styles.oauthButton}
-                        onPress={() => handleOAuthLogin('google')}
-                    >
-                        <Ionicons name="logo-google" size={20} color="#111827" />
-                        <Text style={styles.oauthButtonText}>Continue with Google</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.oauthButton}
-                        onPress={() => handleOAuthLogin('apple')}
-                    >
-                        <Ionicons name="logo-apple" size={20} color="#111827" />
-                        <Text style={styles.oauthButtonText}>Continue with Apple</Text>
-                    </TouchableOpacity>
-
-                    {/* Sign Up Link */}
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>Don't have an account? </Text>
                         <TouchableOpacity onPress={() => router.push('/web/auth/signup' as any)}>
-                            <Text style={styles.footerLink}>Sign Up</Text>
+                            <Text style={styles.link}>Sign up</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
 
-            {/* Right: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Your pet’s world, made simple and caring"
-                    subtitle="Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend."
-                />
-            </View>
+            {/* Right: Hero Panel (Hidden on Mobile) */}
+            {!isMobile && (
+                <View style={styles.heroSection}>
+                    <AuthHeroPanel 
+                        title="Your Pet's Health Journey Starts Here"
+                        subtitle="Track vaccinations, appointments, and health records all in one place."
+                    />
+                </View>
+            )}
         </View>
     );
 }
@@ -211,6 +151,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
+    },
+    containerMobile: {
+        flexDirection: 'column',
     },
     heroSection: {
         flex: 1,
@@ -221,6 +164,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    formSectionMobile: {
+        padding: 24,
     },
     logoHeader: {
         position: 'absolute',
@@ -255,20 +201,52 @@ const styles = StyleSheet.create({
         color: '#6B7280',
         marginBottom: 32,
     },
+    socialButtons: {
+        flexDirection: 'row',
+        gap: 16,
+        marginBottom: 24,
+    },
+    socialButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        height: 48,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+        backgroundColor: '#fff',
+    },
+    socialButtonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E5E7EB',
+    },
+    dividerText: {
+        paddingHorizontal: 16,
+        fontSize: 12,
+        color: '#6B7280',
+        fontWeight: '500',
+    },
     inputGroup: {
         marginBottom: 20,
-    },
-    labelRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
         color: '#374151',
-        marginBottom: 0,
+        marginBottom: 8,
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -288,9 +266,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#111827',
     },
-    row: {
+    rowBetween: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 24,
     },
@@ -300,26 +278,21 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     checkbox: {
-        width: 18,
-        height: 18,
-        borderWidth: 2,
-        borderColor: '#D1D5DB',
+        width: 16,
+        height: 16,
         borderRadius: 4,
+        backgroundColor: '#6366F1',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    checkboxChecked: {
-        backgroundColor: '#6366F1',
-        borderColor: '#6366F1',
-    },
     checkboxLabel: {
         fontSize: 14,
-        color: '#6B7280',
+        color: '#374151',
     },
-    link: {
+    forgotPassword: {
         fontSize: 14,
-        color: '#6366F1',
         fontWeight: '600',
+        color: '#6366F1',
     },
     button: {
         backgroundColor: '#6366F1',
@@ -337,49 +310,18 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#fff',
     },
-    divider: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#E5E7EB',
-    },
-    dividerText: {
-        fontSize: 14,
-        color: '#6B7280',
-        paddingHorizontal: 16,
-    },
-    oauthButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 12,
-        height: 48,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 12,
-        marginBottom: 12,
-    },
-    oauthButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#111827',
-    },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 24,
+        alignItems: 'center',
     },
     footerText: {
         fontSize: 14,
         color: '#6B7280',
     },
-    footerLink: {
+    link: {
         fontSize: 14,
-        color: '#6366F1',
         fontWeight: '600',
+        color: '#6366F1',
     },
 });

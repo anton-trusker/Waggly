@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pet } from '@/types';
@@ -11,6 +11,8 @@ interface PetCardDesktopProps {
 
 const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
     const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const handlePress = () => {
         if (onPress) {
@@ -32,16 +34,16 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
     };
 
     return (
-        <TouchableOpacity style={styles.card} onPress={handlePress}>
+        <TouchableOpacity style={[styles.card, isMobile && styles.cardMobile]} onPress={handlePress}>
             {/* Pet Photo */}
-            <View style={styles.photoContainer}>
+            <View style={[styles.photoContainer, isMobile && styles.photoContainerMobile]}>
                 {pet.photo_url ? (
-                    <Image source={{ uri: pet.photo_url }} style={styles.photo} />
+                    <Image source={{ uri: pet.photo_url }} style={[styles.photo, isMobile && styles.photoMobile]} />
                 ) : (
-                    <View style={styles.photoPlaceholder}>
+                    <View style={[styles.photoPlaceholder, isMobile && styles.photoPlaceholderMobile]}>
                         <Ionicons
                             name="paw"
-                            size={32}
+                            size={isMobile ? 24 : 32}
                             color="#6366F1"
                         />
                     </View>
@@ -59,7 +61,7 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
             </View>
 
             {/* Pet Info */}
-            <View style={styles.info}>
+            <View style={[styles.info, isMobile && styles.infoMobile]}>
                 <Text style={styles.name}>{pet.name}</Text>
                 <Text style={styles.breed}>{pet.breed || pet.species}</Text>
             </View>
@@ -83,12 +85,14 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
             </View>
 
             {/* Chevron */}
-            <Ionicons
-                name="chevron-forward"
-                size={20}
-                color="#9CA3AF"
-                style={styles.chevron}
-            />
+            {!isMobile && (
+                <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color="#9CA3AF"
+                    style={styles.chevron}
+                />
+            )}
         </TouchableOpacity>
     );
 };
@@ -107,10 +111,21 @@ const styles = StyleSheet.create({
         elevation: 2,
         position: 'relative',
     },
+    cardMobile: {
+        padding: 16,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 12,
+    },
     photoContainer: {
         alignSelf: 'center',
         marginBottom: 16,
         position: 'relative',
+    },
+    photoContainerMobile: {
+        alignSelf: 'auto',
+        marginBottom: 0,
     },
     roleBadge: {
         position: 'absolute',
@@ -138,6 +153,11 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 40,
     },
+    photoMobile: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+    },
     photoPlaceholder: {
         width: 80,
         height: 80,
@@ -146,9 +166,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    photoPlaceholderMobile: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+    },
     info: {
         alignItems: 'center',
         marginBottom: 16,
+    },
+    infoMobile: {
+        alignItems: 'flex-start',
+        marginBottom: 0,
+        flex: 1,
     },
     name: {
         fontSize: 18,
@@ -166,6 +196,7 @@ const styles = StyleSheet.create({
         paddingTop: 16,
         borderTopWidth: 1,
         borderTopColor: '#F3F4F6',
+        width: '100%',
     },
     detailItem: {
         alignItems: 'center',

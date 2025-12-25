@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -16,35 +16,35 @@ const QUICK_ACTIONS: QuickAction[] = [
     {
         id: 'visit',
         label: 'Book Visit',
-        icon: 'calendar',
+        icon: 'calendar_today',
         colors: ['#6366F1', '#818CF8'],
         route: '/web/pets/visit/new',
     },
     {
         id: 'vaccine',
         label: 'Add Vaccine',
-        icon: 'fitness',
+        icon: 'vaccines',
         colors: ['#0EA5E9', '#38BDF8'],
         route: '/web/pets/vaccination/new',
     },
     {
         id: 'meds',
         label: 'Add Meds',
-        icon: 'medical',
+        icon: 'medication',
         colors: ['#10B981', '#34D399'],
         route: '/web/pets/treatment/new',
     },
     {
         id: 'weight',
         label: 'Add Weight',
-        icon: 'scale',
+        icon: 'monitor_weight',
         colors: ['#F59E0B', '#FBBF24'],
         route: '/web/pets/weight/log',
     },
     {
         id: 'photo',
         label: 'Add Photo',
-        icon: 'camera',
+        icon: 'add_a_photo',
         colors: ['#EC4899', '#F472B6'],
         route: '/web/pets/photos/add',
     },
@@ -52,49 +52,62 @@ const QUICK_ACTIONS: QuickAction[] = [
 
 const QuickActionsGrid: React.FC = () => {
     const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const handleAction = (action: QuickAction) => {
         router.push(action.route as any);
     };
 
+    const ActionItem = ({ action }: { action: QuickAction }) => (
+        <Pressable
+            key={action.id}
+            accessibilityRole="button"
+            focusable
+            onPress={() => handleAction(action)}
+            style={({ hovered, focused }: any) => [
+                styles.actionCard,
+                isMobile && styles.actionCardMobile,
+                hovered && styles.actionCardHover,
+                focused && styles.actionCardFocus
+            ]}
+        >
+            <LinearGradient
+                colors={action.colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[styles.iconContainer, isMobile && styles.iconContainerMobile]}
+            >
+                <IconSymbol
+                    android_material_icon_name={action.icon as any}
+                    size={isMobile ? 20 : 24}
+                    color="#fff"
+                />
+            </LinearGradient>
+            <Text style={[styles.label, isMobile && styles.labelMobile]}>{action.label}</Text>
+        </Pressable>
+    );
+
     return (
         <View style={styles.container}>
             <Text style={styles.heading}>Quick Actions</Text>
-            <View style={styles.grid}>
-                {QUICK_ACTIONS.map((action) => (
-                    <Pressable
-                        key={action.id}
-                        accessibilityRole="button"
-                        focusable
-                        onPress={() => handleAction(action)}
-                        style={({ hovered, focused }) => [
-                            styles.actionCard,
-                            hovered && styles.actionCardHover,
-                            focused && styles.actionCardFocus
-                        ]}
-                    >
-                        <LinearGradient
-                            colors={action.colors}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={styles.iconContainer}
-                        >
-                            <IconSymbol
-                                android_material_icon_name={
-                                    action.id === 'visit' ? 'event' :
-                                    action.id === 'vaccine' ? 'vaccines' :
-                                    action.id === 'meds' ? 'medication' :
-                                    action.id === 'weight' ? 'monitor_weight' :
-                                    'add-a-photo'
-                                }
-                                size={24}
-                                color="#fff"
-                            />
-                        </LinearGradient>
-                        <Text style={styles.label}>{action.label}</Text>
-                    </Pressable>
-                ))}
-            </View>
+            {isMobile ? (
+                <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false} 
+                    contentContainerStyle={styles.scrollContent}
+                >
+                    {QUICK_ACTIONS.map((action) => (
+                        <ActionItem key={action.id} action={action} />
+                    ))}
+                </ScrollView>
+            ) : (
+                <View style={styles.grid}>
+                    {QUICK_ACTIONS.map((action) => (
+                        <ActionItem key={action.id} action={action} />
+                    ))}
+                </View>
+            )}
         </View>
     );
 };
@@ -115,12 +128,20 @@ const styles = StyleSheet.create({
         gap: 16,
         flexWrap: 'wrap',
     },
+    scrollContent: {
+        gap: 12,
+        paddingRight: 16,
+    },
     actionCard: {
         alignItems: 'center',
         minWidth: 100,
         paddingVertical: 6,
         paddingHorizontal: 4,
         borderRadius: 12,
+    },
+    actionCardMobile: {
+        minWidth: 80,
+        paddingVertical: 0,
     },
     actionCardHover: {
         shadowColor: '#000',
@@ -146,12 +167,21 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
     },
+    iconContainerMobile: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        marginBottom: 4,
+    },
     label: {
         fontSize: 14,
         fontWeight: '600',
         color: '#374151',
         textAlign: 'center',
         fontFamily: 'Plus Jakarta Sans',
+    },
+    labelMobile: {
+        fontSize: 12,
     },
 });
 

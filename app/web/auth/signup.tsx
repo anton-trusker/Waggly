@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Image, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -7,6 +7,9 @@ import { supabase } from '@/lib/supabase';
 
 export default function SignupPage() {
     const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -73,12 +76,12 @@ export default function SignupPage() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Form */}
-            <View style={styles.formSection}>
+            <View style={[styles.formSection, isMobile && styles.formSectionMobile]}>
                 {/* Logo header */}
                 <View style={styles.logoHeader}>
-                    <Image source={{ uri: '/logo.png' }} style={styles.logoImage} />
+                    <Image source={{ uri: '/favicon.ico' }} style={styles.logoImage} />
                     <Text style={styles.logoText}>pawzly</Text>
                 </View>
                 <View style={styles.formContainer}>
@@ -233,12 +236,14 @@ export default function SignupPage() {
             </View>
 
             {/* Right: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Your pet’s world, made simple and caring"
-                    subtitle="Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend."
-                />
-            </View>
+            {!isMobile && (
+                <View style={styles.heroSection}>
+                    <AuthHeroPanel
+                        title="Your pet’s world, made simple and caring"
+                        subtitle="Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend."
+                    />
+                </View>
+            )}
         </View>
     );
 }
@@ -247,6 +252,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
+    },
+    containerMobile: {
+        flexDirection: 'column',
     },
     heroSection: {
         flex: 1,
@@ -257,6 +265,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    formSectionMobile: {
+        padding: 24,
     },
     logoHeader: {
         position: 'absolute',

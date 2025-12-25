@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import { supabase } from '@/lib/supabase';
+import { Pet } from '@/types';
 
 interface AddVaccinationModalProps {
   visible: boolean;
-  petId: string;
+  petId?: string;
+  pets?: Pet[];
   onClose: () => void;
 }
 
-export default function AddVaccinationModal({ visible, petId, onClose }: AddVaccinationModalProps) {
+export default function AddVaccinationModal({ visible, petId, pets, onClose }: AddVaccinationModalProps) {
   const [loading, setLoading] = useState(false);
+  const [selectedPetId, setSelectedPetId] = useState(petId || '');
   const [formData, setFormData] = useState({
     vaccine_name: '',
     date_given: '',
@@ -23,9 +27,19 @@ export default function AddVaccinationModal({ visible, petId, onClose }: AddVacc
     notes: '',
   });
 
+  useEffect(() => {
+    if (petId) setSelectedPetId(petId);
+    else if (pets && pets.length > 0 && !selectedPetId) setSelectedPetId(pets[0].id);
+  }, [petId, pets]);
+
   if (!visible) return null;
 
   const handleSubmit = async () => {
+    const targetPetId = petId || selectedPetId;
+    if (!targetPetId) {
+      Alert.alert('Error', 'Please select a pet');
+      return;
+    }
     if (!formData.vaccine_name) {
       Alert.alert('Error', 'Please enter vaccine name');
       return;
@@ -36,7 +50,7 @@ export default function AddVaccinationModal({ visible, petId, onClose }: AddVacc
       const { error } = await supabase
         .from('vaccinations')
         .insert({
-          pet_id: petId,
+          pet_id: targetPetId,
           vaccine_name: formData.vaccine_name,
           date_given: formData.date_given || null,
           next_due_date: formData.next_due_date || null,
@@ -69,6 +83,23 @@ export default function AddVaccinationModal({ visible, petId, onClose }: AddVacc
         </View>
 
         <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
+          {!petId && pets && (
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Select Pet *</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={selectedPetId}
+                  onValueChange={(itemValue) => setSelectedPetId(itemValue)}
+                  style={styles.picker}
+                >
+                  {pets.map((pet) => (
+                    <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+          )}
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Vaccine Name *</Text>
             <TextInput

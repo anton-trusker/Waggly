@@ -2,19 +2,18 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter, usePathname, useSegments } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { usePets } from '@/hooks/usePets';
 
 export default function Breadcrumbs() {
     const router = useRouter();
     const segments = useSegments();
     const pathname = usePathname();
+    const { pets } = usePets();
 
     // Don't show on dashboard root
     if (pathname === '/web/dashboard' || segments.length <= 2) return null;
 
     const getBreadcrumbs = () => {
-        // Basic mapping logic - in a real app this would look up titles
-        // For now we just prettify the segments
-
         // Filter out 'web', '(auth)', etc.
         const relevantSegments = segments.filter(
             s => !['web', '(auth)', '(app)', 'index'].includes(s)
@@ -27,13 +26,16 @@ export default function Breadcrumbs() {
 
             let label = segment.charAt(0).toUpperCase() + segment.slice(1);
 
-            // Handle IDs (simplified detection)
+            // Handle IDs
             if (segment.length > 20 || !isNaN(Number(segment))) {
-                label = 'Details'; // Or look up pet name in context/store
+                const pet = pets.find(p => p.id === segment);
+                label = pet ? pet.name : '...'; // Show name or loading placeholder
             }
 
             // Handle known segments
             if (segment === 'add') label = 'Add New';
+            
+            // Handle "pets" segment specifically if needed, but Title Case "Pets" is fine.
 
             return {
                 label,
@@ -51,12 +53,12 @@ export default function Breadcrumbs() {
                 onPress={() => router.push('/web/dashboard')}
                 style={styles.homeButton}
             >
-                <Ionicons name="home-outline" size={16} color="#6B7280" />
+                <Text style={styles.crumbText}>Home</Text>
             </TouchableOpacity>
 
             {breadcrumbs.map((crumb, index) => (
                 <View key={crumb.path} style={styles.crumbContainer}>
-                    <Ionicons name="chevron-forward" size={12} color="#D1D5DB" />
+                    <Text style={styles.separator}>{'>'}</Text>
                     <TouchableOpacity
                         onPress={() => !crumb.isLast && router.push(crumb.path as any)}
                         disabled={crumb.isLast}
@@ -76,8 +78,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 32,
-        paddingVertical: 12,
         gap: 8,
     },
     homeButton: {
@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
+    },
+    separator: {
+        color: '#9CA3AF',
+        fontSize: 14,
     },
     crumbButton: {
         padding: 2,

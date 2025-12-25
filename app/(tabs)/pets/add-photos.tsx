@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, FlatList, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, FlatList, Platform, useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { colors } from '@/styles/commonStyles';
@@ -15,7 +15,10 @@ export default function AddPhotosScreen() {
   const { petId: initialPetId } = useLocalSearchParams();
   const { user } = useAuth();
   const { pets } = usePets();
+  const { width } = useWindowDimensions();
   
+  const numColumns = width > 1024 ? 6 : width > 768 ? 4 : 3;
+
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
   const [photos, setPhotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -157,11 +160,12 @@ export default function AddPhotosScreen() {
         {/* Grid */}
         <FlatList
             data={photos}
+            key={numColumns} // Force re-render on column change
             keyExtractor={(item, index) => index.toString()}
-            numColumns={3}
+            numColumns={numColumns}
             contentContainerStyle={styles.grid}
             renderItem={({ item, index }) => (
-                <View style={styles.photoContainer}>
+                <View style={[styles.photoContainer, { flex: 1/numColumns }]}>
                     <Image source={{ uri: item.uri }} style={styles.photo} />
                     {!uploading && (
                         <TouchableOpacity style={styles.removeButton} onPress={() => removePhoto(index)}>

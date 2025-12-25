@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,6 +12,8 @@ export default function ProfilePage() {
     const { profile, updateProfile } = useProfile();
     const [loading, setLoading] = useState(false);
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const [formData, setFormData] = useState({
         firstName: profile?.first_name || '',
@@ -88,17 +90,19 @@ export default function ProfilePage() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Complete Your Profile"
-                    subtitle="Tell us a bit about yourself to personalize your experience"
-                />
-            </View>
+            {!isMobile && (
+                <View style={styles.heroSection}>
+                    <AuthHeroPanel
+                        title="Complete Your Profile"
+                        subtitle="Tell us a bit about yourself to personalize your experience"
+                    />
+                </View>
+            )}
 
             {/* Right: Form */}
-            <View style={styles.formSection}>
+            <View style={[styles.formSection, isMobile && styles.formSectionMobile]}>
                 <View style={styles.formContainer}>
                     {/* Header */}
                     <View style={styles.header}>
@@ -213,6 +217,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
+    containerMobile: {
+        flexDirection: 'column',
+    },
     heroSection: {
         flex: 1,
     },
@@ -222,6 +229,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 48,
+    },
+    formSectionMobile: {
+        padding: 24,
     },
     formContainer: {
         width: '100%',

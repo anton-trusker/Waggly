@@ -1,15 +1,21 @@
 import React from 'react';
-import { View, ScrollView, Text, Pressable } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { View, ScrollView, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
 import { useVaccinations } from '@/hooks/useVaccinations';
 import { useTreatments } from '@/hooks/useTreatments';
 import { useAllergies } from '@/hooks/useAllergies';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HealthTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 1024;
+  const isMobile = width < 768;
+
   const { pets } = usePets();
   const { events } = useEvents({ petIds: [id] });
   const { vaccinations } = useVaccinations(id);
@@ -19,14 +25,19 @@ export default function HealthTab() {
   const pet = pets?.find(p => p.id === id);
   if (!pet) return null;
 
-  const upcomingEvents = events?.filter(e => new Date(e.date) > new Date()).slice(0, 3) || [];
-  const recentEvents = events?.filter(e => new Date(e.date) <= new Date()).slice(0, 3) || [];
-  const activeVaccinations = vaccinations?.filter(v => new Date(v.expires_at) > new Date()) || [];
-  const currentTreatments = treatments?.filter(t => !t.end_date || new Date(t.end_date) > new Date()) || [];
+  const upcomingEvents = events?.filter(e => new Date(e.dueDate) > new Date()).slice(0, 3) || [];
+  const recentEvents = events?.filter(e => new Date(e.dueDate) <= new Date()).slice(0, 3) || [];
+  const activeVaccinations = vaccinations?.filter(v => v.next_due_date && new Date(v.next_due_date) > new Date()) || [];
+  const currentTreatments = treatments?.filter(t => t.is_active) || [];
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   const getDaysUntil = (dateString: string) => {
@@ -37,419 +48,1067 @@ export default function HealthTab() {
     return diffDays;
   };
 
-  const getVaccineStatus = (expiresAt: string) => {
-    const daysUntil = getDaysUntil(expiresAt);
+  const getVaccineStatus = (dueDate: string | null) => {
+    if (!dueDate) return 'ACTIVE';
+    const daysUntil = getDaysUntil(dueDate);
     if (daysUntil < 0) return 'EXPIRED';
     if (daysUntil <= 30) return 'DUE SOON';
     return 'ACTIVE';
   };
 
-  const getVaccineStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'bg-green-100 dark:bg-green-900/30 text-green-600';
-      case 'DUE SOON': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600';
-      case 'EXPIRED': return 'bg-red-100 dark:bg-red-900/30 text-red-600';
-      default: return 'bg-gray-100 dark:bg-gray-900/30 text-gray-600';
-    }
-  };
-
-  const getVaccineBorderColor = (status: string) => {
-    switch (status) {
-      case 'DUE SOON': return 'border-yellow-500/30 bg-yellow-50/50 dark:bg-yellow-900/10';
-      default: return 'border-transparent';
-    }
-  };
-
   return (
-    <ScrollView className="flex-1 bg-background-light dark:bg-background-dark">
-      <View className="p-4 lg:p-8">
-        <View className="max-w-7xl mx-auto space-y-6">
-          {/* Quick Actions */}
-          <View className="grid grid-cols-3 md:grid-cols-6 gap-4">
-            <Pressable
-              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="calendar_add_on" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Visit</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="vaccines" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Vaccine</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="medication" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Tx</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="add_a_photo" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Image</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="note_add" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Doc</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)}
-              className="flex flex-col items-center justify-center gap-2 p-4 bg-card-light dark:bg-card-dark hover:bg-gray-50 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark rounded-xl transition-all hover:shadow-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <View className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <IconSymbol name="history_edu" size={20} />
-              </View>
-              <Text className="text-xs font-medium text-muted-light dark:text-muted-dark">Add Record</Text>
-            </Pressable>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={[styles.content, isMobile && styles.contentMobile]}>
+        
+        {/* Quick Actions */}
+        {isMobile ? (
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            contentContainerStyle={styles.mobileQuickActionsContainer}
+            style={styles.mobileQuickActionsScroll}
+          >
+            <QuickActionButton 
+              label="Add Visit" 
+              icon="calendar_today" 
+              color="#2563EB" 
+              bgColor="#DBEAFE" 
+              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+              isMobile={true}
+            />
+            <QuickActionButton 
+              label="Add Vaccine" 
+              icon="vaccines" 
+              color="#DB2777" 
+              bgColor="#FCE7F3" 
+              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+              isMobile={true}
+            />
+            <QuickActionButton 
+              label="Add Tx" 
+              icon="medication" 
+              color="#9333EA" 
+              bgColor="#F3E8FF" 
+              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+              isMobile={true}
+            />
+            <QuickActionButton 
+              label="Add Image" 
+              icon="add_a_photo" 
+              color="#D97706" 
+              bgColor="#FEF3C7" 
+              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+              isMobile={true}
+            />
+            <QuickActionButton 
+              label="Add Doc" 
+              icon="note_add" 
+              color="#EA580C" 
+              bgColor="#FFEDD5" 
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+              isMobile={true}
+            />
+            <QuickActionButton 
+              label="Add Record" 
+              icon="history_edu" 
+              color="#059669" 
+              bgColor="#D1FAE5" 
+              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+              isMobile={true}
+            />
+          </ScrollView>
+        ) : (
+          <View style={styles.quickActionsGrid}>
+            <QuickActionButton 
+              label="Add Visit" 
+              icon="calendar_today" 
+              color="#2563EB" 
+              bgColor="#DBEAFE" 
+              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+            />
+            <QuickActionButton 
+              label="Add Vaccine" 
+              icon="vaccines" 
+              color="#DB2777" 
+              bgColor="#FCE7F3" 
+              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+            />
+            <QuickActionButton 
+              label="Add Tx" 
+              icon="medication" 
+              color="#9333EA" 
+              bgColor="#F3E8FF" 
+              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+            />
+            <QuickActionButton 
+              label="Add Image" 
+              icon="add_a_photo" 
+              color="#D97706" 
+              bgColor="#FEF3C7" 
+              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+            />
+            <QuickActionButton 
+              label="Add Doc" 
+              icon="note_add" 
+              color="#EA580C" 
+              bgColor="#FFEDD5" 
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+            />
+            <QuickActionButton 
+              label="Add Record" 
+              icon="history_edu" 
+              color="#059669" 
+              bgColor="#D1FAE5" 
+              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+            />
           </View>
+        )}
 
-          <View className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
+          
+          {/* Main Column */}
+          <View style={styles.mainColumn}>
+            
             {/* Visits Section */}
-            <View className="lg:col-span-2 space-y-6">
-              <View className="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-border-light dark:border-border-dark">
-                <View className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                  <View className="flex items-center gap-3">
-                    <View className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400">
-                      <IconSymbol name="calendar_month" size={24} />
-                    </View>
-                    <Text className="text-xl font-bold text-text-light dark:text-text-dark">Visits</Text>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View style={styles.headerTitleRow}>
+                  <View style={[styles.iconBox, { backgroundColor: '#DBEAFE' }]}>
+                    <IconSymbol android_material_icon_name="calendar-today" size={24} color="#2563EB" />
                   </View>
-                  <View className="flex items-center gap-2">
-                    <Pressable className="px-3 py-1.5 text-sm font-medium rounded-lg text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-slate-800 border border-border-light dark:border-border-dark flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                      <IconSymbol name="filter_list" size={16} />
-                      <Text>Filter</Text>
-                    </Pressable>
-                    <Pressable 
-                      onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
-                      className="px-3 py-1.5 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    >
-                      <IconSymbol name="add" size={16} />
-                      <Text>New Visit</Text>
-                    </Pressable>
-                  </View>
+                  <Text style={styles.cardTitle}>Visits</Text>
                 </View>
-
-                <View className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Upcoming Visits */}
-                  <View className="space-y-3">
-                    <Text className="text-xs font-bold text-muted-light dark:text-muted-dark uppercase tracking-wider">Upcoming</Text>
-                    {upcomingEvents.length > 0 ? (
-                      upcomingEvents.map((event) => {
-                        const daysUntil = getDaysUntil(event.date);
-                        return (
-                          <View key={event.id} className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-5 text-white relative overflow-hidden group hover:shadow-lg transition-all">
-                            <View className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></View>
-                            <View className="relative z-10">
-                              <View className="flex justify-between items-start mb-4">
-                                <View className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                  <IconSymbol name="medical_services" size={24} />
-                                </View>
-                                <Text className="bg-white/20 text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
-                                  {daysUntil === 0 ? 'TODAY' : daysUntil === 1 ? 'TOMORROW' : `${daysUntil} DAYS`}
-                                </Text>
-                              </View>
-                              <Text className="font-bold text-lg">{event.title}</Text>
-                              <Text className="text-blue-100 text-sm mb-4">{event.location || 'Vet Clinic'} • {event.veterinarian || 'Dr. Smith'}</Text>
-                              <View className="flex items-center justify-between text-sm border-t border-white/20 pt-3">
-                                <Text className="flex items-center gap-1">
-                                  <IconSymbol name="event" size={16} />
-                                  {formatDate(event.date)} {event.time || '09:00 AM'}
-                                </Text>
-                              </View>
-                            </View>
-                          </View>
-                        );
-                      })
-                    ) : (
-                      <View className="bg-background-light dark:bg-slate-800/50 rounded-xl p-5 text-center">
-                        <Text className="text-muted-light dark:text-muted-dark text-sm">No upcoming visits</Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Recent History */}
-                  <View className="space-y-3">
-                    <Text className="text-xs font-bold text-muted-light dark:text-muted-dark uppercase tracking-wider">Recent History</Text>
-                    {recentEvents.length > 0 ? (
-                      <View className="space-y-2">
-                        {recentEvents.map((event) => (
-                          <Pressable
-                            key={event.id}
-                            className="flex items-center gap-3 p-3 bg-background-light dark:bg-slate-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-colors border border-transparent hover:border-border-light dark:hover:border-border-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          >
-                            <View className="flex flex-col items-center justify-center w-10 h-10 bg-card-light dark:bg-slate-700 rounded-lg text-xs font-bold text-muted-light dark:text-muted-dark border border-border-light dark:border-slate-600">
-                              <Text>{formatDate(event.date).split(' ')[0]}</Text>
-                              <Text>{formatDate(event.date).split(' ')[1]}</Text>
-                            </View>
-                            <View className="flex-1">
-                              <Text className="font-medium text-sm">{event.title}</Text>
-                              <Text className="text-xs text-muted-light dark:text-muted-dark">{event.type || 'Consultation'}</Text>
-                            </View>
-                            <IconSymbol name="chevron_right" size={16} className="text-muted-light dark:text-muted-dark" />
-                          </Pressable>
-                        ))}
-                      </View>
-                    ) : (
-                      <View className="bg-background-light dark:bg-slate-800/50 rounded-xl p-5 text-center">
-                        <Text className="text-muted-light dark:text-muted-dark text-sm">No recent visits</Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
-
-              {/* Vaccinations */}
-              <View className="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-border-light dark:border-border-dark">
-                <View className="flex items-center justify-between mb-6">
-                  <View className="flex items-center gap-3">
-                    <View className="bg-pink-100 dark:bg-pink-900/30 p-2 rounded-lg text-pink-600 dark:text-pink-400">
-                      <IconSymbol name="vaccines" size={24} />
-                    </View>
-                    <Text className="text-xl font-bold text-text-light dark:text-text-dark">Vaccinations</Text>
-                  </View>
+                <View style={styles.headerActions}>
+                  <Pressable style={styles.filterBtn}>
+                    <IconSymbol android_material_icon_name="filter-list" size={16} color="#6B7280" />
+                    <Text style={styles.filterBtnText}>Filter</Text>
+                  </Pressable>
                   <Pressable 
-                    onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}
-                    className="text-primary font-medium text-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    style={styles.primaryBtn}
+                    onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
                   >
-                    <Text>+ Add New</Text>
+                    <IconSymbol android_material_icon_name="add" size={16} color="#fff" />
+                    <Text style={styles.primaryBtnText}>New Visit</Text>
                   </Pressable>
                 </View>
+              </View>
 
-                <View className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {activeVaccinations.length > 0 ? (
-                    activeVaccinations.map((vaccination) => {
-                      const status = getVaccineStatus(vaccination.expires_at);
+              <View style={[styles.visitsGrid, !isMobile && styles.visitsGridDesktop]}>
+                {/* Upcoming Visits */}
+                <View style={styles.visitsColumn}>
+                  <Text style={styles.sectionLabel}>UPCOMING</Text>
+                  {upcomingEvents.length > 0 ? (
+                    upcomingEvents.map((event) => {
+                      const daysUntil = getDaysUntil(event.dueDate);
                       return (
-                        <View key={vaccination.id} className={`bg-background-light dark:bg-slate-800/50 p-4 rounded-xl border hover:border-primary/50 transition-colors group ${getVaccineBorderColor(status)}`}>
-                          <View className="flex justify-between items-start mb-3">
-                            <View className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center">
-                              <IconSymbol name="check" size={16} />
+                        <LinearGradient
+                          key={event.id}
+                          colors={['#3B82F6', '#4F46E5']}
+                          style={styles.upcomingCard}
+                        >
+                          <View style={styles.upcomingCardHeader}>
+                            <View style={styles.upcomingCardIcon}>
+                              <IconSymbol android_material_icon_name="medical-services" size={24} color="#FFFFFF" />
                             </View>
-                            <Text className={`text-[10px] font-bold px-2 py-1 rounded ${getVaccineStatusColor(status)}`}>
-                              {status}
-                            </Text>
+                            <View style={styles.daysBadge}>
+                              <Text style={styles.daysBadgeText}>
+                                {daysUntil === 0 ? 'TODAY' : daysUntil === 1 ? 'TOMORROW' : `${daysUntil} DAYS`}
+                              </Text>
+                            </View>
                           </View>
-                          <Text className="font-bold text-sm mb-1">{vaccination.name}</Text>
-                          <Text className="text-xs text-muted-light dark:text-muted-dark mb-3">{vaccination.brand || 'Standard Vaccine'}</Text>
-                          <View className="pt-3 border-t border-border-light dark:border-slate-700">
-                            <Text className="text-[10px] text-muted-light dark:text-muted-dark uppercase">Expires</Text>
-                            <Text className={`text-sm font-medium ${status === 'DUE SOON' ? 'text-yellow-700 dark:text-yellow-500' : ''}`}>
-                              {formatDate(vaccination.expires_at)}
-                            </Text>
+                          <Text style={styles.upcomingCardTitle}>{event.title}</Text>
+                          <Text style={styles.upcomingCardLocation}>{event.location || 'Vet Clinic'}</Text>
+                          <View style={styles.upcomingCardFooter}>
+                            <View style={styles.upcomingCardTime}>
+                              <IconSymbol android_material_icon_name="event" size={16} color="#FFFFFF" />
+                              <Text style={styles.upcomingCardTimeText}>
+                                {formatDate(event.dueDate)} {formatTime(event.dueDate)}
+                              </Text>
+                            </View>
                           </View>
-                        </View>
+                        </LinearGradient>
                       );
                     })
                   ) : (
-                    <View className="col-span-full bg-background-light dark:bg-slate-800/50 rounded-xl p-5 text-center">
-                      <Text className="text-muted-light dark:text-muted-dark text-sm">No vaccinations recorded</Text>
+                    <View style={styles.emptyState}>
+                      <Text style={styles.emptyStateText}>No upcoming visits</Text>
                     </View>
                   )}
                 </View>
-              </View>
 
-              {/* Treatments & Meds */}
-              <View className="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-border-light dark:border-border-dark">
-                <View className="flex items-center justify-between mb-6">
-                  <View className="flex items-center gap-3">
-                    <View className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg text-purple-600 dark:text-purple-400">
-                      <IconSymbol name="medication" size={24} />
-                    </View>
-                    <Text className="text-xl font-bold text-text-light dark:text-text-dark">Treatments & Meds</Text>
-                  </View>
-                  <View className="flex gap-2">
-                    <Pressable className="p-1.5 text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                      <IconSymbol name="filter_list" size={24} />
-                    </Pressable>
-                    <Pressable 
-                      onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}
-                      className="text-primary font-medium text-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    >
-                      <Text>+ Add Tx</Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                <View className="space-y-4">
-                  {currentTreatments.length > 0 ? (
-                    currentTreatments.map((treatment) => (
-                      <View key={treatment.id} className="flex items-center gap-4 p-4 bg-background-light dark:bg-slate-800/50 rounded-xl group hover:shadow-md transition-all">
-                        <View className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                          <IconSymbol name="pill" size={24} />
-                        </View>
-                        <View className="flex-1 min-w-0">
-                          <View className="flex justify-between items-start">
-                            <Text className="font-bold text-sm truncate">{treatment.name}</Text>
-                            <Text className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded">
-                              {treatment.frequency || 'Current'}
-                            </Text>
+                {/* Recent History */}
+                <View style={styles.visitsColumn}>
+                  <Text style={styles.sectionLabel}>RECENT HISTORY</Text>
+                  {recentEvents.length > 0 ? (
+                    <View style={styles.recentList}>
+                      {recentEvents.map((event) => (
+                        <Pressable key={event.id} style={styles.recentItem}>
+                          <View style={styles.recentDateBox}>
+                            <Text style={styles.recentDateDay}>{formatDate(event.dueDate).split(' ')[1]}</Text>
+                            <Text style={styles.recentDateMonth}>{formatDate(event.dueDate).split(' ')[0]}</Text>
                           </View>
-                          <Text className="text-xs text-muted-light dark:text-muted-dark mt-1">{treatment.description || 'For treatment. Follow dosage instructions.'}</Text>
-                          <View className="flex items-center gap-4 mt-2 text-xs text-muted-light dark:text-muted-dark">
-                            <Text className="flex items-center gap-1">
-                              <IconSymbol name="schedule" size={16} />
-                              {treatment.frequency || 'As needed'}
-                            </Text>
-                            {treatment.next_dose && (
-                              <Text className="flex items-center gap-1">
-                                <IconSymbol name="calendar_today" size={16} />
-                                Next: {treatment.next_dose}
-                              </Text>
-                            )}
+                          <View style={styles.recentInfo}>
+                            <Text style={styles.recentTitle}>{event.title}</Text>
+                            <Text style={styles.recentType}>{event.type || 'Consultation'}</Text>
                           </View>
-                        </View>
-                        <Pressable className="opacity-0 group-hover:opacity-100 p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                          <IconSymbol name="more_vert" size={16} className="text-muted-light dark:text-muted-dark" />
+                          <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
                         </Pressable>
-                      </View>
-                    ))
+                      ))}
+                    </View>
                   ) : (
-                    <View className="bg-background-light dark:bg-slate-800/50 rounded-xl p-5 text-center">
-                      <Text className="text-muted-light dark:text-muted-dark text-sm">No current treatments</Text>
+                    <View style={styles.emptyState}>
+                      <Text style={styles.emptyStateText}>No recent visits</Text>
                     </View>
                   )}
                 </View>
               </View>
             </View>
 
-            {/* Allergies Sidebar */}
-            <View className="space-y-6">
-              <View className="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-border-light dark:border-border-dark">
-                <View className="flex items-center justify-between mb-6">
-                  <Text className="text-xl font-bold text-text-light dark:text-text-dark">Allergies</Text>
-                  <Pressable className="text-primary hover:bg-primary/10 w-8 h-8 flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                    <IconSymbol name="edit" size={20} />
-                  </Pressable>
+            {/* Vaccinations */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View style={styles.headerTitleRow}>
+                  <View style={[styles.iconBox, { backgroundColor: '#FCE7F3' }]}>
+                    <IconSymbol android_material_icon_name="vaccines" size={24} color="#DB2777" />
+                  </View>
+                  <Text style={styles.cardTitle}>Vaccinations</Text>
                 </View>
+                <Pressable onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}>
+                  <Text style={styles.linkText}>+ Add New</Text>
+                </Pressable>
+              </View>
 
-                <View className="space-y-3">
-                  {allergies && allergies.length > 0 ? (
-                    allergies.map((allergy) => (
-                      <View key={allergy.id} className={`border p-4 rounded-xl flex items-start gap-3 ${allergy.severity === 'severe' ? 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30' : 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-100 dark:border-yellow-900/30'}`}>
-                        <IconSymbol 
-                          name={allergy.severity === 'severe' ? 'warning' : 'eco'} 
-                          size={20} 
-                          className={allergy.severity === 'severe' ? 'text-red-500 mt-0.5' : 'text-yellow-600 dark:text-yellow-500 mt-0.5'} 
-                        />
-                        <View className="flex-1">
-                          <Text className={`font-bold text-sm ${allergy.severity === 'severe' ? 'text-red-700 dark:text-red-400' : 'text-yellow-700 dark:text-yellow-500'}`}>
-                            {allergy.name}
-                          </Text>
-                          <Text className={`text-xs mt-1 ${allergy.severity === 'severe' ? 'text-red-600/80 dark:text-red-400/70' : 'text-yellow-600/80 dark:text-yellow-500/70'}`}>
-                            {allergy.description || 'Allergic reaction noted.'}
+              <View style={styles.vaccinesGrid}>
+                {activeVaccinations.length > 0 ? (
+                  activeVaccinations.map((vaccination) => {
+                    const status = getVaccineStatus(vaccination.next_due_date);
+                    const isDueSoon = status === 'DUE SOON';
+                    return (
+                      <View key={vaccination.id} style={[
+                        styles.vaccineCard,
+                        !isMobile && styles.vaccineCardDesktop,
+                        isDueSoon && styles.vaccineCardDue
+                      ]}>
+                        <View style={styles.vaccineHeader}>
+                          <View style={styles.checkCircle}>
+                            <IconSymbol android_material_icon_name="check" size={16} color="#16A34A" />
+                          </View>
+                          <View style={[
+                            styles.statusBadge,
+                            isDueSoon ? styles.statusBadgeDue : styles.statusBadgeActive
+                          ]}>
+                            <Text style={[
+                              styles.statusBadgeText,
+                              isDueSoon ? styles.statusTextDue : styles.statusTextActive
+                            ]}>{status}</Text>
+                          </View>
+                        </View>
+                        <Text style={styles.vaccineName}>{vaccination.name}</Text>
+                        <Text style={styles.vaccineProvider}>{vaccination.provider || 'Standard Vaccine'}</Text>
+                        <View style={styles.vaccineFooter}>
+                          <Text style={styles.expiresLabel}>EXPIRES</Text>
+                          <Text style={[
+                            styles.expiresDate,
+                            isDueSoon && styles.expiresDateDue
+                          ]}>
+                            {vaccination.next_due_date ? formatDate(vaccination.next_due_date) : 'N/A'}
                           </Text>
                         </View>
                       </View>
-                    ))
-                  ) : (
-                    <View className="bg-background-light dark:bg-slate-800/50 rounded-xl p-5 text-center">
-                      <Text className="text-muted-light dark:text-muted-dark text-sm">No allergies recorded</Text>
-                    </View>
-                  )}
-                  <Pressable className="w-full py-2 border border-dashed border-border-light dark:border-border-dark rounded-xl text-sm text-muted-light dark:text-muted-dark hover:border-primary hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                    <Text>+ Add Allergy</Text>
+                    );
+                  })
+                ) : (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>No vaccinations recorded</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Treatments & Meds */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View style={styles.headerTitleRow}>
+                  <View style={[styles.iconBox, { backgroundColor: '#F3E8FF' }]}>
+                    <IconSymbol android_material_icon_name="medication" size={24} color="#9333EA" />
+                  </View>
+                  <Text style={styles.cardTitle}>Treatments & Meds</Text>
+                </View>
+                <View style={styles.headerActions}>
+                  <Pressable style={styles.iconBtn}>
+                    <IconSymbol android_material_icon_name="filter-list" size={24} color="#6B7280" />
+                  </Pressable>
+                  <Pressable onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}>
+                    <Text style={styles.linkText}>+ Add Tx</Text>
                   </Pressable>
                 </View>
               </View>
 
-              {/* Health Log */}
-              <View className="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-border-light dark:border-border-dark">
-                <View className="flex items-center justify-between mb-6">
-                  <Text className="text-xl font-bold text-text-light dark:text-text-dark">Health Log</Text>
-                  <Pressable className="text-muted-light dark:text-muted-dark hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                    <IconSymbol name="history" size={24} />
-                  </Pressable>
-                </View>
-
-                <View className="relative pl-4 space-y-8">
-                  {/* Timeline line */}
-                  <View className="absolute top-2 left-[15px] bottom-0 w-0.5 bg-border-light dark:bg-border-dark"></View>
-                  
-                  {/* Weight Check */}
-                  <View className="relative z-10 flex gap-3">
-                    <View className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-primary ring-4 ring-card-light dark:ring-card-dark"></View>
-                    <View className="flex-1 pb-2">
-                      <View className="flex justify-between items-start">
-                        <Text className="font-bold text-sm">Weight Check</Text>
-                        <Text className="text-[10px] text-muted-light dark:text-muted-dark">Oct 20</Text>
+              <View style={styles.treatmentsList}>
+                {currentTreatments.length > 0 ? (
+                  currentTreatments.map((treatment) => (
+                    <View key={treatment.id} style={styles.treatmentItem}>
+                      <View style={[styles.treatmentIconBox, { backgroundColor: '#E0E7FF' }]}>
+                        <IconSymbol android_material_icon_name="medication" size={24} color="#4F46E5" />
                       </View>
-                      <Text className="text-xs text-muted-light dark:text-muted-dark mt-1">Recorded at home.</Text>
-                      <View className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded text-xs font-bold">
-                        <Text>24.5 kg</Text>
-                        <IconSymbol name="arrow_upward" size={10} />
+                      <View style={styles.treatmentContent}>
+                        <View style={styles.treatmentHeader}>
+                          <Text style={styles.treatmentTitle}>{treatment.type}</Text>
+                          <View style={styles.frequencyBadge}>
+                            <Text style={styles.frequencyText}>{treatment.frequency || 'Current'}</Text>
+                          </View>
+                        </View>
+                        <Text style={styles.treatmentNotes}>{treatment.notes || 'For treatment. Follow dosage instructions.'}</Text>
+                        <View style={styles.treatmentMeta}>
+                          <View style={styles.metaItem}>
+                            <IconSymbol android_material_icon_name="schedule" size={16} color="#6B7280" />
+                            <Text style={styles.metaText}>{treatment.frequency || 'As needed'}</Text>
+                          </View>
+                          {treatment.next_due_date && (
+                            <View style={styles.metaItem}>
+                              <IconSymbol android_material_icon_name="calendar-today" size={16} color="#6B7280" />
+                              <Text style={styles.metaText}>Next: {formatDate(treatment.next_due_date)}</Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                      <Pressable style={styles.moreBtn}>
+                        <IconSymbol android_material_icon_name="more-vert" size={20} color="#9CA3AF" />
+                      </Pressable>
+                    </View>
+                  ))
+                ) : (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>No current treatments</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+          </View>
+
+          {/* Sidebar Column */}
+          <View style={styles.sidebarColumn}>
+            
+            {/* Allergies Sidebar */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Allergies</Text>
+                <Pressable style={styles.editBtn}>
+                  <IconSymbol android_material_icon_name="edit" size={20} color="#6366F1" />
+                </Pressable>
+              </View>
+
+              <View style={styles.allergiesList}>
+                {allergies && allergies.length > 0 ? (
+                  allergies.map((allergy) => (
+                    <View key={allergy.id} style={[
+                      styles.allergyItem,
+                      allergy.severity === 'severe' ? styles.allergySevere : styles.allergyMild
+                    ]}>
+                      <IconSymbol 
+                        android_material_icon_name={allergy.severity === 'severe' ? 'warning' : 'eco'} 
+                        size={20} 
+                        color={allergy.severity === 'severe' ? '#EF4444' : '#CA8A04'}
+                      />
+                      <View style={styles.allergyContent}>
+                        <Text style={[
+                          styles.allergyName,
+                          allergy.severity === 'severe' ? styles.textSevere : styles.textMild
+                        ]}>
+                          {allergy.name}
+                        </Text>
+                        <Text style={[
+                          styles.allergyNotes,
+                          allergy.severity === 'severe' ? styles.textSevereLight : styles.textMildLight
+                        ]}>
+                          {allergy.notes || 'Allergic reaction noted.'}
+                        </Text>
                       </View>
                     </View>
+                  ))
+                ) : (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>No allergies recorded</Text>
                   </View>
-
-                  {/* Symptom Log */}
-                  <View className="relative z-10 flex gap-3">
-                    <View className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-gray-400 ring-4 ring-card-light dark:ring-card-dark"></View>
-                    <View className="flex-1 pb-2">
-                      <View className="flex justify-between items-start">
-                        <Text className="font-bold text-sm">Symptom Log</Text>
-                        <Text className="text-[10px] text-muted-light dark:text-muted-dark">Oct 12</Text>
-                      </View>
-                      <Text className="text-xs text-text-light dark:text-text-dark mt-1">Mild lethargy noted in the evening. Appetite normal.</Text>
-                    </View>
-                  </View>
-
-                  {/* Condition Resolved */}
-                  <View className="relative z-10 flex gap-3">
-                    <View className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-card-light dark:ring-card-dark"></View>
-                    <View className="flex-1 pb-2">
-                      <View className="flex justify-between items-start">
-                        <Text className="font-bold text-sm">Condition Resolved</Text>
-                        <Text className="text-[10px] text-muted-light dark:text-muted-dark">Oct 10</Text>
-                      </View>
-                      <Text className="text-xs text-text-light dark:text-text-dark mt-1">Otitis Externa (Ear Infection) marked as resolved.</Text>
-                    </View>
-                  </View>
-
-                  {/* Note Added */}
-                  <View className="relative z-10 flex gap-3">
-                    <View className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-gray-400 ring-4 ring-card-light dark:ring-card-dark"></View>
-                    <View className="flex-1 pb-0">
-                      <View className="flex justify-between items-start">
-                        <Text className="font-bold text-sm">Note Added</Text>
-                        <Text className="text-[10px] text-muted-light dark:text-muted-dark">Sep 15</Text>
-                      </View>
-                      <Text className="text-xs text-muted-light dark:text-muted-dark mt-1">Started new bag of food. Transitioning over 7 days.</Text>
-                    </View>
-                  </View>
-                </View>
-
-                <Pressable className="w-full mt-6 py-2 text-sm text-primary font-medium hover:bg-primary/5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                  <Text>View Full History</Text>
+                )}
+                <Pressable style={styles.addAllergyBtn}>
+                  <Text style={styles.addAllergyText}>+ Add Allergy</Text>
                 </Pressable>
               </View>
             </View>
+
+            {/* Health Log */}
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Health Log</Text>
+                <Pressable>
+                  <IconSymbol android_material_icon_name="history" size={24} color="#6B7280" />
+                </Pressable>
+              </View>
+
+              <View style={styles.logList}>
+                <View style={styles.logLine} />
+                
+                {/* Log Items (Mock Data) */}
+                <LogItem 
+                  color="#6366F1" 
+                  title="Weight Check" 
+                  date="Oct 20" 
+                  desc="Recorded at home."
+                >
+                  <View style={styles.weightBadge}>
+                    <Text style={styles.weightBadgeText}>24.5 kg</Text>
+                    <IconSymbol android_material_icon_name="arrow-upward" size={10} color="#15803d" />
+                  </View>
+                </LogItem>
+
+                <LogItem 
+                  color="#9CA3AF" 
+                  title="Symptom Log" 
+                  date="Oct 12" 
+                  desc="Mild lethargy noted in the evening. Appetite normal."
+                />
+
+                <LogItem 
+                  color="#3B82F6" 
+                  title="Condition Resolved" 
+                  date="Oct 10" 
+                  desc="Otitis Externa (Ear Infection) marked as resolved."
+                />
+
+                <LogItem 
+                  color="#9CA3AF" 
+                  title="Note Added" 
+                  date="Sep 15" 
+                  desc="Started new bag of food. Transitioning over 7 days."
+                />
+
+                <Pressable style={styles.viewHistoryBtn}>
+                  <Text style={styles.viewHistoryText}>View Full History</Text>
+                </Pressable>
+              </View>
+            </View>
+
           </View>
         </View>
       </View>
     </ScrollView>
   );
 }
+
+function QuickActionButton({ label, icon, color, bgColor, onPress, isMobile }: any) {
+  if (isMobile) {
+    return (
+      <Pressable style={styles.mobileQuickAction} onPress={onPress}>
+        <View style={[styles.mobileQuickActionIcon, { backgroundColor: bgColor }]}>
+          <IconSymbol android_material_icon_name={icon} size={24} color={color} />
+        </View>
+        <Text style={styles.mobileQuickActionLabel}>{label}</Text>
+      </Pressable>
+    );
+  }
+  return (
+    <Pressable style={styles.quickActionBtn} onPress={onPress}>
+      <View style={[styles.quickActionIcon, { backgroundColor: bgColor }]}>
+        <IconSymbol android_material_icon_name={icon} size={20} color={color} />
+      </View>
+      <Text style={styles.quickActionLabel}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function LogItem({ color, title, date, desc, children }: any) {
+  return (
+    <View style={styles.logItem}>
+      <View style={[styles.logDot, { backgroundColor: color }]} />
+      <View style={styles.logContent}>
+        <View style={styles.logHeader}>
+          <Text style={styles.logTitle}>{title}</Text>
+          <Text style={styles.logDate}>{date}</Text>
+        </View>
+        <Text style={styles.logDesc}>{desc}</Text>
+        {children}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F6F8',
+  },
+  content: {
+    padding: 24,
+    maxWidth: 1280,
+    width: '100%',
+    alignSelf: 'center',
+    gap: 24,
+  },
+  contentMobile: {
+    padding: 16,
+  },
+  mobileQuickActionsScroll: {
+    marginBottom: 24,
+    marginHorizontal: -16, // Bleed out
+    paddingHorizontal: 16,
+  },
+  mobileQuickActionsContainer: {
+    gap: 16,
+    paddingRight: 16,
+  },
+  mobileQuickAction: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  mobileQuickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mobileQuickActionLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#4B5563',
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  quickActionBtn: {
+    flex: 1,
+    minWidth: 100,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  quickActionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  mainGrid: {
+    flexDirection: 'column',
+    gap: 24,
+  },
+  mainGridLarge: {
+    flexDirection: 'row',
+  },
+  mainColumn: {
+    flex: 2,
+    gap: 24,
+  },
+  sidebarColumn: {
+    flex: 1,
+    gap: 24,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  iconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  filterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  filterBtnText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  primaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#6366F1',
+  },
+  primaryBtnText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#fff',
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6366F1',
+  },
+  iconBtn: {
+    padding: 4,
+  },
+  visitsGrid: {
+    flexDirection: 'column',
+    gap: 24,
+  },
+  visitsGridDesktop: {
+    flexDirection: 'row',
+  },
+  visitsColumn: {
+    flex: 1,
+    gap: 12,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6B7280',
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  upcomingCard: {
+    borderRadius: 12,
+    padding: 20,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  upcomingCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  upcomingCardIcon: {
+    padding: 8,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 8,
+  },
+  daysBadge: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  daysBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  upcomingCardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  upcomingCardLocation: {
+    fontSize: 14,
+    color: '#E0E7FF',
+    marginBottom: 16,
+  },
+  upcomingCardFooter: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.2)',
+    paddingTop: 12,
+  },
+  upcomingCardTime: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  upcomingCardTimeText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  emptyState: {
+    padding: 20,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    color: '#6B7280',
+    fontSize: 14,
+  },
+  recentList: {
+    gap: 12,
+  },
+  recentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    gap: 12,
+  },
+  recentDateBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recentDateDay: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    lineHeight: 18,
+  },
+  recentDateMonth: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6B7280',
+    textTransform: 'uppercase',
+  },
+  recentInfo: {
+    flex: 1,
+  },
+  recentTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  recentType: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  vaccinesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  vaccineCard: {
+    width: '100%',
+    minWidth: 200,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  vaccineCardDesktop: {
+    width: '31%',
+  },
+  vaccineCardDue: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FEF3C7',
+  },
+  vaccineHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#DCFCE7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  statusBadgeActive: {
+    backgroundColor: '#DCFCE7',
+  },
+  statusBadgeDue: {
+    backgroundColor: '#FEF3C7',
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  statusTextActive: {
+    color: '#16A34A',
+  },
+  statusTextDue: {
+    color: '#D97706',
+  },
+  vaccineName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  vaccineProvider: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 12,
+  },
+  vaccineFooter: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 12,
+  },
+  expiresLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    marginBottom: 2,
+  },
+  expiresDate: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1F2937',
+  },
+  expiresDateDue: {
+    color: '#D97706',
+  },
+  treatmentsList: {
+    gap: 16,
+  },
+  treatmentItem: {
+    flexDirection: 'row',
+    gap: 16,
+    padding: 16,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+  },
+  treatmentIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  treatmentContent: {
+    flex: 1,
+  },
+  treatmentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  treatmentTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  frequencyBadge: {
+    backgroundColor: '#E0E7FF',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  frequencyText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#4F46E5',
+  },
+  treatmentNotes: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  treatmentMeta: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaText: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  moreBtn: {
+    padding: 4,
+  },
+  editBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  allergiesList: {
+    gap: 12,
+  },
+  allergyItem: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  allergySevere: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FEE2E2',
+  },
+  allergyMild: {
+    backgroundColor: '#FEFCE8',
+    borderColor: '#FEF9C3',
+  },
+  allergyContent: {
+    flex: 1,
+  },
+  allergyName: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  textSevere: {
+    color: '#B91C1C',
+  },
+  textMild: {
+    color: '#A16207',
+  },
+  allergyNotes: {
+    fontSize: 12,
+  },
+  textSevereLight: {
+    color: '#DC2626',
+  },
+  textMildLight: {
+    color: '#CA8A04',
+  },
+  addAllergyBtn: {
+    width: '100%',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+  },
+  addAllergyText: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  logList: {
+    position: 'relative',
+    paddingLeft: 16,
+    gap: 24,
+  },
+  logLine: {
+    position: 'absolute',
+    left: 3.5,
+    top: 8,
+    bottom: 0,
+    width: 2,
+    backgroundColor: '#E5E7EB',
+  },
+  logItem: {
+    flexDirection: 'row',
+    gap: 16,
+    position: 'relative',
+  },
+  logDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    marginTop: 6,
+    zIndex: 1,
+    borderWidth: 2,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  logContent: {
+    flex: 1,
+  },
+  logHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  logTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  logDate: {
+    fontSize: 12,
+    color: '#9CA3AF',
+  },
+  logDesc: {
+    fontSize: 12,
+    color: '#4B5563',
+    lineHeight: 18,
+  },
+  weightBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  weightBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#15803d',
+  },
+  viewHistoryBtn: {
+    alignItems: 'center',
+    paddingTop: 8,
+  },
+  viewHistoryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6366F1',
+  },
+});

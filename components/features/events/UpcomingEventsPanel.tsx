@@ -39,7 +39,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
   const dynamicStyles = {
     title: { color: colors.text.primary },
     link: { color: colors.success[500] }, // green
-    card: { backgroundColor: colors.background.tertiary }, // white/dark-slate
+    card: { backgroundColor: colors.background.secondary }, // White cards
     textPrimary: { color: colors.text.primary },
     textSecondary: { color: colors.text.secondary },
     timelineLine: { backgroundColor: colors.neutral[200] },
@@ -58,6 +58,44 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
     return null; // Don't show section if empty
   }
 
+  const getEventStyles = (type: string) => {
+    switch (type) {
+      case 'vaccination':
+        return {
+          bg: '#FEF2F2', // red-50
+          text: '#EF4444', // red-500
+          icon: 'cross.vial',
+          iconName: 'vaccines',
+          borderColor: '#FECACA',
+        };
+      case 'medication':
+      case 'treatment':
+        return {
+          bg: '#EFF6FF', // blue-50
+          text: '#3B82F6', // blue-500
+          icon: 'pills',
+          iconName: 'medication',
+          borderColor: '#BFDBFE',
+        };
+      case 'grooming':
+        return {
+          bg: '#FAF5FF', // purple-50
+          text: '#A855F7', // purple-500
+          icon: 'scissors',
+          iconName: 'content_cut',
+          borderColor: '#E9D5FF',
+        };
+      default: // visit/checkup
+        return {
+          bg: '#F0FDFA', // teal-50
+          text: '#14B8A6', // teal-500
+          icon: 'stethoscope',
+          iconName: 'medical_services',
+          borderColor: '#99F6E4',
+        };
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -71,35 +109,17 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
         {upcomingEvents.map((e, index) => {
           const date = new Date(e.dueDate);
           const isLast = index === upcomingEvents.length - 1;
-
-          // Icon logic
-          let iconName = 'calendar';
-          let iconColor = colors.primary[500];
-          let iconBg = colors.primary[50];
-
-          if (e.type === 'vaccination') {
-            iconName = 'cross.vial'; // approx
-            iconColor = colors.error[500]; // Red for medical/high priority often
-            iconBg = colors.error[50];
-          } else if (e.type === 'treatment') {
-            iconName = 'pills';
-            iconColor = colors.primary[500]; // Blue/Purple
-            iconBg = colors.primary[50];
-          } else if (e.type === 'grooming') {
-            iconName = 'scissors';
-            iconColor = '#A855F7'; // Purple
-            iconBg = '#F3E8FF';
-          }
+          const style = getEventStyles(e.type);
 
           return (
             <View key={e.id} style={styles.timelineItem}>
               <View style={styles.timelineLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
+                <View style={[styles.iconCircle, { backgroundColor: style.bg }]}>
                   <IconSymbol
-                    ios_icon_name={iconName as any}
-                    android_material_icon_name="event" // generic fallback or map properly
+                    ios_icon_name={style.icon as any}
+                    android_material_icon_name={style.iconName as any}
                     size={20}
-                    color={iconColor}
+                    color={style.text}
                   />
                 </View>
                 {!isLast && <View style={[styles.timelineLine, dynamicStyles.timelineLine]} />}
@@ -108,40 +128,44 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
               <TouchableOpacity
                 style={[styles.eventCard, dynamicStyles.card]}
                 onPress={() => {
-                  // Navigate to detail
                   if (e.relatedId) {
-                    if (e.type === 'vaccination') {
-                      router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${e.relatedId}`);
-                    } else if (e.type === 'treatment') {
-                      router.push(`/(tabs)/pets/record-detail?type=treatment&id=${e.relatedId}`);
-                    } else if (e.type === 'vet') {
-                      router.push(`/(tabs)/pets/record-detail?type=visit&id=${e.relatedId}`);
-                    }
+                    const routeMap: Record<string, string> = {
+                      vaccination: 'vaccination',
+                      treatment: 'treatment',
+                      visit: 'visit'
+                    };
+                    const detailType = routeMap[e.type] || 'visit';
+                    router.push(`/(tabs)/pets/record-detail?type=${detailType}&id=${e.relatedId}` as any);
                   }
                 }}
                 activeOpacity={0.7}
               >
                 <View style={styles.cardHeader}>
-                  <View>
-                    {/* High Priority Badge - mock logic */}
-                    {e.type === 'vaccination' && (
-                      <View style={styles.priorityBadge}>
-                        <Text style={styles.priorityText}>HIGH PRIORITY</Text>
+                  <View style={{ flex: 1 }}>
+                    {/* Priority Badge for Vax or Urgent */}
+                    {(e.type === 'vaccination' || e.title.includes('Urgent')) && (
+                      <View style={[styles.priorityBadge, { backgroundColor: style.bg }]}>
+                        <IconSymbol ios_icon_name="exclamationmark.triangle.fill" android_material_icon_name="warning" size={10} color={style.text} />
+                        <Text style={[styles.priorityText, { color: style.text }]}>HIGH PRIORITY</Text>
                       </View>
                     )}
-                    <Text style={[styles.eventTitle, dynamicStyles.textPrimary]}>{e.title}</Text>
+
+                    <Text style={[styles.eventTitle, dynamicStyles.textPrimary]} numberOfLines={1}>{e.title}</Text>
+
                     <View style={styles.metaRow}>
-                      <IconSymbol ios_icon_name="calendar" android_material_icon_name="calendar-today" size={14} color={colors.text.tertiary} />
-                      <Text style={[styles.eventTime, dynamicStyles.textSecondary]}>
-                        {date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </Text>
+                      <View style={[styles.dateTag, { backgroundColor: colors.neutral[100] }]}>
+                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="calendar_today" size={12} color={colors.text.tertiary} />
+                        <Text style={[styles.eventTime, dynamicStyles.textSecondary]}>
+                          {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} • {date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                  {/* Pet Avatar if available */}
-                  {/* Assuming we might have pet photo url in event or need to fetch. 
-                             For now, let's use a small placeholder or skip if not in event data easily.
-                             The generic hook returns standard event structure.
-                          */}
+
+                  {/* Action Icon */}
+                  <View style={styles.actionIcon}>
+                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron_right" size={16} color={colors.neutral[400]} />
+                  </View>
                 </View>
               </TouchableOpacity>
             </View>
@@ -167,7 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   link: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
   },
   list: {
@@ -180,31 +204,31 @@ const styles = StyleSheet.create({
   },
   timelineLeft: {
     alignItems: 'center',
-    width: 40,
+    width: 36,
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
   },
   timelineLine: {
-    width: 1,
-    flex: 1, // fill height
-    minHeight: 40, // ensure visible if content is short
+    width: 2,
+    flex: 1,
+    minHeight: 24,
     backgroundColor: '#E5E7EB',
-    marginTop: -4, // tuck under icon slightly
+    marginTop: -4,
     marginBottom: -4,
   },
   eventCard: {
     flex: 1,
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    padding: 12,
+    marginBottom: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
@@ -212,33 +236,45 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center', // Center vertically
   },
   priorityBadge: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)', // red-500/10
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 100,
     alignSelf: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   priorityText: {
-    color: '#EF4444', // red-500
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.5,
   },
   eventTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
     marginBottom: 4,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  dateTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   eventTime: {
-    fontSize: 13,
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  actionIcon: {
+    marginLeft: 8,
   },
 });

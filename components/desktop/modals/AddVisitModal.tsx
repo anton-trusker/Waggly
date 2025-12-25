@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import { supabase } from '@/lib/supabase';
+import { Pet } from '@/types';
 
 interface AddVisitModalProps {
   visible: boolean;
-  petId: string;
+  petId?: string;
+  pets?: Pet[];
   onClose: () => void;
 }
 
 const VISIT_TYPES = ['Checkup', 'Emergency', 'Surgery', 'Specialist', 'Follow-up', 'Other'];
 
-export default function AddVisitModal({ visible, petId, onClose }: AddVisitModalProps) {
+export default function AddVisitModal({ visible, petId, pets, onClose }: AddVisitModalProps) {
   const [loading, setLoading] = useState(false);
+  const [selectedPetId, setSelectedPetId] = useState(petId || '');
   const [formData, setFormData] = useState({
     visit_type: 'Checkup',
     visit_date: '',
@@ -26,9 +30,19 @@ export default function AddVisitModal({ visible, petId, onClose }: AddVisitModal
     notes: '',
   });
 
+  useEffect(() => {
+    if (petId) setSelectedPetId(petId);
+    else if (pets && pets.length > 0 && !selectedPetId) setSelectedPetId(pets[0].id);
+  }, [petId, pets]);
+
   if (!visible) return null;
 
   const handleSubmit = async () => {
+    const targetPetId = petId || selectedPetId;
+    if (!targetPetId) {
+      Alert.alert('Error', 'Please select a pet');
+      return;
+    }
     if (!formData.visit_date) {
       Alert.alert('Error', 'Please enter visit date');
       return;
@@ -39,7 +53,7 @@ export default function AddVisitModal({ visible, petId, onClose }: AddVisitModal
       const { error } = await supabase
         .from('medical_visits')
         .insert({
-          pet_id: petId,
+          pet_id: targetPetId,
           visit_type: formData.visit_type,
           visit_date: formData.visit_date,
           veterinarian: formData.veterinarian || null,
@@ -73,6 +87,23 @@ export default function AddVisitModal({ visible, petId, onClose }: AddVisitModal
         </View>
 
         <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
+          {!petId && pets && (
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Select Pet *</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={selectedPetId}
+                  onValueChange={(itemValue) => setSelectedPetId(itemValue)}
+                  style={styles.picker}
+                >
+                  {pets.map((pet) => (
+                    <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+          )}
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Visit Type</Text>
             <View style={styles.chipContainer}>

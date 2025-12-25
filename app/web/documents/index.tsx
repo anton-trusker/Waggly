@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, useWindowDimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDocuments } from '@/hooks/useDocuments';
 import { usePets } from '@/hooks/usePets';
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import * as Linking from 'expo-linking';
-
-// MOCK_DOCUMENTS removed
+import DragDropZone from '@/components/desktop/DragDropZone';
 
 const DOCUMENT_TYPES = [
     { id: 'all', label: 'All Documents', icon: 'document-text' },
@@ -16,14 +15,13 @@ const DOCUMENT_TYPES = [
     { id: 'insurance', label: 'Insurance', icon: 'umbrella' },
 ];
 
-import DragDropZone from '@/components/desktop/DragDropZone';
-
-import { Pressable } from 'react-native';
-
 export default function DocumentsPage() {
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
     const [selectedType, setSelectedType] = useState('all');
     const [selectedPetId, setSelectedPetId] = useState('all');
     const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
+    const [initialFile, setInitialFile] = useState<File | null>(null);
 
     // Fetch all documents for all pets (pass undefined to hook)
     const { documents, deleteDocument, fetchDocuments } = useDocuments();
@@ -33,9 +31,10 @@ export default function DocumentsPage() {
     const [isSelectionMode, setIsSelectionMode] = useState(false);
 
     const handleDrop = (files: File[]) => {
-        // TODO: Handle drag & drop upload via modal or direct
-        const fileNames = files.map(f => f.name).join(', ');
-        Alert.alert('Files Dropped', `Please use the "Upload Document" button to upload: ${fileNames}`);
+        if (files.length > 0) {
+            setInitialFile(files[0]);
+            setIsUploadModalVisible(true);
+        }
     };
 
     const filteredDocuments = documents.filter(doc => {
@@ -80,7 +79,7 @@ export default function DocumentsPage() {
                         const ids = Array.from(selectedIds);
                         for (const id of ids) {
                             const doc = documents.find(d => d.id === id);
-                            if (doc) await deleteDocument(doc.id, doc.url);
+                            if (doc) await deleteDocument(doc.id, doc.file_url);
                         }
                         setSelectedIds(new Set());
                         setIsSelectionMode(false);
@@ -107,26 +106,27 @@ export default function DocumentsPage() {
     };
 
     const handleUpload = () => {
+        setInitialFile(null); // Clear any dropped file
         setIsUploadModalVisible(true);
     };
 
     const handleDownload = (doc: any) => {
-        if (doc.url) {
-            Linking.openURL(doc.url);
+        if (doc.file_url) {
+            Linking.openURL(doc.file_url);
         }
     };
 
     const handleDelete = (doc: any) => {
         Alert.alert(
             'Delete Document',
-            `Are you sure you want to delete ${doc.name}?`,
+            `Are you sure you want to delete ${doc.file_name}?`,
             [
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Delete',
                     style: 'destructive',
                     onPress: async () => {
-                        await deleteDocument(doc.id, doc.url);
+                        await deleteDocument(doc.id, doc.file_url);
                         fetchDocuments();
                     }
                 },
@@ -142,11 +142,97 @@ export default function DocumentsPage() {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
+    const renderFilters = () => (
+        <ScrollView 
+            horizontal={isMobile} 
+            showsHorizontalScrollIndicator={false}
+            style={isMobile ? styles.filtersMobile : styles.sidebar}
+            contentContainerStyle={isMobile ? styles.filtersContentMobile : undefined}
+        >
+            <View style={!isMobile && { gap: 4 }}>
+                <Text style={styles.sidebarTitle}>Pets</Text>
+                <TouchableOpacity
+                    style={[
+                        styles.filterItem,
+                        selectedPetId === 'all' && styles.filterItemActive,
+                        isMobile && styles.filterItemMobile
+                    ]}
+                    onPress={() => setSelectedPetId('all')}
+                >
+                    <Ionicons
+                        name="paw"
+                        size={20}
+                        color={selectedPetId === 'all' ? '#6366F1' : '#6B7280'}
+                    />
+                    <Text style={[
+                        styles.filterText,
+                        selectedPetId === 'all' && styles.filterTextActive,
+                    ]}>
+                        All Pets
+                    </Text>
+                </TouchableOpacity>
+
+                {pets.map((pet) => (
+                    <TouchableOpacity
+                        key={pet.id}
+                        style={[
+                            styles.filterItem,
+                            selectedPetId === pet.id && styles.filterItemActive,
+                            isMobile && styles.filterItemMobile
+                        ]}
+                        onPress={() => setSelectedPetId(pet.id)}
+                    >
+                        <Ionicons
+                            name="paw-outline"
+                            size={20}
+                            color={selectedPetId === pet.id ? '#6366F1' : '#6B7280'}
+                        />
+                        <Text style={[
+                            styles.filterText,
+                            selectedPetId === pet.id && styles.filterTextActive,
+                        ]} numberOfLines={1}>
+                            {pet.name}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+
+                <View style={{ height: 24, width: isMobile ? 24 : 0 }} />
+
+                <Text style={styles.sidebarTitle}>Document Types</Text>
+                {DOCUMENT_TYPES.map((type) => (
+                    <TouchableOpacity
+                        key={type.id}
+                        style={[
+                            styles.filterItem,
+                            selectedType === type.id && styles.filterItemActive,
+                            isMobile && styles.filterItemMobile
+                        ]}
+                        onPress={() => setSelectedType(type.id)}
+                    >
+                        <Ionicons
+                            name={type.icon as any}
+                            size={20}
+                            color={selectedType === type.id ? '#6366F1' : '#6B7280'}
+                        />
+                        <Text
+                            style={[
+                                styles.filterText,
+                                selectedType === type.id && styles.filterTextActive,
+                            ]}
+                        >
+                            {type.label}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+        </ScrollView>
+    );
+
     return (
         <DragDropZone onDrop={handleDrop}>
             <View style={styles.container}>
                 {/* Header */}
-                <View style={styles.header}>
+                <View style={[styles.header, isMobile && styles.headerMobile]}>
                     <View>
                         <Text style={styles.title}>Documents</Text>
                         <Text style={styles.subtitle}>
@@ -165,94 +251,18 @@ export default function DocumentsPage() {
                         ) : (
                             <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
                                 <Ionicons name="cloud-upload-outline" size={20} color="#fff" />
-                                <Text style={styles.uploadButtonText}>Upload Document</Text>
+                                <Text style={styles.uploadButtonText}>Upload</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
 
-                <View style={styles.content}>
-                    {/* Sidebar Filters */}
-
-                    // ... (MOCK_DOCUMENTS removed, DOCUMENT_TYPES kept)
-
-                    // ... (Inside Sidebar View)
-                    <View style={styles.sidebar}>
-                        <Text style={styles.sidebarTitle}>Pets</Text>
-                        <TouchableOpacity
-                            style={[
-                                styles.filterItem,
-                                selectedPetId === 'all' && styles.filterItemActive,
-                            ]}
-                            onPress={() => setSelectedPetId('all')}
-                        >
-                            <Ionicons
-                                name="paw"
-                                size={20}
-                                color={selectedPetId === 'all' ? '#6366F1' : '#6B7280'}
-                            />
-                            <Text style={[
-                                styles.filterText,
-                                selectedPetId === 'all' && styles.filterTextActive,
-                            ]}>
-                                All Pets
-                            </Text>
-                        </TouchableOpacity>
-
-                        {pets.map((pet) => (
-                            <TouchableOpacity
-                                key={pet.id}
-                                style={[
-                                    styles.filterItem,
-                                    selectedPetId === pet.id && styles.filterItemActive,
-                                ]}
-                                onPress={() => setSelectedPetId(pet.id)}
-                            >
-                                <Ionicons
-                                    name="paw-outline"
-                                    size={20}
-                                    color={selectedPetId === pet.id ? '#6366F1' : '#6B7280'}
-                                />
-                                <Text style={[
-                                    styles.filterText,
-                                    selectedPetId === pet.id && styles.filterTextActive,
-                                ]} numberOfLines={1}>
-                                    {pet.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-
-                        <View style={{ height: 24 }} />
-
-                        <Text style={styles.sidebarTitle}>Document Types</Text>
-                        {DOCUMENT_TYPES.map((type) => (
-                            <TouchableOpacity
-                                key={type.id}
-                                style={[
-                                    styles.filterItem,
-                                    selectedType === type.id && styles.filterItemActive,
-                                ]}
-                                onPress={() => setSelectedType(type.id)}
-                            >
-                                <Ionicons
-                                    name={type.icon as any}
-                                    size={20}
-                                    color={selectedType === type.id ? '#6366F1' : '#6B7280'}
-                                />
-                                <Text
-                                    style={[
-                                        styles.filterText,
-                                        selectedType === type.id && styles.filterTextActive,
-                                    ]}
-                                >
-                                    {type.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                <View style={[styles.content, isMobile && styles.contentMobile]}>
+                    {/* Filters */}
+                    {renderFilters()}
 
                     {/* Documents List */}
-                    <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
                         {filteredDocuments.length > 0 && (
                             <View style={styles.listHeader}>
                                 <TouchableOpacity
@@ -286,7 +296,6 @@ export default function DocumentsPage() {
                                 {filteredDocuments.map((doc: any) => {
                                     const { icon, color } = getDocumentIcon(doc.type);
                                     const isSelected = selectedIds.has(doc.id);
-                                    // Use formatSize
                                     const sizeString = formatSize(doc.size_bytes);
 
                                     return (
@@ -312,7 +321,7 @@ export default function DocumentsPage() {
                                             </View>
                                             <View style={styles.documentInfo}>
                                                 <Text style={styles.documentName} numberOfLines={1}>
-                                                    {doc.name}
+                                                    {doc.file_name}
                                                 </Text>
                                                 <View style={styles.documentMeta}>
                                                     <Ionicons name="paw" size={12} color="#9CA3AF" />
@@ -347,6 +356,7 @@ export default function DocumentsPage() {
                                 })}
                             </View>
                         )}
+                        {isMobile && <View style={{ height: 80 }} />}
                     </ScrollView>
                 </View>
             </View>
@@ -354,9 +364,11 @@ export default function DocumentsPage() {
                 visible={isUploadModalVisible}
                 onClose={() => {
                     setIsUploadModalVisible(false);
+                    setInitialFile(null);
                     fetchDocuments();
                 }}
                 petId={selectedPetId === 'all' ? undefined : selectedPetId}
+                initialFile={initialFile}
             />
         </DragDropZone>
     );
@@ -375,6 +387,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
+    },
+    headerMobile: {
+        padding: 16,
     },
     title: {
         fontSize: 28,
@@ -404,12 +419,28 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
+    contentMobile: {
+        flexDirection: 'column',
+    },
     sidebar: {
         width: 240,
         backgroundColor: '#fff',
         borderRightWidth: 1,
         borderRightColor: '#E5E7EB',
         padding: 16,
+    },
+    filtersMobile: {
+        maxHeight: 60,
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E7EB',
+    },
+    filtersContentMobile: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
     },
     sidebarTitle: {
         fontSize: 12,
@@ -418,6 +449,7 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         marginBottom: 12,
         paddingHorizontal: 16,
+        marginTop: 8,
     },
     filterItem: {
         flexDirection: 'row',
@@ -427,6 +459,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 8,
         marginBottom: 4,
+    },
+    filterItemMobile: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: '#F3F4F6',
+        borderRadius: 20,
+        marginBottom: 0,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
     },
     filterItemActive: {
         backgroundColor: '#F0F6FF',
@@ -443,6 +484,9 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 32,
     },
+    mainMobile: {
+        padding: 16,
+    },
     documentGrid: {
         gap: 16,
     },
@@ -455,6 +499,10 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: '#E5E7EB',
+    },
+    documentCardSelected: {
+        borderColor: '#6366F1',
+        backgroundColor: '#EEF2FF',
     },
     documentIcon: {
         width: 64,
@@ -585,9 +633,5 @@ const styles = StyleSheet.create({
     },
     cardCheckbox: {
         marginRight: 8,
-    },
-    documentCardSelected: {
-        borderColor: '#6366F1',
-        backgroundColor: '#EEF2FF',
     },
 });

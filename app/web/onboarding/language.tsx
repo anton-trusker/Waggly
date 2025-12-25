@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
@@ -33,6 +33,8 @@ export default function LanguagePage() {
     const { updateProfile } = useProfile();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState('en');
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const filteredLanguages = LANGUAGES.filter(lang =>
         lang.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,17 +53,19 @@ export default function LanguagePage() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Hero Panel */}
-            <View style={styles.heroSection}>
-                <AuthHeroPanel
-                    title="Choose Your Language"
-                    subtitle="Select your preferred language to personalize your experience"
-                />
-            </View>
+            {!isMobile && (
+                <View style={styles.heroSection}>
+                    <AuthHeroPanel
+                        title="Choose Your Language"
+                        subtitle="Select your preferred language to personalize your experience"
+                    />
+                </View>
+            )}
 
             {/* Right: Language Selector */}
-            <View style={styles.formSection}>
+            <View style={[styles.formSection, isMobile && styles.formSectionMobile]}>
                 <View style={styles.formContainer}>
                     {/* Header */}
                     <View style={styles.header}>
@@ -90,6 +94,7 @@ export default function LanguagePage() {
                                     style={[
                                         styles.languageCard,
                                         selectedLanguage === lang.code && styles.languageCardSelected,
+                                        isMobile && styles.languageCardMobile
                                     ]}
                                     onPress={() => setSelectedLanguage(lang.code)}
                                 >
@@ -125,6 +130,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
+    containerMobile: {
+        flexDirection: 'column',
+    },
     heroSection: {
         flex: 1,
     },
@@ -132,6 +140,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         padding: 48,
+    },
+    formSectionMobile: {
+        padding: 24,
     },
     formContainer: {
         flex: 1,
@@ -182,8 +193,8 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     languageCard: {
-        width: 'calc(33.333% - 11px)' as any,
-        minWidth: 180,
+        width: '31%', // Fallback for no calc support in some engines, but typically flexBasis is better
+        minWidth: 160,
         padding: 20,
         borderWidth: 2,
         borderColor: '#E5E7EB',
@@ -191,6 +202,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         backgroundColor: '#fff',
+    },
+    languageCardMobile: {
+        width: '47%',
+        minWidth: 140,
     },
     languageCardSelected: {
         borderColor: '#6366F1',

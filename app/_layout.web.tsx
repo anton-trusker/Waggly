@@ -2,10 +2,11 @@ import "@/lib/i18n";
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useScreenType } from "@/hooks/useScreenType";
 import { useColorScheme } from "react-native";
 import {
   DarkTheme,
@@ -26,11 +27,32 @@ export const unstable_settings = {
 function RootLayoutNav() {
   const { session, loading } = useAuth();
   const router = useRouter();
+  const segments = useSegments();
+  const { isMobile } = useScreenType();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (loading) return;
-    // Auth guards can go here if needed
-  }, [loading, session]);
+    if (loading || !isMounted) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+    const inWebGroup = segments[0] === 'web';
+    const inTabsGroup = segments[0] === '(tabs)';
+
+    // If on mobile and in web group -> go to mobile tabs
+    if (isMobile && inWebGroup) {
+      // Preserve sub-path if possible? For now, just go to root tabs
+      // or map specific routes. Simplest is root tabs.
+      router.replace('/(tabs)' as any);
+    }
+    // If on desktop and in tabs group -> go to web dashboard
+    else if (!isMobile && inTabsGroup) {
+      router.replace('/web/dashboard');
+    }
+  }, [loading, isMounted, isMobile, segments, router]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

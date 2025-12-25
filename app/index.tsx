@@ -14,5 +14,5 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={session ? "/(tabs)/(home)" : "/(auth)/login"} />;
+  return <Redirect href={session ? "/web/dashboard" : "/web/auth/login"} />;
 }

@@ -81,11 +81,11 @@ function RootLayoutNav() {
   }, [user]);
 
   useEffect(() => {
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
     const inOnboardingGroup = segments[0] === '(onboarding)';
 
     if (session && inAuthGroup) {
-      router.replace('/(tabs)');
+      router.replace('/web/dashboard');
     } else if (session && !inAuthGroup && !inOnboardingGroup) {
       // Profile check logic placeholder
     }
@@ -93,9 +93,9 @@ function RootLayoutNav() {
     // Simple check: If no session, go to login.
     if (!session) {
       if (inOnboardingGroup) {
-        router.replace('/(auth)/login');
+        router.replace('/web/auth/login');
       } else if (!inAuthGroup && segments[0] !== 'welcome') {
-        router.replace('/(auth)/login');
+        router.replace('/web/auth/login');
       }
     }
   }, [session, segments]);

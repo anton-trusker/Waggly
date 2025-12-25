@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Alert, ActivityIndicator, useWindowDimensions, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useLocale } from '@/hooks/useLocale';
 import { useRouter } from 'expo-router';
+import { supabase } from '@/lib/supabase';
 
 export default function SettingsPage() {
     const { user, signOut } = useAuth();
     const { profile, upsertProfile, loading: profileLoading } = useProfile();
     const { locale, setLocale } = useLocale();
     const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
     const [activeTab, setActiveTab] = useState<'account' | 'notifications' | 'privacy'>('account');
 
     // Profile State
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [country, setCountry] = useState('');
+    const [photoUrl, setPhotoUrl] = useState('');
     const [saving, setSaving] = useState(false);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
     // Notification preferences
     const [emailNotifications, setEmailNotifications] = useState(true);
@@ -31,6 +37,7 @@ export default function SettingsPage() {
             setFirstName(profile.first_name || '');
             setLastName(profile.last_name || '');
             setCountry(profile.country || '');
+            setPhotoUrl(profile.photo_url || '');
 
             // If we had notification prefs in profile, we'd load them here
             // const prefs = profile.notification_prefs as any;
@@ -38,12 +45,54 @@ export default function SettingsPage() {
         }
     }, [profile]);
 
+    const handlePhotoUpload = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.8,
+            });
+
+            if (!result.canceled && result.assets[0]) {
+                setUploadingPhoto(true);
+                const file = result.assets[0];
+
+                // Upload to Supabase Storage
+                const fileExt = file.uri.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('user-uploads')
+                    .upload(filePath, {
+                        uri: file.uri,
+                        type: `image/${fileExt}`,
+                        name: fileName,
+                    } as any);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('user-uploads')
+                    .getPublicUrl(filePath);
+
+                setPhotoUrl(publicUrl);
+            }
+        } catch (error: any) {
+            Alert.alert('Upload Error', error.message);
+        } finally {
+            setUploadingPhoto(false);
+        }
+    };
+
     const handleSaveProfile = async () => {
         setSaving(true);
         const { error } = await upsertProfile({
             first_name: firstName,
             last_name: lastName,
             country: country,
+            photo_url: photoUrl,
             updated_at: new Date().toISOString(),
         });
         setSaving(false);
@@ -91,64 +140,73 @@ export default function SettingsPage() {
     return (
         <View style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, isMobile && styles.headerMobile]}>
                 <Text style={styles.title}>Settings</Text>
                 <Text style={styles.subtitle}>Manage your account and preferences</Text>
             </View>
 
-            <View style={styles.content}>
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Sidebar Tabs */}
-                <View style={styles.sidebar}>
-                    <TouchableOpacity
-                        style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive]}
-                        onPress={() => setActiveTab('account')}
+                <View style={[styles.sidebar, isMobile && styles.sidebarMobile]}>
+                    <ScrollView 
+                        horizontal={isMobile} 
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={isMobile ? styles.sidebarScrollMobile : undefined}
                     >
-                        <Ionicons
-                            name="person-outline"
-                            size={20}
-                            color={activeTab === 'account' ? '#6366F1' : '#6B7280'}
-                        />
-                        <Text style={[styles.sidebarText, activeTab === 'account' && styles.sidebarTextActive]}>
-                            Account
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive]}
-                        onPress={() => setActiveTab('notifications')}
-                    >
-                        <Ionicons
-                            name="notifications-outline"
-                            size={20}
-                            color={activeTab === 'notifications' ? '#6366F1' : '#6B7280'}
-                        />
-                        <Text style={[styles.sidebarText, activeTab === 'notifications' && styles.sidebarTextActive]}>
-                            Notifications
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive]}
-                        onPress={() => setActiveTab('privacy')}
-                    >
-                        <Ionicons
-                            name="lock-closed-outline"
-                            size={20}
-                            color={activeTab === 'privacy' ? '#6366F1' : '#6B7280'}
-                        />
-                        <Text style={[styles.sidebarText, activeTab === 'privacy' && styles.sidebarTextActive]}>
-                            Privacy
-                        </Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                            onPress={() => setActiveTab('account')}
+                        >
+                            <Ionicons
+                                name="person-outline"
+                                size={20}
+                                color={activeTab === 'account' ? '#6366F1' : '#6B7280'}
+                            />
+                            <Text style={[styles.sidebarText, activeTab === 'account' && styles.sidebarTextActive]}>
+                                Account
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                            onPress={() => setActiveTab('notifications')}
+                        >
+                            <Ionicons
+                                name="notifications-outline"
+                                size={20}
+                                color={activeTab === 'notifications' ? '#6366F1' : '#6B7280'}
+                            />
+                            <Text style={[styles.sidebarText, activeTab === 'notifications' && styles.sidebarTextActive]}>
+                                Notifications
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                            onPress={() => setActiveTab('privacy')}
+                        >
+                            <Ionicons
+                                name="lock-closed-outline"
+                                size={20}
+                                color={activeTab === 'privacy' ? '#6366F1' : '#6B7280'}
+                            />
+                            <Text style={[styles.sidebarText, activeTab === 'privacy' && styles.sidebarTextActive]}>
+                                Privacy
+                            </Text>
+                        </TouchableOpacity>
 
-                    <View style={styles.sidebarDivider} />
-
-                    <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
-                        <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                        <Text style={[styles.sidebarText, { color: '#EF4444' }]}>Sign Out</Text>
-                    </TouchableOpacity>
+                        {!isMobile && (
+                            <>
+                                <View style={styles.sidebarDivider} />
+                                <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
+                                    <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+                                    <Text style={[styles.sidebarText, { color: '#EF4444' }]}>Sign Out</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </ScrollView>
                 </View>
 
                 {/* Main Content */}
-                <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
+                <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
                     {activeTab === 'account' && (
                         <View style={styles.tabContent}>
                             <Text style={styles.sectionTitle}>Account Information</Text>
@@ -163,7 +221,7 @@ export default function SettingsPage() {
                                     />
                                 </View>
 
-                                <View style={styles.row}>
+                                <View style={[styles.row, isMobile && styles.rowMobile]}>
                                     <View style={[styles.inputGroup, styles.flex1]}>
                                         <Text style={styles.label}>First Name</Text>
                                         <TextInput
@@ -237,6 +295,15 @@ export default function SettingsPage() {
                                     <Text style={styles.changePasswordText}>Change Password</Text>
                                 </TouchableOpacity>
                             </View>
+                            
+                            {isMobile && (
+                                <View style={{ marginTop: 24 }}>
+                                    <TouchableOpacity style={[styles.dangerButton, { justifyContent: 'center', backgroundColor: '#FEF2F2', borderRadius: 12 }]} onPress={handleSignOut}>
+                                        <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+                                        <Text style={styles.dangerButtonText}>Sign Out</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
                         </View>
                     )}
 
@@ -342,6 +409,7 @@ export default function SettingsPage() {
                     )}
                 </ScrollView>
             </View>
+            {isMobile && <View style={{ height: 80 }} />}
         </View>
     );
 }
@@ -357,6 +425,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
     },
+    headerMobile: {
+        padding: 16,
+    },
     title: {
         fontSize: 28,
         fontWeight: '700',
@@ -371,12 +442,27 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
+    contentMobile: {
+        flexDirection: 'column',
+    },
     sidebar: {
         width: 240,
         backgroundColor: '#fff',
         borderRightWidth: 1,
         borderRightColor: '#E5E7EB',
         padding: 16,
+    },
+    sidebarMobile: {
+        width: '100%',
+        borderRightWidth: 0,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E7EB',
+        padding: 0,
+        backgroundColor: '#fff',
+    },
+    sidebarScrollMobile: {
+        padding: 8,
+        gap: 8,
     },
     sidebarItem: {
         flexDirection: 'row',
@@ -386,6 +472,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 8,
         marginBottom: 4,
+    },
+    sidebarItemMobile: {
+        marginBottom: 0,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: '#F9FAFB',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
     },
     sidebarItemActive: {
         backgroundColor: '#F0F6FF',
@@ -401,6 +495,9 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         padding: 32,
+    },
+    mainMobile: {
+        padding: 16,
     },
     tabContent: {
         gap: 32,
@@ -440,6 +537,10 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         gap: 16,
+    },
+    rowMobile: {
+        flexDirection: 'column',
+        gap: 20,
     },
     flex1: {
         flex: 1,

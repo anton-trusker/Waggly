@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { designSystem, getSpacing } from '@/constants/designSystem';
@@ -17,6 +18,7 @@ import { Image } from 'react-native';
 import AppHeader from '@/components/layout/AppHeader';
 import LanguageSelect from '@/components/ui/LanguageSelect';
 import { useLocale } from '@/hooks/useLocale';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -33,13 +35,29 @@ export default function ProfileScreen() {
           text: t('profile.sign_out'),
           style: 'destructive',
           onPress: async () => {
-            await signOut();
-            router.replace('/(auth)/login');
+            try {
+              await signOut();
+              router.replace('/(auth)/login');
+            } catch (error) {
+              console.error('Sign out error:', error);
+              Alert.alert(
+                t('common.error'),
+                t('profile.sign_out_error') || 'Failed to sign out. Please try again.'
+              );
+            }
           },
         },
       ]
     );
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loading]}>
+        <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -54,17 +72,36 @@ export default function ProfileScreen() {
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
             {profile?.photo_url ? (
-              <Image source={{ uri: profile.photo_url }} style={{ width: 80, height: 80, borderRadius: 40 }} />
+              <Image source={{ uri: profile.photo_url }} style={styles.avatarImage} />
             ) : (
               <Text style={styles.avatarText}>
                 {user?.email?.charAt(0).toUpperCase() || 'U'}
               </Text>
             )}
+            <TouchableOpacity 
+              style={styles.editAvatarButton}
+              onPress={() => router.push('/(tabs)/profile/edit')}
+            >
+              <Ionicons name="camera" size={16} color="#fff" />
+            </TouchableOpacity>
           </View>
           <Text style={styles.name}>
             {(profile?.first_name || '') + (profile?.last_name ? ` ${profile?.last_name}` : '')}
           </Text>
           <Text style={styles.email}>{user?.email}</Text>
+          
+          {profile?.address && (
+            <View style={styles.locationContainer}>
+              <Ionicons name="location-outline" size={14} color={designSystem.colors.text.secondary} />
+              <Text style={styles.locationText}>{profile.address}</Text>
+            </View>
+          )}
+          
+          {profile?.country && (
+            <View style={styles.countryContainer}>
+              <Text style={styles.countryText}>🌍 {profile.country}</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -154,6 +191,11 @@ const styles = StyleSheet.create({
     ...designSystem.typography.headline.small,
     color: designSystem.colors.text.primary,
   },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   profileCard: {
     backgroundColor: getColor('background.secondary'),
     borderRadius: designSystem.borderRadius.lg,
@@ -163,17 +205,36 @@ const styles = StyleSheet.create({
     ...designSystem.shadows.sm,
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: designSystem.borderRadius.full,
     backgroundColor: designSystem.colors.primary[500],
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: getSpacing(4),
+    position: 'relative',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: designSystem.borderRadius.full,
   },
   avatarText: {
     ...designSystem.typography.display.small,
     color: designSystem.colors.text.inverse,
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: designSystem.colors.primary[600],
+    borderRadius: designSystem.borderRadius.full,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: designSystem.colors.background.primary,
   },
   email: {
     ...designSystem.typography.body.medium,
@@ -181,9 +242,28 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   name: {
-    ...designSystem.typography.title.medium,
+    ...designSystem.typography.title.large,
     color: designSystem.colors.text.primary,
     marginBottom: getSpacing(1),
+    fontWeight: '600',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: getSpacing(2),
+    marginBottom: getSpacing(1),
+  },
+  locationText: {
+    ...designSystem.typography.body.small,
+    color: designSystem.colors.text.secondary,
+    marginLeft: getSpacing(1),
+  },
+  countryContainer: {
+    marginTop: getSpacing(1),
+  },
+  countryText: {
+    ...designSystem.typography.body.small,
+    color: designSystem.colors.text.secondary,
   },
   section: {
     marginBottom: getSpacing(6),
