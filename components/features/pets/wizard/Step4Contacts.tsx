@@ -4,8 +4,15 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import PhoneInput from '@/components/ui/PhoneInput';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import EnhancedSelection from '@/components/ui/EnhancedSelection';
+import { COUNTRIES } from '@/constants/countries';
 
 export interface Step4Data {
+    vetName: string;
+    vetClinicName: string;
+    vetAddress: string;
+    vetCountry: string;
+    vetPhone: string;
     emergencyContactName: string;
     emergencyContactPhone: string;
 }
@@ -15,13 +22,28 @@ interface Step4Props {
     onNext: (data: Step4Data) => void;
 }
 
+const COUNTRY_OPTIONS_WITH_FLAG = COUNTRIES.map(c => ({
+    id: c.code,
+    label: `${c.flag} ${c.name}`
+}));
+
 export default function Step4Contacts({ initialData, onNext }: Step4Props) {
     const { colors } = useAppTheme();
+    const [vetName, setVetName] = useState(initialData.vetName || '');
+    const [vetClinicName, setVetClinicName] = useState(initialData.vetClinicName || '');
+    const [vetAddress, setVetAddress] = useState(initialData.vetAddress || '');
+    const [vetCountry, setVetCountry] = useState(initialData.vetCountry || '');
+    const [vetPhone, setVetPhone] = useState(initialData.vetPhone || '');
     const [emergencyContactName, setEmergencyContactName] = useState(initialData.emergencyContactName);
     const [emergencyContactPhone, setEmergencyContactPhone] = useState(initialData.emergencyContactPhone);
 
     const handleNext = () => {
         onNext({
+            vetName,
+            vetClinicName,
+            vetAddress,
+            vetCountry,
+            vetPhone,
             emergencyContactName,
             emergencyContactPhone
         });
@@ -55,11 +77,80 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={[styles.title, dynamicStyles.title]}>Emergency Contact</Text>
-                    <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Who should we call in an emergency?</Text>
+                    <Text style={[styles.title, dynamicStyles.title]}>Contacts & Care</Text>
+                    <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Veterinarian and emergency details.</Text>
                 </View>
 
                 <View style={styles.formSection}>
+                    
+                    {/* Veterinarian Section */}
+                    <View style={[styles.sectionHeader, dynamicStyles.sectionHeader]}>
+                        <View style={[styles.sectionIcon, { backgroundColor: designSystem.colors.primary[50] }]}>
+                            <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="medical-services" size={20} color={designSystem.colors.primary[500]} />
+                        </View>
+                        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Veterinarian</Text>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.label, dynamicStyles.label]}>CLINIC NAME</Text>
+                        <View style={styles.inputContainer}>
+                            <IconSymbol ios_icon_name="building.2" android_material_icon_name="domain" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
+                            <TextInput
+                                style={[styles.input, dynamicStyles.input]}
+                                placeholder="e.g. City Vet Clinic"
+                                placeholderTextColor={dynamicStyles.placeholder}
+                                value={vetClinicName}
+                                onChangeText={setVetClinicName}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.label, dynamicStyles.label]}>VET NAME <Text style={styles.optional}>(Optional)</Text></Text>
+                        <View style={styles.inputContainer}>
+                             <IconSymbol ios_icon_name="person.fill" android_material_icon_name="person" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
+                            <TextInput
+                                style={[styles.input, dynamicStyles.input]}
+                                placeholder="Dr. Smith"
+                                placeholderTextColor={dynamicStyles.placeholder}
+                                value={vetName}
+                                onChangeText={setVetName}
+                            />
+                        </View>
+                    </View>
+
+                     <View style={styles.inputGroup}>
+                        <Text style={[styles.label, dynamicStyles.label]}>ADDRESS <Text style={styles.optional}>(Optional)</Text></Text>
+                        <View style={styles.inputContainer}>
+                             <IconSymbol ios_icon_name="location.fill" android_material_icon_name="location-on" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
+                            <TextInput
+                                style={[styles.input, dynamicStyles.input]}
+                                placeholder="123 Vet Street"
+                                placeholderTextColor={dynamicStyles.placeholder}
+                                value={vetAddress}
+                                onChangeText={setVetAddress}
+                            />
+                        </View>
+                    </View>
+
+                    <EnhancedSelection
+                        label="COUNTRY"
+                        value={vetCountry}
+                        options={COUNTRY_OPTIONS_WITH_FLAG}
+                        onSelect={(opt) => setVetCountry(opt.id)}
+                        placeholder="Select Country"
+                        searchable
+                        icon="globe"
+                    />
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.label, dynamicStyles.label]}>PHONE <Text style={styles.optional}>(Optional)</Text></Text>
+                        <PhoneInput
+                            value={vetPhone}
+                            onChangeText={setVetPhone}
+                        />
+                    </View>
+
                     {/* Emergency Contact Section */}
                     <View style={[styles.sectionHeader, { marginTop: 16 }, dynamicStyles.sectionHeader]}>
                         <View style={[styles.sectionIcon, { backgroundColor: colors.error[50] }]}>
@@ -79,7 +170,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                 style={styles.inputIcon}
                             />
                             <TextInput
-                                style={[styles.inputError, dynamicStyles.input, { borderColor: dynamicStyles.input.borderColor }]}
+                                style={[styles.input, dynamicStyles.input, { borderColor: dynamicStyles.input.borderColor }]}
                                 placeholder="e.g. Jane Doe"
                                 placeholderTextColor={dynamicStyles.placeholder}
                                 value={emergencyContactName}
@@ -188,18 +279,6 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     input: {
-        backgroundColor: designSystem.colors.neutral[0],
-        borderWidth: 1,
-        borderColor: designSystem.colors.neutral[200],
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingLeft: 48,
-        paddingVertical: 16,
-        fontSize: 16,
-        color: designSystem.colors.text.primary,
-        ...designSystem.shadows.sm,
-    },
-    inputError: {
         backgroundColor: designSystem.colors.neutral[0],
         borderWidth: 1,
         borderColor: designSystem.colors.neutral[200],

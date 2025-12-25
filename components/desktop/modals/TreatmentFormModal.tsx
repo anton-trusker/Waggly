@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { cssInterop } from 'react-native-css-interop';
+import AddressFormSection from './AddressFormSection';
 
 // Apply cssInterop to components if not already done globally
 cssInterop(BlurView, { className: 'style' });
@@ -27,12 +28,21 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
     const [formData, setFormData] = useState({
         treatment_type: 'Medication',
         name: '',
-        date_administered: '',
+        date_administered: new Date().toISOString().split('T')[0],
         frequency_duration: '',
-        veterinarian: '',
+        reminders_enabled: false,
+        next_due_date: '',
+        
+        // Provider & Costs
+        provider: '', // Clinic/Vet Name
+        address: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+        
         cost: '',
         currency: 'EUR',
-        reminders_enabled: false,
         notes: '',
     });
 
@@ -48,12 +58,18 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
         setFormData({
             treatment_type: 'Medication',
             name: '',
-            date_administered: '',
+            date_administered: new Date().toISOString().split('T')[0],
             frequency_duration: '',
-            veterinarian: '',
+            reminders_enabled: false,
+            next_due_date: '',
+            provider: '',
+            address: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: '',
             cost: '',
             currency: 'EUR',
-            reminders_enabled: false,
             notes: '',
         });
         if (!initialPetId && pets.length > 0) {
@@ -78,22 +94,14 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                 .insert({
                     pet_id: selectedPetId,
                     treatment_type: formData.treatment_type,
-                    diagnosis: formData.name, // Using name as diagnosis or we might need to adjust schema. Let's assume name maps to diagnosis or we add a name field if schema supports it. Actually schema likely has treatment_type and diagnosis. I'll use name as diagnosis for now or check schema.
-                    // Checking previous file: treatment_type, diagnosis, veterinarian, treatment_date, frequency, notes, cost, currency, provider.
-                    // The design has "Treatment Name". I will map this to diagnosis for now as it seems most appropriate or maybe notes.
-                    // Wait, previous file had treatment_type and diagnosis.
-                    // Let's map "Treatment Name" to diagnosis for now as it's the closest fit.
-                    veterinarian: formData.veterinarian || null,
+                    diagnosis: formData.name, // Using name as diagnosis for now based on schema assumptions
+                    veterinarian: formData.provider || null,
                     treatment_date: formData.date_administered || null,
                     frequency: formData.frequency_duration || null,
                     notes: formData.notes || null,
                     cost: parseFloat(formData.cost) || null,
                     currency: formData.currency,
-                    reminders_enabled: formData.reminders_enabled, // Check if schema supports this. Previous file didn't seem to use it in insert but had it in state? No, previous file didn't have reminders_enabled in state.
-                    // If schema doesn't support reminders_enabled for treatments, we might need to omit it or add column.
-                    // I will omit it from insert for now to be safe, or check schema.
-                    // Actually, let's assume I can add it if needed, but for now I'll just not send it if not sure.
-                    // However, for "Set Reminder", usually that implies creating a reminder record or notification.
+                    // Note: reminders_enabled might not be in schema, ignoring for now or assuming handled elsewhere
                 });
 
             if (error) throw error;
@@ -113,213 +121,252 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/40 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={10} className="absolute inset-0" />
-                <View className="w-full max-w-3xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
+            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
+                <BlurView intensity={20} className="absolute inset-0" />
+                <View className="w-full max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
                     {/* Header */}
-                    <View className="flex-row items-center justify-between p-8 border-b border-gray-200 dark:border-gray-700 pb-6">
-                        <Text className="text-gray-900 dark:text-white text-2xl font-bold">+ Add Treatment</Text>
-                        <TouchableOpacity onPress={onClose} className="w-8 h-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                            <Ionicons name="close" size={18} color="#4B5563" />
+                    <View className="flex-row items-center justify-between px-6 py-5 border-b border-[#2C2C2E]">
+                        <TouchableOpacity onPress={onClose}>
+                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                        </TouchableOpacity>
+                        <Text className="text-white text-lg font-bold">Add Treatment</Text>
+                        <TouchableOpacity onPress={handleSubmit} disabled={loading}>
+                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Form Content */}
-                    <ScrollView className="p-8 pt-6" showsVerticalScrollIndicator={false}>
+                    <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
                         <View className="space-y-8 pb-8">
-                            {/* Who is this for? Section */}
+                            
+                            {/* Who is this for? */}
                             <View>
-                                <Text className="text-gray-900 dark:text-white text-lg font-bold mb-4">Who is this for?</Text>
+                                <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">WHO IS THIS FOR?</Text>
                                 <View className="flex-row flex-wrap gap-4">
                                     {petsLoading ? (
-                                        <ActivityIndicator color="#13ec37" />
+                                        <ActivityIndicator color="#0A84FF" />
                                     ) : (
                                         pets.map((pet) => (
                                             <TouchableOpacity 
                                                 key={pet.id} 
                                                 onPress={() => setSelectedPetId(pet.id)}
-                                                className={`flex-col items-center gap-2 cursor-pointer group`}
+                                                className="items-center gap-2"
                                             >
-                                                <View className={`rounded-full ${selectedPetId === pet.id ? 'border-4 border-[#13ec37]' : 'border-2 border-transparent'}`}>
-                                                    <Image 
-                                                        source={{ uri: pet.image_url || 'https://via.placeholder.com/150' }} 
-                                                        className="w-20 h-20 rounded-full bg-gray-200"
-                                                    />
+                                                <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
+                                                    {pet.image_url ? (
+                                                        <Image source={{ uri: pet.image_url }} className="w-14 h-14 rounded-full" />
+                                                    ) : (
+                                                        <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
+                                                    )}
+                                                    {selectedPetId === pet.id && (
+                                                        <View className="absolute -bottom-1 -right-1 bg-[#22C55E] rounded-full p-0.5 border-2 border-[#1C1C1E]">
+                                                            <Ionicons name="checkmark" size={12} color="white" />
+                                                        </View>
+                                                    )}
                                                 </View>
-                                                <Text className="text-base font-medium text-gray-800 dark:text-gray-200">{pet.name}</Text>
+                                                <Text className={`text-sm font-medium ${selectedPetId === pet.id ? 'text-[#0A84FF]' : 'text-[#6B7280]'}`}>
+                                                    {pet.name}
+                                                </Text>
                                             </TouchableOpacity>
                                         ))
                                     )}
                                 </View>
                             </View>
 
-                            {/* Treatment Details Section */}
+                            {/* Treatment Details */}
                             <View>
-                                <Text className="text-gray-900 dark:text-white text-lg font-bold mb-4">Treatment Details</Text>
-                                <View className="flex-col md:flex-row flex-wrap gap-6">
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Treatment Type</Text>
-                                        <View className="h-12 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg justify-center px-2">
-                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                {TREATMENT_TYPES.map(type => (
-                                                    <TouchableOpacity 
-                                                        key={type} 
-                                                        onPress={() => setFormData({...formData, treatment_type: type})}
-                                                        className={`px-3 py-1 mr-2 rounded ${formData.treatment_type === type ? 'bg-[#13ec37]' : ''}`}
-                                                    >
-                                                        <Text className={`${formData.treatment_type === type ? 'text-black' : 'text-gray-900 dark:text-white'}`}>{type}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </ScrollView>
-                                        </View>
+                                <View className="flex-row items-center gap-2 mb-4">
+                                    <Ionicons name="bandage" size={20} color="#0A84FF" />
+                                    <Text className="text-white text-lg font-bold">Treatment Details</Text>
+                                </View>
+                                
+                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                    {/* Treatment Type Pills */}
+                                    <View>
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Treatment Type</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                                            {TREATMENT_TYPES.map(type => (
+                                                <TouchableOpacity
+                                                    key={type}
+                                                    onPress={() => setFormData({...formData, treatment_type: type})}
+                                                    className={`px-4 py-2 rounded-full mr-2 border ${
+                                                        formData.treatment_type === type 
+                                                        ? 'bg-[#0A84FF] border-[#0A84FF]' 
+                                                        : 'bg-transparent border-[#4B5563]'
+                                                    }`}
+                                                >
+                                                    <Text className={`text-sm font-medium ${formData.treatment_type === type ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                                                        {type}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </ScrollView>
                                     </View>
 
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Treatment Name</Text>
+                                    <View>
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Treatment Name</Text>
                                         <TextInput
-                                            className="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
-                                            placeholder="e.g., Flea & Tick Prevention"
-                                            placeholderTextColor="#9CA3AF"
+                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            placeholder="e.g. Flea & Tick Prevention"
+                                            placeholderTextColor="#4B5563"
                                             value={formData.name}
                                             onChangeText={(text) => setFormData({ ...formData, name: text })}
                                         />
                                     </View>
 
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date Administered</Text>
-                                        <View className="relative">
+                                    <View className="flex-row gap-4">
+                                        <View className="flex-1">
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Date Administered</Text>
+                                            <View className="relative">
+                                                <TextInput
+                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                    placeholder="YYYY-MM-DD"
+                                                    placeholderTextColor="#4B5563"
+                                                    value={formData.date_administered}
+                                                    onChangeText={(text) => setFormData({ ...formData, date_administered: text })}
+                                                />
+                                                <View className="absolute right-3 top-3.5 pointer-events-none">
+                                                    <Ionicons name="calendar" size={18} color="#6B7280" />
+                                                </View>
+                                            </View>
+                                        </View>
+                                        <View className="flex-1">
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Frequency / Duration</Text>
                                             <TextInput
-                                                className="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pr-10"
-                                                placeholder="Select date"
-                                                placeholderTextColor="#9CA3AF"
-                                                value={formData.date_administered}
-                                                onChangeText={(text) => setFormData({ ...formData, date_administered: text })}
+                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                placeholder="e.g. Daily for 7 days"
+                                                placeholderTextColor="#4B5563"
+                                                value={formData.frequency_duration}
+                                                onChangeText={(text) => setFormData({ ...formData, frequency_duration: text })}
                                             />
-                                            <View className="absolute right-3 top-3 pointer-events-none">
-                                                <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                                        </View>
+                                    </View>
+
+                                    {/* Reminder Toggle */}
+                                    <View className="flex-row items-center justify-between py-2 border-t border-[#3A3A3C] mt-2 pt-4">
+                                        <View className="flex-row items-center gap-3">
+                                            <View className="w-8 h-8 rounded-full bg-[#1C1C1E] items-center justify-center">
+                                                <Ionicons name="notifications" size={16} color="#0A84FF" />
+                                            </View>
+                                            <View>
+                                                <Text className="text-white text-sm font-bold">Set Reminder</Text>
+                                                <Text className="text-[#9CA3AF] text-xs">Alert me when due</Text>
+                                            </View>
+                                        </View>
+                                        <Switch
+                                            value={formData.reminders_enabled}
+                                            onValueChange={(val) => setFormData({ ...formData, reminders_enabled: val })}
+                                            trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
+                                            thumbColor={'#FFFFFF'}
+                                        />
+                                    </View>
+
+                                    {formData.reminders_enabled && (
+                                        <View>
+                                            <View className="relative">
+                                                <TextInput
+                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                    placeholder="Next Due Date (YYYY-MM-DD)"
+                                                    placeholderTextColor="#4B5563"
+                                                    value={formData.next_due_date}
+                                                    onChangeText={(text) => setFormData({ ...formData, next_due_date: text })}
+                                                />
+                                                <View className="absolute right-4 top-3.5 pointer-events-none">
+                                                    <Ionicons name="calendar" size={20} color="#6B7280" />
+                                                </View>
+                                            </View>
+                                        </View>
+                                    )}
+                                </View>
+                            </View>
+
+                            {/* Provider & Costs */}
+                            <View>
+                                <View className="flex-row items-center gap-2 mb-4">
+                                    <Ionicons name="wallet" size={20} color="#EC4899" />
+                                    <Text className="text-white text-lg font-bold">Provider & Costs</Text>
+                                </View>
+                                
+                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                    <AddressFormSection
+                                        isDark={true}
+                                        locationName={formData.provider}
+                                        setLocationName={(text) => setFormData({...formData, provider: text})}
+                                        address={formData.address}
+                                        setAddress={(text) => setFormData({...formData, address: text})}
+                                        city={formData.city}
+                                        setCity={(text) => setFormData({...formData, city: text})}
+                                        state={formData.state}
+                                        setState={(text) => setFormData({...formData, state: text})}
+                                        zip={formData.zip}
+                                        setZip={(text) => setFormData({...formData, zip: text})}
+                                        country={formData.country}
+                                        setCountry={(text) => setFormData({...formData, country: text})}
+                                    />
+
+                                    <View className="flex-row gap-4">
+                                        <View className="flex-1">
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                            <View className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+                                                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="p-2">
+                                                    {CURRENCIES.map(curr => (
+                                                        <TouchableOpacity 
+                                                            key={curr}
+                                                            onPress={() => setFormData({...formData, currency: curr})}
+                                                            className={`px-3 py-2 rounded-lg mr-2 ${formData.currency === curr ? 'bg-[#3A3A3C]' : ''}`}
+                                                        >
+                                                            <Text className={`text-sm font-bold ${formData.currency === curr ? 'text-white' : 'text-[#6B7280]'}`}>
+                                                                {curr}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    ))}
+                                                </ScrollView>
+                                            </View>
+                                        </View>
+                                        <View className="flex-1">
+                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Total Cost</Text>
+                                            <View className="relative">
+                                                <TextInput
+                                                    className="w-full bg-[#1C1C1E] rounded-xl pl-10 pr-4 py-3 text-white text-base"
+                                                    placeholder="0.00"
+                                                    placeholderTextColor="#4B5563"
+                                                    keyboardType="numeric"
+                                                    value={formData.cost}
+                                                    onChangeText={(text) => setFormData({ ...formData, cost: text })}
+                                                />
+                                                <View className="absolute left-3 top-3.5 pointer-events-none">
+                                                    <Ionicons name="cash-outline" size={20} color="#6B7280" />
+                                                </View>
                                             </View>
                                         </View>
                                     </View>
 
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Frequency / Duration</Text>
+                                    <View>
+                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Notes</Text>
                                         <TextInput
-                                            className="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
-                                            placeholder="e.g., Daily for 7 days"
-                                            placeholderTextColor="#9CA3AF"
-                                            value={formData.frequency_duration}
-                                            onChangeText={(text) => setFormData({ ...formData, frequency_duration: text })}
+                                            className="w-full bg-[#1C1C1E] rounded-xl p-4 text-white text-base min-h-[100px]"
+                                            placeholder="Any side effects or observations?"
+                                            placeholderTextColor="#4B5563"
+                                            multiline
+                                            textAlignVertical="top"
+                                            value={formData.notes}
+                                            onChangeText={(text) => setFormData({ ...formData, notes: text })}
                                         />
                                     </View>
                                 </View>
                             </View>
 
-                            {/* Provider & Costs Section */}
-                            <View>
-                                <Text className="text-gray-900 dark:text-white text-lg font-bold mb-4">Provider & Costs</Text>
-                                <View className="flex-col md:flex-row flex-wrap gap-6">
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vet Name / Clinic</Text>
-                                        <View className="relative">
-                                            <TextInput
-                                                className="w-full h-12 pl-10 pr-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
-                                                placeholder="Search for a clinic"
-                                                placeholderTextColor="#9CA3AF"
-                                                value={formData.veterinarian}
-                                                onChangeText={(text) => setFormData({ ...formData, veterinarian: text })}
-                                            />
-                                            <View className="absolute left-3 top-3 pointer-events-none">
-                                                <Ionicons name="search-outline" size={20} color="#6B7280" />
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    <View className="w-full md:w-[48%]">
-                                        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Total Cost</Text>
-                                        <View className="flex-row">
-                                            <View className="w-24 h-12 bg-gray-50 dark:bg-gray-800 border-t border-b border-l border-gray-300 dark:border-gray-600 rounded-l-lg justify-center px-2">
-                                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                    {CURRENCIES.map(curr => (
-                                                        <TouchableOpacity 
-                                                            key={curr} 
-                                                            onPress={() => setFormData({...formData, currency: curr})}
-                                                            className={`px-2 py-1 mr-1 rounded ${formData.currency === curr ? 'bg-[#13ec37]' : ''}`}
-                                                        >
-                                                            <Text className={`${formData.currency === curr ? 'text-black' : 'text-gray-900 dark:text-white'}`}>{curr}</Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </ScrollView>
-                                            </View>
-                                            <TextInput
-                                                className="flex-1 h-12 px-4 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
-                                                placeholder="50.00"
-                                                placeholderTextColor="#9CA3AF"
-                                                keyboardType="numeric"
-                                                value={formData.cost}
-                                                onChangeText={(text) => setFormData({ ...formData, cost: text })}
-                                            />
-                                        </View>
-                                    </View>
+                            {/* Attach Record Image */}
+                            <TouchableOpacity className="border border-dashed border-[#0A84FF] bg-[#0A84FF]/10 rounded-3xl p-8 items-center justify-center gap-2">
+                                <View className="w-12 h-12 rounded-full bg-[#0A84FF]/20 items-center justify-center">
+                                    <Ionicons name="camera" size={24} color="#0A84FF" />
                                 </View>
-                            </View>
+                                <Text className="text-white font-bold text-base">Attach Record Image</Text>
+                                <Text className="text-[#9CA3AF] text-sm">Photo of sticker or certificate</Text>
+                            </TouchableOpacity>
 
-                            {/* Set Reminder */}
-                            <View className="flex-row items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
-                                <Text className="text-base font-medium text-gray-900 dark:text-white">Set Reminder</Text>
-                                <TouchableOpacity 
-                                    onPress={() => setFormData({...formData, reminders_enabled: !formData.reminders_enabled})}
-                                    className={`w-11 h-6 rounded-full items-center justify-center ${formData.reminders_enabled ? 'bg-[#13ec37]' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                >
-                                    <View className={`w-5 h-5 rounded-full bg-white shadow transform transition-transform ${formData.reminders_enabled ? 'translate-x-2.5' : '-translate-x-2.5'}`} />
-                                </TouchableOpacity>
-                            </View>
-
-                            {/* Additional Info Section */}
-                            <View className="space-y-4">
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes</Text>
-                                    <TextInput
-                                        className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white h-32"
-                                        placeholder="Add any relevant notes here..."
-                                        placeholderTextColor="#9CA3AF"
-                                        multiline
-                                        textAlignVertical="top"
-                                        value={formData.notes}
-                                        onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                                    />
-                                </View>
-
-                                <View>
-                                    <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Attach Document</Text>
-                                    <TouchableOpacity className="w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 items-center justify-center p-6">
-                                        <Ionicons name="cloud-upload-outline" size={32} color="#9CA3AF" />
-                                        <Text className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            <Text className="font-semibold text-[#13ec37]">Click to upload</Text> or drag and drop
-                                        </Text>
-                                        <Text className="text-xs text-gray-500 dark:text-gray-500 mt-1">PDF, PNG, JPG (max. 10MB)</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
                         </View>
                     </ScrollView>
-
-                    {/* Footer */}
-                    <View className="flex-row justify-end gap-4 border-t border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 p-6 backdrop-blur-sm rounded-b-xl">
-                        <TouchableOpacity onPress={onClose} className="rounded-lg bg-gray-100 dark:bg-gray-800 px-5 py-2.5">
-                            <Text className="text-base font-semibold text-gray-800 dark:text-gray-200">Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            onPress={handleSubmit} 
-                            disabled={loading}
-                            className={`rounded-lg bg-[#13ec37] px-5 py-2.5 ${loading ? 'opacity-70' : ''}`}
-                        >
-                            {loading ? (
-                                <ActivityIndicator color="#000" size="small" />
-                            ) : (
-                                <Text className="text-base font-semibold text-gray-900">Add Treatment</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </View>
         </Modal>

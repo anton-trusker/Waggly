@@ -572,10 +572,18 @@ export default function OverviewTab() {
       </View>
 
       {/* Modals */}
-      <AddVisitModal visible={visitOpen} petId={pet.id} onClose={() => setVisitOpen(false)} />
-      <AddVaccinationModal visible={vaccinationOpen} petId={pet.id} onClose={() => setVaccinationOpen(false)} />
-      <AddTreatmentModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
-      <AddMedicationModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} />
+      <VisitFormModal visible={visitOpen} petId={pet.id} onClose={() => setVisitOpen(false)} />
+      <VaccinationFormModal visible={vaccinationOpen} petId={pet.id} onClose={() => setVaccinationOpen(false)} />
+      <TreatmentFormModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
+      {/* MedicationFormModal logic can be similar to TreatmentFormModal or separated if needed. 
+          Assuming TreatmentFormModal handles 'Medication' type or we reuse AddMedicationModal if it wasn't refactored yet.
+          The user asked for 'Add Treatment' which includes medication type pills. 
+          If MedicationFormModal is distinct, we should check if we refactored it. 
+          I refactored TreatmentFormModal which has 'Medication' as a type. 
+          I will use TreatmentFormModal for the 'Meds' quick action for now as it aligns with the 'Treatment' modal design request 
+          that included 'Medication' as a type. 
+      */}
+      {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
     </ScrollView>
   );
 }

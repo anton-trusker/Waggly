@@ -83,7 +83,7 @@ export function PetHealthSummary() {
         )}
         {healthData?.currentWeight && (
           <HealthSummaryCard
-            iconName="weight-scale"
+            iconName="scale-bathroom"
             iconLibrary="MaterialCommunityIcons"
             label="Current Weight"
             value={healthData.currentWeight.value}

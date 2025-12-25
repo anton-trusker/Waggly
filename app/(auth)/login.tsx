@@ -18,6 +18,7 @@ import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -38,6 +39,46 @@ export default function LoginScreen() {
       Alert.alert('Login Failed', error.message);
     } else {
       router.replace('/(tabs)/(home)');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
+      });
+      
+      if (error) {
+        console.error('Google login error:', error);
+        Alert.alert('Login Failed', 'Google authentication failed. Please try again.');
+      }
+    } catch (error: any) {
+      console.error('Google login failed:', error);
+      Alert.alert('Login Failed', error.message || 'Google authentication failed. Please try again.');
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
+      });
+      
+      if (error) {
+        console.error('Apple login error:', error);
+        Alert.alert('Login Failed', 'Apple authentication failed. Please try again.');
+      }
+    } catch (error: any) {
+      console.error('Apple login failed:', error);
+      Alert.alert('Login Failed', error.message || 'Apple authentication failed. Please try again.');
     }
   };
 
@@ -114,12 +155,18 @@ export default function LoginScreen() {
               </View>
 
               <View style={styles.socialButtons}>
-                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                <TouchableOpacity 
+                  style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}
+                  onPress={handleAppleLogin}
+                >
                   <IconSymbol android_material_icon_name="apple" size={24} color={colors.text.primary} />
                   <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Apple</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
+                <TouchableOpacity 
+                  style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}
+                  onPress={handleGoogleLogin}
+                >
                   {/* Google Icon SVG or Placeholder - utilizing a simple text or icon for now */}
                   <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>G</Text>

@@ -41,11 +41,14 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
                     <Image source={{ uri: pet.photo_url }} style={[styles.photo, isMobile && styles.photoMobile]} />
                 ) : (
                     <View style={[styles.photoPlaceholder, isMobile && styles.photoPlaceholderMobile]}>
-                        <Ionicons
-                            name="paw"
-                            size={isMobile ? 24 : 32}
-                            color="#6366F1"
-                        />
+                         <Text style={{ fontSize: isMobile ? 24 : 32 }}>
+                            {pet.species === 'dog' ? '🐕' : 
+                             pet.species === 'cat' ? '🐈' : 
+                             pet.species === 'bird' ? '🦜' : 
+                             pet.species === 'rabbit' ? '🐰' : 
+                             pet.species === 'reptile' ? '🦎' : 
+                             '🐾'}
+                        </Text>
                     </View>
                 )}
                 {pet.role && pet.role !== 'owner' && (

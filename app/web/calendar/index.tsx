@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native'
 import CalendarGridDesktop from '@/components/desktop/calendar/CalendarGridDesktop';
 import CalendarFilters from '@/components/desktop/calendar/CalendarFilters';
 import MiniCalendar from '@/components/desktop/calendar/MiniCalendar';
-import { useEvents } from '@/hooks/useEvents';
+import { useEvents, type EventType } from '@/hooks/useEvents';
 
 export default function CalendarPage() {
     const { events } = useEvents();
@@ -11,14 +11,14 @@ export default function CalendarPage() {
     const isMobile = width < 1024;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedPets, setSelectedPets] = useState<string[]>([]);
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    const [selectedTypes, setSelectedTypes] = useState<EventType[]>([]);
 
     // Filter events based on selected pets and types
     const filteredEvents = useMemo(() => {
         return events.filter(event => {
             // Filter by pet
-            if (selectedPets.length > 0 && event.pet_id) {
-                if (!selectedPets.includes(event.pet_id)) return false;
+            if (selectedPets.length > 0 && event.petId) {
+                if (!selectedPets.includes(event.petId)) return false;
             }
 
             // Filter by type
@@ -27,21 +27,8 @@ export default function CalendarPage() {
             }
 
             return true;
-        }).map(event => ({
-            ...event,
-            color: getEventColor(event.type),
-        }));
+        });
     }, [events, selectedPets, selectedTypes]);
-
-    const getEventColor = (type?: string) => {
-        switch (type) {
-            case 'medical': return '#6366F1';
-            case 'grooming': return '#10B981';
-            case 'training': return '#F59E0B';
-            case 'feeding': return '#EC4899';
-            default: return '#8B5CF6';
-        }
-    };
 
     const handleDateClick = (date: Date) => {
         setSelectedDate(date);

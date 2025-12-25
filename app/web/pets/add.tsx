@@ -6,6 +6,7 @@ import WizardStepBasicInfo from '@/components/desktop/pets/wizard/WizardStepBasi
 import WizardStepContactInfo from '@/components/desktop/pets/wizard/WizardStepContactInfo';
 import WizardStepDetails from '@/components/desktop/pets/wizard/WizardStepDetails';
 import WizardStepReview from '@/components/desktop/pets/wizard/WizardStepReview';
+import { uploadPetPhoto } from '@/lib/storage';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -29,10 +30,14 @@ export default function AddPetPage() {
         date_of_birth: '',
         weight: 0,
         weight_unit: 'kg',
+        photoUri: undefined as string | undefined,
         // Contact Info
         microchip_number: '',
         vet_name: '',
+        vet_clinic_name: '',
         vet_address: '',
+        vet_country: '',
+        vet_phone: '',
         emergency_contact_name: '',
         emergency_contact_phone: '',
         // Details
@@ -79,6 +84,38 @@ export default function AddPetPage() {
                 .single();
 
             if (error) throw error;
+
+            const petId = data.id;
+
+            // Create Veterinarian (if provided)
+            if (formData.vet_clinic_name) {
+                await supabase
+                    .from('veterinarians')
+                    .insert({
+                        pet_id: petId,
+                        clinic_name: formData.vet_clinic_name,
+                        vet_name: formData.vet_name || undefined,
+                        address: formData.vet_address || undefined,
+                        country: formData.vet_country || undefined,
+                        phone: formData.vet_phone || undefined,
+                        is_primary: true,
+                    });
+            }
+
+            // Upload Photo if exists
+            if (formData.photoUri) {
+                try {
+                    const uploadedUrl = await uploadPetPhoto(user.id, petId, formData.photoUri);
+                    if (uploadedUrl) {
+                        await supabase
+                            .from('pets')
+                            .update({ photo_url: uploadedUrl })
+                            .eq('id', petId);
+                    }
+                } catch (photoError) {
+                    console.warn('Photo upload failed but pet created:', photoError);
+                }
+            }
 
             Alert.alert('Success', 'Pet added successfully!');
             router.push(`/web/pets/${data.id}` as any);

@@ -50,8 +50,11 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Contact Information</Text>
                 {renderRow('Microchip', formData.microchip_number, 'qr-code')}
+                {renderRow('Clinic Name', formData.vet_clinic_name, 'business')}
                 {renderRow('Veterinarian', formData.vet_name, 'medical')}
                 {renderRow('Clinic Address', formData.vet_address, 'location')}
+                {renderRow('Clinic Country', formData.vet_country, 'globe')}
+                {renderRow('Clinic Phone', formData.vet_phone, 'call')}
                 {renderRow('Emergency Contact', formData.emergency_contact_name, 'person')}
                 {renderRow('Emergency Phone', formData.emergency_contact_phone, 'call')}
             </View>

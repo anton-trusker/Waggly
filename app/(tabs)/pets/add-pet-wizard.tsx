@@ -30,6 +30,8 @@ const INITIAL_DATA: WizardData = {
     tagId: '',
     vetClinicName: '',
     vetName: '',
+    vetAddress: '',
+    vetCountry: '',
     vetPhone: '',
     emergencyContactName: '',
     emergencyContactPhone: '',
@@ -124,6 +126,8 @@ export default function AddPetWizardScreen() {
                         pet_id: petId,
                         clinic_name: formData.vetClinicName,
                         vet_name: formData.vetName || undefined,
+                        address: formData.vetAddress || undefined,
+                        country: formData.vetCountry || undefined,
                         phone: formData.vetPhone || undefined,
                         is_primary: true,
                     });

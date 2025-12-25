@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -32,6 +33,44 @@ export default function LoginPage() {
         }
     };
 
+    const handleGoogleLogin = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/web/auth/callback'
+                }
+            });
+            
+            if (error) {
+                console.error('Google login error:', error);
+                Alert.alert('Login Failed', 'Google authentication failed. Please try again.');
+            }
+        } catch (error: any) {
+            console.error('Google login failed:', error);
+            Alert.alert('Login Failed', error.message || 'Google authentication failed. Please try again.');
+        }
+    };
+
+    const handleAppleLogin = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'apple',
+                options: {
+                    redirectTo: window.location.origin + '/web/auth/callback'
+                }
+            });
+            
+            if (error) {
+                console.error('Apple login error:', error);
+                Alert.alert('Login Failed', 'Apple authentication failed. Please try again.');
+            }
+        } catch (error: any) {
+            console.error('Apple login failed:', error);
+            Alert.alert('Login Failed', error.message || 'Apple authentication failed. Please try again.');
+        }
+    };
+
     return (
         <View style={[styles.container, isMobile && styles.containerMobile]}>
             {/* Left: Form */}
@@ -48,11 +87,11 @@ export default function LoginPage() {
 
                     {/* Social Login Buttons */}
                     <View style={styles.socialButtons}>
-                        <TouchableOpacity style={styles.socialButton}>
+                        <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
                             <Ionicons name="logo-google" size={20} color="#000" />
                             <Text style={styles.socialButtonText}>Google</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.socialButton}>
+                        <TouchableOpacity style={styles.socialButton} onPress={handleAppleLogin}>
                             <Ionicons name="logo-apple" size={20} color="#000" />
                             <Text style={styles.socialButtonText}>Apple</Text>
                         </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator, Modal, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator, Modal, useWindowDimensions, Platform } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -9,12 +9,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
-const { width: screenWidth } = Dimensions.get('window');
-
 const IS_IOS = typeof Platform !== 'undefined' && Platform.OS === 'ios';
-
-// Calculate image size for 4 columns with proper spacing
-const IMAGE_SIZE = (screenWidth - 48) / 4; // 48 = 16*2 padding + 16 spacing (4*4)
 
 type Props = {
   petId: string;
@@ -22,6 +17,8 @@ type Props = {
 };
 
 export default function PetGallery({ petId, gallery }: Props) {
+  const { width: screenWidth } = useWindowDimensions();
+  const imageSize = Math.max(64, (screenWidth - 48) / 4);
   const { updatePet } = usePets();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -117,7 +114,7 @@ export default function PetGallery({ petId, gallery }: Props) {
 
   const renderImageItem = ({ item, index }: { item: string; index: number }) => (
     <TouchableOpacity
-      style={styles.imageContainer}
+      style={[styles.imageContainer, { width: imageSize, height: imageSize }]}
       onPress={() => handleImagePress(index)}
       activeOpacity={0.8}
     >
@@ -192,7 +189,7 @@ export default function PetGallery({ petId, gallery }: Props) {
             <>
               <Image
                 source={{ uri: images[selectedImageIndex] }}
-                style={styles.modalImage}
+                style={[styles.modalImage, { width: screenWidth * 0.9, height: screenWidth * 0.9 }]}
                 resizeMode="contain"
               />
 
@@ -259,8 +256,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   imageContainer: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
     margin: 2,
     position: 'relative',
   },
@@ -326,8 +321,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   modalImage: {
-    width: screenWidth * 0.9,
-    height: screenWidth * 0.9,
     borderRadius: 12,
   },
   modalNavButton: {

@@ -90,7 +90,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
           bg: '#F0FDFA', // teal-50
           text: '#14B8A6', // teal-500
           icon: 'stethoscope',
-          iconName: 'medical_services',
+          iconName: 'medical-services',
           borderColor: '#99F6E4',
         };
     }
@@ -154,7 +154,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
 
                     <View style={styles.metaRow}>
                       <View style={[styles.dateTag, { backgroundColor: colors.neutral[100] }]}>
-                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="calendar_today" size={12} color={colors.text.tertiary} />
+                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="calendar-today" size={12} color={colors.text.tertiary} />
                         <Text style={[styles.eventTime, dynamicStyles.textSecondary]}>
                           {date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} • {date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                         </Text>
@@ -164,7 +164,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
 
                   {/* Action Icon */}
                   <View style={styles.actionIcon}>
-                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron_right" size={16} color={colors.neutral[400]} />
+                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={16} color={colors.neutral[400]} />
                   </View>
                 </View>
               </TouchableOpacity>

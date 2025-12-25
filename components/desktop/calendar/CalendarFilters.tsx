@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
+import type { EventType } from '@/hooks/useEvents';
 
 interface CalendarFiltersProps {
     selectedPets: string[];
-    selectedTypes: string[];
+    selectedTypes: EventType[];
     onPetsChange: (petIds: string[]) => void;
-    onTypesChange: (types: string[]) => void;
+    onTypesChange: (types: EventType[]) => void;
 }
 
-const EVENT_TYPES = [
-    { id: 'medical', label: 'Medical', icon: 'medical', color: '#6366F1' },
-    { id: 'grooming', label: 'Grooming', icon: 'cut', color: '#10B981' },
-    { id: 'training', label: 'Training', icon: 'school', color: '#F59E0B' },
-    { id: 'feeding', label: 'Feeding', icon: 'restaurant', color: '#EC4899' },
+const EVENT_TYPES: { id: EventType; label: string; icon: string; color: string }[] = [
+    { id: 'vaccination', label: 'Vaccination', icon: 'medkit', color: '#6366F1' },
+    { id: 'treatment', label: 'Treatment', icon: 'bandage', color: '#F59E0B' },
+    { id: 'vet', label: 'Vet Visit', icon: 'medkit', color: '#10B981' },
+    { id: 'grooming', label: 'Grooming', icon: 'cut', color: '#06B6D4' },
+    { id: 'walking', label: 'Walking', icon: 'walk', color: '#A855F7' },
     { id: 'other', label: 'Other', icon: 'ellipsis-horizontal', color: '#8B5CF6' },
 ];
 
@@ -35,7 +37,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
         }
     };
 
-    const toggleType = (typeId: string) => {
+    const toggleType = (typeId: EventType) => {
         if (selectedTypes.includes(typeId)) {
             onTypesChange(selectedTypes.filter(id => id !== typeId));
         } else {

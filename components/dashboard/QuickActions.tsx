@@ -33,7 +33,7 @@ const quickActionsData: QuickActionItem[] = [
     accessibilityLabel: 'Add a new vaccination',
   },
   {
-    iconName: 'weight-scale',
+    iconName: 'scale-bathroom',
     label: 'Log Weight',
     onPress: () => router.push('/(tabs)/pets/log-weight'), // Assuming a log-weight screen/modal
     accessibilityLabel: 'Log pet\'s weight',

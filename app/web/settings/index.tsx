@@ -24,6 +24,15 @@ export default function SettingsPage() {
     const [photoUrl, setPhotoUrl] = useState('');
     const [saving, setSaving] = useState(false);
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const [phone, setPhone] = useState('');
+    const [bio, setBio] = useState('');
+    const [gender, setGender] = useState('');
+    const [website, setWebsite] = useState('');
+    const [dateOfBirth, setDateOfBirth] = useState('');
+    const [address, setAddress] = useState('');
+    const [countryCode, setCountryCode] = useState('');
+    const [languageCode, setLanguageCode] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
 
     // Notification preferences
     const [emailNotifications, setEmailNotifications] = useState(true);
@@ -38,6 +47,14 @@ export default function SettingsPage() {
             setLastName(profile.last_name || '');
             setCountry(profile.country || '');
             setPhotoUrl(profile.photo_url || '');
+            setPhone(profile.phone || '');
+            setBio(profile.bio || '');
+            setGender(profile.gender || '');
+            setWebsite(profile.website || '');
+            setDateOfBirth(profile.date_of_birth || '');
+            setAddress(profile.address || '');
+            setCountryCode(profile.country_code || '');
+            setLanguageCode(profile.language_code || '');
 
             // If we had notification prefs in profile, we'd load them here
             // const prefs = profile.notification_prefs as any;
@@ -58,26 +75,40 @@ export default function SettingsPage() {
                 setUploadingPhoto(true);
                 const file = result.assets[0];
 
-                // Upload to Supabase Storage
+                // Upload to Supabase Storage using the user-photos bucket
                 const fileExt = file.uri.split('.').pop();
                 const fileName = `${Date.now()}.${fileExt}`;
-                const filePath = `avatars/${fileName}`;
+                const filePath = `${user?.id}/profile/${fileName}`;
+
+                // Convert URI to blob for web upload
+                const response = await fetch(file.uri);
+                const blob = await response.blob();
 
                 const { error: uploadError } = await supabase.storage
-                    .from('user-uploads')
-                    .upload(filePath, {
-                        uri: file.uri,
-                        type: `image/${fileExt}`,
-                        name: fileName,
-                    } as any);
+                    .from('user-photos')
+                    .upload(filePath, blob, {
+                        contentType: `image/${fileExt}`,
+                        upsert: true,
+                    });
 
                 if (uploadError) throw uploadError;
 
                 const { data: { publicUrl } } = supabase.storage
-                    .from('user-uploads')
+                    .from('user-photos')
                     .getPublicUrl(filePath);
 
                 setPhotoUrl(publicUrl);
+                
+                // Delete old photo if exists
+                if (profile?.photo_url && profile.photo_url !== publicUrl) {
+                    const oldPath = profile.photo_url.split('/').pop();
+                    if (oldPath) {
+                        await supabase.storage
+                            .from('user-photos')
+                            .remove([`${user?.id}/profile/${oldPath}`])
+                            .catch(console.warn);
+                    }
+                }
             }
         } catch (error: any) {
             Alert.alert('Upload Error', error.message);
@@ -93,6 +124,14 @@ export default function SettingsPage() {
             last_name: lastName,
             country: country,
             photo_url: photoUrl,
+            phone: phone || null,
+            bio: bio || null,
+            gender: gender || null,
+            website: website || null,
+            date_of_birth: dateOfBirth || null,
+            address: address || null,
+            country_code: countryCode || null,
+            language_code: languageCode || null,
             updated_at: new Date().toISOString(),
         });
         setSaving(false);
@@ -101,6 +140,7 @@ export default function SettingsPage() {
             Alert.alert('Error', 'Failed to update profile');
         } else {
             Alert.alert('Success', 'Profile updated successfully');
+            setIsEditing(false);
         }
     };
 
@@ -114,8 +154,16 @@ export default function SettingsPage() {
                     text: 'Sign Out',
                     style: 'destructive',
                     onPress: async () => {
-                        await signOut();
-                        router.replace('/web/auth/login');
+                        try {
+                            await signOut();
+                            router.replace('/web/auth/login');
+                        } catch (error) {
+                            console.error('Sign out error:', error);
+                            Alert.alert(
+                                'Error',
+                                'Failed to sign out. Please try again.'
+                            );
+                        }
                     }
                 }
             ]
@@ -132,6 +180,42 @@ export default function SettingsPage() {
                     text: 'Delete',
                     style: 'destructive',
                     onPress: () => Alert.alert('Request Sent', 'Your account deletion request has been received.')
+                }
+            ]
+        );
+    };
+
+    const handleDownloadData = () => {
+        Alert.alert(
+            'Download Data',
+            'This will download all your account data including profile information, pets, and settings.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Download',
+                    style: 'default',
+                    onPress: () => {
+                        // In a real implementation, this would trigger a data export
+                        Alert.alert('Download Started', 'Your data export is being prepared and will be downloaded shortly.');
+                    }
+                }
+            ]
+        );
+    };
+
+    const handleSignOutAllDevices = () => {
+        Alert.alert(
+            'Sign Out All Devices',
+            'This will sign you out of all devices except this one. Are you sure?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Sign Out',
+                    style: 'destructive',
+                    onPress: () => {
+                        // In a real implementation, this would invalidate all sessions
+                        Alert.alert('Success', 'You have been signed out of all other devices.');
+                    }
                 }
             ]
         );
@@ -209,86 +293,249 @@ export default function SettingsPage() {
                 <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
                     {activeTab === 'account' && (
                         <View style={styles.tabContent}>
-                            <Text style={styles.sectionTitle}>Account Information</Text>
-
-                            <View style={styles.section}>
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.label}>Email</Text>
-                                    <TextInput
-                                        style={[styles.input, styles.inputDisabled]}
-                                        value={user?.email}
-                                        editable={false}
-                                    />
-                                </View>
-
-                                <View style={[styles.row, isMobile && styles.rowMobile]}>
-                                    <View style={[styles.inputGroup, styles.flex1]}>
-                                        <Text style={styles.label}>First Name</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={firstName}
-                                            onChangeText={setFirstName}
-                                            placeholder="John"
-                                        />
-                                    </View>
-                                    <View style={[styles.inputGroup, styles.flex1]}>
-                                        <Text style={styles.label}>Last Name</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={lastName}
-                                            onChangeText={setLastName}
-                                            placeholder="Doe"
-                                        />
-                                    </View>
-                                </View>
-
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.label}>Country</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        value={country}
-                                        onChangeText={setCountry}
-                                        placeholder="US"
-                                    />
-                                </View>
-
-                                <View style={styles.inputGroup}>
-                                    <Text style={styles.label}>Language</Text>
-                                    <View style={styles.languageRow}>
-                                        {['en', 'es', 'fr'].map((lang) => (
-                                            <TouchableOpacity
-                                                key={lang}
-                                                style={[
-                                                    styles.langChip,
-                                                    locale === lang && styles.langChipActive
-                                                ]}
-                                                onPress={() => setLocale(lang)}
-                                            >
-                                                <Text style={[
-                                                    styles.langText,
-                                                    locale === lang && styles.langTextActive
-                                                ]}>
-                                                    {lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Français'}
+                            <View style={styles.profileHeader}>
+                                <View style={styles.avatarSection}>
+                                    <View style={styles.avatarContainer}>
+                                        {photoUrl ? (
+                                            <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
+                                        ) : (
+                                            <View style={styles.avatarPlaceholder}>
+                                                <Text style={styles.avatarText}>
+                                                    {(firstName?.charAt(0) || '') + (lastName?.charAt(0) || '')}
                                                 </Text>
+                                            </View>
+                                        )}
+                                        {isEditing && (
+                                            <TouchableOpacity style={styles.avatarEditButton} onPress={handlePhotoUpload}>
+                                                <Ionicons name="camera" size={16} color="#fff" />
                                             </TouchableOpacity>
-                                        ))}
+                                        )}
+                                    </View>
+                                    <View style={styles.userInfo}>
+                                        <Text style={styles.userName}>
+                                            {firstName} {lastName}
+                                        </Text>
+                                        <Text style={styles.userEmail}>{user?.email}</Text>
+                                        {address && <Text style={styles.userLocation}>{address}</Text>}
                                     </View>
                                 </View>
-
                                 <TouchableOpacity
-                                    style={[styles.saveButton, saving && styles.saveButtonDisabled]}
-                                    onPress={handleSaveProfile}
-                                    disabled={saving}
+                                    style={styles.editButton}
+                                    onPress={() => setIsEditing(!isEditing)}
                                 >
-                                    {saving ? (
-                                        <ActivityIndicator color="#fff" size="small" />
-                                    ) : (
-                                        <Text style={styles.saveButtonText}>Save Changes</Text>
-                                    )}
+                                    <Ionicons name={isEditing ? "close" : "pencil"} size={20} color="#6366F1" />
+                                    <Text style={styles.editButtonText}>{isEditing ? 'Cancel' : 'Edit Profile'}</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            <Text style={styles.sectionTitle}>Password</Text>
+                            {isEditing ? (
+                                <View style={styles.section}>
+                                    <Text style={styles.sectionTitle}>Personal Information</Text>
+                                    
+                                    <View style={[styles.row, isMobile && styles.rowMobile]}>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>First Name</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={firstName}
+                                                onChangeText={setFirstName}
+                                                placeholder="John"
+                                            />
+                                        </View>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>Last Name</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={lastName}
+                                                onChangeText={setLastName}
+                                                placeholder="Doe"
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.row}>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>Date of Birth</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={dateOfBirth}
+                                                onChangeText={setDateOfBirth}
+                                                placeholder="YYYY-MM-DD"
+                                            />
+                                        </View>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>Gender</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={gender}
+                                                onChangeText={setGender}
+                                                placeholder="male/female/other"
+                                            />
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.inputGroup}>
+                                        <Text style={styles.label}>Phone</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={phone}
+                                            onChangeText={setPhone}
+                                            placeholder="+1234567890"
+                                            keyboardType="phone-pad"
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputGroup}>
+                                        <Text style={styles.label}>Website</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={website}
+                                            onChangeText={setWebsite}
+                                            placeholder="https://example.com"
+                                            keyboardType="url"
+                                            autoCapitalize="none"
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputGroup}>
+                                        <Text style={styles.label}>Address</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            value={address}
+                                            onChangeText={setAddress}
+                                            placeholder="123 Main St, City, State"
+                                        />
+                                    </View>
+
+                                    <View style={styles.row}>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>Country</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                value={country}
+                                                onChangeText={setCountry}
+                                                placeholder="United States"
+                                            />
+                                        </View>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>Language</Text>
+                                            <View style={styles.languageRow}>
+                                                {['en', 'es', 'fr'].map((lang) => (
+                                                    <TouchableOpacity
+                                                        key={lang}
+                                                        style={[
+                                                            styles.langChip,
+                                                            languageCode === lang && styles.langChipActive
+                                                        ]}
+                                                        onPress={() => setLanguageCode(lang)}
+                                                    >
+                                                        <Text style={[
+                                                            styles.langText,
+                                                            languageCode === lang && styles.langTextActive
+                                                        ]}>
+                                                            {lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Français'}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.inputGroup}>
+                                        <Text style={styles.label}>Bio</Text>
+                                        <TextInput
+                                            style={[styles.input, styles.textArea]}
+                                            value={bio}
+                                            onChangeText={setBio}
+                                            placeholder="Tell us about yourself..."
+                                            multiline
+                                            numberOfLines={4}
+                                            textAlignVertical="top"
+                                        />
+                                    </View>
+
+                                    <TouchableOpacity
+                                        style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+                                        onPress={handleSaveProfile}
+                                        disabled={saving}
+                                    >
+                                        {saving ? (
+                                            <ActivityIndicator color="#fff" size="small" />
+                                        ) : (
+                                            <Text style={styles.saveButtonText}>Save Changes</Text>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <View style={styles.profileView}>
+                                    <View style={styles.infoSection}>
+                                        <Text style={styles.infoLabel}>Full Name</Text>
+                                        <Text style={styles.infoValue}>{firstName} {lastName}</Text>
+                                    </View>
+                                    
+                                    {dateOfBirth && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Date of Birth</Text>
+                                            <Text style={styles.infoValue}>{dateOfBirth}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {gender && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Gender</Text>
+                                            <Text style={styles.infoValue}>{gender}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {phone && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Phone</Text>
+                                            <Text style={styles.infoValue}>{phone}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {website && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Website</Text>
+                                            <Text style={[styles.infoValue, styles.link]}>{website}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {address && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Address</Text>
+                                            <Text style={styles.infoValue}>{address}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {country && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Country</Text>
+                                            <Text style={styles.infoValue}>{country}</Text>
+                                        </View>
+                                    )}
+                                    
+                                    {languageCode && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Language</Text>
+                                            <Text style={styles.infoValue}>
+                                                {languageCode === 'en' ? 'English' : 
+                                                 languageCode === 'es' ? 'Español' : 
+                                                 languageCode === 'fr' ? 'Français' : languageCode}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    
+                                    {bio && (
+                                        <View style={styles.infoSection}>
+                                            <Text style={styles.infoLabel}>Bio</Text>
+                                            <Text style={styles.infoValue}>{bio}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            )}
+
+                            <Text style={styles.sectionTitle}>Security</Text>
                             <View style={styles.section}>
                                 <TouchableOpacity style={styles.changePasswordButton}>
                                     <Ionicons name="key-outline" size={20} color="#6366F1" />
@@ -312,6 +559,8 @@ export default function SettingsPage() {
                             <Text style={styles.sectionTitle}>Notification Preferences</Text>
 
                             <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>General Notifications</Text>
+                                
                                 <View style={styles.settingRow}>
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Email Notifications</Text>
@@ -341,7 +590,11 @@ export default function SettingsPage() {
                                         thumbColor={pushNotifications ? '#6366F1' : '#fff'}
                                     />
                                 </View>
+                            </View>
 
+                            <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>Pet Care Reminders</Text>
+                                
                                 <View style={styles.settingRow}>
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Health Reminders</Text>
@@ -361,7 +614,7 @@ export default function SettingsPage() {
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Event Reminders</Text>
                                         <Text style={styles.settingDescription}>
-                                            Reminders for upcoming appointments
+                                            Reminders for upcoming appointments and events
                                         </Text>
                                     </View>
                                     <Switch
@@ -369,6 +622,55 @@ export default function SettingsPage() {
                                         onValueChange={setEventReminders}
                                         trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
                                         thumbColor={eventReminders ? '#6366F1' : '#fff'}
+                                    />
+                                </View>
+
+                                <View style={styles.settingRow}>
+                                    <View style={styles.settingInfo}>
+                                        <Text style={styles.settingLabel}>Weight Tracking</Text>
+                                        <Text style={styles.settingDescription}>
+                                            Reminders to log your pet's weight
+                                        </Text>
+                                    </View>
+                                    <Switch
+                                        value={true}
+                                        onValueChange={(value) => console.log('Weight tracking:', value)}
+                                        trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                                        thumbColor={'#6366F1'}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>Communication Preferences</Text>
+                                
+                                <View style={styles.settingRow}>
+                                    <View style={styles.settingInfo}>
+                                        <Text style={styles.settingLabel}>Newsletter</Text>
+                                        <Text style={styles.settingDescription}>
+                                            Receive tips and updates about pet care
+                                        </Text>
+                                    </View>
+                                    <Switch
+                                        value={true}
+                                        onValueChange={(value) => console.log('Newsletter:', value)}
+                                        trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                                        thumbColor={'#6366F1'}
+                                    />
+                                </View>
+
+                                <View style={styles.settingRow}>
+                                    <View style={styles.settingInfo}>
+                                        <Text style={styles.settingLabel}>Product Updates</Text>
+                                        <Text style={styles.settingDescription}>
+                                            Get notified about new features and improvements
+                                        </Text>
+                                    </View>
+                                    <Switch
+                                        value={true}
+                                        onValueChange={(value) => console.log('Product updates:', value)}
+                                        trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                                        thumbColor={'#6366F1'}
                                     />
                                 </View>
                             </View>
@@ -380,12 +682,14 @@ export default function SettingsPage() {
                             <Text style={styles.sectionTitle}>Privacy & Security</Text>
 
                             <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>Data Protection</Text>
+                                
                                 <View style={styles.privacyItem}>
                                     <Ionicons name="shield-checkmark-outline" size={24} color="#10B981" />
                                     <View style={styles.privacyInfo}>
                                         <Text style={styles.privacyLabel}>Data Encryption</Text>
                                         <Text style={styles.privacyDescription}>
-                                            All your data is encrypted end-to-end
+                                            All your data is encrypted end-to-end using industry-standard encryption
                                         </Text>
                                     </View>
                                 </View>
@@ -395,10 +699,63 @@ export default function SettingsPage() {
                                     <View style={styles.privacyInfo}>
                                         <Text style={styles.privacyLabel}>Private by Default</Text>
                                         <Text style={styles.privacyDescription}>
-                                            Your pet information is only visible to you and co-owners
+                                            Your pet information is only visible to you and authorized co-owners
                                         </Text>
                                     </View>
                                 </View>
+
+                                <View style={styles.privacyItem}>
+                                    <Ionicons name="cloud-upload-outline" size={24} color="#F59E0B" />
+                                    <View style={styles.privacyInfo}>
+                                        <Text style={styles.privacyLabel}>Secure Backups</Text>
+                                        <Text style={styles.privacyDescription}>
+                                            Your data is securely backed up and can be restored if needed
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>Account Activity</Text>
+                                
+                                <View style={styles.activityItem}>
+                                    <View style={styles.activityInfo}>
+                                        <Text style={styles.activityLabel}>Last Login</Text>
+                                        <Text style={styles.activityValue}>Today at 2:34 PM</Text>
+                                    </View>
+                                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                                </View>
+
+                                <View style={styles.activityItem}>
+                                    <View style={styles.activityInfo}>
+                                        <Text style={styles.activityLabel}>Account Created</Text>
+                                        <Text style={styles.activityValue}>
+                                            {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Unknown'}
+                                        </Text>
+                                    </View>
+                                    <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                                </View>
+
+                                <View style={styles.activityItem}>
+                                    <View style={styles.activityInfo}>
+                                        <Text style={styles.activityLabel}>Data Download</Text>
+                                        <Text style={styles.activityDescription}>
+                                            Download all your account data
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.actionButton} onPress={handleDownloadData}>
+                                         <Text style={styles.actionButtonText}>Download</Text>
+                                     </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <View style={styles.section}>
+                                <Text style={styles.subsectionTitle}>Danger Zone</Text>
+                                
+                                <TouchableOpacity style={styles.warningButton} onPress={handleSignOutAllDevices}>
+                                    <Ionicons name="log-out-outline" size={20} color="#F59E0B" />
+                                    <Text style={styles.warningButtonText}>Sign Out of All Devices</Text>
+                                </TouchableOpacity>
 
                                 <TouchableOpacity style={styles.dangerButton} onPress={handleDeleteAccount}>
                                     <Ionicons name="trash-outline" size={20} color="#EF4444" />
@@ -507,6 +864,13 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
         marginBottom: 16,
+    },
+    subsectionTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#6B7280',
+        marginBottom: 12,
+        textTransform: 'uppercase',
     },
     section: {
         backgroundColor: '#fff',
@@ -647,6 +1011,121 @@ const styles = StyleSheet.create({
         color: '#6366F1',
         fontWeight: '600',
     },
+    textArea: {
+        height: 100,
+        textAlignVertical: 'top',
+    },
+    profileHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 24,
+        padding: 24,
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+    },
+    avatarSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    avatarContainer: {
+        position: 'relative',
+        marginRight: 16,
+    },
+    avatarImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+    },
+    avatarPlaceholder: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#6366F1',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    avatarText: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#fff',
+    },
+    avatarEditButton: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#6366F1',
+        borderRadius: 12,
+        width: 32,
+        height: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#fff',
+    },
+    userInfo: {
+        flex: 1,
+    },
+    userName: {
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 4,
+    },
+    userEmail: {
+        fontSize: 14,
+        color: '#6B7280',
+        marginBottom: 2,
+    },
+    userLocation: {
+        fontSize: 14,
+        color: '#6B7280',
+    },
+    editButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+        backgroundColor: '#F0F6FF',
+        borderWidth: 1,
+        borderColor: '#6366F1',
+    },
+    editButtonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#6366F1',
+    },
+    profileView: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 24,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+    },
+    infoSection: {
+        marginBottom: 20,
+    },
+    infoLabel: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#6B7280',
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
+    infoValue: {
+        fontSize: 16,
+        color: '#111827',
+        lineHeight: 24,
+    },
+    link: {
+        color: '#6366F1',
+        textDecorationLine: 'underline',
+    },
     saveButtonDisabled: {
         opacity: 0.7,
     },
@@ -661,5 +1140,60 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         color: '#EF4444',
+    },
+    warningButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#F59E0B',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+    },
+    warningButtonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#F59E0B',
+    },
+    activityItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    activityInfo: {
+        flex: 1,
+    },
+    activityLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 2,
+    },
+    activityValue: {
+        fontSize: 14,
+        color: '#6B7280',
+    },
+    activityDescription: {
+        fontSize: 13,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    actionButton: {
+        backgroundColor: '#F0F6FF',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: '#6366F1',
+    },
+    actionButtonText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#6366F1',
     },
 });

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +17,7 @@ import { designSystem, getSpacing } from '@/constants/designSystem';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Href } from 'expo-router';
 
-const { width: screenWidth } = Dimensions.get('window');
+// Use live window dimensions inside component for responsive width
 
 export interface TabBarItem {
   name: string;
@@ -34,10 +34,12 @@ interface FloatingTabBarProps {
 
 export default function FloatingTabBar({
   tabs,
-  containerWidth = screenWidth / 2.5,
   borderRadius = 35,
   
 }: FloatingTabBarProps) {
+  const { width } = useWindowDimensions();
+  const computedContainerWidth = (typeof width === 'number' ? width : 400) / 2.5;
+  const finalContainerWidth = Math.min((typeof containerWidth === 'number' ? containerWidth : computedContainerWidth), 600);
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
@@ -126,7 +128,7 @@ export default function FloatingTabBar({
       <View style={[
         styles.container,
         {
-          width: containerWidth,
+          width: finalContainerWidth,
         }
       ]}>
         <View style={dynamicStyles.containerSolid}>

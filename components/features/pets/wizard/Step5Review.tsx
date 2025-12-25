@@ -83,6 +83,9 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                             <View style={styles.contactItem}>
                                 <Text style={styles.contactLabel}>VET CLINIC</Text>
                                 <Text style={styles.contactName}>{data.vetClinicName}</Text>
+                                {data.vetName && <Text style={styles.contactSub}>Vet: {data.vetName}</Text>}
+                                {data.vetAddress && <Text style={styles.contactSub}>{data.vetAddress}</Text>}
+                                {data.vetCountry && <Text style={styles.contactSub}>{data.vetCountry}</Text>}
                                 {data.vetPhone && <Text style={styles.contactSub}>{data.vetPhone}</Text>}
                             </View>
                         )}

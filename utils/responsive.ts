@@ -2,9 +2,9 @@ import { Dimensions, Platform, PixelRatio } from 'react-native';
 
 export const responsive = {
   // Screen dimensions
-  screen: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+  get screen() {
+    const { width, height } = Dimensions.get('window');
+    return { width, height };
   },
   
   // Breakpoints
@@ -15,9 +15,16 @@ export const responsive = {
   },
   
   // Platform detection
-  isPhone: Dimensions.get('window').width < 768,
-  isTablet: Dimensions.get('window').width >= 768 && Dimensions.get('window').width < 1024,
-  isDesktop: Dimensions.get('window').width >= 1024,
+  get isPhone() {
+    return Dimensions.get('window').width < 768;
+  },
+  get isTablet() {
+    const w = Dimensions.get('window').width;
+    return w >= 768 && w < 1024;
+  },
+  get isDesktop() {
+    return Dimensions.get('window').width >= 1024;
+  },
   isIOS: Platform.OS === 'ios',
   isAndroid: Platform.OS === 'android',
   isWeb: Platform.OS === 'web',
@@ -194,15 +201,16 @@ export const responsive = {
   
   // Media query-like helpers
   get isSmallScreen() {
-    return this.screen.width < 375;
+    return Dimensions.get('window').width < 375;
   },
   
   get isMediumScreen() {
-    return this.screen.width >= 375 && this.screen.width < 768;
+    const w = Dimensions.get('window').width;
+    return w >= 375 && w < 768;
   },
   
   get isLargeScreen() {
-    return this.screen.width >= 768;
+    return Dimensions.get('window').width >= 768;
   },
   
   // Platform-specific adjustments

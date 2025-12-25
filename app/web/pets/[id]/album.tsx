@@ -69,14 +69,14 @@ export default function AlbumTab() {
               style={styles.btnSecondary}
               onPress={() => router.push(`/web/pets/albums/new?petId=${id}` as any)}
             >
-              <IconSymbol android_material_icon_name="create_new_folder" size={20} color="#6B7280" />
+              <IconSymbol android_material_icon_name="create-new-folder" size={20} color="#6B7280" />
               <Text style={styles.btnTextSecondary}>New Album</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.btnPrimary}
               onPress={() => router.push(`/web/pets/photos/add?petId=${id}` as any)}
             >
-              <IconSymbol android_material_icon_name="add_a_photo" size={20} color="#fff" />
+              <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#fff" />
               <Text style={styles.btnTextPrimary}>Add Media</Text>
             </TouchableOpacity>
           </View>
@@ -183,7 +183,7 @@ export default function AlbumTab() {
                 {/* Video Icon Overlay */}
                 {photo.type === 'video' && (
                   <View style={styles.playIconOverlay}>
-                    <IconSymbol android_material_icon_name="play_arrow" size={20} color="#fff" />
+                    <IconSymbol android_material_icon_name="play-arrow" size={20} color="#fff" />
                   </View>
                 )}
               </TouchableOpacity>
@@ -193,7 +193,7 @@ export default function AlbumTab() {
           {/* Load More */}
           <TouchableOpacity style={styles.loadMoreBtn}>
             <Text style={styles.loadMoreText}>Load More</Text>
-            <IconSymbol android_material_icon_name="expand_more" size={20} color="#6B7280" />
+            <IconSymbol android_material_icon_name="expand-more" size={20} color="#6B7280" />
           </TouchableOpacity>
 
         </View>

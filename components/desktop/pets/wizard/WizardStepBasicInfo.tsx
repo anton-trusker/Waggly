@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useBreeds } from '@/hooks/useBreeds';
+import * as ImagePicker from 'expo-image-picker';
+import EnhancedSelection from '@/components/ui/EnhancedSelection';
+import { calculateAgeFromDDMMYYYY, formatAge, parseDDMMYYYY } from '@/utils/dateUtils';
+import { designSystem } from '@/constants/designSystem';
 
 interface WizardStepBasicInfoProps {
     formData: any;
@@ -12,13 +16,15 @@ interface WizardStepBasicInfoProps {
 const SPECIES_OPTIONS = [
     { id: 'dog', label: 'Dog', icon: '🐕' },
     { id: 'cat', label: 'Cat', icon: '🐈' },
+    { id: 'bird', label: 'Bird', icon: '🦜' },
+    { id: 'rabbit', label: 'Rabbit', icon: '🐰' },
+    { id: 'reptile', label: 'Reptile', icon: '🦎' },
     { id: 'other', label: 'Other', icon: '🐾' },
 ];
 
 const GENDER_OPTIONS = [
-    { id: 'male', label: 'Male' },
-    { id: 'female', label: 'Female' },
-    { id: 'unknown', label: 'Unknown' },
+    { id: 'male', label: 'Male', icon: 'male' },
+    { id: 'female', label: 'Female', icon: 'female' },
 ];
 
 const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
@@ -28,6 +34,38 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
 }) => {
     const { breeds } = useBreeds();
     const [localData, setLocalData] = useState(formData);
+    const [ageDisplay, setAgeDisplay] = useState('');
+
+    useEffect(() => {
+        if (localData.date_of_birth) {
+            // Check format. If YYYY-MM-DD (standard HTML date), convert to DD-MM-YYYY for utils
+            // If the input is text "DD-MM-YYYY", use as is.
+            // Let's assume we store as YYYY-MM-DD (ISO) for consistency if possible, or whatever the app expects.
+            // The previous code had "YYYY-MM-DD" placeholder.
+            // But `utils/dateUtils` prefers DD-MM-YYYY.
+            // Let's stick to YYYY-MM-DD for storage/input value on web (standard), but convert for display/utils.
+            
+            // Actually, let's try to parse whatever we have.
+            const parts = localData.date_of_birth.split('-');
+            let dateObj: Date | null = null;
+            
+            if (parts.length === 3) {
+                if (parts[0].length === 4) {
+                     // YYYY-MM-DD
+                     dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else {
+                    // DD-MM-YYYY
+                    dateObj = parseDDMMYYYY(localData.date_of_birth);
+                }
+            }
+
+            if (dateObj && !isNaN(dateObj.getTime())) {
+                setAgeDisplay(formatAge(dateObj));
+            } else {
+                setAgeDisplay('');
+            }
+        }
+    }, [localData.date_of_birth]);
 
     const updateField = (field: string, value: any) => {
         const newData = { ...localData, [field]: value };
@@ -35,7 +73,22 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
         onUpdate(newData);
     };
 
-    const filteredBreeds = breeds.filter(b => b.species === localData.species);
+    const handlePhotoPick = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            updateField('photoUri', result.assets[0].uri);
+        }
+    };
+
+    const filteredBreeds = breeds
+        .filter(b => b.species === localData.species)
+        .map(b => ({ id: b.name, label: b.name }));
 
     const isValid = localData.name && localData.species;
 
@@ -43,6 +96,23 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Text style={styles.heading}>Basic Information</Text>
             <Text style={styles.subheading}>Tell us about your pet</Text>
+
+            {/* Photo Upload */}
+            <View style={styles.photoSection}>
+                <TouchableOpacity onPress={handlePhotoPick} style={styles.photoContainer}>
+                    {localData.photoUri ? (
+                        <Image source={{ uri: localData.photoUri }} style={styles.photo} />
+                    ) : (
+                        <View style={styles.photoPlaceholder}>
+                            <Ionicons name="camera" size={32} color="#9CA3AF" />
+                        </View>
+                    )}
+                    <View style={styles.addPhotoButton}>
+                        <Ionicons name="add" size={20} color="#fff" />
+                    </View>
+                </TouchableOpacity>
+                <Text style={styles.addPhotoLabel}>Add Photo</Text>
+            </View>
 
             {/* Pet Name */}
             <View style={styles.inputGroup}>
@@ -59,20 +129,26 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
             {/* Species Selection */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Species *</Text>
-                <View style={styles.optionsGrid}>
+                <View style={styles.speciesGrid}>
                     {SPECIES_OPTIONS.map((option) => (
                         <TouchableOpacity
                             key={option.id}
                             style={[
-                                styles.optionCard,
-                                localData.species === option.id && styles.optionCardSelected,
+                                styles.speciesCard,
+                                localData.species === option.id && styles.speciesCardSelected,
                             ]}
-                            onPress={() => updateField('species', option.id)}
+                            onPress={() => {
+                                updateField('species', option.id);
+                                updateField('breed', ''); // Reset breed
+                            }}
                         >
-                            <Text style={styles.optionIcon}>{option.icon}</Text>
-                            <Text style={styles.optionLabel}>{option.label}</Text>
+                            <Text style={styles.speciesIcon}>{option.icon}</Text>
+                            <Text style={[
+                                styles.speciesLabel,
+                                localData.species === option.id && styles.speciesLabelSelected
+                            ]}>{option.label}</Text>
                             {localData.species === option.id && (
-                                <View style={styles.optionCheck}>
+                                <View style={styles.checkIcon}>
                                     <Ionicons name="checkmark-circle" size={20} color="#6366F1" />
                                 </View>
                             )}
@@ -82,65 +158,90 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
             </View>
 
             {/* Breed */}
-            {localData.species && (
+            {(localData.species === 'dog' || localData.species === 'cat') && (
+                <EnhancedSelection
+                    label="Breed"
+                    value={localData.breed}
+                    options={filteredBreeds}
+                    onSelect={(opt) => updateField('breed', opt.id)}
+                    placeholder="Select breed"
+                    searchable
+                />
+            )}
+             {localData.species && localData.species !== 'dog' && localData.species !== 'cat' && (
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Breed</Text>
-                    <View style={styles.inputWrapper}>
-                        <Ionicons name="search-outline" size={20} color="#6B7280" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Search breed..."
-                            placeholderTextColor="#9CA3AF"
-                            value={localData.breed}
-                            onChangeText={(text) => updateField('breed', text)}
-                        />
-                    </View>
+                    <Text style={styles.label}>Breed / Type</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="e.g. Hamster, Parrot"
+                        placeholderTextColor="#9CA3AF"
+                        value={localData.breed}
+                        onChangeText={(text) => updateField('breed', text)}
+                    />
                 </View>
             )}
 
-            {/* Color */}
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Color</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="e.g., Brown, Black, White"
-                    placeholderTextColor="#9CA3AF"
-                    value={localData.color}
-                    onChangeText={(text) => updateField('color', text)}
-                />
-            </View>
-
-            {/* Gender */}
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Gender</Text>
-                <View style={styles.radioGroup}>
-                    {GENDER_OPTIONS.map((option) => (
-                        <TouchableOpacity
-                            key={option.id}
-                            style={styles.radioOption}
-                            onPress={() => updateField('gender', option.id)}
-                        >
-                            <View style={styles.radio}>
-                                {localData.gender === option.id && (
-                                    <View style={styles.radioSelected} />
-                                )}
-                            </View>
-                            <Text style={styles.radioLabel}>{option.label}</Text>
-                        </TouchableOpacity>
-                    ))}
+            {/* Color & Gender Row */}
+            <View style={styles.row}>
+                <View style={styles.col}>
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Color</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="e.g., Brown"
+                            placeholderTextColor="#9CA3AF"
+                            value={localData.color}
+                            onChangeText={(text) => updateField('color', text)}
+                        />
+                    </View>
+                </View>
+                <View style={styles.col}>
+                    <EnhancedSelection
+                        label="Gender"
+                        value={localData.gender}
+                        options={GENDER_OPTIONS}
+                        onSelect={(opt) => updateField('gender', opt.id)}
+                        placeholder="Select gender"
+                        searchable={false}
+                    />
                 </View>
             </View>
 
             {/* Date of Birth */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Date of Birth</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="YYYY-MM-DD"
-                    placeholderTextColor="#9CA3AF"
-                    value={localData.date_of_birth}
-                    onChangeText={(text) => updateField('date_of_birth', text)}
-                />
+                {Platform.OS === 'web' ? (
+                    React.createElement('input', {
+                        type: 'date',
+                        style: {
+                            borderWidth: 1,
+                            borderColor: '#E5E7EB',
+                            borderRadius: 12,
+                            padding: '12px 16px',
+                            fontSize: '14px',
+                            color: '#111827',
+                            backgroundColor: '#F9FAFB',
+                            width: '100%',
+                            outline: 'none',
+                            boxSizing: 'border-box',
+                            fontFamily: 'inherit'
+                        },
+                        value: localData.date_of_birth || '',
+                        onChange: (e: any) => updateField('date_of_birth', e.target.value),
+                        placeholder: "Select date"
+                    })
+                ) : (
+                    <TextInput
+                        style={styles.input}
+                        placeholder="YYYY-MM-DD"
+                        placeholderTextColor="#9CA3AF"
+                        value={localData.date_of_birth}
+                        onChangeText={(text) => updateField('date_of_birth', text)}
+                    />
+                )}
+                {ageDisplay ? (
+                    <Text style={styles.ageText}>Age: {ageDisplay}</Text>
+                ) : null}
             </View>
 
             {/* Weight */}
@@ -211,6 +312,56 @@ const styles = StyleSheet.create({
         color: '#6B7280',
         marginBottom: 32,
     },
+    photoSection: {
+        alignItems: 'center',
+        marginBottom: 32,
+    },
+    photoContainer: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        marginBottom: 12,
+        position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    photo: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 60,
+    },
+    photoPlaceholder: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 60,
+        backgroundColor: '#F3F4F6',
+        borderWidth: 2,
+        borderColor: '#E5E7EB',
+        borderStyle: 'dashed',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    addPhotoButton: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#6366F1',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 3,
+        borderColor: '#fff',
+    },
+    addPhotoLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#6366F1',
+    },
     inputGroup: {
         marginBottom: 24,
     },
@@ -230,81 +381,49 @@ const styles = StyleSheet.create({
         color: '#111827',
         backgroundColor: '#F9FAFB',
     },
-    inputWrapper: {
+    speciesGrid: {
         flexDirection: 'row',
-        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 12,
+    },
+    speciesCard: {
+        width: '31%', // Approx 1/3
+        aspectRatio: 1,
+        backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#E5E7EB',
         borderRadius: 12,
-        paddingHorizontal: 16,
-        backgroundColor: '#F9FAFB',
-    },
-    inputIcon: {
-        marginRight: 12,
-    },
-    optionsGrid: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    optionCard: {
-        flex: 1,
-        padding: 20,
-        borderWidth: 2,
-        borderColor: '#E5E7EB',
-        borderRadius: 16,
+        justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
-        backgroundColor: '#fff',
     },
-    optionCardSelected: {
+    speciesCardSelected: {
         borderColor: '#6366F1',
         backgroundColor: '#F0F6FF',
     },
-    optionIcon: {
-        fontSize: 40,
+    speciesIcon: {
+        fontSize: 32,
         marginBottom: 8,
     },
-    optionLabel: {
+    speciesLabel: {
         fontSize: 14,
         fontWeight: '600',
         color: '#111827',
     },
-    optionCheck: {
+    speciesLabelSelected: {
+        color: '#6366F1',
+    },
+    checkIcon: {
         position: 'absolute',
         top: 8,
         right: 8,
     },
-    radioGroup: {
-        flexDirection: 'row',
-        gap: 24,
-    },
-    radioOption: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    radio: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: '#D1D5DB',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    radioSelected: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: '#6366F1',
-    },
-    radioLabel: {
-        fontSize: 14,
-        color: '#374151',
-    },
     row: {
         flexDirection: 'row',
         gap: 16,
+    },
+    col: {
+        flex: 1,
     },
     flex1: {
         flex: 1,
@@ -326,6 +445,11 @@ const styles = StyleSheet.create({
     },
     segmentSelected: {
         backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 1,
     },
     segmentText: {
         fontSize: 14,
@@ -334,6 +458,12 @@ const styles = StyleSheet.create({
     },
     segmentTextSelected: {
         color: '#111827',
+    },
+    ageText: {
+        marginTop: 8,
+        fontSize: 14,
+        color: '#6366F1',
+        fontWeight: '500',
     },
     nextButton: {
         flexDirection: 'row',

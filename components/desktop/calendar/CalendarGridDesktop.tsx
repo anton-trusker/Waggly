@@ -48,11 +48,18 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
     const getEventsForDate = (day: number) => {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+        const targetDate = new Date(year, month, day);
 
         return events.filter(event => {
-            const eventDate = new Date(event.start_time).toISOString().split('T')[0];
-            return eventDate === dateStr;
+            const raw = event.dueDate ?? event.start_time;
+            if (!raw) return false;
+            const d = new Date(raw);
+            if (isNaN(d.getTime())) return false;
+            return (
+                d.getFullYear() === targetDate.getFullYear() &&
+                d.getMonth() === targetDate.getMonth() &&
+                d.getDate() === targetDate.getDate()
+            );
         });
     };
 

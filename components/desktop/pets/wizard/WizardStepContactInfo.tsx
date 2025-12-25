@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import EnhancedSelection from '@/components/ui/EnhancedSelection';
+import { COUNTRIES } from '@/constants/countries';
 
 interface WizardStepContactInfoProps {
     formData: any;
@@ -8,6 +10,29 @@ interface WizardStepContactInfoProps {
     onNext: () => void;
     onBack: () => void;
 }
+
+const COUNTRY_OPTIONS = COUNTRIES.map(c => ({
+    id: c.code,
+    label: c.name,
+    icon: c.flag // EnhancedSelection might expect icon name, but let's see if it handles emoji or custom
+    // EnhancedSelection expects icon name from IconSymbol (SF Symbols/Material). 
+    // It doesn't seem to support raw text/emoji as icon prop directly unless modified.
+    // However, EnhancedSelection renders icon using IconSymbol. 
+    // Let's check EnhancedSelection again.
+    // It renders: <IconSymbol ... />
+    // So passing emoji to icon prop won't work if it expects symbol name.
+    // But EnhancedSelection options have { icon?: string }. 
+    // Wait, looking at EnhancedSelection code:
+    // {item.icon && <IconSymbol ... />} ? No, looking at optionItem render:
+    // It doesn't render icon in the list item! It only renders label and subLabel.
+    // So the flag won't show in the list unless I modify EnhancedSelection or just put it in the label.
+}));
+
+// Let's put flag in label for now
+const COUNTRY_OPTIONS_WITH_FLAG = COUNTRIES.map(c => ({
+    id: c.code,
+    label: `${c.flag} ${c.name}`
+}));
 
 const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
     formData,
@@ -55,6 +80,18 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
                 />
             </View>
 
+            {/* Clinic Name */}
+            <View style={styles.inputGroup}>
+                <Text style={styles.label}>Veterinary Clinic Name</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="e.g. City Vet Clinic"
+                    placeholderTextColor="#9CA3AF"
+                    value={localData.vet_clinic_name}
+                    onChangeText={(text) => updateField('vet_clinic_name', text)}
+                />
+            </View>
+
             {/* Vet Address/Clinic */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Veterinary Clinic Address</Text>
@@ -65,6 +102,33 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
                     value={localData.vet_address}
                     onChangeText={(text) => updateField('vet_address', text)}
                 />
+            </View>
+
+            {/* Vet Country */}
+            <EnhancedSelection
+                label="Country"
+                value={localData.vet_country}
+                options={COUNTRY_OPTIONS_WITH_FLAG}
+                onSelect={(opt) => updateField('vet_country', opt.id)}
+                placeholder="Select Country"
+                searchable
+                icon="globe"
+            />
+
+            {/* Vet Phone */}
+            <View style={styles.inputGroup}>
+                <Text style={styles.label}>Veterinarian Phone</Text>
+                <View style={styles.inputWrapper}>
+                    <Ionicons name="call-outline" size={20} color="#6B7280" style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="+1 (555) 123-4567"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="phone-pad"
+                        value={localData.vet_phone}
+                        onChangeText={(text) => updateField('vet_phone', text)}
+                    />
+                </View>
             </View>
 
             {/* Emergency Contact */}

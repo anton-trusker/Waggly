@@ -111,7 +111,12 @@ export default function PetsScreen() {
                       <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
                     ) : (
                       <Text style={styles.petIconText}>
-                        {pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐈' : '🐾'}
+                        {pet.species === 'dog' ? '🐕' : 
+                         pet.species === 'cat' ? '🐈' : 
+                         pet.species === 'bird' ? '🦜' : 
+                         pet.species === 'rabbit' ? '🐰' : 
+                         pet.species === 'reptile' ? '🦎' : 
+                         '🐾'}
                       </Text>
                     )}
                   </View>
