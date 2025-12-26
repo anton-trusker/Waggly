@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import { cssInterop } from 'react-native-css-interop';
 import PetSelector from './shared/PetSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
-import CurrencyInput from './shared/CurrencyInput';
-import PlacesAutocomplete, { Place } from '@/components/ui/PlacesAutocomplete';
-
-cssInterop(BlurView, { className: 'style' });
 
 interface VaccinationFormModalProps {
     visible: boolean;
@@ -36,46 +31,26 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         date_given: new Date().toISOString().split('T')[0],
         administered_time: '',
         next_due_date: '',
-
-        // Details
         manufacturer: '',
         batch_number: '',
         lot_number: '',
         route_of_administration: 'Subcutaneous',
         administered_by: '',
-
-        // Classification
         vaccination_type: 'Core',
         schedule_interval: '1 Year',
-
-        // Provider
         clinic_name: '',
         clinic_address: '',
-        clinic_street: '',
-        clinic_city: '',
-        clinic_state: '',
-        clinic_zip: '',
-        clinic_country: '',
-        clinic_lat: null as number | null,
-        clinic_lng: null as number | null,
         clinic_phone: '',
-
-        // Cost
         cost: 0,
         currency: 'EUR',
         payment_method: '',
         insurance_provider: '',
-
-        // Reactions
         reaction_severity: 'None',
         reactions: [] as string[],
         reaction_notes: '',
-
-        // Reminders
         reminder_enabled: true,
         reminder_days_before: 7,
         reminder_methods: ['app'] as string[],
-
         notes: '',
     });
 
@@ -86,20 +61,6 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             setSelectedPetId(pets[0].id);
         }
     }, [initialPetId, pets, selectedPetId]);
-
-    const handleClinicSelect = (place: Place) => {
-        setFormData(prev => ({
-            ...prev,
-            clinic_address: place.formatted_address,
-            clinic_street: place.street || '',
-            clinic_city: place.city || '',
-            clinic_state: place.state || '',
-            clinic_zip: place.postal_code || '',
-            clinic_country: place.country || '',
-            clinic_lat: place.lat,
-            clinic_lng: place.lng,
-        }));
-    };
 
     const resetForm = () => {
         setFormData({
@@ -116,13 +77,6 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             schedule_interval: '1 Year',
             clinic_name: '',
             clinic_address: '',
-            clinic_street: '',
-            clinic_city: '',
-            clinic_state: '',
-            clinic_zip: '',
-            clinic_country: '',
-            clinic_lat: null,
-            clinic_lng: null,
             clinic_phone: '',
             cost: 0,
             currency: 'EUR',
@@ -209,39 +163,32 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                 date_given: formData.date_given,
                 administered_time: formData.administered_time || null,
                 next_due_date: formData.reminder_enabled ? (formData.next_due_date || null) : null,
-
                 manufacturer: formData.manufacturer || null,
                 batch_number: formData.batch_number || null,
                 lot_number: formData.lot_number || null,
                 route_of_administration: formData.route_of_administration,
                 administered_by: formData.administered_by || null,
-
                 vaccination_type: formData.vaccination_type,
                 schedule_interval: formData.schedule_interval || null,
-
                 clinic_name: formData.clinic_name || null,
                 clinic_address: formData.clinic_address || null,
                 clinic_phone: formData.clinic_phone || null,
-
                 cost: formData.cost || null,
                 currency: formData.currency,
                 payment_method: formData.payment_method || null,
                 insurance_provider: formData.insurance_provider || null,
-
                 reaction_severity: formData.reaction_severity,
                 reactions: formData.reactions.length > 0 ? formData.reactions : null,
                 reaction_notes: formData.reaction_notes || null,
-
                 reminder_enabled: formData.reminder_enabled,
                 reminder_days_before: formData.reminder_days_before,
                 reminder_methods: formData.reminder_methods,
-
                 notes: formData.notes || null,
             };
 
             const { error } = await supabase
                 .from('vaccinations')
-                .insert(vaccinationData as any); // Type assertion to fix Supabase type mismatch
+                .insert(vaccinationData as any);
 
             if (error) throw error;
 
@@ -260,77 +207,72 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={20} className="absolute inset-0" />
-                <View className="w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
+            <View style={styles.overlay}>
+                <View style={styles.modalContainer}>
                     {/* Header */}
-                    <View className="flex-row items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-[#2C2C2E]">
+                    <View style={styles.header}>
                         <TouchableOpacity onPress={onClose}>
-                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-base sm:text-lg font-bold">Add Vaccination</Text>
+                        <Text style={styles.headerTitle}>Add Vaccination</Text>
                         <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
+                            <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Form Content */}
-                    <ScrollView className="p-4 sm:p-5 md:p-6" showsVerticalScrollIndicator={false}>
-                        <View className="space-y-6 sm:space-y-8 pb-6 sm:pb-8">
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                        <View style={styles.formContent}>
 
                             <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
-                            <TouchableOpacity
-                                onPress={handleRepeatLast}
-                                className="flex-row items-center justify-center gap-2 bg-[#2C2C2E] py-3 rounded-xl border border-[#374151]"
-                            >
+                            <TouchableOpacity onPress={handleRepeatLast} style={styles.repeatButton}>
                                 <Ionicons name="reload" size={16} color="#0A84FF" />
-                                <Text className="text-[#0A84FF] font-medium">Repeat Last Vaccination</Text>
+                                <Text style={styles.repeatButtonText}>Repeat Last Vaccination</Text>
                             </TouchableOpacity>
 
                             {/* Vaccine Details */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="medkit" size={20} color="#0A84FF" />
-                                    <Text className="text-white text-lg font-bold">Vaccine Details</Text>
+                                    <Text style={styles.sectionTitle}>Vaccine Details</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Vaccine Name *</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Vaccine Name *</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="e.g. Rabies, DHPP"
                                             placeholderTextColor="#4B5563"
                                             value={formData.vaccine_name}
                                             onChangeText={(text) => setFormData({ ...formData, vaccine_name: text })}
                                         />
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row mt-3 gap-2">
-                                            {COMMON_VACCINES.map(v => (
-                                                <TouchableOpacity
-                                                    key={v}
-                                                    onPress={() => setFormData({ ...formData, vaccine_name: v })}
-                                                    className={`px-3 py-1.5 rounded-lg border ${formData.vaccine_name === v ? 'bg-[#0A84FF] border-[#0A84FF]' : 'bg-[#1C1C1E] border-[#374151]'
-                                                        }`}
-                                                >
-                                                    <Text className={`text-xs ${formData.vaccine_name === v ? 'text-white' : 'text-[#9CA3AF]'}`}>{v}</Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
+                                            <View style={styles.chipRow}>
+                                                {COMMON_VACCINES.map(v => (
+                                                    <TouchableOpacity
+                                                        key={v}
+                                                        onPress={() => setFormData({ ...formData, vaccine_name: v })}
+                                                        style={[styles.chip, formData.vaccine_name === v && styles.chipSelected]}
+                                                    >
+                                                        <Text style={[styles.chipText, formData.vaccine_name === v && styles.chipTextSelected]}>{v}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
 
-                                    {/* Type Classification */}
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Vaccination Type</Text>
-                                        <View className="flex-row gap-2">
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Vaccination Type</Text>
+                                        <View style={styles.buttonRow}>
                                             {VACCINATION_TYPES.map(type => (
                                                 <TouchableOpacity
                                                     key={type}
                                                     onPress={() => setFormData({ ...formData, vaccination_type: type })}
-                                                    className={`flex-1 py-2 items-center rounded-lg border ${formData.vaccination_type === type ? 'bg-[#0A84FF] border-[#0A84FF]' : 'border-[#374151]'
-                                                        }`}
+                                                    style={[styles.typeButton, formData.vaccination_type === type && styles.typeButtonSelected]}
                                                 >
-                                                    <Text className={`text-sm font-medium ${formData.vaccination_type === type ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                                                    <Text style={[styles.typeButtonText, formData.vaccination_type === type && styles.typeButtonTextSelected]}>
                                                         {type}
                                                     </Text>
                                                 </TouchableOpacity>
@@ -338,8 +280,8 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         </View>
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
                                             <UniversalDatePicker
                                                 label="Date Given"
                                                 value={formData.date_given}
@@ -347,10 +289,10 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                                 mode="date"
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Time</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Time</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="HH:MM"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.administered_time}
@@ -359,21 +301,21 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         </View>
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Manufacturer</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Manufacturer</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="Pfizer, Merck, etc."
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.manufacturer}
                                                 onChangeText={(text) => setFormData({ ...formData, manufacturer: text })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Batch/Lot #</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Batch/Lot #</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="Optional"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.batch_number}
@@ -382,17 +324,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Route of Administration</Text>
-                                        <View className="flex-row gap-2">
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Route of Administration</Text>
+                                        <View style={styles.chipRow}>
                                             {ADMINISTRATION_ROUTES.map(route => (
                                                 <TouchableOpacity
                                                     key={route}
                                                     onPress={() => setFormData({ ...formData, route_of_administration: route })}
-                                                    className={`px-3 py-2 rounded-lg border ${formData.route_of_administration === route ? 'bg-[#0A84FF] border-[#0A84FF]' : 'border-[#374151]'
-                                                        }`}
+                                                    style={[styles.chip, formData.route_of_administration === route && styles.chipSelected]}
                                                 >
-                                                    <Text className={`text-xs ${formData.route_of_administration === route ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                                                    <Text style={[styles.chipText, formData.route_of_administration === route && styles.chipTextSelected]}>
                                                         {route}
                                                     </Text>
                                                 </TouchableOpacity>
@@ -400,10 +341,10 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Administered By</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Administered By</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="Dr. Smith, Veterinary Technician, etc."
                                             placeholderTextColor="#4B5563"
                                             value={formData.administered_by}
@@ -414,28 +355,27 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                             </View>
 
                             {/* Reactions */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="warning" size={20} color="#EF4444" />
-                                    <Text className="text-white text-lg font-bold">Reactions (if any)</Text>
+                                    <Text style={styles.sectionTitle}>Reactions (if any)</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-2">
+                                <View style={styles.card}>
+                                    <View style={styles.buttonRow}>
                                         {REACTION_SEVERITIES.map(severity => (
                                             <TouchableOpacity
                                                 key={severity}
                                                 onPress={() => setFormData({ ...formData, reaction_severity: severity })}
-                                                className={`flex-1 py-2 items-center rounded-lg border ${formData.reaction_severity === severity
-                                                    ? severity === 'None' ? 'bg-[#10B981] border-[#10B981]'
-                                                        : 'bg-[#EF4444]/20 border-[#EF4444]'
-                                                    : 'border-[#374151]'
-                                                    }`}
+                                                style={[
+                                                    styles.severityButton,
+                                                    formData.reaction_severity === severity && (severity === 'None' ? styles.severityNone : styles.severityDanger)
+                                                ]}
                                             >
-                                                <Text className={`text-xs font-medium ${formData.reaction_severity === severity
-                                                    ? severity === 'None' ? 'text-white' : 'text-[#EF4444]'
-                                                    : 'text-[#9CA3AF]'
-                                                    }`}>
+                                                <Text style={[
+                                                    styles.severityText,
+                                                    formData.reaction_severity === severity && (severity === 'None' ? styles.severityTextNone : styles.severityTextDanger)
+                                                ]}>
                                                     {severity}
                                                 </Text>
                                             </TouchableOpacity>
@@ -444,19 +384,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
 
                                     {formData.reaction_severity !== 'None' && (
                                         <>
-                                            <View>
-                                                <Text className="text-[#9CA3AF] text-xs mb-2">Symptoms Observed</Text>
-                                                <View className="flex-row flex-wrap gap-2">
+                                            <View style={styles.fieldGroup}>
+                                                <Text style={styles.label}>Symptoms Observed</Text>
+                                                <View style={styles.chipWrap}>
                                                     {COMMON_REACTIONS.map(reaction => (
                                                         <TouchableOpacity
                                                             key={reaction}
                                                             onPress={() => toggleReaction(reaction)}
-                                                            className={`px-3 py-1.5 rounded-lg border ${formData.reactions.includes(reaction)
-                                                                ? 'bg-[#EF4444]/20 border-[#EF4444]'
-                                                                : 'border-[#374151]'
-                                                                }`}
+                                                            style={[styles.chip, formData.reactions.includes(reaction) && styles.chipDanger]}
                                                         >
-                                                            <Text className={`text-xs ${formData.reactions.includes(reaction) ? 'text-[#EF4444]' : 'text-[#9CA3AF]'}`}>
+                                                            <Text style={[styles.chipText, formData.reactions.includes(reaction) && styles.chipTextDanger]}>
                                                                 {reaction}
                                                             </Text>
                                                         </TouchableOpacity>
@@ -477,14 +414,14 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                             </View>
 
                             {/* Reminders */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="notifications" size={20} color="#F59E0B" />
-                                    <Text className="text-white text-lg font-bold">Reminders</Text>
+                                    <Text style={styles.sectionTitle}>Reminders</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className="text-white font-medium">Enable Reminder</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.switchRow}>
+                                        <Text style={styles.switchLabel}>Enable Reminder</Text>
                                         <Switch
                                             value={formData.reminder_enabled}
                                             onValueChange={(val) => setFormData({ ...formData, reminder_enabled: val })}
@@ -502,17 +439,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                                 minDate={new Date()}
                                             />
 
-                                            <View>
-                                                <Text className="text-[#9CA3AF] text-xs mb-2">Remind me before</Text>
-                                                <View className="flex-row gap-2">
+                                            <View style={styles.fieldGroup}>
+                                                <Text style={styles.label}>Remind me before</Text>
+                                                <View style={styles.buttonRow}>
                                                     {[7, 14, 30].map(days => (
                                                         <TouchableOpacity
                                                             key={days}
                                                             onPress={() => setFormData({ ...formData, reminder_days_before: days })}
-                                                            className={`flex-1 py-2 items-center rounded-lg ${formData.reminder_days_before === days ? 'bg-[#0A84FF]' : 'bg-[#1C1C1E]'
-                                                                }`}
+                                                            style={[styles.daysButton, formData.reminder_days_before === days && styles.daysButtonSelected]}
                                                         >
-                                                            <Text className={formData.reminder_days_before === days ? 'text-white' : 'text-[#9CA3AF]'}>
+                                                            <Text style={[styles.daysButtonText, formData.reminder_days_before === days && styles.daysButtonTextSelected]}>
                                                                 {days} days
                                                             </Text>
                                                         </TouchableOpacity>
@@ -520,17 +456,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                                 </View>
                                             </View>
 
-                                            <View>
-                                                <Text className="text-[#9CA3AF] text-xs mb-2">Notification Methods</Text>
-                                                <View className="flex-row gap-2">
+                                            <View style={styles.fieldGroup}>
+                                                <Text style={styles.label}>Notification Methods</Text>
+                                                <View style={styles.buttonRow}>
                                                     {['App', 'Email', 'SMS'].map(method => (
                                                         <TouchableOpacity
                                                             key={method}
                                                             onPress={() => toggleReminderMethod(method.toLowerCase())}
-                                                            className={`px-4 py-2 rounded-lg ${formData.reminder_methods.includes(method.toLowerCase()) ? 'bg-[#0A84FF]' : 'bg-[#1C1C1E]'
-                                                                }`}
+                                                            style={[styles.methodButton, formData.reminder_methods.includes(method.toLowerCase()) && styles.methodButtonSelected]}
                                                         >
-                                                            <Text className={formData.reminder_methods.includes(method.toLowerCase()) ? 'text-white' : 'text-[#9CA3AF]'}>
+                                                            <Text style={[styles.methodButtonText, formData.reminder_methods.includes(method.toLowerCase()) && styles.methodButtonTextSelected]}>
                                                                 {method}
                                                             </Text>
                                                         </TouchableOpacity>
@@ -543,16 +478,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                             </View>
 
                             {/* Provider & Cost */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="location" size={20} color="#EC4899" />
-                                    <Text className="text-white text-lg font-bold">Provider & Cost</Text>
+                                    <Text style={styles.sectionTitle}>Provider & Cost</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Clinic Name</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Clinic Name</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="Veterinary clinic"
                                             placeholderTextColor="#4B5563"
                                             value={formData.clinic_name}
@@ -560,11 +495,11 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         />
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Cost</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Cost</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="0.00"
                                                 keyboardType="numeric"
                                                 placeholderTextColor="#4B5563"
@@ -572,10 +507,10 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                                 onChangeText={(text) => setFormData({ ...formData, cost: parseFloat(text) || 0 })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Currency</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 value={formData.currency}
                                                 onChangeText={(text) => setFormData({ ...formData, currency: text })}
                                             />
@@ -593,6 +528,7 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                 minHeight={80}
                             />
 
+                            <View style={{ height: 40 }} />
                         </View>
                     </ScrollView>
                 </View>
@@ -600,3 +536,241 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    modalContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        maxHeight: '90%',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2C2C2E',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2E',
+    },
+    cancelText: {
+        color: '#9CA3AF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    headerTitle: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    saveText: {
+        color: '#0A84FF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    formContent: {
+        padding: 20,
+        gap: 24,
+    },
+    repeatButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        backgroundColor: '#2C2C2E',
+        paddingVertical: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    repeatButtonText: {
+        color: '#0A84FF',
+        fontWeight: '500',
+    },
+    section: {
+        gap: 12,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    sectionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    card: {
+        backgroundColor: '#2C2C2E',
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+    },
+    fieldGroup: {
+        gap: 8,
+    },
+    label: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    input: {
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    halfWidth: {
+        flex: 1,
+    },
+    chipScroll: {
+        marginTop: 8,
+    },
+    chipRow: {
+        flexDirection: 'row',
+        gap: 8,
+        flexWrap: 'wrap',
+    },
+    chipWrap: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    chip: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+        backgroundColor: '#1C1C1E',
+    },
+    chipSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    chipText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+    },
+    chipTextSelected: {
+        color: '#FFFFFF',
+    },
+    chipDanger: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderColor: '#EF4444',
+    },
+    chipTextDanger: {
+        color: '#EF4444',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    typeButton: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    typeButtonSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    typeButtonText: {
+        color: '#9CA3AF',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    typeButtonTextSelected: {
+        color: '#FFFFFF',
+    },
+    severityButton: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    severityNone: {
+        backgroundColor: '#10B981',
+        borderColor: '#10B981',
+    },
+    severityDanger: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderColor: '#EF4444',
+    },
+    severityText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    severityTextNone: {
+        color: '#FFFFFF',
+    },
+    severityTextDanger: {
+        color: '#EF4444',
+    },
+    switchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    switchLabel: {
+        color: '#FFFFFF',
+        fontWeight: '500',
+    },
+    daysButton: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8,
+        backgroundColor: '#1C1C1E',
+    },
+    daysButtonSelected: {
+        backgroundColor: '#0A84FF',
+    },
+    daysButtonText: {
+        color: '#9CA3AF',
+    },
+    daysButtonTextSelected: {
+        color: '#FFFFFF',
+    },
+    methodButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
+        backgroundColor: '#1C1C1E',
+    },
+    methodButtonSelected: {
+        backgroundColor: '#0A84FF',
+    },
+    methodButtonText: {
+        color: '#9CA3AF',
+    },
+    methodButtonTextSelected: {
+        color: '#FFFFFF',
+    },
+});

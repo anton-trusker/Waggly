@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import { cssInterop } from 'react-native-css-interop';
 import PetSelector from './shared/PetSelector';
-import BusinessSearch from './shared/BusinessSearch';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
-import CurrencyInput from './shared/CurrencyInput';
 import PlacesAutocomplete, { Place } from '@/components/ui/PlacesAutocomplete';
-
-cssInterop(BlurView, { className: 'style' });
 
 interface VisitFormModalProps {
     visible: boolean;
@@ -29,7 +23,7 @@ const PROVIDER_TYPES = [
     { type: 'daycare', label: 'Daycare', icon: 'home', color: '#10B981' },
     { type: 'walker', label: 'Walker', icon: 'walk', color: '#3B82F6' },
     { type: 'sitter', label: 'Sitter', icon: 'person', color: '#EC4899' },
-    { type: 'behaviorist', label: 'Behaviorist', icon: 'psychology', color: '#6366F1' },
+    { type: 'behaviorist', label: 'Behaviorist', icon: 'fitness', color: '#6366F1' },
     { type: 'nutritionist', label: 'Nutritionist', icon: 'restaurant', color: '#14B8A6' },
 ] as const;
 
@@ -69,13 +63,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         provider_name: '',
         business_place_id: '',
         business_address: '',
-        business_street: '',
-        business_city: '',
-        business_state: '',
-        business_zip: '',
-        business_country: '',
-        business_lat: null as number | null,
-        business_lng: null as number | null,
         business_phone: '',
         business_website: '',
         reason: '',
@@ -97,7 +84,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         }
     }, [initialPetId, pets, selectedPetId]);
 
-    // Update service category when provider type changes
     useEffect(() => {
         const categories = SERVICE_CATEGORIES[formData.provider_type];
         if (categories && categories.length > 0) {
@@ -117,13 +103,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             provider_name: '',
             business_place_id: '',
             business_address: '',
-            business_street: '',
-            business_city: '',
-            business_state: '',
-            business_zip: '',
-            business_country: '',
-            business_lat: null,
-            business_lng: null,
             business_phone: '',
             business_website: '',
             reason: '',
@@ -154,13 +133,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             ...prev,
             business_address: place.formatted_address,
             business_place_id: place.place_id,
-            business_street: place.street || '',
-            business_city: place.city || '',
-            business_state: place.state || '',
-            business_zip: place.postal_code || '',
-            business_country: place.country || '',
-            business_lat: place.lat,
-            business_lng: place.lng,
         }));
     };
 
@@ -239,7 +211,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                     payment_method: formData.payment_method || null,
                     follow_up_date: formData.follow_up_date || null,
                     reminder_enabled: formData.reminder_enabled,
-                } as any); // Type assertion to fix Supabase type mismatch
+                } as any);
 
             if (error) throw error;
 
@@ -261,92 +233,93 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={20} className="absolute inset-0" />
-                <View className="w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
+            <View style={styles.overlay}>
+                <View style={styles.modalContainer}>
                     {/* Header */}
-                    <View className="flex-row items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-[#2C2C2E]">
+                    <View style={styles.header}>
                         <TouchableOpacity onPress={onClose}>
-                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-lg font-bold">Add New Visit</Text>
+                        <Text style={styles.headerTitle}>Add New Visit</Text>
                         <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
+                            <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Form Content */}
-                    <ScrollView className="p-4 sm:p-5 md:p-6" showsVerticalScrollIndicator={false}>
-                        <View className="space-y-6 sm:space-y-8 pb-6 sm:pb-8">
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                        <View style={styles.formContent}>
 
                             <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
-                            {/* Repeat Last Button */}
-                            <TouchableOpacity
-                                onPress={handleRepeatLast}
-                                className="flex-row items-center justify-center gap-2 bg-[#2C2C2E] py-3 rounded-xl border border-[#374151]"
-                            >
+                            <TouchableOpacity onPress={handleRepeatLast} style={styles.repeatButton}>
                                 <Ionicons name="reload" size={16} color="#0A84FF" />
-                                <Text className="text-[#0A84FF] font-medium">Repeat Last Visit Details</Text>
+                                <Text style={styles.repeatButtonText}>Repeat Last Visit Details</Text>
                             </TouchableOpacity>
 
                             {/* Provider Type Selector */}
-                            <View>
-                                <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">PROVIDER TYPE</Text>
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3">
-                                    {PROVIDER_TYPES.map(provider => (
-                                        <TouchableOpacity
-                                            key={provider.type}
-                                            onPress={() => setFormData({ ...formData, provider_type: provider.type as any })}
-                                            className="items-center"
-                                            style={{ minWidth: 80 }}
-                                        >
-                                            <View
-                                                className="w-16 h-16 rounded-2xl items-center justify-center mb-2"
-                                                style={{
-                                                    backgroundColor: formData.provider_type === provider.type ? provider.color : '#2C2C2E',
-                                                    borderWidth: 2,
-                                                    borderColor: formData.provider_type === provider.type ? provider.color : '#374151'
-                                                }}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionLabel}>PROVIDER TYPE</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.providerRow}>
+                                        {PROVIDER_TYPES.map(provider => (
+                                            <TouchableOpacity
+                                                key={provider.type}
+                                                onPress={() => setFormData({ ...formData, provider_type: provider.type as any })}
+                                                style={styles.providerItem}
                                             >
-                                                <Ionicons
-                                                    name={provider.icon as any}
-                                                    size={28}
-                                                    color={formData.provider_type === provider.type ? '#FFFFFF' : '#9CA3AF'}
-                                                />
-                                            </View>
-                                            <Text
-                                                className="text-xs font-medium text-center"
-                                                style={{ color: formData.provider_type === provider.type ? provider.color : '#9CA3AF' }}
-                                            >
-                                                {provider.label}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
+                                                <View
+                                                    style={[
+                                                        styles.providerIcon,
+                                                        {
+                                                            backgroundColor: formData.provider_type === provider.type ? provider.color : '#2C2C2E',
+                                                            borderColor: formData.provider_type === provider.type ? provider.color : '#374151'
+                                                        }
+                                                    ]}
+                                                >
+                                                    <Ionicons
+                                                        name={provider.icon as any}
+                                                        size={28}
+                                                        color={formData.provider_type === provider.type ? '#FFFFFF' : '#9CA3AF'}
+                                                    />
+                                                </View>
+                                                <Text
+                                                    style={[
+                                                        styles.providerLabel,
+                                                        { color: formData.provider_type === provider.type ? provider.color : '#9CA3AF' }
+                                                    ]}
+                                                >
+                                                    {provider.label}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
                                 </ScrollView>
                             </View>
 
                             {/* Visit Details */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="calendar" size={20} color={selectedProvider?.color} />
-                                    <Text className="text-white text-base sm:text-lg font-bold">Add Visit Record</Text>
+                                    <Text style={styles.sectionTitle}>Add Visit Record</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                <View style={styles.card}>
                                     {/* Urgency */}
-                                    <View className="flex-row gap-2">
+                                    <View style={styles.buttonRow}>
                                         {URGENCY_LEVELS.map((level) => (
                                             <TouchableOpacity
                                                 key={level.value}
                                                 onPress={() => setFormData({ ...formData, urgency: level.value })}
-                                                className="flex-1 py-2 items-center rounded-lg border"
-                                                style={{
-                                                    backgroundColor: formData.urgency === level.value ? `${level.color}20` : 'transparent',
-                                                    borderColor: formData.urgency === level.value ? level.color : '#374151'
-                                                }}
+                                                style={[
+                                                    styles.urgencyButton,
+                                                    {
+                                                        backgroundColor: formData.urgency === level.value ? `${level.color}20` : 'transparent',
+                                                        borderColor: formData.urgency === level.value ? level.color : '#374151'
+                                                    }
+                                                ]}
                                             >
-                                                <Text style={{ color: formData.urgency === level.value ? level.color : '#9CA3AF' }} className="font-bold text-xs uppercase">
+                                                <Text style={[styles.urgencyText, { color: formData.urgency === level.value ? level.color : '#9CA3AF' }]}>
                                                     {level.label}
                                                 </Text>
                                             </TouchableOpacity>
@@ -354,51 +327,49 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                     </View>
 
                                     {/* Service Category */}
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Service Type</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                                            {availableCategories.map(category => (
-                                                <TouchableOpacity
-                                                    key={category}
-                                                    onPress={() => setFormData({ ...formData, service_category: category })}
-                                                    className={`px-4 py-2 rounded-full mr-2 border ${formData.service_category === category
-                                                        ? 'border-[#0A84FF]'
-                                                        : 'border-[#4B5563]'
-                                                        }`}
-                                                    style={{
-                                                        backgroundColor: formData.service_category === category ? '#0A84FF' : 'transparent'
-                                                    }}
-                                                >
-                                                    <Text className={`text-sm font-medium ${formData.service_category === category ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {category}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Service Type</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
+                                                {availableCategories.map(category => (
+                                                    <TouchableOpacity
+                                                        key={category}
+                                                        onPress={() => setFormData({ ...formData, service_category: category })}
+                                                        style={[
+                                                            styles.categoryChip,
+                                                            formData.service_category === category && styles.categoryChipSelected
+                                                        ]}
+                                                    >
+                                                        <Text style={[styles.categoryChipText, formData.service_category === category && styles.categoryChipTextSelected]}>
+                                                            {category}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
 
-                                    {/* Date, Time, Duration */}
                                     <UniversalDatePicker
                                         label="Date"
                                         value={formData.date}
                                         onChange={(text) => setFormData({ ...formData, date: text })}
                                     />
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Time (Optional)</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Time (Optional)</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="HH:MM"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.visit_time}
                                                 onChangeText={(text) => setFormData({ ...formData, visit_time: text })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Duration (min)</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Duration (min)</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="30"
                                                 placeholderTextColor="#4B5563"
                                                 keyboardType="numeric"
@@ -420,26 +391,22 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
                             {/* Medical Fields (Veterinary Only) */}
                             {formData.provider_type === 'veterinary' && (
-                                <View>
-                                    <View className="flex-row items-center gap-2 mb-4">
+                                <View style={styles.section}>
+                                    <View style={styles.sectionHeader}>
                                         <Ionicons name="pulse" size={20} color="#EF4444" />
-                                        <Text className="text-white text-lg font-bold">Medical Details</Text>
+                                        <Text style={styles.sectionTitle}>Medical Details</Text>
                                     </View>
 
-                                    <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-1">
-                                            <View className="flex-row gap-2 px-1">
+                                    <View style={styles.card}>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
                                                 {COMMON_SYMPTOMS.map(symptom => (
                                                     <TouchableOpacity
                                                         key={symptom}
                                                         onPress={() => toggleSymptom(symptom)}
-                                                        className={`px-3 py-1.5 rounded-lg border ${formData.symptoms.includes(symptom)
-                                                            ? 'bg-[#EF4444]/20 border-[#EF4444]'
-                                                            : 'border-[#374151]'
-                                                            }`}
+                                                        style={[styles.chip, formData.symptoms.includes(symptom) && styles.chipDanger]}
                                                     >
-                                                        <Text className={`text-xs font-medium ${formData.symptoms.includes(symptom) ? 'text-[#EF4444]' : 'text-[#9CA3AF]'
-                                                            }`}>
+                                                        <Text style={[styles.chipText, formData.symptoms.includes(symptom) && styles.chipTextDanger]}>
                                                             {symptom}
                                                         </Text>
                                                     </TouchableOpacity>
@@ -458,17 +425,17 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             )}
 
                             {/* Provider & Location */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="location" size={20} color="#EC4899" />
-                                    <Text className="text-white text-base sm:text-lg font-bold mb-3 sm:mb-4">Provider & Location</Text>
+                                    <Text style={styles.sectionTitle}>Provider & Location</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Business Name *</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Business Name *</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder={`Enter ${selectedProvider?.label.toLowerCase()} name...`}
                                             placeholderTextColor="#4B5563"
                                             value={formData.business_name}
@@ -476,10 +443,10 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         />
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Provider Name (Optional)</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Provider Name (Optional)</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="Dr. Smith, Jane Doe, etc."
                                             placeholderTextColor="#4B5563"
                                             value={formData.provider_name}
@@ -487,7 +454,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         />
                                     </View>
 
-                                    {/* Address with Google Places Autocomplete */}
                                     <PlacesAutocomplete
                                         value={formData.business_address}
                                         onSelect={handlePlaceSelect}
@@ -496,11 +462,11 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         label="Business Address (Optional)"
                                     />
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Phone</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Phone</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="(555) 123-4567"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.business_phone}
@@ -508,10 +474,10 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                 keyboardType="phone-pad"
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Website</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Website</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="www.example.com"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.business_website}
@@ -524,17 +490,17 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             </View>
 
                             {/* Cost */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="cash" size={20} color="#10B981" />
-                                    <Text className="text-white text-lg font-bold">Cost</Text>
+                                    <Text style={styles.sectionTitle}>Cost</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Total Cost</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Total Cost</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="0.00"
                                                 placeholderTextColor="#4B5563"
                                                 keyboardType="numeric"
@@ -542,20 +508,20 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                 onChangeText={(text) => setFormData({ ...formData, cost: parseFloat(text) || 0 })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Currency</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 value={formData.currency}
                                                 onChangeText={(text) => setFormData({ ...formData, currency: text })}
                                             />
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Payment Method (Optional)</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Payment Method (Optional)</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="Cash, Card, Insurance..."
                                             placeholderTextColor="#4B5563"
                                             value={formData.payment_method}
@@ -566,16 +532,15 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             </View>
 
                             {/* Notes */}
-                            <View>
-                                <RichTextInput
-                                    label="Additional Notes"
-                                    placeholder="Any other details about this visit..."
-                                    value={formData.notes}
-                                    onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                                    minHeight={80}
-                                />
-                            </View>
+                            <RichTextInput
+                                label="Additional Notes"
+                                placeholder="Any other details about this visit..."
+                                value={formData.notes}
+                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
+                                minHeight={80}
+                            />
 
+                            <View style={{ height: 40 }} />
                         </View>
                     </ScrollView>
                 </View>
@@ -583,3 +548,199 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    modalContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        maxHeight: '90%',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2C2C2E',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2E',
+    },
+    cancelText: {
+        color: '#9CA3AF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    headerTitle: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    saveText: {
+        color: '#0A84FF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    formContent: {
+        padding: 20,
+        gap: 24,
+    },
+    repeatButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        backgroundColor: '#2C2C2E',
+        paddingVertical: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    repeatButtonText: {
+        color: '#0A84FF',
+        fontWeight: '500',
+    },
+    section: {
+        gap: 12,
+    },
+    sectionLabel: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 1,
+        marginBottom: 12,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    sectionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    providerRow: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    providerItem: {
+        alignItems: 'center',
+        minWidth: 80,
+    },
+    providerIcon: {
+        width: 64,
+        height: 64,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 8,
+        borderWidth: 2,
+    },
+    providerLabel: {
+        fontSize: 12,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    card: {
+        backgroundColor: '#2C2C2E',
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+    },
+    fieldGroup: {
+        gap: 8,
+    },
+    label: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    input: {
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    halfWidth: {
+        flex: 1,
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    urgencyButton: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8,
+        borderWidth: 1,
+    },
+    urgencyText: {
+        fontSize: 12,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+    },
+    chipRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    chip: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+        backgroundColor: '#1C1C1E',
+    },
+    chipText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+    },
+    chipDanger: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderColor: '#EF4444',
+    },
+    chipTextDanger: {
+        color: '#EF4444',
+    },
+    categoryChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#4B5563',
+        marginRight: 8,
+    },
+    categoryChipSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    categoryChipText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#9CA3AF',
+    },
+    categoryChipTextSelected: {
+        color: '#FFFFFF',
+    },
+});

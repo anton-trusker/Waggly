@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import { cssInterop } from 'react-native-css-interop';
 import PetSelector from './shared/PetSelector';
 import SmartAddressInput from './shared/SmartAddressInput';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
-
-// Apply cssInterop to components if not already done globally
-cssInterop(BlurView, { className: 'style' });
 
 interface TreatmentFormModalProps {
     visible: boolean;
@@ -25,28 +20,25 @@ const DOSAGE_UNITS = ['mg', 'ml', 'tablet', 'capsule', 'drop', 'g', 'IU'];
 const FREQUENCIES = ['Once daily', 'Twice daily', 'Three times daily', 'Every 12 hours', 'As needed'];
 
 export default function TreatmentFormModal({ visible, onClose, petId: initialPetId, onSuccess }: TreatmentFormModalProps) {
-    const { pets, loading: petsLoading } = usePets();
+    const { pets } = usePets();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
     const [loading, setLoading] = useState(false);
-    
+
     const [formData, setFormData] = useState({
         treatment_type: 'Medication',
         name: '',
         dosage_value: '',
         dosage_unit: 'mg',
         frequency: 'Once daily',
-        
         start_date: new Date().toISOString().split('T')[0],
         end_date: '',
         is_active: true,
-        
         provider: '',
         address: '',
         city: '',
         state: '',
         zip: '',
         country: '',
-        
         cost: '',
         currency: 'EUR',
         notes: '',
@@ -85,7 +77,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
         if (!initialPetId && pets.length > 0) {
             setSelectedPetId(pets[0].id);
         }
-    }
+    };
 
     const handleRepeatLast = async () => {
         if (!selectedPetId) return;
@@ -164,43 +156,40 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={20} className="absolute inset-0" />
-                <View className="w-full max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
-                    <View className="flex-row items-center justify-between px-6 py-5 border-b border-[#2C2C2E]">
+            <View style={styles.overlay}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.header}>
                         <TouchableOpacity onPress={onClose}>
-                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-lg font-bold">Add Treatment</Text>
+                        <Text style={styles.headerTitle}>Add Treatment</Text>
                         <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
+                            <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-                        <View className="space-y-8 pb-8">
-                            
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                        <View style={styles.formContent}>
+
                             <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
-                            <TouchableOpacity 
-                                onPress={handleRepeatLast}
-                                className="flex-row items-center justify-center gap-2 bg-[#2C2C2E] py-3 rounded-xl border border-[#374151]"
-                            >
+                            <TouchableOpacity onPress={handleRepeatLast} style={styles.repeatButton}>
                                 <Ionicons name="reload" size={16} color="#0A84FF" />
-                                <Text className="text-[#0A84FF] font-medium">Repeat Last Medication</Text>
+                                <Text style={styles.repeatButtonText}>Repeat Last Medication</Text>
                             </TouchableOpacity>
 
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            {/* Medication Details */}
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="medkit" size={20} color="#0A84FF" />
-                                    <Text className="text-white text-lg font-bold">Medication Details</Text>
+                                    <Text style={styles.sectionTitle}>Medication Details</Text>
                                 </View>
-                                
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Medication Name</Text>
+
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Medication Name</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="e.g. Amoxicillin"
                                             placeholderTextColor="#4B5563"
                                             value={formData.name}
@@ -208,11 +197,11 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                                         />
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Dosage</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Dosage</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="e.g. 50"
                                                 keyboardType="numeric"
                                                 placeholderTextColor="#4B5563"
@@ -220,70 +209,63 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                                                 onChangeText={(text) => setFormData({ ...formData, dosage_value: text })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Unit</Text>
-                                            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row py-2">
-                                                {DOSAGE_UNITS.map(unit => (
-                                                    <TouchableOpacity
-                                                        key={unit}
-                                                        onPress={() => setFormData({...formData, dosage_unit: unit})}
-                                                        className={`px-3 py-1.5 rounded-lg mr-2 border ${
-                                                            formData.dosage_unit === unit 
-                                                            ? 'bg-[#0A84FF] border-[#0A84FF]' 
-                                                            : 'border-[#374151]'
-                                                        }`}
-                                                    >
-                                                        <Text className={`text-xs ${formData.dosage_unit === unit ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                            {unit}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))}
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Unit</Text>
+                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                                <View style={styles.chipRow}>
+                                                    {DOSAGE_UNITS.map(unit => (
+                                                        <TouchableOpacity
+                                                            key={unit}
+                                                            onPress={() => setFormData({ ...formData, dosage_unit: unit })}
+                                                            style={[styles.chip, formData.dosage_unit === unit && styles.chipSelected]}
+                                                        >
+                                                            <Text style={[styles.chipText, formData.dosage_unit === unit && styles.chipTextSelected]}>{unit}</Text>
+                                                        </TouchableOpacity>
+                                                    ))}
+                                                </View>
                                             </ScrollView>
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Frequency</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                                            {FREQUENCIES.map(freq => (
-                                                <TouchableOpacity
-                                                    key={freq}
-                                                    onPress={() => setFormData({...formData, frequency: freq})}
-                                                    className={`px-3 py-1.5 rounded-lg mr-2 border ${
-                                                        formData.frequency === freq 
-                                                        ? 'bg-[#0A84FF] border-[#0A84FF]' 
-                                                        : 'border-[#374151]'
-                                                    }`}
-                                                >
-                                                    <Text className={`text-xs ${formData.frequency === freq ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {freq}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Frequency</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
+                                                {FREQUENCIES.map(freq => (
+                                                    <TouchableOpacity
+                                                        key={freq}
+                                                        onPress={() => setFormData({ ...formData, frequency: freq })}
+                                                        style={[styles.chip, formData.frequency === freq && styles.chipSelected]}
+                                                    >
+                                                        <Text style={[styles.chipText, formData.frequency === freq && styles.chipTextSelected]}>{freq}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
                                 </View>
                             </View>
 
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            {/* Schedule */}
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="calendar" size={20} color="#F59E0B" />
-                                    <Text className="text-white text-lg font-bold">Schedule</Text>
+                                    <Text style={styles.sectionTitle}>Schedule</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <UniversalDatePicker 
+                                <View style={styles.card}>
+                                    <UniversalDatePicker
                                         label="Start Date"
                                         value={formData.start_date}
-                                        onChange={(text) => setFormData({...formData, start_date: text})}
+                                        onChange={(text) => setFormData({ ...formData, start_date: text })}
                                     />
-                                    <UniversalDatePicker 
+                                    <UniversalDatePicker
                                         label="End Date (Optional)"
                                         value={formData.end_date}
-                                        onChange={(text) => setFormData({...formData, end_date: text})}
+                                        onChange={(text) => setFormData({ ...formData, end_date: text })}
                                         placeholder="Ongoing if empty"
                                     />
-                                    <View className="flex-row items-center justify-between pt-2">
-                                        <Text className="text-white font-medium">Enable Reminders</Text>
+                                    <View style={styles.switchRow}>
+                                        <Text style={styles.switchLabel}>Enable Reminders</Text>
                                         <Switch
                                             value={formData.reminders_enabled}
                                             onValueChange={(val) => setFormData({ ...formData, reminders_enabled: val })}
@@ -293,44 +275,45 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                                 </View>
                             </View>
 
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            {/* Provider */}
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="location" size={20} color="#EC4899" />
-                                    <Text className="text-white text-lg font-bold">Pharmacy / Provider</Text>
+                                    <Text style={styles.sectionTitle}>Pharmacy / Provider</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
+                                <View style={styles.card}>
                                     <SmartAddressInput
                                         providerName={formData.provider}
-                                        setProviderName={(text) => setFormData({...formData, provider: text})}
+                                        setProviderName={(text) => setFormData({ ...formData, provider: text })}
                                         address={formData.address}
-                                        setAddress={(text) => setFormData({...formData, address: text})}
+                                        setAddress={(text) => setFormData({ ...formData, address: text })}
                                         city={formData.city}
-                                        setCity={(text) => setFormData({...formData, city: text})}
+                                        setCity={(text) => setFormData({ ...formData, city: text })}
                                         state={formData.state}
-                                        setState={(text) => setFormData({...formData, state: text})}
+                                        setState={(text) => setFormData({ ...formData, state: text })}
                                         zip={formData.zip}
-                                        setZip={(text) => setFormData({...formData, zip: text})}
+                                        setZip={(text) => setFormData({ ...formData, zip: text })}
                                         country={formData.country}
-                                        setCountry={(text) => setFormData({...formData, country: text})}
+                                        setCountry={(text) => setFormData({ ...formData, country: text })}
                                     />
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Cost</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Cost</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="0.00"
                                                 keyboardType="numeric"
                                                 placeholderTextColor="#4B5563"
                                                 value={formData.cost}
-                                                onChangeText={(text) => setFormData({...formData, cost: text})}
+                                                onChangeText={(text) => setFormData({ ...formData, cost: text })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Currency</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 value={formData.currency}
-                                                onChangeText={(text) => setFormData({...formData, currency: text})}
+                                                onChangeText={(text) => setFormData({ ...formData, currency: text })}
                                             />
                                         </View>
                                     </View>
@@ -341,8 +324,10 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                                 label="Instructions / Notes"
                                 placeholder="e.g. Give with food..."
                                 value={formData.notes}
-                                onChangeText={(text) => setFormData({...formData, notes: text})}
+                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
                             />
+
+                            <View style={{ height: 40 }} />
                         </View>
                     </ScrollView>
                 </View>
@@ -350,3 +335,144 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    modalContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        maxHeight: '90%',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2C2C2E',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2E',
+    },
+    cancelText: {
+        color: '#9CA3AF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    headerTitle: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    saveText: {
+        color: '#0A84FF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    formContent: {
+        padding: 20,
+        gap: 24,
+    },
+    repeatButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        backgroundColor: '#2C2C2E',
+        paddingVertical: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    repeatButtonText: {
+        color: '#0A84FF',
+        fontWeight: '500',
+    },
+    section: {
+        gap: 12,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    sectionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    card: {
+        backgroundColor: '#2C2C2E',
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+    },
+    fieldGroup: {
+        gap: 8,
+    },
+    label: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    input: {
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    halfWidth: {
+        flex: 1,
+    },
+    chipRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    chip: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+        backgroundColor: '#1C1C1E',
+    },
+    chipSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    chipText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+    },
+    chipTextSelected: {
+        color: '#FFFFFF',
+    },
+    switchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 8,
+    },
+    switchLabel: {
+        color: '#FFFFFF',
+        fontWeight: '500',
+    },
+});

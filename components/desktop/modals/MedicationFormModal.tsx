@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import { cssInterop } from 'react-native-css-interop';
 import PetSelector from './shared/PetSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
-import PlacesAutocomplete, { Place } from '@/components/ui/PlacesAutocomplete';
-
-cssInterop(BlurView, { className: 'style' });
 
 interface MedicationFormModalProps {
     visible: boolean;
@@ -34,70 +29,44 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
     const [interactionWarnings, setInteractionWarnings] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
-        // Basic Info
         medication_name: '',
         treatment_type: 'Medication',
-
-        // Dosage
         dosage_value: '',
         dosage_unit: 'mg',
         strength: '',
-        form: '', // tablet, capsule, liquid, etc.
+        form: '',
         route_of_administration: 'Oral',
-
-        // Schedule
         frequency: 'Once daily',
-        administration_times: [] as string[], // ['09:00', '21:00']
+        administration_times: [] as string[],
         administration_instructions: '',
-        best_time_to_give: [] as string[], // ['with_food', 'morning', etc.]
-
-        // Duration
+        best_time_to_give: [] as string[],
         start_date: new Date().toISOString().split('T')[0],
         end_date: '',
         duration_value: '',
         duration_unit: 'Days',
         is_ongoing: false,
-
-        // Prescription Info
         prescribed_by: '',
         prescription_number: '',
         pharmacy_name: '',
-        pharmacy_address: '',
-        pharmacy_street: '',
-        pharmacy_city: '',
-        pharmacy_state: '',
-        pharmacy_zip: '',
-        pharmacy_country: '',
-        pharmacy_lat: null as number | null,
-        pharmacy_lng: null as number | null,
         pharmacy_phone: '',
-
-        // Refills
         auto_refill: false,
         refill_every: '',
         refill_quantity: '',
         refills_remaining: '',
-
-        // Cost
         unit_price: 0,
         quantity: '',
         total_cost: 0,
         currency: 'EUR',
         insurance_coverage_percent: 0,
-
-        // Side Effects & Safety
         side_effects: [] as string[],
         severity_rating: 'None',
         side_effect_notes: '',
         contraindications: '',
         interactions: '',
         storage_instructions: '',
-
-        // Medical Context
         reason_for_treatment: '',
         condition_being_treated: '',
         monitor_for: '',
-
         notes: '',
     });
 
@@ -109,7 +78,6 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         }
     }, [initialPetId, pets, selectedPetId]);
 
-    // Check for medication interactions
     useEffect(() => {
         if (formData.medication_name && selectedPetId) {
             checkInteractions();
@@ -118,25 +86,20 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
 
     const checkInteractions = async () => {
         if (!formData.medication_name || !selectedPetId) return;
-
         const warnings: string[] = [];
-
         try {
-            // Check for active medications
             const { data: activeMeds } = await supabase
                 .from('medications')
                 .select('medication_name, treatment_type')
                 .eq('pet_id', selectedPetId)
                 .or('end_date.is.null,end_date.gt.' + new Date().toISOString());
 
-            // Check for documented allergies
             const { data: allergies } = await supabase
                 .from('allergies')
                 .select('allergen_name, allergy_type, severity_level')
                 .eq('pet_id', selectedPetId)
                 .eq('allergy_type', 'medication');
 
-            // Check medication allergies
             if (allergies && allergies.length > 0) {
                 allergies.forEach(allergy => {
                     if (formData.medication_name.toLowerCase().includes(allergy.allergen_name.toLowerCase())) {
@@ -145,35 +108,8 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                 });
             }
 
-            // Mock interaction database (in production, use real drug interaction API)
-            const knownInteractions: Record<string, string[]> = {
-                'nsaid': ['steroid', 'aspirin'],
-                'steroid': ['nsaid', 'anti-inflammatory'],
-                'antibiotic': ['antacid'],
-            };
-
-            // Check for drug interactions
-            if (activeMeds && activeMeds.length > 0) {
-                const currentMedLower = formData.medication_name.toLowerCase();
-
-                activeMeds.forEach(med => {
-                    const activeMedLower = med.medication_name.toLowerCase();
-
-                    // Check known interactions
-                    Object.entries(knownInteractions).forEach(([drug, interactsWith]) => {
-                        if (currentMedLower.includes(drug)) {
-                            interactsWith.forEach(interacting => {
-                                if (activeMedLower.includes(interacting)) {
-                                    warnings.push(`⚠️ INTERACTION: Possible interaction between ${formData.medication_name} and active medication ${med.medication_name}`);
-                                }
-                            });
-                        }
-                    });
-                });
-
-                if (activeMeds.length >= 3) {
-                    warnings.push(`ℹ️ INFO: Pet is currently on ${activeMeds.length} medications. Consider monitoring for polypharmacy effects.`);
-                }
+            if (activeMeds && activeMeds.length >= 3) {
+                warnings.push(`ℹ️ INFO: Pet is currently on ${activeMeds.length} medications. Consider monitoring for polypharmacy effects.`);
             }
 
             setInteractionWarnings(warnings);
@@ -188,32 +124,6 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         } else {
             setFormData({ ...formData, side_effects: [...formData.side_effects, effect] });
         }
-    };
-
-    const addAdministrationTime = () => {
-        const newTime = '09:00'; // Default time
-        setFormData({ ...formData, administration_times: [...formData.administration_times, newTime] });
-    };
-
-    const removeAdministrationTime = (index: number) => {
-        setFormData({
-            ...formData,
-            administration_times: formData.administration_times.filter((_, i) => i !== index)
-        });
-    };
-
-    const handlePharmacySelect = (place: Place) => {
-        setFormData(prev => ({
-            ...prev,
-            pharmacy_address: place.formatted_address,
-            pharmacy_street: place.street || '',
-            pharmacy_city: place.city || '',
-            pharmacy_state: place.state || '',
-            pharmacy_zip: place.postal_code || '',
-            pharmacy_country: place.country || '',
-            pharmacy_lat: place.lat,
-            pharmacy_lng: place.lng,
-        }));
     };
 
     const resetForm = () => {
@@ -237,14 +147,6 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             prescribed_by: '',
             prescription_number: '',
             pharmacy_name: '',
-            pharmacy_address: '',
-            pharmacy_street: '',
-            pharmacy_city: '',
-            pharmacy_state: '',
-            pharmacy_zip: '',
-            pharmacy_country: '',
-            pharmacy_lat: null,
-            pharmacy_lng: null,
             pharmacy_phone: '',
             auto_refill: false,
             refill_every: '',
@@ -282,7 +184,6 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             return;
         }
 
-        // Show warnings if they exist
         if (interactionWarnings.length > 0) {
             Alert.alert(
                 'Interaction Warnings',
@@ -302,59 +203,50 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         try {
             const { error } = await supabase
                 .from('medications')
-                .insert({ // Type assertion to fix Supabase type mismatch
+                .insert({
                     pet_id: selectedPetId,
                     medication_name: formData.medication_name,
                     treatment_type: formData.treatment_type,
-
                     dosage_value: formData.dosage_value ? parseFloat(formData.dosage_value) : null,
                     dosage_unit: formData.dosage_unit,
                     strength: formData.strength || null,
                     form: formData.form || null,
                     route_of_administration: formData.route_of_administration,
-
                     frequency: formData.frequency,
                     administration_times: formData.administration_times.length > 0 ? formData.administration_times : null,
                     administration_instructions: formData.administration_instructions || null,
                     best_time_to_give: formData.best_time_to_give.length > 0 ? formData.best_time_to_give : null,
-
                     start_date: formData.start_date,
                     end_date: formData.end_date || null,
                     duration_value: formData.duration_value ? parseInt(formData.duration_value) : null,
                     duration_unit: formData.duration_unit,
                     is_ongoing: formData.is_ongoing,
-
                     prescribed_by: formData.prescribed_by || null,
                     prescription_number: formData.prescription_number || null,
                     pharmacy_name: formData.pharmacy_name || null,
                     pharmacy_phone: formData.pharmacy_phone || null,
-
                     auto_refill: formData.auto_refill,
                     refill_schedule: formData.auto_refill ? {
                         every: formData.refill_every,
                         quantity: formData.refill_quantity,
                     } : null,
                     refills_remaining: formData.refills_remaining ? parseInt(formData.refills_remaining) : null,
-
                     unit_price: formData.unit_price || null,
                     quantity: formData.quantity ? parseInt(formData.quantity) : null,
                     total_cost: formData.total_cost || null,
                     currency: formData.currency,
                     insurance_coverage_percent: formData.insurance_coverage_percent || null,
-
                     side_effects: formData.side_effects.length > 0 ? formData.side_effects : null,
                     severity_rating: formData.severity_rating,
                     side_effect_notes: formData.side_effect_notes || null,
                     contraindications: formData.contraindications || null,
                     interactions: formData.interactions || null,
                     storage_instructions: formData.storage_instructions || null,
-
                     reason_for_treatment: formData.reason_for_treatment || null,
                     condition_being_treated: formData.condition_being_treated || null,
                     monitor_for: formData.monitor_for || null,
-
                     notes: formData.notes || null,
-                } as any); // Type assertion to fix Supabase type mismatch
+                } as any);
 
             if (error) throw error;
 
@@ -373,51 +265,50 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={20} className="absolute inset-0" />
-                <View className="w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
+            <View style={styles.overlay}>
+                <View style={styles.modalContainer}>
                     {/* Header */}
-                    <View className="flex-row items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-[#2C2C2E]">
+                    <View style={styles.header}>
                         <TouchableOpacity onPress={onClose}>
-                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-base sm:text-lg font-bold">Add Medication</Text>
+                        <Text style={styles.headerTitle}>Add Medication</Text>
                         <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
+                            <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Form Content */}
-                    <ScrollView className="p-4 sm:p-5 md:p-6" showsVerticalScrollIndicator={false}>
-                        <View className="space-y-6 sm:space-y-8 pb-6 sm:pb-8">
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                        <View style={styles.formContent}>
 
                             <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
                             {/* Interaction Warnings */}
                             {interactionWarnings.length > 0 && (
-                                <View className="bg-[#EF4444]/20 border border-[#EF4444] rounded-xl p-4">
-                                    <View className="flex-row items-center gap-2 mb-2">
+                                <View style={styles.warningBox}>
+                                    <View style={styles.warningHeader}>
                                         <Ionicons name="warning" size={20} color="#EF4444" />
-                                        <Text className="text-[#EF4444] font-bold">Warnings Detected</Text>
+                                        <Text style={styles.warningTitle}>Warnings Detected</Text>
                                     </View>
                                     {interactionWarnings.map((warning, index) => (
-                                        <Text key={index} className="text-[#EF4444] text-sm mb-1">• {warning}</Text>
+                                        <Text key={index} style={styles.warningText}>• {warning}</Text>
                                     ))}
                                 </View>
                             )}
 
                             {/* Medication Details */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="medkit" size={20} color="#0A84FF" />
-                                    <Text className="text-white text-lg font-bold">Medication Details</Text>
+                                    <Text style={styles.sectionTitle}>Medication Details</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Medication Name *</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Medication Name *</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                            style={styles.input}
                                             placeholder="e.g. Apoquel, Prednisone"
                                             placeholderTextColor="#4B5563"
                                             value={formData.medication_name}
@@ -425,29 +316,28 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                         />
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Treatment Type</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                                            {TREATMENT_TYPES.map(type => (
-                                                <TouchableOpacity
-                                                    key={type}
-                                                    onPress={() => setFormData({ ...formData, treatment_type: type })}
-                                                    className={`px-3 py-2 rounded-lg border ${formData.treatment_type === type ? 'bg-[#0A84FF] border-[#0A84FF]' : 'border-[#374151]'
-                                                        }`}
-                                                >
-                                                    <Text className={`text-xs ${formData.treatment_type === type ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {type}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Treatment Type</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
+                                                {TREATMENT_TYPES.map(type => (
+                                                    <TouchableOpacity
+                                                        key={type}
+                                                        onPress={() => setFormData({ ...formData, treatment_type: type })}
+                                                        style={[styles.chip, formData.treatment_type === type && styles.chipSelected]}
+                                                    >
+                                                        <Text style={[styles.chipText, formData.treatment_type === type && styles.chipTextSelected]}>{type}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Dosage</Text>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Dosage</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="16"
                                                 keyboardType="numeric"
                                                 placeholderTextColor="#4B5563"
@@ -455,73 +345,70 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                                 onChangeText={(text) => setFormData({ ...formData, dosage_value: text })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Unit</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Unit</Text>
                                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                {DOSAGE_UNITS.map(unit => (
-                                                    <TouchableOpacity
-                                                        key={unit}
-                                                        onPress={() => setFormData({ ...formData, dosage_unit: unit })}
-                                                        className={`px-3 py-2 mr-2 rounded-lg ${formData.dosage_unit === unit ? 'bg-[#0A84FF]' : 'bg-[#1C1C1E]'
-                                                            }`}
-                                                    >
-                                                        <Text className={formData.dosage_unit === unit ? 'text-white' : 'text-[#9CA3AF]'}>
-                                                            {unit}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))}
+                                                <View style={styles.chipRow}>
+                                                    {DOSAGE_UNITS.map(unit => (
+                                                        <TouchableOpacity
+                                                            key={unit}
+                                                            onPress={() => setFormData({ ...formData, dosage_unit: unit })}
+                                                            style={[styles.unitChip, formData.dosage_unit === unit && styles.unitChipSelected]}
+                                                        >
+                                                            <Text style={[styles.unitChipText, formData.dosage_unit === unit && styles.unitChipTextSelected]}>{unit}</Text>
+                                                        </TouchableOpacity>
+                                                    ))}
+                                                </View>
                                             </ScrollView>
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Frequency</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                                            {FREQUENCIES.map(freq => (
-                                                <TouchableOpacity
-                                                    key={freq}
-                                                    onPress={() => setFormData({ ...formData, frequency: freq })}
-                                                    className={`px-4 py-2 rounded-lg border ${formData.frequency === freq ? 'bg-[#0A84FF] border-[#0A84FF]' : 'border-[#374151]'
-                                                        }`}
-                                                >
-                                                    <Text className={`text-sm ${formData.frequency === freq ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {freq}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Frequency</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
+                                                {FREQUENCIES.map(freq => (
+                                                    <TouchableOpacity
+                                                        key={freq}
+                                                        onPress={() => setFormData({ ...formData, frequency: freq })}
+                                                        style={[styles.chip, formData.frequency === freq && styles.chipSelected]}
+                                                    >
+                                                        <Text style={[styles.chipText, formData.frequency === freq && styles.chipTextSelected]}>{freq}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Route of Administration</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                                            {ROUTE_OF_ADMIN.map(route => (
-                                                <TouchableOpacity
-                                                    key={route}
-                                                    onPress={() => setFormData({ ...formData, route_of_administration: route })}
-                                                    className={`px-3 py-2 rounded-lg border ${formData.route_of_administration === route ? 'bg-[#0A84FF] border-[#0A84FF]' : 'border-[#374151]'
-                                                        }`}
-                                                >
-                                                    <Text className={`text-xs ${formData.route_of_administration === route ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                                                        {route}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Route of Administration</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <View style={styles.chipRow}>
+                                                {ROUTE_OF_ADMIN.map(route => (
+                                                    <TouchableOpacity
+                                                        key={route}
+                                                        onPress={() => setFormData({ ...formData, route_of_administration: route })}
+                                                        style={[styles.chip, formData.route_of_administration === route && styles.chipSelected]}
+                                                    >
+                                                        <Text style={[styles.chipText, formData.route_of_administration === route && styles.chipTextSelected]}>{route}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </ScrollView>
                                     </View>
                                 </View>
                             </View>
 
                             {/* Duration & Schedule */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="calendar" size={20} color="#F59E0B" />
-                                    <Text className="text-white text-lg font-bold">Duration & Schedule</Text>
+                                    <Text style={styles.sectionTitle}>Duration & Schedule</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
+                                <View style={styles.card}>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
                                             <UniversalDatePicker
                                                 label="Start Date"
                                                 value={formData.start_date}
@@ -529,7 +416,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                                 mode="date"
                                             />
                                         </View>
-                                        <View className="flex-1">
+                                        <View style={styles.halfWidth}>
                                             <UniversalDatePicker
                                                 label="End Date (Optional)"
                                                 value={formData.end_date}
@@ -540,8 +427,8 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                         </View>
                                     </View>
 
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className="text-white font-medium">Ongoing Medication</Text>
+                                    <View style={styles.switchRow}>
+                                        <Text style={styles.switchLabel}>Ongoing Medication</Text>
                                         <Switch
                                             value={formData.is_ongoing}
                                             onValueChange={(val) => setFormData({ ...formData, is_ongoing: val })}
@@ -550,11 +437,11 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                     </View>
 
                                     {!formData.is_ongoing && (
-                                        <View className="flex-row gap-4">
-                                            <View className="flex-1">
-                                                <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Duration</Text>
+                                        <View style={styles.row}>
+                                            <View style={styles.halfWidth}>
+                                                <Text style={styles.label}>Duration</Text>
                                                 <TextInput
-                                                    className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                                    style={styles.input}
                                                     placeholder="7"
                                                     keyboardType="numeric"
                                                     placeholderTextColor="#4B5563"
@@ -562,21 +449,20 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                                     onChangeText={(text) => setFormData({ ...formData, duration_value: text })}
                                                 />
                                             </View>
-                                            <View className="flex-1">
-                                                <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Unit</Text>
-                                                <ScrollView horizontal>
-                                                    {DURATION_UNITS.map(unit => (
-                                                        <TouchableOpacity
-                                                            key={unit}
-                                                            onPress={() => setFormData({ ...formData, duration_unit: unit })}
-                                                            className={`px-3 py-2 mr-2 rounded-lg ${formData.duration_unit === unit ? 'bg-[#0A84FF]' : 'bg-[#1C1C1E]'
-                                                                }`}
-                                                        >
-                                                            <Text className={formData.duration_unit === unit ? 'text-white' : 'text-[#9CA3AF]'}>
-                                                                {unit}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
+                                            <View style={styles.halfWidth}>
+                                                <Text style={styles.label}>Unit</Text>
+                                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                                    <View style={styles.chipRow}>
+                                                        {DURATION_UNITS.map(unit => (
+                                                            <TouchableOpacity
+                                                                key={unit}
+                                                                onPress={() => setFormData({ ...formData, duration_unit: unit })}
+                                                                style={[styles.unitChip, formData.duration_unit === unit && styles.unitChipSelected]}
+                                                            >
+                                                                <Text style={[styles.unitChipText, formData.duration_unit === unit && styles.unitChipTextSelected]}>{unit}</Text>
+                                                            </TouchableOpacity>
+                                                        ))}
+                                                    </View>
                                                 </ScrollView>
                                             </View>
                                         </View>
@@ -592,88 +478,28 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                 </View>
                             </View>
 
-                            {/* Refill Management */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
-                                    <Ionicons name="refresh" size={20} color="#10B981" />
-                                    <Text className="text-white text-lg font-bold">Refill Management</Text>
-                                </View>
-
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className="text-white font-medium">Auto-Refill</Text>
-                                        <Switch
-                                            value={formData.auto_refill}
-                                            onValueChange={(val) => setFormData({ ...formData, auto_refill: val })}
-                                            trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
-                                        />
-                                    </View>
-
-                                    {formData.auto_refill && (
-                                        <>
-                                            <View className="flex-row gap-4">
-                                                <View className="flex-1">
-                                                    <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Refill Every (days)</Text>
-                                                    <TextInput
-                                                        className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
-                                                        placeholder="30"
-                                                        keyboardType="numeric"
-                                                        placeholderTextColor="#4B5563"
-                                                        value={formData.refill_every}
-                                                        onChangeText={(text) => setFormData({ ...formData, refill_every: text })}
-                                                    />
-                                                </View>
-                                                <View className="flex-1">
-                                                    <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Quantity</Text>
-                                                    <TextInput
-                                                        className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
-                                                        placeholder="60"
-                                                        keyboardType="numeric"
-                                                        placeholderTextColor="#4B5563"
-                                                        value={formData.refill_quantity}
-                                                        onChangeText={(text) => setFormData({ ...formData, refill_quantity: text })}
-                                                    />
-                                                </View>
-                                            </View>
-                                        </>
-                                    )}
-
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Pharmacy Name</Text>
-                                        <TextInput
-                                            className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
-                                            placeholder="Pet Pharmacy Plus"
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.pharmacy_name}
-                                            onChangeText={(text) => setFormData({ ...formData, pharmacy_name: text })}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-
                             {/* Side Effects */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="warning" size={20} color="#EF4444" />
-                                    <Text className="text-white text-lg font-bold">Side Effects</Text>
+                                    <Text style={styles.sectionTitle}>Side Effects</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-2">
+                                <View style={styles.card}>
+                                    <View style={styles.buttonRow}>
                                         {SIDE_EFFECT_SEVERITIES.map(severity => (
                                             <TouchableOpacity
                                                 key={severity}
                                                 onPress={() => setFormData({ ...formData, severity_rating: severity })}
-                                                className={`flex-1 py-2 items-center rounded-lg border ${formData.severity_rating === severity
-                                                    ? severity === 'None' ? 'bg-[#10B981] border-[#10B981]'
-                                                        : 'bg-[#EF4444]/20 border-[#EF4444]'
-                                                    : 'border-[#374151]'
-                                                    }`}
+                                                style={[
+                                                    styles.severityButton,
+                                                    formData.severity_rating === severity && (severity === 'None' ? styles.severityNone : styles.severityDanger)
+                                                ]}
                                             >
-                                                <Text className={`text-xs font-medium ${formData.severity_rating === severity
-                                                    ? severity === 'None' ? 'text-white' : 'text-[#EF4444]'
-                                                    : 'text-[#9CA3AF]'
-                                                    }`}>
+                                                <Text style={[
+                                                    styles.severityText,
+                                                    formData.severity_rating === severity && (severity === 'None' ? styles.severityTextNone : styles.severityTextDanger)
+                                                ]}>
                                                     {severity}
                                                 </Text>
                                             </TouchableOpacity>
@@ -682,19 +508,16 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
 
                                     {formData.severity_rating !== 'None' && (
                                         <>
-                                            <View>
-                                                <Text className="text-[#9CA3AF] text-xs mb-2">Symptoms Observed</Text>
-                                                <View className="flex-row flex-wrap gap-2">
+                                            <View style={styles.fieldGroup}>
+                                                <Text style={styles.label}>Symptoms Observed</Text>
+                                                <View style={styles.chipWrap}>
                                                     {COMMON_SIDE_EFFECTS.map(effect => (
                                                         <TouchableOpacity
                                                             key={effect}
                                                             onPress={() => toggleSideEffect(effect)}
-                                                            className={`px-3 py-1.5 rounded-lg border ${formData.side_effects.includes(effect)
-                                                                ? 'bg-[#EF4444]/20 border-[#EF4444]'
-                                                                : 'border-[#374151]'
-                                                                }`}
+                                                            style={[styles.chip, formData.side_effects.includes(effect) && styles.chipDanger]}
                                                         >
-                                                            <Text className={`text-xs ${formData.side_effects.includes(effect) ? 'text-[#EF4444]' : 'text-[#9CA3AF]'}`}>
+                                                            <Text style={[styles.chipText, formData.side_effects.includes(effect) && styles.chipTextDanger]}>
                                                                 {effect}
                                                             </Text>
                                                         </TouchableOpacity>
@@ -715,17 +538,17 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                             </View>
 
                             {/* Medical Context */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="document-text" size={20} color="#8B5CF6" />
-                                    <Text className="text-white text-lg font-bold">Medical Context</Text>
+                                    <Text style={styles.sectionTitle}>Medical Context</Text>
                                 </View>
 
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Reason for Treatment</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Reason for Treatment</Text>
                                         <TextInput
-                                            className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                            style={styles.input}
                                             placeholder="Allergies, infection, pain management..."
                                             placeholderTextColor="#4B5563"
                                             value={formData.reason_for_treatment}
@@ -733,10 +556,10 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                         />
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Condition Being Treated</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Condition Being Treated</Text>
                                         <TextInput
-                                            className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                            style={styles.input}
                                             placeholder="Atopic dermatitis, UTI, arthritis..."
                                             placeholderTextColor="#4B5563"
                                             value={formData.condition_being_treated}
@@ -744,10 +567,10 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                         />
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Prescribed By</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Prescribed By</Text>
                                         <TextInput
-                                            className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                            style={styles.input}
                                             placeholder="Dr. Smith, ABC Veterinary Clinic"
                                             placeholderTextColor="#4B5563"
                                             value={formData.prescribed_by}
@@ -758,17 +581,17 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                             </View>
 
                             {/* Cost */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="cash" size={20} color="#10B981" />
-                                    <Text className="text-white text-lg font-bold">Cost Information</Text>
+                                    <Text style={styles.sectionTitle}>Cost Information</Text>
                                 </View>
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Total Cost</Text>
+                                <View style={styles.card}>
+                                    <View style={styles.row}>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Total Cost</Text>
                                             <TextInput
-                                                className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                                style={styles.input}
                                                 placeholder="45.50"
                                                 keyboardType="numeric"
                                                 placeholderTextColor="#4B5563"
@@ -776,10 +599,10 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                                 onChangeText={(text) => setFormData({ ...formData, total_cost: parseFloat(text) || 0 })}
                                             />
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Currency</Text>
+                                        <View style={styles.halfWidth}>
+                                            <Text style={styles.label}>Currency</Text>
                                             <TextInput
-                                                className="bg-[#1C1C1E] rounded-xl px-4 py-3 text-white"
+                                                style={styles.input}
                                                 value={formData.currency}
                                                 onChangeText={(text) => setFormData({ ...formData, currency: text })}
                                             />
@@ -797,6 +620,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                 minHeight={80}
                             />
 
+                            <View style={{ height: 40 }} />
                         </View>
                     </ScrollView>
                 </View>
@@ -804,3 +628,209 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    modalContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        maxHeight: '90%',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2C2C2E',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2E',
+    },
+    cancelText: {
+        color: '#9CA3AF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    headerTitle: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    saveText: {
+        color: '#0A84FF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    formContent: {
+        padding: 20,
+        gap: 24,
+    },
+    warningBox: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderWidth: 1,
+        borderColor: '#EF4444',
+        borderRadius: 12,
+        padding: 16,
+    },
+    warningHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        marginBottom: 8,
+    },
+    warningTitle: {
+        color: '#EF4444',
+        fontWeight: '700',
+    },
+    warningText: {
+        color: '#EF4444',
+        fontSize: 14,
+        marginBottom: 4,
+    },
+    section: {
+        gap: 12,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    sectionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    card: {
+        backgroundColor: '#2C2C2E',
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+    },
+    fieldGroup: {
+        gap: 8,
+    },
+    label: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    input: {
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    halfWidth: {
+        flex: 1,
+    },
+    chipRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    chipWrap: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    chip: {
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+        backgroundColor: '#1C1C1E',
+    },
+    chipSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    chipText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+    },
+    chipTextSelected: {
+        color: '#FFFFFF',
+    },
+    chipDanger: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderColor: '#EF4444',
+    },
+    chipTextDanger: {
+        color: '#EF4444',
+    },
+    unitChip: {
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 8,
+        backgroundColor: '#1C1C1E',
+        marginRight: 8,
+    },
+    unitChipSelected: {
+        backgroundColor: '#0A84FF',
+    },
+    unitChipText: {
+        color: '#9CA3AF',
+    },
+    unitChipTextSelected: {
+        color: '#FFFFFF',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    severityButton: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#374151',
+    },
+    severityNone: {
+        backgroundColor: '#10B981',
+        borderColor: '#10B981',
+    },
+    severityDanger: {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+        borderColor: '#EF4444',
+    },
+    severityText: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    severityTextNone: {
+        color: '#FFFFFF',
+    },
+    severityTextDanger: {
+        color: '#EF4444',
+    },
+    switchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    switchLabel: {
+        color: '#FFFFFF',
+        fontWeight: '500',
+    },
+});

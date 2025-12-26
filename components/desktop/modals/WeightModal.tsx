@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
 import { usePets } from '@/hooks/usePets';
 import { WeightEntry } from '@/types';
-import { cssInterop } from 'react-native-css-interop';
-
-cssInterop(BlurView, { className: 'style' });
 
 interface WeightModalProps {
     visible: boolean;
@@ -20,11 +16,7 @@ interface WeightModalProps {
 export default function WeightModal({ visible, onClose, petId: initialPetId, existingEntry, onSuccess }: WeightModalProps) {
     const { pets, loading: petsLoading } = usePets();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
-    
-    // Hooks depend on petId, but we might switch pets.
-    // For now, we use the selectedPetId to call actions.
     const { addWeightEntry, updateWeightEntry } = useWeightEntries(selectedPetId);
-    
     const [loading, setLoading] = useState(false);
 
     const [weight, setWeight] = useState('');
@@ -42,7 +34,6 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
                 setWeight(String(existingEntry.weight));
                 setUnit(existingEntry.unit);
                 setDate(existingEntry.date.split('T')[0]);
-                // Time extraction from ISO string if needed
                 setNotes(existingEntry.notes || '');
             } else {
                 setWeight('');
@@ -63,16 +54,11 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
             Alert.alert('Error', 'Please enter a valid weight');
             return;
         }
-        
+
         setLoading(true);
 
         const numericWeight = parseFloat(weight);
-        const entryData = {
-            weight: numericWeight,
-            unit,
-            date, // Should include time ideally
-            notes
-        };
+        const entryData = { weight: numericWeight, unit, date, notes };
 
         let result;
         if (existingEntry) {
@@ -82,7 +68,7 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
         }
 
         setLoading(false);
-        
+
         if (result && !result.error) {
             onSuccess?.();
             onClose();
@@ -95,51 +81,48 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
 
     return (
         <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View className="flex-1 bg-black/60 justify-center items-center p-4 sm:p-6 lg:p-8">
-                <BlurView intensity={20} className="absolute inset-0" />
-                <View className="w-full max-w-xl bg-[#1C1C1E] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-[#2C2C2E]">
-                    {/* Header */}
-                    <View className="flex-row items-center justify-between px-6 py-5 border-b border-[#2C2C2E]">
+            <View style={styles.overlay}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.header}>
                         <TouchableOpacity onPress={onClose}>
-                            <Text className="text-[#9CA3AF] text-base font-medium">Cancel</Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text className="text-white text-lg font-bold">{existingEntry ? 'Edit Weight' : 'Log Weight'}</Text>
+                        <Text style={styles.headerTitle}>{existingEntry ? 'Edit Weight' : 'Log Weight'}</Text>
                         <TouchableOpacity onPress={handleSave} disabled={loading}>
-                            <Text className="text-[#0A84FF] text-lg font-bold">Save</Text>
+                            <Text style={styles.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
 
-                    {/* Form Content */}
-                    <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-                        <View className="space-y-8 pb-8">
-                            
-                            {/* Who is this for? */}
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                        <View style={styles.formContent}>
+
+                            {/* Pet Selector */}
                             {!existingEntry && (
-                                <View>
-                                    <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">WHO IS THIS FOR?</Text>
-                                    <View className="flex-row flex-wrap gap-4">
+                                <View style={styles.section}>
+                                    <Text style={styles.sectionLabel}>WHO IS THIS FOR?</Text>
+                                    <View style={styles.petRow}>
                                         {petsLoading ? (
                                             <ActivityIndicator color="#0A84FF" />
                                         ) : (
                                             pets.map((pet) => (
-                                                <TouchableOpacity 
-                                                    key={pet.id} 
+                                                <TouchableOpacity
+                                                    key={pet.id}
                                                     onPress={() => setSelectedPetId(pet.id)}
-                                                    className="items-center gap-2"
+                                                    style={styles.petItem}
                                                 >
-                                                    <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
+                                                    <View style={[styles.petAvatar, selectedPetId === pet.id && styles.petAvatarSelected]}>
                                                         {pet.image_url ? (
-                                                            <Image source={{ uri: pet.image_url }} className="w-14 h-14 rounded-full" />
+                                                            <Image source={{ uri: pet.image_url }} style={styles.petImage} />
                                                         ) : (
                                                             <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
                                                         )}
                                                         {selectedPetId === pet.id && (
-                                                            <View className="absolute -bottom-1 -right-1 bg-[#22C55E] rounded-full p-0.5 border-2 border-[#1C1C1E]">
+                                                            <View style={styles.checkmark}>
                                                                 <Ionicons name="checkmark" size={12} color="white" />
                                                             </View>
                                                         )}
                                                     </View>
-                                                    <Text className={`text-sm font-medium ${selectedPetId === pet.id ? 'text-[#0A84FF]' : 'text-[#6B7280]'}`}>
+                                                    <Text style={[styles.petName, selectedPetId === pet.id && styles.petNameSelected]}>
                                                         {pet.name}
                                                     </Text>
                                                 </TouchableOpacity>
@@ -150,18 +133,18 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
                             )}
 
                             {/* Weight Details */}
-                            <View>
-                                <View className="flex-row items-center gap-2 mb-4">
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
                                     <Ionicons name="scale" size={20} color="#0A84FF" />
-                                    <Text className="text-white text-lg font-bold">Weight Details</Text>
+                                    <Text style={styles.sectionTitle}>Weight Details</Text>
                                 </View>
-                                
-                                <View className="bg-[#2C2C2E] rounded-2xl p-4 space-y-4">
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Weight</Text>
+
+                                <View style={styles.card}>
+                                    <View style={styles.row}>
+                                        <View style={styles.flex1}>
+                                            <Text style={styles.label}>Weight</Text>
                                             <TextInput
-                                                className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                style={styles.input}
                                                 placeholder="0.00"
                                                 placeholderTextColor="#4B5563"
                                                 keyboardType="decimal-pad"
@@ -169,62 +152,62 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
                                                 onChangeText={setWeight}
                                             />
                                         </View>
-                                        <View className="w-1/3">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Unit</Text>
-                                            <View className="flex-row bg-[#1C1C1E] rounded-xl p-1">
-                                                <TouchableOpacity 
+                                        <View style={styles.unitContainer}>
+                                            <Text style={styles.label}>Unit</Text>
+                                            <View style={styles.unitToggle}>
+                                                <TouchableOpacity
                                                     onPress={() => setUnit('kg')}
-                                                    className={`flex-1 py-2 rounded-lg items-center ${unit === 'kg' ? 'bg-[#3A3A3C]' : ''}`}
+                                                    style={[styles.unitButton, unit === 'kg' && styles.unitButtonSelected]}
                                                 >
-                                                    <Text className={`font-bold ${unit === 'kg' ? 'text-white' : 'text-[#6B7280]'}`}>kg</Text>
+                                                    <Text style={[styles.unitText, unit === 'kg' && styles.unitTextSelected]}>kg</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity 
+                                                <TouchableOpacity
                                                     onPress={() => setUnit('lbs')}
-                                                    className={`flex-1 py-2 rounded-lg items-center ${unit === 'lbs' ? 'bg-[#3A3A3C]' : ''}`}
+                                                    style={[styles.unitButton, unit === 'lbs' && styles.unitButtonSelected]}
                                                 >
-                                                    <Text className={`font-bold ${unit === 'lbs' ? 'text-white' : 'text-[#6B7280]'}`}>lbs</Text>
+                                                    <Text style={[styles.unitText, unit === 'lbs' && styles.unitTextSelected]}>lbs</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
                                     </View>
 
-                                    <View className="flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Date</Text>
-                                            <View className="relative">
+                                    <View style={styles.row}>
+                                        <View style={styles.flex1}>
+                                            <Text style={styles.label}>Date</Text>
+                                            <View style={styles.inputWithIcon}>
                                                 <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                    style={styles.input}
                                                     placeholder="YYYY-MM-DD"
                                                     placeholderTextColor="#4B5563"
                                                     value={date}
                                                     onChangeText={setDate}
                                                 />
-                                                <View className="absolute right-3 top-3.5 pointer-events-none">
+                                                <View style={styles.inputIcon}>
                                                     <Ionicons name="calendar" size={18} color="#6B7280" />
                                                 </View>
                                             </View>
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Time</Text>
-                                            <View className="relative">
+                                        <View style={styles.flex1}>
+                                            <Text style={styles.label}>Time</Text>
+                                            <View style={styles.inputWithIcon}>
                                                 <TextInput
-                                                    className="w-full bg-[#1C1C1E] rounded-xl px-4 py-3 text-white text-base"
+                                                    style={styles.input}
                                                     placeholder="HH:MM"
                                                     placeholderTextColor="#4B5563"
                                                     value={time}
                                                     onChangeText={setTime}
                                                 />
-                                                <View className="absolute right-3 top-3.5 pointer-events-none">
+                                                <View style={styles.inputIcon}>
                                                     <Ionicons name="time" size={18} color="#6B7280" />
                                                 </View>
                                             </View>
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <Text className="text-[#9CA3AF] text-xs font-medium mb-2">Notes</Text>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Notes</Text>
                                         <TextInput
-                                            className="w-full bg-[#1C1C1E] rounded-xl p-4 text-white text-base min-h-[100px]"
+                                            style={[styles.input, styles.textArea]}
                                             placeholder="Additional notes..."
                                             placeholderTextColor="#4B5563"
                                             multiline
@@ -236,6 +219,7 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
                                 </View>
                             </View>
 
+                            <View style={{ height: 40 }} />
                         </View>
                     </ScrollView>
                 </View>
@@ -243,3 +227,185 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    modalContainer: {
+        width: '100%',
+        maxWidth: 500,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        maxHeight: '90%',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2C2C2E',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2C2C2E',
+    },
+    cancelText: {
+        color: '#9CA3AF',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    headerTitle: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    saveText: {
+        color: '#0A84FF',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    formContent: {
+        padding: 20,
+        gap: 24,
+    },
+    section: {
+        gap: 12,
+    },
+    sectionLabel: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 1,
+        marginBottom: 4,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    sectionTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    petRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 16,
+    },
+    petItem: {
+        alignItems: 'center',
+        gap: 8,
+    },
+    petAvatar: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#2C2C2E',
+    },
+    petAvatarSelected: {
+        backgroundColor: '#0A84FF',
+    },
+    petImage: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+    },
+    checkmark: {
+        position: 'absolute',
+        bottom: -4,
+        right: -4,
+        backgroundColor: '#22C55E',
+        borderRadius: 10,
+        padding: 2,
+        borderWidth: 2,
+        borderColor: '#1C1C1E',
+    },
+    petName: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6B7280',
+    },
+    petNameSelected: {
+        color: '#0A84FF',
+    },
+    card: {
+        backgroundColor: '#2C2C2E',
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+    },
+    fieldGroup: {
+        gap: 8,
+    },
+    label: {
+        color: '#9CA3AF',
+        fontSize: 12,
+        fontWeight: '500',
+        marginBottom: 8,
+    },
+    input: {
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: '#FFFFFF',
+        fontSize: 16,
+    },
+    textArea: {
+        minHeight: 100,
+        textAlignVertical: 'top',
+        paddingTop: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    flex1: {
+        flex: 1,
+    },
+    unitContainer: {
+        width: 100,
+    },
+    unitToggle: {
+        flexDirection: 'row',
+        backgroundColor: '#1C1C1E',
+        borderRadius: 12,
+        padding: 4,
+    },
+    unitButton: {
+        flex: 1,
+        paddingVertical: 8,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    unitButtonSelected: {
+        backgroundColor: '#3A3A3C',
+    },
+    unitText: {
+        fontWeight: '700',
+        color: '#6B7280',
+    },
+    unitTextSelected: {
+        color: '#FFFFFF',
+    },
+    inputWithIcon: {
+        position: 'relative',
+    },
+    inputIcon: {
+        position: 'absolute',
+        right: 12,
+        top: 14,
+    },
+});
