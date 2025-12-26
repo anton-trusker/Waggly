@@ -340,6 +340,8 @@ export const designSystem = Object.freeze({
       shadowOpacity: 0.05,
       shadowRadius: 2,
       elevation: 1,
+      // Web compatibility
+      boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.05)',
     },
     md: {
       shadowColor: '#000',
@@ -347,6 +349,8 @@ export const designSystem = Object.freeze({
       shadowOpacity: 0.08,
       shadowRadius: 8,
       elevation: 2,
+      // Web compatibility
+      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
     },
     lg: {
       shadowColor: '#000',
@@ -354,6 +358,8 @@ export const designSystem = Object.freeze({
       shadowOpacity: 0.1,
       shadowRadius: 12,
       elevation: 4,
+      // Web compatibility
+      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
     },
     xl: {
       shadowColor: '#000',
@@ -361,6 +367,8 @@ export const designSystem = Object.freeze({
       shadowOpacity: 0.12,
       shadowRadius: 16,
       elevation: 8,
+      // Web compatibility
+      boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.12)',
     },
   },
 

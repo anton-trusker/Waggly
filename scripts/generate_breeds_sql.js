@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const catPath = path.join(__dirname, '../.trae/documents/all_cat_breeds_comprehensive.csv');
-const dogPath = path.join(__dirname, '../.trae/documents/all_dog_breeds_comprehensive.csv');
-const outPath = path.join(__dirname, '../supabase/migrations/20251219160000_populate_breeds.sql');
+const projectRoot = process.cwd();
+const catPath = path.join(projectRoot, '.trae/documents/all_cat_breeds_comprehensive.csv');
+const dogPath = path.join(projectRoot, '.trae/documents/all_dog_breeds_comprehensive.csv');
+const outPath = path.join(projectRoot, 'supabase/migrations/20251219160000_populate_breeds.sql');
 
 function parseCSV(content) {
   const lines = content.split('\n').filter(l => l.trim());

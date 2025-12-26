@@ -91,6 +91,8 @@ export const commonStyles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
+    // Web compatibility
+    boxShadow: '0px 2px 12px rgba(0, 0, 0, 0.06)',
   },
   input: {
     backgroundColor: colors.card,

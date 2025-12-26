@@ -4,7 +4,7 @@ import { Stack, router, usePathname } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import FloatingTabBarWithPlus, { TabBarItem } from '@/components/layout/FloatingTabBarWithPlus';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, useWindowDimensions } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import AddActionsModal from '@/components/features/actions/AddActionsModal';
 import { useLocale } from '@/hooks/useLocale';
@@ -13,15 +13,19 @@ import { usePets } from '@/hooks/usePets';
 export default function TabLayout() {
   const { user, loading } = useAuth();
   const pathname = usePathname();
+  const { width } = useWindowDimensions();
   const [quickActionVisible, setQuickActionVisible] = useState(false);
   const { t } = useLocale();
   const { pets } = usePets();
 
+  // Desktop detection (>= 1024px)
+  const isDesktop = width >= 1024;
+
   // Define paths where the bottom menu should be hidden
-  const shouldHideTabBar = 
-    pathname.includes('/add-') || 
-    pathname.includes('/edit') || 
-    pathname.includes('/wizard') || 
+  const shouldHideTabBar =
+    pathname.includes('/add-') ||
+    pathname.includes('/edit') ||
+    pathname.includes('/wizard') ||
     pathname.includes('/log-') ||
     pathname.includes('/co-owners');
 
@@ -72,8 +76,8 @@ export default function TabLayout() {
 
   const handleTabPressOverride = (route: string) => {
     if (route === '/(tabs)/pets' && pets && pets.length === 1) {
-       router.push(`/(tabs)/pets/pet-detail?id=${pets[0].id}`);
-       return true; // Handled
+      router.push(`/(tabs)/pets/pet-detail?id=${pets[0].id}`);
+      return true; // Handled
     }
     return false; // Not handled, proceed with default
   };
@@ -92,9 +96,10 @@ export default function TabLayout() {
         <Stack.Screen name="notifications" />
         <Stack.Screen name="profile" />
       </Stack>
-      {!shouldHideTabBar && (
-        <FloatingTabBarWithPlus 
-          tabs={tabs} 
+      {/* Mobile Tab Bar - Hidden on desktop (sidebar shown instead) */}
+      {!shouldHideTabBar && !isDesktop && (
+        <FloatingTabBarWithPlus
+          tabs={tabs}
           onPlusPress={() => setQuickActionVisible(true)}
           onTabPressOverride={handleTabPressOverride}
         />

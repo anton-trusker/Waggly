@@ -10,7 +10,7 @@ import * as Clipboard from 'expo-clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
+import { copyAsync, documentDirectory } from 'expo-file-system';
 
 interface ShareModalProps {
   visible: boolean;
@@ -51,9 +51,9 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
       if (!uri) return;
 
       const fileName = `PetProfile-QR-${generatedShare?.token?.slice(0, 8)}.png`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+      const fileUri = `${documentDirectory}${fileName}`;
 
-      await FileSystem.copyAsync({
+      await copyAsync({
         from: uri,
         to: fileUri,
       });

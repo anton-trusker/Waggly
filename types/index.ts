@@ -12,6 +12,9 @@ export type Pet = Database['public']['Tables']['pets']['Row'] & {
   blood_type?: string;
   address_json?: any; // JSONB
   role?: 'owner' | 'co-owner' | 'viewer';
+  height?: number | null;
+  microchip_implantation_date?: string | null;
+  sterilization_date?: string | null;
 };
 export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'] & {
   type?: 'clinic' | 'emergency' | 'specialist';
