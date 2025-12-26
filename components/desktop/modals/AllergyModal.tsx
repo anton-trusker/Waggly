@@ -117,8 +117,8 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                                     style={styles.petItem}
                                                 >
                                                     <View style={[styles.petAvatar, selectedPetId === pet.id && styles.petAvatarSelected]}>
-                                                        {pet.image_url ? (
-                                                            <Image source={{ uri: pet.image_url }} style={styles.petImage} />
+                                                        {pet.photo_url ? (
+                                                            <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
                                                         ) : (
                                                             <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
                                                         )}
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: '100%',
-        maxWidth: 500,
-        backgroundColor: '#1C1C1E',
+        maxWidth: 700,
+        backgroundColor: '#0F0F10',
         borderRadius: 24,
         maxHeight: '90%',
         overflow: 'hidden',

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform, Alert } from 'react-native';
 import FormModal from '@/components/ui/FormModal';
 import Button from '@/components/ui/Button';
 import Radio from '@/components/ui/Radio';
@@ -8,6 +8,9 @@ import { usePublicShare, SharePreset, PublicShare } from '@/hooks/usePublicShare
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as Clipboard from 'expo-clipboard';
 import QRCode from 'react-native-qrcode-svg';
+import ViewShot from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 
 interface ShareModalProps {
   visible: boolean;
@@ -20,6 +23,7 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
   const [selectedPreset, setSelectedPreset] = useState<SharePreset>('BASIC');
   const [generatedShare, setGeneratedShare] = useState<PublicShare | null>(null);
   const { generateLink, loading } = usePublicShare();
+  const qrRef = useRef<ViewShot>(null);
 
   const handleGenerate = async () => {
     try {
@@ -28,7 +32,7 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
       if (onLinkGenerated) onLinkGenerated();
     } catch (error) {
       console.error('Failed to generate link:', error);
-      // Ideally show toast/alert
+      Alert.alert('Error', 'Failed to generate share link. Please try again.');
     }
   };
 
@@ -36,7 +40,35 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
     if (!generatedShare) return;
     const url = `https://mypawzly.app/share/${generatedShare.token}`;
     await Clipboard.setStringAsync(url);
-    // Show feedback
+    Alert.alert('Success', 'Link copied to clipboard!');
+  };
+
+  const handleDownloadQR = async () => {
+    if (!qrRef.current) return;
+
+    try {
+      const uri = await qrRef.current.capture?.();
+      if (!uri) return;
+
+      const fileName = `PetProfile-QR-${generatedShare?.token?.slice(0, 8)}.png`;
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+
+      await FileSystem.copyAsync({
+        from: uri,
+        to: fileUri,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          dialogTitle: 'Save QR Code',
+        });
+      } else {
+        Alert.alert('Success', 'QR code saved!');
+      }
+    } catch (error) {
+      console.error('Failed to download QR:', error);
+      Alert.alert('Error', 'Failed to download QR code. Please try again.');
+    }
   };
 
   const handleClose = () => {
@@ -73,23 +105,35 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
     >
       {() => generatedShare ? (
         <View style={styles.resultContainer}>
-          <View style={styles.qrContainer}>
-            <QRCode
-              value={`https://mypawzly.app/share/${generatedShare.token}`}
-              size={200}
-            />
-          </View>
+          <ViewShot ref={qrRef} options={{ format: 'png', quality: 1.0 }}>
+            <View style={styles.qrContainer}>
+              <QRCode
+                value={`https://mypawzly.app/share/${generatedShare.token}`}
+                size={200}
+              />
+            </View>
+          </ViewShot>
           <Text style={styles.helperText}>
-            Scan this code or copy the link below to share the pet profile.
+            Scan this code or use the buttons below to share the pet profile.
           </Text>
-          <Button
-            variant="outline"
-            onPress={handleCopyLink}
-            style={styles.copyButton}
-          >
-            <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.primary[500]} />
-            <Text style={styles.copyButtonText}> Copy Link</Text>
-          </Button>
+          <View style={styles.buttonsRow}>
+            <Button
+              variant="outline"
+              onPress={handleCopyLink}
+              style={styles.actionButton}
+            >
+              <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.primary[500]} />
+              <Text style={styles.actionButtonText}> Copy Link</Text>
+            </Button>
+            <Button
+              variant="outline"
+              onPress={handleDownloadQR}
+              style={styles.actionButton}
+            >
+              <IconSymbol android_material_icon_name="download" size={20} color={designSystem.colors.primary[500]} />
+              <Text style={styles.actionButtonText}> Download QR</Text>
+            </Button>
+          </View>
         </View>
       ) : (
         <View style={styles.selectionContainer}>
@@ -165,10 +209,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: '80%',
   },
-  copyButton: {
+  buttonsRow: {
+    flexDirection: 'row',
+    gap: 12,
     width: '100%',
   },
-  copyButtonText: {
+  actionButton: {
+    flex: 1,
+  },
+  actionButtonText: {
     color: designSystem.colors.primary[500],
     fontWeight: '600',
     marginLeft: 8,

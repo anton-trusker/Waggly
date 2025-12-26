@@ -5,6 +5,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import * as Clipboard from 'expo-clipboard';
 import { formatDateFriendly } from '@/utils/dateUtils';
+import ShareDetailsModal from './ShareDetailsModal';
 
 interface ActiveLinksListProps {
   petId: string;
@@ -15,6 +16,8 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
   const { getActiveLinks, revokeLink, loading } = usePublicShare();
   const [links, setLinks] = useState<PublicShare[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedShare, setSelectedShare] = useState<PublicShare | null>(null);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
 
   const fetchLinks = async () => {
     setRefreshing(true);
@@ -29,7 +32,12 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
 
   const handleCopy = async (token: string) => {
     await Clipboard.setStringAsync(`https://mypawzly.app/share/${token}`);
-    // Ideally show toast
+    Alert.alert('Success', 'Link copied to clipboard!');
+  };
+
+  const handleViewDetails = (share: PublicShare) => {
+    setSelectedShare(share);
+    setDetailsModalVisible(true);
   };
 
   const handleRevoke = async (id: string) => {
@@ -66,6 +74,12 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
       <View style={styles.actionsContainer}>
         <Pressable
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+          onPress={() => handleViewDetails(item)}
+        >
+          <IconSymbol android_material_icon_name="visibility" size={20} color={designSystem.colors.primary[500]} />
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
           onPress={() => handleCopy(item.token)}
         >
           <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.text.secondary} />
@@ -93,13 +107,20 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
   }
 
   return (
-    <FlatList
-      data={links}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.listContent}
-      scrollEnabled={false} // Assuming it's nested in a ScrollView
-    />
+    <>
+      <FlatList
+        data={links}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+        scrollEnabled={false} // Assuming it's nested in a ScrollView
+      />
+      <ShareDetailsModal
+        visible={detailsModalVisible}
+        onClose={() => setDetailsModalVisible(false)}
+        share={selectedShare}
+      />
+    </>
   );
 }
 

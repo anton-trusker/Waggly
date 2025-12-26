@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Alert, ActivityIndicator, useWindowDimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Alert, ActivityIndicator, useWindowDimensions, Image, Modal, FlatList, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,6 +7,8 @@ import { useProfile } from '@/hooks/useProfile';
 import { useLocale } from '@/hooks/useLocale';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { COUNTRIES } from '@/constants/countries';
+import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
 
 export default function SettingsPage() {
     const { user, signOut } = useAuth();
@@ -32,7 +34,15 @@ export default function SettingsPage() {
     const [address, setAddress] = useState('');
     const [countryCode, setCountryCode] = useState('');
     const [languageCode, setLanguageCode] = useState('');
+    const [phoneCountryCode, setPhoneCountryCode] = useState('US');
+    const [showCountryPicker, setShowCountryPicker] = useState(false);
+    const [showPhoneCountryPicker, setShowPhoneCountryPicker] = useState(false);
+    const [countrySearch, setCountrySearch] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const [showCityDropdown, setShowCityDropdown] = useState(false);
+
+    // City autocomplete using Google Places JS SDK
+    const cityAutocomplete = useCityAutocomplete(countryCode);
 
     // Notification preferences
     const [emailNotifications, setEmailNotifications] = useState(true);
@@ -45,7 +55,6 @@ export default function SettingsPage() {
         if (profile) {
             setFirstName(profile.first_name || '');
             setLastName(profile.last_name || '');
-            setCountry(profile.country || '');
             setPhotoUrl(profile.photo_url || '');
             setPhone(profile.phone || '');
             setBio(profile.bio || '');
@@ -98,7 +107,7 @@ export default function SettingsPage() {
                     .getPublicUrl(filePath);
 
                 setPhotoUrl(publicUrl);
-                
+
                 // Delete old photo if exists
                 if (profile?.photo_url && profile.photo_url !== publicUrl) {
                     const oldPath = profile.photo_url.split('/').pop();
@@ -122,7 +131,6 @@ export default function SettingsPage() {
         const { error } = await upsertProfile({
             first_name: firstName,
             last_name: lastName,
-            country: country,
             photo_url: photoUrl,
             phone: phone || null,
             bio: bio || null,
@@ -132,8 +140,7 @@ export default function SettingsPage() {
             address: address || null,
             country_code: countryCode || null,
             language_code: languageCode || null,
-            updated_at: new Date().toISOString(),
-        });
+        } as any);
         setSaving(false);
 
         if (error) {
@@ -232,8 +239,8 @@ export default function SettingsPage() {
             <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Sidebar Tabs */}
                 <View style={[styles.sidebar, isMobile && styles.sidebarMobile]}>
-                    <ScrollView 
-                        horizontal={isMobile} 
+                    <ScrollView
+                        horizontal={isMobile}
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={isMobile ? styles.sidebarScrollMobile : undefined}
                     >
@@ -331,7 +338,7 @@ export default function SettingsPage() {
                             {isEditing ? (
                                 <View style={styles.section}>
                                     <Text style={styles.sectionTitle}>Personal Information</Text>
-                                    
+
                                     <View style={[styles.row, isMobile && styles.rowMobile]}>
                                         <View style={[styles.inputGroup, styles.flex1]}>
                                             <Text style={styles.label}>First Name</Text>
@@ -353,36 +360,92 @@ export default function SettingsPage() {
                                         </View>
                                     </View>
 
+                                    <View style={styles.inputGroup}>
+                                        <Text style={styles.label}>Email</Text>
+                                        <View style={styles.emailContainer}>
+                                            <Ionicons name="mail-outline" size={20} color="#6B7280" style={{ marginRight: 10 }} />
+                                            <Text style={styles.emailText}>{user?.email || 'No email set'}</Text>
+                                        </View>
+                                    </View>
+
                                     <View style={styles.row}>
                                         <View style={[styles.inputGroup, styles.flex1]}>
                                             <Text style={styles.label}>Date of Birth</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={dateOfBirth}
-                                                onChangeText={setDateOfBirth}
-                                                placeholder="YYYY-MM-DD"
-                                            />
+                                            {Platform.OS === 'web' ? (
+                                                <input
+                                                    type="date"
+                                                    value={dateOfBirth}
+                                                    onChange={(e) => setDateOfBirth(e.target.value)}
+                                                    style={{
+                                                        height: 48,
+                                                        borderWidth: 1,
+                                                        borderColor: '#E5E7EB',
+                                                        borderRadius: 12,
+                                                        backgroundColor: '#fff',
+                                                        paddingLeft: 16,
+                                                        paddingRight: 16,
+                                                        fontSize: 16,
+                                                        color: '#111827',
+                                                        outline: 'none',
+                                                        border: '1px solid #E5E7EB',
+                                                    }}
+                                                />
+                                            ) : (
+                                                <TextInput
+                                                    style={styles.input}
+                                                    value={dateOfBirth}
+                                                    onChangeText={setDateOfBirth}
+                                                    placeholder="dd/mm/yyyy"
+                                                />
+                                            )}
                                         </View>
                                         <View style={[styles.inputGroup, styles.flex1]}>
                                             <Text style={styles.label}>Gender</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={gender}
-                                                onChangeText={setGender}
-                                                placeholder="male/female/other"
-                                            />
+                                            <View style={styles.genderRow}>
+                                                {['male', 'female', 'other'].map((g) => (
+                                                    <TouchableOpacity
+                                                        key={g}
+                                                        style={[
+                                                            styles.genderChip,
+                                                            gender === g && styles.genderChipActive
+                                                        ]}
+                                                        onPress={() => setGender(g)}
+                                                    >
+                                                        <Text style={[
+                                                            styles.genderText,
+                                                            gender === g && styles.genderTextActive
+                                                        ]}>
+                                                            {g.charAt(0).toUpperCase() + g.slice(1)}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
                                         </View>
                                     </View>
 
                                     <View style={styles.inputGroup}>
                                         <Text style={styles.label}>Phone</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={phone}
-                                            onChangeText={setPhone}
-                                            placeholder="+1234567890"
-                                            keyboardType="phone-pad"
-                                        />
+                                        <View style={styles.phoneRow}>
+                                            <TouchableOpacity
+                                                style={styles.phoneCountryButton}
+                                                onPress={() => setShowPhoneCountryPicker(true)}
+                                            >
+                                                <Text style={styles.phoneFlag}>
+                                                    {COUNTRIES.find(c => c.code === phoneCountryCode)?.flag || '🇺🇸'}
+                                                </Text>
+                                                <Text style={styles.phoneDialCode}>
+                                                    {COUNTRIES.find(c => c.code === phoneCountryCode)?.dialCode || '+1'}
+                                                </Text>
+                                                <Ionicons name="chevron-down" size={16} color="#6B7280" />
+                                            </TouchableOpacity>
+                                            <TextInput
+                                                style={[styles.input, styles.phoneInput]}
+                                                value={phone}
+                                                onChangeText={setPhone}
+                                                placeholder="(555) 123-4567"
+                                                keyboardType="phone-pad"
+                                            />
+                                        </View>
                                     </View>
 
                                     <View style={styles.inputGroup}>
@@ -410,13 +473,64 @@ export default function SettingsPage() {
                                     <View style={styles.row}>
                                         <View style={[styles.inputGroup, styles.flex1]}>
                                             <Text style={styles.label}>Country</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={country}
-                                                onChangeText={setCountry}
-                                                placeholder="United States"
-                                            />
+                                            <TouchableOpacity
+                                                style={styles.dropdownButton}
+                                                onPress={() => setShowCountryPicker(true)}
+                                            >
+                                                <Text style={countryCode ? styles.dropdownText : styles.dropdownPlaceholder}>
+                                                    {countryCode ? `${COUNTRIES.find(c => c.code === countryCode)?.flag} ${COUNTRIES.find(c => c.code === countryCode)?.name}` : 'Select country'}
+                                                </Text>
+                                                <Ionicons name="chevron-down" size={20} color="#6B7280" />
+                                            </TouchableOpacity>
                                         </View>
+                                        <View style={[styles.inputGroup, styles.flex1]}>
+                                            <Text style={styles.label}>City</Text>
+                                            <View style={styles.cityAutocomplete}>
+                                                <View style={styles.cityInputContainer}>
+                                                    <Ionicons name="location-outline" size={18} color="#6B7280" style={{ marginRight: 8 }} />
+                                                    <TextInput
+                                                        style={styles.cityInput}
+                                                        value={cityAutocomplete.query || cityAutocomplete.selectedCity}
+                                                        onChangeText={cityAutocomplete.setQuery}
+                                                        placeholder="Search city..."
+                                                        placeholderTextColor="#9CA3AF"
+                                                        onFocus={() => setShowCityDropdown(true)}
+                                                        onBlur={() => setTimeout(() => setShowCityDropdown(false), 200)}
+                                                    />
+                                                    {cityAutocomplete.loading && (
+                                                        <ActivityIndicator size="small" color="#6366F1" />
+                                                    )}
+                                                    {cityAutocomplete.selectedCity && !cityAutocomplete.loading && (
+                                                        <TouchableOpacity onPress={cityAutocomplete.clearCity}>
+                                                            <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+                                                        </TouchableOpacity>
+                                                    )}
+                                                </View>
+                                                {showCityDropdown && cityAutocomplete.predictions.length > 0 && (
+                                                    <View style={styles.cityDropdown}>
+                                                        {cityAutocomplete.predictions.map((prediction) => (
+                                                            <TouchableOpacity
+                                                                key={prediction.place_id}
+                                                                style={styles.cityDropdownItem}
+                                                                onPress={() => {
+                                                                    cityAutocomplete.selectCity(prediction);
+                                                                    setShowCityDropdown(false);
+                                                                }}
+                                                            >
+                                                                <Ionicons name="location" size={16} color="#6366F1" />
+                                                                <View style={{ flex: 1, marginLeft: 8 }}>
+                                                                    <Text style={styles.cityMainText}>{prediction.main_text}</Text>
+                                                                    <Text style={styles.citySecondaryText}>{prediction.secondary_text}</Text>
+                                                                </View>
+                                                            </TouchableOpacity>
+                                                        ))}
+                                                    </View>
+                                                )}
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.row}>
                                         <View style={[styles.inputGroup, styles.flex1]}>
                                             <Text style={styles.label}>Language</Text>
                                             <View style={styles.languageRow}>
@@ -472,60 +586,60 @@ export default function SettingsPage() {
                                         <Text style={styles.infoLabel}>Full Name</Text>
                                         <Text style={styles.infoValue}>{firstName} {lastName}</Text>
                                     </View>
-                                    
+
                                     {dateOfBirth && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Date of Birth</Text>
                                             <Text style={styles.infoValue}>{dateOfBirth}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {gender && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Gender</Text>
                                             <Text style={styles.infoValue}>{gender}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {phone && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Phone</Text>
                                             <Text style={styles.infoValue}>{phone}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {website && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Website</Text>
                                             <Text style={[styles.infoValue, styles.link]}>{website}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {address && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Address</Text>
                                             <Text style={styles.infoValue}>{address}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {country && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Country</Text>
                                             <Text style={styles.infoValue}>{country}</Text>
                                         </View>
                                     )}
-                                    
+
                                     {languageCode && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Language</Text>
                                             <Text style={styles.infoValue}>
-                                                {languageCode === 'en' ? 'English' : 
-                                                 languageCode === 'es' ? 'Español' : 
-                                                 languageCode === 'fr' ? 'Français' : languageCode}
+                                                {languageCode === 'en' ? 'English' :
+                                                    languageCode === 'es' ? 'Español' :
+                                                        languageCode === 'fr' ? 'Français' : languageCode}
                                             </Text>
                                         </View>
                                     )}
-                                    
+
                                     {bio && (
                                         <View style={styles.infoSection}>
                                             <Text style={styles.infoLabel}>Bio</Text>
@@ -542,7 +656,7 @@ export default function SettingsPage() {
                                     <Text style={styles.changePasswordText}>Change Password</Text>
                                 </TouchableOpacity>
                             </View>
-                            
+
                             {isMobile && (
                                 <View style={{ marginTop: 24 }}>
                                     <TouchableOpacity style={[styles.dangerButton, { justifyContent: 'center', backgroundColor: '#FEF2F2', borderRadius: 12 }]} onPress={handleSignOut}>
@@ -560,7 +674,7 @@ export default function SettingsPage() {
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>General Notifications</Text>
-                                
+
                                 <View style={styles.settingRow}>
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Email Notifications</Text>
@@ -594,7 +708,7 @@ export default function SettingsPage() {
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>Pet Care Reminders</Text>
-                                
+
                                 <View style={styles.settingRow}>
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Health Reminders</Text>
@@ -643,7 +757,7 @@ export default function SettingsPage() {
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>Communication Preferences</Text>
-                                
+
                                 <View style={styles.settingRow}>
                                     <View style={styles.settingInfo}>
                                         <Text style={styles.settingLabel}>Newsletter</Text>
@@ -683,7 +797,7 @@ export default function SettingsPage() {
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>Data Protection</Text>
-                                
+
                                 <View style={styles.privacyItem}>
                                     <Ionicons name="shield-checkmark-outline" size={24} color="#10B981" />
                                     <View style={styles.privacyInfo}>
@@ -717,7 +831,7 @@ export default function SettingsPage() {
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>Account Activity</Text>
-                                
+
                                 <View style={styles.activityItem}>
                                     <View style={styles.activityInfo}>
                                         <Text style={styles.activityLabel}>Last Login</Text>
@@ -744,14 +858,14 @@ export default function SettingsPage() {
                                         </Text>
                                     </View>
                                     <TouchableOpacity style={styles.actionButton} onPress={handleDownloadData}>
-                                         <Text style={styles.actionButtonText}>Download</Text>
-                                     </TouchableOpacity>
+                                        <Text style={styles.actionButtonText}>Download</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
 
                             <View style={styles.section}>
                                 <Text style={styles.subsectionTitle}>Danger Zone</Text>
-                                
+
                                 <TouchableOpacity style={styles.warningButton} onPress={handleSignOutAllDevices}>
                                     <Ionicons name="log-out-outline" size={20} color="#F59E0B" />
                                     <Text style={styles.warningButtonText}>Sign Out of All Devices</Text>
@@ -767,9 +881,182 @@ export default function SettingsPage() {
                 </ScrollView>
             </View>
             {isMobile && <View style={{ height: 80 }} />}
+
+            {/* Country Picker Modal */}
+            <Modal
+                visible={showCountryPicker}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowCountryPicker(false)}
+            >
+                <View style={modalStyles.overlay}>
+                    <View style={modalStyles.content}>
+                        <View style={modalStyles.header}>
+                            <Text style={modalStyles.title}>Select Country</Text>
+                            <TouchableOpacity onPress={() => { setShowCountryPicker(false); setCountrySearch(''); }}>
+                                <Ionicons name="close" size={24} color="#111827" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={modalStyles.searchContainer}>
+                            <Ionicons name="search" size={18} color="#6B7280" />
+                            <TextInput
+                                style={modalStyles.searchInput}
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChangeText={setCountrySearch}
+                            />
+                        </View>
+                        <FlatList
+                            data={COUNTRIES.filter(c =>
+                                c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                                c.code.toLowerCase().includes(countrySearch.toLowerCase())
+                            )}
+                            keyExtractor={(item) => item.code}
+                            style={{ maxHeight: 400 }}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[modalStyles.item, countryCode === item.code && modalStyles.itemSelected]}
+                                    onPress={() => {
+                                        setCountryCode(item.code);
+                                        setShowCountryPicker(false);
+                                        setCountrySearch('');
+                                    }}
+                                >
+                                    <Text style={modalStyles.flag}>{item.flag}</Text>
+                                    <Text style={modalStyles.countryName}>{item.name}</Text>
+                                    {countryCode === item.code && (
+                                        <Ionicons name="checkmark" size={20} color="#6366F1" />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Phone Country Picker Modal */}
+            <Modal
+                visible={showPhoneCountryPicker}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowPhoneCountryPicker(false)}
+            >
+                <View style={modalStyles.overlay}>
+                    <View style={modalStyles.content}>
+                        <View style={modalStyles.header}>
+                            <Text style={modalStyles.title}>Select Country Code</Text>
+                            <TouchableOpacity onPress={() => { setShowPhoneCountryPicker(false); setCountrySearch(''); }}>
+                                <Ionicons name="close" size={24} color="#111827" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={modalStyles.searchContainer}>
+                            <Ionicons name="search" size={18} color="#6B7280" />
+                            <TextInput
+                                style={modalStyles.searchInput}
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChangeText={setCountrySearch}
+                            />
+                        </View>
+                        <FlatList
+                            data={COUNTRIES.filter(c =>
+                                c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                                c.dialCode.includes(countrySearch)
+                            )}
+                            keyExtractor={(item) => item.code}
+                            style={{ maxHeight: 400 }}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[modalStyles.item, phoneCountryCode === item.code && modalStyles.itemSelected]}
+                                    onPress={() => {
+                                        setPhoneCountryCode(item.code);
+                                        setShowPhoneCountryPicker(false);
+                                        setCountrySearch('');
+                                    }}
+                                >
+                                    <Text style={modalStyles.flag}>{item.flag}</Text>
+                                    <Text style={modalStyles.countryName}>{item.name}</Text>
+                                    <Text style={modalStyles.dialCode}>{item.dialCode}</Text>
+                                    {phoneCountryCode === item.code && (
+                                        <Ionicons name="checkmark" size={20} color="#6366F1" />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
+
+const modalStyles = StyleSheet.create({
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+    },
+    content: {
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        width: '100%',
+        maxWidth: 400,
+        maxHeight: '80%',
+        overflow: 'hidden',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E7EB',
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#111827',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F3F4F6',
+        margin: 16,
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        gap: 8,
+    },
+    searchInput: {
+        flex: 1,
+        height: 44,
+        fontSize: 16,
+        color: '#111827',
+    },
+    item: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        gap: 12,
+    },
+    itemSelected: {
+        backgroundColor: '#EEF2FF',
+    },
+    flag: {
+        fontSize: 24,
+    },
+    countryName: {
+        flex: 1,
+        fontSize: 16,
+        color: '#111827',
+    },
+    dialCode: {
+        fontSize: 14,
+        color: '#6B7280',
+    },
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -1010,6 +1297,142 @@ const styles = StyleSheet.create({
     langTextActive: {
         color: '#6366F1',
         fontWeight: '600',
+    },
+    genderRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    genderChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        backgroundColor: '#fff',
+    },
+    genderChipActive: {
+        backgroundColor: '#EEF2FF',
+        borderColor: '#6366F1',
+    },
+    genderText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6B7280',
+    },
+    genderTextActive: {
+        color: '#6366F1',
+        fontWeight: '600',
+    },
+    emailContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 48,
+        paddingHorizontal: 16,
+        backgroundColor: '#F9FAFB',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+    },
+    emailText: {
+        fontSize: 16,
+        color: '#6B7280',
+    },
+    cityAutocomplete: {
+        position: 'relative',
+    },
+    cityInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 48,
+        paddingHorizontal: 16,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+    },
+    cityInput: {
+        flex: 1,
+        fontSize: 16,
+        color: '#111827',
+    },
+    cityDropdown: {
+        position: 'absolute',
+        top: 52,
+        left: 0,
+        right: 0,
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
+        zIndex: 1000,
+    },
+    cityDropdownItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    cityMainText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    citySecondaryText: {
+        fontSize: 12,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    phoneRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    phoneCountryButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 48,
+        paddingHorizontal: 12,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+        gap: 6,
+    },
+    phoneFlag: {
+        fontSize: 18,
+    },
+    phoneDialCode: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    phoneInput: {
+        flex: 1,
+    },
+    dropdownButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 48,
+        paddingHorizontal: 16,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: '#111827',
+    },
+    dropdownPlaceholder: {
+        fontSize: 16,
+        color: '#9CA3AF',
     },
     textArea: {
         height: 100,

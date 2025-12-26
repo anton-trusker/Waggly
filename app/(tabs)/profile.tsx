@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { Image } from 'react-native';
+import { usePets } from '@/hooks/usePets';
 import AppHeader from '@/components/layout/AppHeader';
 import LanguageSelect from '@/components/ui/LanguageSelect';
 import { useLocale } from '@/hooks/useLocale';
@@ -22,7 +23,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
-  const { profile } = useProfile();
+  const { profile, loading } = useProfile();
+  const { pets } = usePets();
   const { t, locale, setLocale } = useLocale();
 
   const handleSignOut = () => {
@@ -51,6 +53,26 @@ export default function ProfileScreen() {
     );
   };
 
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    } catch {
+      return null;
+    }
+  };
+
+  const getMemberSince = () => {
+    if (profile?.created_at) {
+      return formatDate(profile.created_at);
+    }
+    if (user?.created_at) {
+      return formatDate(user.created_at);
+    }
+    return null;
+  };
+
   if (loading) {
     return (
       <View style={[styles.container, styles.loading]}>
@@ -58,6 +80,9 @@ export default function ProfileScreen() {
       </View>
     );
   }
+
+  const memberSince = getMemberSince();
+  const fullName = (profile?.first_name || '') + (profile?.last_name ? ` ${profile?.last_name}` : '');
 
   return (
     <View style={styles.container}>
@@ -67,101 +92,148 @@ export default function ProfileScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header} />
-
+        {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.avatarContainer}>
             {profile?.photo_url ? (
               <Image source={{ uri: profile.photo_url }} style={styles.avatarImage} />
             ) : (
               <Text style={styles.avatarText}>
-                {user?.email?.charAt(0).toUpperCase() || 'U'}
+                {profile?.first_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
               </Text>
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.editAvatarButton}
               onPress={() => router.push('/(tabs)/profile/edit')}
             >
               <Ionicons name="camera" size={16} color="#fff" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.name}>
-            {(profile?.first_name || '') + (profile?.last_name ? ` ${profile?.last_name}` : '')}
-          </Text>
+
+          <Text style={styles.name}>{fullName || 'Your Name'}</Text>
           <Text style={styles.email}>{user?.email}</Text>
-          
-          {profile?.address && (
-            <View style={styles.locationContainer}>
-              <Ionicons name="location-outline" size={14} color={designSystem.colors.text.secondary} />
-              <Text style={styles.locationText}>{profile.address}</Text>
+
+          {/* Location info */}
+          {(profile?.address || profile?.country) && (
+            <View style={styles.locationRow}>
+              <Ionicons name="location-outline" size={14} color="#9CA3AF" />
+              <Text style={styles.locationText}>
+                {profile?.address || profile?.country}
+              </Text>
             </View>
           )}
-          
-          {profile?.country && (
-            <View style={styles.countryContainer}>
-              <Text style={styles.countryText}>🌍 {profile.country}</Text>
+
+          {/* Bio */}
+          {profile?.bio && (
+            <Text style={styles.bioText}>{profile.bio}</Text>
+          )}
+        </View>
+
+        {/* Stats Row */}
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Ionicons name="paw" size={24} color="#0A84FF" />
+            <Text style={styles.statValue}>{pets?.length || 0}</Text>
+            <Text style={styles.statLabel}>Pets</Text>
+          </View>
+          {memberSince && (
+            <View style={styles.statItem}>
+              <Ionicons name="calendar-outline" size={24} color="#10B981" />
+              <Text style={styles.statValue}>{memberSince}</Text>
+              <Text style={styles.statLabel}>Member Since</Text>
+            </View>
+          )}
+          {profile?.phone && (
+            <View style={styles.statItem}>
+              <Ionicons name="call-outline" size={24} color="#8B5CF6" />
+              <Text style={styles.statValue} numberOfLines={1}>{profile.phone}</Text>
+              <Text style={styles.statLabel}>Phone</Text>
             </View>
           )}
         </View>
 
+        {/* Account Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/edit')}>
-            <Text style={styles.menuItemText}>{t('profile.edit_profile')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="person-outline" size={20} color="#0A84FF" />
+              <Text style={styles.menuItemText}>{t('profile.edit_profile')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/co-owners')}>
-            <Text style={styles.menuItemText}>{t('profile.co_owners')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="people-outline" size={20} color="#10B981" />
+              <Text style={styles.menuItemText}>{t('profile.co_owners')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/notifications')}>
-            <Text style={styles.menuItemText}>{t('profile.notifications_settings')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="notifications-outline" size={20} color="#F59E0B" />
+              <Text style={styles.menuItemText}>{t('profile.notifications_settings')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(tabs)/profile/settings/appearance')}>
-            <Text style={styles.menuItemText}>Appearance</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="color-palette-outline" size={20} color="#8B5CF6" />
+              <Text style={styles.menuItemText}>Appearance</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <View style={styles.menuItem}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="language-outline" size={20} color="#EC4899" />
               <Text style={styles.menuItemText}>{t('common.language')}</Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ width: 140 }}>
               <LanguageSelect value={locale} onChange={setLocale} />
             </View>
           </View>
-
-          {/* Privacy & Security removed */}
         </View>
 
+        {/* Support Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('support.title')}</Text>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuItemText}>{t('support.help_center')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="help-circle-outline" size={20} color="#6B7280" />
+              <Text style={styles.menuItemText}>{t('support.help_center')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuItemText}>{t('support.terms_of_service')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="document-text-outline" size={20} color="#6B7280" />
+              <Text style={styles.menuItemText}>{t('support.terms_of_service')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuItemText}>{t('support.privacy_policy')}</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="shield-checkmark-outline" size={20} color="#6B7280" />
+              <Text style={styles.menuItemText}>{t('support.privacy_policy')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#6B7280" />
           </TouchableOpacity>
         </View>
 
+        {/* Sign Out */}
         <TouchableOpacity
           style={styles.signOutButton}
           onPress={handleSignOut}
         >
+          <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
           <Text style={styles.signOutText}>{t('profile.sign_out')}</Text>
         </TouchableOpacity>
 
@@ -184,13 +256,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: getSpacing(5),
     paddingBottom: getSpacing(30),
   },
-  header: {
-    marginBottom: getSpacing(6),
-  },
-  title: {
-    ...designSystem.typography.headline.small,
-    color: designSystem.colors.text.primary,
-  },
   loading: {
     flex: 1,
     justifyContent: 'center',
@@ -198,16 +263,15 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     backgroundColor: getColor('background.secondary'),
-    borderRadius: designSystem.borderRadius.lg,
+    borderRadius: 20,
     padding: getSpacing(6),
     alignItems: 'center',
-    marginBottom: getSpacing(6),
-    ...designSystem.shadows.sm,
+    marginBottom: getSpacing(4),
   },
   avatarContainer: {
     width: 100,
     height: 100,
-    borderRadius: designSystem.borderRadius.full,
+    borderRadius: 50,
     backgroundColor: designSystem.colors.primary[500],
     alignItems: 'center',
     justifyContent: 'center',
@@ -217,18 +281,19 @@ const styles = StyleSheet.create({
   avatarImage: {
     width: '100%',
     height: '100%',
-    borderRadius: designSystem.borderRadius.full,
+    borderRadius: 50,
   },
   avatarText: {
-    ...designSystem.typography.display.small,
-    color: designSystem.colors.text.inverse,
+    fontSize: 40,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   editAvatarButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
     backgroundColor: designSystem.colors.primary[600],
-    borderRadius: designSystem.borderRadius.full,
+    borderRadius: 16,
     width: 32,
     height: 32,
     justifyContent: 'center',
@@ -236,78 +301,104 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: designSystem.colors.background.primary,
   },
-  email: {
-    ...designSystem.typography.body.medium,
-    color: designSystem.colors.text.primary,
-    fontWeight: '500',
-  },
   name: {
-    ...designSystem.typography.title.large,
+    fontSize: 24,
+    fontWeight: '700',
     color: designSystem.colors.text.primary,
-    marginBottom: getSpacing(1),
-    fontWeight: '600',
+    marginBottom: 4,
   },
-  locationContainer: {
+  email: {
+    fontSize: 15,
+    color: designSystem.colors.text.secondary,
+    marginBottom: 8,
+  },
+  locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: getSpacing(2),
-    marginBottom: getSpacing(1),
+    gap: 4,
+    marginTop: 4,
   },
   locationText: {
-    ...designSystem.typography.body.small,
+    fontSize: 14,
+    color: '#9CA3AF',
+  },
+  bioText: {
+    fontSize: 14,
     color: designSystem.colors.text.secondary,
-    marginLeft: getSpacing(1),
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 20,
   },
-  countryContainer: {
-    marginTop: getSpacing(1),
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: getColor('background.secondary'),
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: getSpacing(6),
+    justifyContent: 'space-around',
   },
-  countryText: {
-    ...designSystem.typography.body.small,
+  statItem: {
+    alignItems: 'center',
+    gap: 4,
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: designSystem.colors.text.primary,
+  },
+  statLabel: {
+    fontSize: 12,
     color: designSystem.colors.text.secondary,
   },
   section: {
     marginBottom: getSpacing(6),
   },
   sectionTitle: {
-    ...designSystem.typography.title.medium,
-    color: designSystem.colors.text.primary,
+    fontSize: 13,
+    fontWeight: '600',
+    color: designSystem.colors.text.secondary,
     marginBottom: getSpacing(3),
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: getColor('background.secondary'),
-    borderRadius: designSystem.borderRadius.md,
-    padding: designSystem.spacing[4],
-    marginBottom: designSystem.spacing[2],
-    ...designSystem.shadows.sm,
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 8,
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   menuItemText: {
-    ...designSystem.typography.body.medium,
+    fontSize: 16,
     color: designSystem.colors.text.primary,
   },
-  menuItemArrow: {
-    ...designSystem.typography.title.medium,
-    color: getColor('text.secondary'),
-  },
   signOutButton: {
-    backgroundColor: designSystem.colors.error[500],
-    borderRadius: designSystem.borderRadius.md,
-    padding: designSystem.spacing[4],
+    flexDirection: 'row',
+    backgroundColor: '#EF4444',
+    borderRadius: 14,
+    padding: 16,
     alignItems: 'center',
-    marginTop: getSpacing(6),
-    ...designSystem.shadows.sm,
+    justifyContent: 'center',
+    marginTop: getSpacing(4),
+    gap: 8,
   },
   signOutText: {
-    ...designSystem.typography.label.medium,
-    color: designSystem.colors.text.inverse,
+    fontSize: 16,
     fontWeight: '600',
+    color: '#FFFFFF',
   },
   version: {
-    ...designSystem.typography.label.small,
+    fontSize: 13,
     color: designSystem.colors.text.secondary,
     textAlign: 'center',
-    marginTop: designSystem.spacing[6],
+    marginTop: 24,
   },
 });

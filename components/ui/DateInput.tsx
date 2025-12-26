@@ -21,7 +21,7 @@ function toISO(ddmmyyyy: string): string | null {
 function toDisplay(iso?: string): string {
   if (!iso || !isDateYYYYMMDD(iso)) return '';
   const [y, m, d] = iso.split('-');
-  return `${d}-${m}-${y}`;
+  return `${d}/${m}/${y}`;
 }
 
 export default function DateInput({ value, onChange, label = 'Date of birth' }: Props) {
@@ -56,7 +56,7 @@ export default function DateInput({ value, onChange, label = 'Date of birth' }: 
       <View style={styles.row}>
         <TextInput
           style={styles.input}
-          placeholder="dd-mm-yyyy"
+          placeholder="dd/mm/yyyy"
           placeholderTextColor={designSystem.colors.text.tertiary}
           value={text}
           onChangeText={onTextChange}
@@ -81,15 +81,15 @@ export default function DateInput({ value, onChange, label = 'Date of birth' }: 
 
 const styles = StyleSheet.create({
   container: { marginBottom: getSpacing(4) },
-  label: { 
-    ...designSystem.typography.label.small, 
-    color: designSystem.colors.text.secondary, 
+  label: {
+    ...designSystem.typography.label.small,
+    color: designSystem.colors.text.secondary,
     marginBottom: getSpacing(1.5),
   },
-  row: { 
-    flexDirection: 'row', 
-    gap: getSpacing(2), 
-    alignItems: 'center' 
+  row: {
+    flexDirection: 'row',
+    gap: getSpacing(2),
+    alignItems: 'center'
   },
   input: {
     flex: 1,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: designSystem.colors.background.primary,
   },
-  icon: { 
+  icon: {
     fontSize: designSystem.iconSizes.md,
     lineHeight: designSystem.iconSizes.md,
   },

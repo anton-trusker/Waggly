@@ -346,8 +346,8 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: '100%',
-        maxWidth: 500,
-        backgroundColor: '#1C1C1E',
+        maxWidth: 700,
+        backgroundColor: '#0F0F10',
         borderRadius: 24,
         maxHeight: '90%',
         overflow: 'hidden',

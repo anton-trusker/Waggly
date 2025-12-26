@@ -6,12 +6,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
 import OverviewTab from './overview';
-import HealthTab from './health';
-import AlbumTab from './album';
+import PassportTab from './passport';
 import DocumentsTab from './documents';
+import HistoryTab from './history';
 import ShareModal from '@/components/sharing/ShareModal';
 import ActiveLinksList from '@/components/sharing/ActiveLinksList';
 import Button from '@/components/ui/Button';
+import EditPetModal from '@/components/pet/EditPetModal';
 
 export default function PetDetailsPage() {
     const router = useRouter();
@@ -20,9 +21,10 @@ export default function PetDetailsPage() {
     const { pets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
-    const [activeTab, setActiveTab] = useState<'overview' | 'health' | 'album' | 'documents' | 'share'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'documents' | 'share' | 'history'>('overview');
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
+    const [editProfileModalVisible, setEditProfileModalVisible] = useState(false);
 
     const pet = pets.find(p => p.id === petId);
 
@@ -79,7 +81,7 @@ export default function PetDetailsPage() {
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
                         {/* Sticky Tabs Header (simulated placement) */}
                         <View style={styles.mobileTabs}>
-                            {['Overview', 'Health', 'Album', 'Documents'].map((tab) => {
+                            {['Overview', 'Passport', 'Documents', 'Share', 'History'].map((tab) => {
                                 const key = tab.toLowerCase() as any;
                                 const isActive = activeTab === key;
                                 return (
@@ -141,9 +143,9 @@ export default function PetDetailsPage() {
                         {/* Tab Content */}
                         <View style={{ paddingBottom: 100 }}>
                             {activeTab === 'overview' && <OverviewTab />}
-                            {activeTab === 'health' && <HealthTab />}
-                            {activeTab === 'album' && <AlbumTab />}
+                            {activeTab === 'passport' && <PassportTab />}
                             {activeTab === 'documents' && <DocumentsTab />}
+                            {activeTab === 'history' && <HistoryTab />}
                         </View>
                     </ScrollView>
                 </>
@@ -191,19 +193,21 @@ export default function PetDetailsPage() {
                             </View>
                         </View>
                         <View style={styles.headerActions}>
-                            <TouchableOpacity style={styles.shareButton} onPress={() => setShareModalVisible(true)}>
-                                <Ionicons name="share-outline" size={20} color="#374151" />
-                                <Text style={styles.shareButtonText}>Share Profile</Text>
-                            </TouchableOpacity>
                             {canEdit && (
-                                <TouchableOpacity
+                                <Button
+                                    variant="outline"
+                                    onPress={() => setEditProfileModalVisible(true)}
                                     style={styles.editButton}
-                                    onPress={() => router.push(`/web/pets/${petId}/edit` as any)}
                                 >
-                                    <Ionicons name="create-outline" size={20} color="#374151" />
-                                    <Text style={styles.editButtonText}>Edit</Text>
-                                </TouchableOpacity>
+                                    Edit Profile
+                                </Button>
                             )}
+                            <Button
+                                onPress={() => setShareModalVisible(true)}
+                                style={styles.shareButton}
+                            >
+                                <Text style={styles.shareButtonText}>Share Profile</Text>
+                            </Button>
                         </View>
                     </View>
 
@@ -218,11 +222,11 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'health' && styles.tabActive]}
-                            onPress={() => setActiveTab('health')}
+                            style={[styles.tab, activeTab === 'passport' && styles.tabActive]}
+                            onPress={() => setActiveTab('passport')}
                         >
-                            <Text style={[styles.tabText, activeTab === 'health' && styles.tabTextActive]}>
-                                Health
+                            <Text style={[styles.tabText, activeTab === 'passport' && styles.tabTextActive]}>
+                                Passport
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -241,13 +245,20 @@ export default function PetDetailsPage() {
                                 Share
                             </Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'history' && styles.tabActive]}
+                            onPress={() => setActiveTab('history')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}>
+                                History
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Desktop Tab Content */}
                     <ScrollView style={styles.tabContent}>
                         {activeTab === 'overview' && <OverviewTab />}
-                        {activeTab === 'health' && <HealthTab />}
-                        {activeTab === 'album' && <AlbumTab />}
+                        {activeTab === 'passport' && <PassportTab />}
                         {activeTab === 'documents' && <DocumentsTab />}
                         {activeTab === 'share' && (
                             <View style={{ padding: 32 }}>
@@ -258,15 +269,22 @@ export default function PetDetailsPage() {
                                 <ActiveLinksList petId={petId} refreshTrigger={shareRefreshTrigger} />
                             </View>
                         )}
+                        {activeTab === 'history' && <HistoryTab />}
                     </ScrollView>
                 </>
             )}
-            
-            <ShareModal 
-                visible={shareModalVisible} 
-                onClose={() => setShareModalVisible(false)} 
+
+            <ShareModal
+                visible={shareModalVisible}
+                onClose={() => setShareModalVisible(false)}
                 petId={petId}
                 onLinkGenerated={() => setShareRefreshTrigger(prev => prev + 1)}
+            />
+
+            <EditPetModal
+                visible={editProfileModalVisible}
+                onClose={() => setEditProfileModalVisible(false)}
+                petId={petId}
             />
         </View>
     );

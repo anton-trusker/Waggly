@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Platform, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Platform, StyleSheet, Modal as RNModal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface UniversalDatePickerProps {
   label?: string;
-  value: string; // ISO date string or datetime string
+  value: string; // ISO date string (YYYY-MM-DD) or time string (HH:MM)
   onChange: (value: string) => void;
   mode?: 'date' | 'time' | 'datetime';
   required?: boolean;
@@ -27,24 +26,29 @@ export default function UniversalDatePicker({
   maxDate,
 }: UniversalDatePickerProps) {
   const [showPicker, setShowPicker] = useState(false);
-  const [tempDate, setTempDate] = useState(value ? new Date(value) : new Date());
+  const inputRef = useRef<any>(null);
 
   const formatDisplayValue = () => {
     if (!value) return '';
 
     try {
+      if (mode === 'time') {
+        // Value is HH:MM format
+        const [hours, minutes] = value.split(':');
+        const h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hour12 = h % 12 || 12;
+        return `${hour12}:${minutes} ${ampm}`;
+      }
+
       const date = new Date(value);
+      if (isNaN(date.getTime())) return value;
 
       if (mode === 'date') {
         return date.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           year: 'numeric',
-        });
-      } else if (mode === 'time') {
-        return date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
         });
       } else {
         return date.toLocaleString('en-US', {
@@ -60,30 +64,63 @@ export default function UniversalDatePicker({
     }
   };
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-    }
-
-    if (selectedDate) {
-      setTempDate(selectedDate);
-
-      if (mode === 'date') {
-        onChange(selectedDate.toISOString().split('T')[0]);
-      } else if (mode === 'time') {
-        const hours = selectedDate.getHours().toString().padStart(2, '0');
-        const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
-        onChange(`${hours}:${minutes}`);
-      } else {
-        onChange(selectedDate.toISOString());
-      }
+  const handleWebChange = (e: any) => {
+    const newValue = e.target?.value || e.nativeEvent?.text;
+    if (newValue) {
+      onChange(newValue);
     }
   };
 
-  const handleDone = () => {
-    setShowPicker(false);
+  const getInputType = () => {
+    if (mode === 'time') return 'time';
+    if (mode === 'datetime') return 'datetime-local';
+    return 'date';
   };
 
+  // For web, use native HTML5 input
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.container}>
+        {label && (
+          <Text style={styles.label}>
+            {label}
+            {required && <Text style={styles.required}> *</Text>}
+          </Text>
+        )}
+
+        <View style={[styles.webInputWrapper, error && styles.webInputWrapperError]}>
+          <Ionicons
+            name={mode === 'time' ? 'time-outline' : 'calendar-outline'}
+            size={18}
+            color="#9CA3AF"
+            style={styles.webIcon}
+          />
+          <input
+            type={getInputType()}
+            value={value || ''}
+            onChange={handleWebChange}
+            min={minDate?.toISOString().split('T')[0]}
+            max={maxDate?.toISOString().split('T')[0]}
+            style={{
+              flex: 1,
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: value ? '#FFFFFF' : '#4B5563',
+              fontSize: 16,
+              fontFamily: 'inherit',
+              padding: 0,
+              cursor: 'pointer',
+            }}
+          />
+        </View>
+
+        {error && <Text style={styles.errorText}>{error}</Text>}
+      </View>
+    );
+  }
+
+  // For native (iOS/Android), use TouchableOpacity + Modal with DateTimePicker
   return (
     <View style={styles.container}>
       {label && (
@@ -110,11 +147,16 @@ export default function UniversalDatePicker({
 
       {error && <Text style={styles.errorText}>{error}</Text>}
 
-      {/* Native Date/Time Picker */}
-      {showPicker && (
-        <View style={styles.pickerContainer}>
-          {Platform.OS === 'ios' ? (
-            <View style={styles.iosPickerWrapper}>
+      {/* Native Modal Picker for iOS/Android */}
+      {showPicker && Platform.OS !== 'web' && (
+        <RNModal
+          transparent
+          visible={showPicker}
+          animationType="slide"
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
               <View style={styles.pickerHeader}>
                 <TouchableOpacity onPress={() => setShowPicker(false)}>
                   <Text style={styles.cancelButton}>Cancel</Text>
@@ -122,32 +164,29 @@ export default function UniversalDatePicker({
                 <Text style={styles.pickerTitle}>
                   Select {mode === 'datetime' ? 'Date & Time' : mode === 'time' ? 'Time' : 'Date'}
                 </Text>
-                <TouchableOpacity onPress={handleDone}>
+                <TouchableOpacity onPress={() => setShowPicker(false)}>
                   <Text style={styles.doneButton}>Done</Text>
                 </TouchableOpacity>
               </View>
-              <DateTimePicker
-                value={tempDate}
-                mode={mode === 'datetime' ? 'datetime' : mode}
-                display="spinner"
-                onChange={handleDateChange}
-                minimumDate={minDate}
-                maximumDate={maxDate}
-                textColor="#FFFFFF"
-                style={styles.picker}
-              />
+
+              {/* Native picker would go here - using TextInput fallback for now */}
+              <View style={styles.manualInputContainer}>
+                <Text style={styles.manualInputLabel}>
+                  Enter {mode === 'time' ? 'time (HH:MM)' : 'date (YYYY-MM-DD)'}:
+                </Text>
+                <TextInput
+                  ref={inputRef}
+                  style={styles.manualInput}
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={mode === 'time' ? '12:00' : '2024-12-25'}
+                  placeholderTextColor="#4B5563"
+                  autoFocus
+                />
+              </View>
             </View>
-          ) : (
-            <DateTimePicker
-              value={tempDate}
-              mode={mode === 'datetime' ? 'date' : mode}
-              display="default"
-              onChange={handleDateChange}
-              minimumDate={minDate}
-              maximumDate={maxDate}
-            />
-          )}
-        </View>
+          </View>
+        </RNModal>
       )}
     </View>
   );
@@ -155,11 +194,11 @@ export default function UniversalDatePicker({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 0,
   },
   label: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#9CA3AF',
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -174,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C1C1E',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     gap: 12,
     borderWidth: 1,
     borderColor: '#2C2C2E',
@@ -191,22 +230,39 @@ const styles = StyleSheet.create({
     color: '#4B5563',
   },
   errorText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#EF4444',
-    marginTop: 4,
+    marginTop: 6,
   },
-  pickerContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1000,
-  },
-  iosPickerWrapper: {
+  // Web-specific styles
+  webInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#1C1C1E',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingBottom: 20,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#2C2C2E',
+    gap: 12,
+  },
+  webInputWrapperError: {
+    borderColor: '#EF4444',
+  },
+  webIcon: {
+    marginRight: 4,
+  },
+  // Modal styles for native
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#1C1C1E',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 40,
   },
   pickerHeader: {
     flexDirection: 'row',
@@ -217,7 +273,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#2C2C2E',
   },
   pickerTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     color: '#FFFFFF',
   },
@@ -230,7 +286,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0A84FF',
   },
-  picker: {
-    height: 200,
+  manualInputContainer: {
+    padding: 24,
+  },
+  manualInputLabel: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    marginBottom: 12,
+  },
+  manualInput: {
+    backgroundColor: '#2C2C2E',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 18,
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
 });

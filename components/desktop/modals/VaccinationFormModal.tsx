@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import PetSelector from './shared/PetSelector';
+import { RefVaccine, calculateNextDueDate } from '@/hooks/useReferenceData';
+import VaccineSelector from './shared/VaccineSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
-import RichTextInput from './shared/RichTextInput';
 
 interface VaccinationFormModalProps {
     visible: boolean;
@@ -15,44 +14,30 @@ interface VaccinationFormModalProps {
     onSuccess?: () => void;
 }
 
-const COMMON_VACCINES = ['Rabies', 'DHPP', 'Bordetella', 'Leptospirosis', 'Lyme', 'FVRCP', 'FeLV', 'Canine Influenza'];
-const ADMINISTRATION_ROUTES = ['Subcutaneous', 'Intramuscular', 'Intranasal', 'Oral'];
-const VACCINATION_TYPES = ['Core', 'Non-Core', 'Optional'];
-const REACTION_SEVERITIES = ['None', 'Mild', 'Moderate', 'Severe', 'Anaphylaxis'];
-const COMMON_REACTIONS = ['Swelling at injection site', 'Lethargy', 'Fever', 'Vomiting', 'Diarrhea', 'Itching', 'Difficulty Breathing', 'Loss of Appetite'];
-
 export default function VaccinationFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VaccinationFormModalProps) {
-    const { pets } = usePets();
+    const { pets, loading: petsLoading } = usePets();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
     const [loading, setLoading] = useState(false);
 
-    const [formData, setFormData] = useState({
-        vaccine_name: '',
-        date_given: new Date().toISOString().split('T')[0],
-        administered_time: '',
-        next_due_date: '',
-        manufacturer: '',
-        batch_number: '',
-        lot_number: '',
-        route_of_administration: 'Subcutaneous',
-        administered_by: '',
-        vaccination_type: 'Core',
-        schedule_interval: '1 Year',
-        clinic_name: '',
-        clinic_address: '',
-        clinic_phone: '',
-        cost: 0,
-        currency: 'EUR',
-        payment_method: '',
-        insurance_provider: '',
-        reaction_severity: 'None',
-        reactions: [] as string[],
-        reaction_notes: '',
-        reminder_enabled: true,
-        reminder_days_before: 7,
-        reminder_methods: ['app'] as string[],
-        notes: '',
-    });
+    // Get species of selected pet for filtering vaccines
+    const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
+    const petSpecies = selectedPet?.species || 'dog';
+
+    // Vaccine from reference table
+    const [selectedVaccine, setSelectedVaccine] = useState<RefVaccine | null>(null);
+    const [customVaccineName, setCustomVaccineName] = useState('');
+
+    // Form state
+    const [dateGiven, setDateGiven] = useState(new Date().toISOString().split('T')[0]);
+    const [nextDueDate, setNextDueDate] = useState('');
+    const [clinicName, setClinicName] = useState('');
+    const [clinicAddress, setClinicAddress] = useState('');
+    const [vetName, setVetName] = useState('');
+    const [batchNumber, setBatchNumber] = useState('');
+    const [cost, setCost] = useState('');
+    const [currency, setCurrency] = useState('EUR');
+    const [reminderEnabled, setReminderEnabled] = useState(true);
+    const [notes, setNotes] = useState('');
 
     useEffect(() => {
         if (initialPetId) {
@@ -62,96 +47,43 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         }
     }, [initialPetId, pets, selectedPetId]);
 
+    // Auto-calculate next due date when vaccine or date changes
+    useEffect(() => {
+        if (selectedVaccine && dateGiven) {
+            const calculatedDate = calculateNextDueDate(dateGiven, selectedVaccine.booster_interval);
+            if (calculatedDate) {
+                setNextDueDate(calculatedDate);
+            }
+        }
+    }, [selectedVaccine, dateGiven]);
+
     const resetForm = () => {
-        setFormData({
-            vaccine_name: '',
-            date_given: new Date().toISOString().split('T')[0],
-            administered_time: '',
-            next_due_date: '',
-            manufacturer: '',
-            batch_number: '',
-            lot_number: '',
-            route_of_administration: 'Subcutaneous',
-            administered_by: '',
-            vaccination_type: 'Core',
-            schedule_interval: '1 Year',
-            clinic_name: '',
-            clinic_address: '',
-            clinic_phone: '',
-            cost: 0,
-            currency: 'EUR',
-            payment_method: '',
-            insurance_provider: '',
-            reaction_severity: 'None',
-            reactions: [],
-            reaction_notes: '',
-            reminder_enabled: true,
-            reminder_days_before: 7,
-            reminder_methods: ['app'],
-            notes: '',
-        });
+        setSelectedVaccine(null);
+        setCustomVaccineName('');
+        setDateGiven(new Date().toISOString().split('T')[0]);
+        setNextDueDate('');
+        setClinicName('');
+        setClinicAddress('');
+        setVetName('');
+        setBatchNumber('');
+        setCost('');
+        setCurrency('EUR');
+        setReminderEnabled(true);
+        setNotes('');
         if (!initialPetId && pets.length > 0) {
             setSelectedPetId(pets[0].id);
         }
     };
 
-    const toggleReaction = (reaction: string) => {
-        if (formData.reactions.includes(reaction)) {
-            setFormData({ ...formData, reactions: formData.reactions.filter(r => r !== reaction) });
-        } else {
-            setFormData({ ...formData, reactions: [...formData.reactions, reaction] });
-        }
-    };
-
-    const toggleReminderMethod = (method: string) => {
-        if (formData.reminder_methods.includes(method)) {
-            setFormData({ ...formData, reminder_methods: formData.reminder_methods.filter(m => m !== method) });
-        } else {
-            setFormData({ ...formData, reminder_methods: [...formData.reminder_methods, method] });
-        }
-    };
-
-    const handleRepeatLast = async () => {
-        if (!selectedPetId) return;
-        setLoading(true);
-        try {
-            const { data } = await supabase
-                .from('vaccinations')
-                .select('*')
-                .eq('pet_id', selectedPetId)
-                .order('date_given', { ascending: false })
-                .limit(1)
-                .single();
-
-            if (data) {
-                setFormData(prev => ({
-                    ...prev,
-                    vaccine_name: data.name || prev.vaccine_name,
-                    manufacturer: data.manufacturer || prev.manufacturer,
-                    route_of_administration: data.route_of_administration || prev.route_of_administration,
-                    vaccination_type: data.vaccination_type || prev.vaccination_type,
-                    clinic_name: data.clinic_name || prev.clinic_name,
-                    clinic_address: data.clinic_address || prev.clinic_address,
-                    currency: data.currency || prev.currency,
-                }));
-                Alert.alert('Auto-Filled', 'Details from the last vaccination have been applied.');
-            } else {
-                Alert.alert('Info', 'No previous vaccinations found.');
-            }
-        } catch (err) {
-            console.log(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSubmit = async () => {
+        const vaccineName = selectedVaccine?.vaccine_name || customVaccineName;
+
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
             return;
         }
-        if (!formData.vaccine_name) {
-            Alert.alert('Error', 'Please enter vaccine name');
+        if (!vaccineName) {
+            Alert.alert('Error', 'Please select or enter a vaccine name');
             return;
         }
 
@@ -159,31 +91,14 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         try {
             const vaccinationData = {
                 pet_id: selectedPetId,
-                name: formData.vaccine_name,
-                date_given: formData.date_given,
-                administered_time: formData.administered_time || null,
-                next_due_date: formData.reminder_enabled ? (formData.next_due_date || null) : null,
-                manufacturer: formData.manufacturer || null,
-                batch_number: formData.batch_number || null,
-                lot_number: formData.lot_number || null,
-                route_of_administration: formData.route_of_administration,
-                administered_by: formData.administered_by || null,
-                vaccination_type: formData.vaccination_type,
-                schedule_interval: formData.schedule_interval || null,
-                clinic_name: formData.clinic_name || null,
-                clinic_address: formData.clinic_address || null,
-                clinic_phone: formData.clinic_phone || null,
-                cost: formData.cost || null,
-                currency: formData.currency,
-                payment_method: formData.payment_method || null,
-                insurance_provider: formData.insurance_provider || null,
-                reaction_severity: formData.reaction_severity,
-                reactions: formData.reactions.length > 0 ? formData.reactions : null,
-                reaction_notes: formData.reaction_notes || null,
-                reminder_enabled: formData.reminder_enabled,
-                reminder_days_before: formData.reminder_days_before,
-                reminder_methods: formData.reminder_methods,
-                notes: formData.notes || null,
+                name: vaccineName,
+                date: dateGiven,
+                next_due_date: reminderEnabled ? (nextDueDate || null) : null,
+                provider: vetName || clinicName || null,
+                batch_number: batchNumber || null,
+                cost: cost ? parseFloat(cost) : null,
+                currency: currency,
+                notes: notes || null,
             };
 
             const { error } = await supabase
@@ -203,6 +118,12 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         }
     };
 
+    const getTypeBadgeColor = (type: string | null) => {
+        if (type === 'core') return '#10B981';
+        if (type === 'non-core') return '#F59E0B';
+        return '#6B7280';
+    };
+
     if (!visible) return null;
 
     return (
@@ -211,12 +132,16 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                 <View style={styles.modalContainer}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={onClose}>
+                        <TouchableOpacity onPress={onClose} style={styles.headerButton}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
                         <Text style={styles.headerTitle}>Add Vaccination</Text>
-                        <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text style={styles.saveText}>Save</Text>
+                        <TouchableOpacity onPress={handleSubmit} disabled={loading} style={styles.headerButton}>
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#0A84FF" />
+                            ) : (
+                                <Text style={styles.saveText}>Save</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -224,309 +149,200 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                     <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
                         <View style={styles.formContent}>
 
-                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
-
-                            <TouchableOpacity onPress={handleRepeatLast} style={styles.repeatButton}>
-                                <Ionicons name="reload" size={16} color="#0A84FF" />
-                                <Text style={styles.repeatButtonText}>Repeat Last Vaccination</Text>
-                            </TouchableOpacity>
+                            {/* Pet Selector */}
+                            <View style={styles.section}>
+                                <Text style={styles.sectionLabel}>WHO IS THIS FOR?</Text>
+                                <View style={styles.petRow}>
+                                    {petsLoading ? (
+                                        <ActivityIndicator color="#0A84FF" />
+                                    ) : (
+                                        pets.map((pet) => (
+                                            <TouchableOpacity
+                                                key={pet.id}
+                                                onPress={() => {
+                                                    setSelectedPetId(pet.id);
+                                                    setSelectedVaccine(null); // Reset vaccine when pet changes
+                                                }}
+                                                style={styles.petItem}
+                                            >
+                                                <View style={[styles.petAvatar, selectedPetId === pet.id && styles.petAvatarSelected]}>
+                                                    {pet.photo_url ? (
+                                                        <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
+                                                    ) : (
+                                                        <Ionicons name="paw" size={28} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
+                                                    )}
+                                                    {selectedPetId === pet.id && (
+                                                        <View style={styles.checkmark}>
+                                                            <Ionicons name="checkmark" size={10} color="white" />
+                                                        </View>
+                                                    )}
+                                                </View>
+                                                <Text style={[styles.petName, selectedPetId === pet.id && styles.petNameSelected]}>
+                                                    {pet.name}
+                                                </Text>
+                                                <Text style={styles.petSpecies}>{pet.species}</Text>
+                                            </TouchableOpacity>
+                                        ))
+                                    )}
+                                </View>
+                            </View>
 
                             {/* Vaccine Details */}
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Ionicons name="medkit" size={20} color="#0A84FF" />
+                                    <Ionicons name="medkit" size={20} color="#9333EA" />
                                     <Text style={styles.sectionTitle}>Vaccine Details</Text>
                                 </View>
 
                                 <View style={styles.card}>
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Vaccine Name *</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="e.g. Rabies, DHPP"
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.vaccine_name}
-                                            onChangeText={(text) => setFormData({ ...formData, vaccine_name: text })}
-                                        />
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
-                                            <View style={styles.chipRow}>
-                                                {COMMON_VACCINES.map(v => (
-                                                    <TouchableOpacity
-                                                        key={v}
-                                                        onPress={() => setFormData({ ...formData, vaccine_name: v })}
-                                                        style={[styles.chip, formData.vaccine_name === v && styles.chipSelected]}
-                                                    >
-                                                        <Text style={[styles.chipText, formData.vaccine_name === v && styles.chipTextSelected]}>{v}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        </ScrollView>
-                                    </View>
+                                    <VaccineSelector
+                                        species={petSpecies}
+                                        selectedVaccine={selectedVaccine}
+                                        onSelect={setSelectedVaccine}
+                                        customName={customVaccineName}
+                                        onCustomNameChange={setCustomVaccineName}
+                                    />
 
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Vaccination Type</Text>
-                                        <View style={styles.buttonRow}>
-                                            {VACCINATION_TYPES.map(type => (
-                                                <TouchableOpacity
-                                                    key={type}
-                                                    onPress={() => setFormData({ ...formData, vaccination_type: type })}
-                                                    style={[styles.typeButton, formData.vaccination_type === type && styles.typeButtonSelected]}
-                                                >
-                                                    <Text style={[styles.typeButtonText, formData.vaccination_type === type && styles.typeButtonTextSelected]}>
-                                                        {type}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                    {/* Type Badge */}
+                                    {selectedVaccine?.vaccine_type && (
+                                        <View style={styles.vaccineMeta}>
+                                            <View style={[styles.typeBadge, { backgroundColor: getTypeBadgeColor(selectedVaccine.vaccine_type) + '20' }]}>
+                                                <Text style={[styles.typeBadgeText, { color: getTypeBadgeColor(selectedVaccine.vaccine_type) }]}>
+                                                    {selectedVaccine.vaccine_type.toUpperCase()}
+                                                </Text>
+                                            </View>
+                                            {selectedVaccine.booster_interval && (
+                                                <Text style={styles.boosterText}>
+                                                    Booster every {selectedVaccine.booster_interval}
+                                                </Text>
+                                            )}
                                         </View>
-                                    </View>
+                                    )}
 
                                     <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
+                                        <View style={styles.flex1}>
                                             <UniversalDatePicker
-                                                label="Date Given"
-                                                value={formData.date_given}
-                                                onChange={(text) => setFormData({ ...formData, date_given: text })}
+                                                label="Date Administered"
+                                                value={dateGiven}
+                                                onChange={setDateGiven}
                                                 mode="date"
                                             />
                                         </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Time</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="HH:MM"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.administered_time}
-                                                onChangeText={(text) => setFormData({ ...formData, administered_time: text })}
-                                            />
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Manufacturer</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="Pfizer, Merck, etc."
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.manufacturer}
-                                                onChangeText={(text) => setFormData({ ...formData, manufacturer: text })}
-                                            />
-                                        </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Batch/Lot #</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="Optional"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.batch_number}
-                                                onChangeText={(text) => setFormData({ ...formData, batch_number: text })}
-                                            />
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Route of Administration</Text>
-                                        <View style={styles.chipRow}>
-                                            {ADMINISTRATION_ROUTES.map(route => (
-                                                <TouchableOpacity
-                                                    key={route}
-                                                    onPress={() => setFormData({ ...formData, route_of_administration: route })}
-                                                    style={[styles.chip, formData.route_of_administration === route && styles.chipSelected]}
-                                                >
-                                                    <Text style={[styles.chipText, formData.route_of_administration === route && styles.chipTextSelected]}>
-                                                        {route}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Administered By</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Dr. Smith, Veterinary Technician, etc."
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.administered_by}
-                                            onChangeText={(text) => setFormData({ ...formData, administered_by: text })}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* Reactions */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="warning" size={20} color="#EF4444" />
-                                    <Text style={styles.sectionTitle}>Reactions (if any)</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.buttonRow}>
-                                        {REACTION_SEVERITIES.map(severity => (
-                                            <TouchableOpacity
-                                                key={severity}
-                                                onPress={() => setFormData({ ...formData, reaction_severity: severity })}
-                                                style={[
-                                                    styles.severityButton,
-                                                    formData.reaction_severity === severity && (severity === 'None' ? styles.severityNone : styles.severityDanger)
-                                                ]}
-                                            >
-                                                <Text style={[
-                                                    styles.severityText,
-                                                    formData.reaction_severity === severity && (severity === 'None' ? styles.severityTextNone : styles.severityTextDanger)
-                                                ]}>
-                                                    {severity}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))}
-                                    </View>
-
-                                    {formData.reaction_severity !== 'None' && (
-                                        <>
-                                            <View style={styles.fieldGroup}>
-                                                <Text style={styles.label}>Symptoms Observed</Text>
-                                                <View style={styles.chipWrap}>
-                                                    {COMMON_REACTIONS.map(reaction => (
-                                                        <TouchableOpacity
-                                                            key={reaction}
-                                                            onPress={() => toggleReaction(reaction)}
-                                                            style={[styles.chip, formData.reactions.includes(reaction) && styles.chipDanger]}
-                                                        >
-                                                            <Text style={[styles.chipText, formData.reactions.includes(reaction) && styles.chipTextDanger]}>
-                                                                {reaction}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </View>
-
-                                            <RichTextInput
-                                                label="Reaction Details"
-                                                placeholder="Describe the reaction..."
-                                                value={formData.reaction_notes}
-                                                onChangeText={(text) => setFormData({ ...formData, reaction_notes: text })}
-                                                minHeight={60}
-                                            />
-                                        </>
-                                    )}
-                                </View>
-                            </View>
-
-                            {/* Reminders */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="notifications" size={20} color="#F59E0B" />
-                                    <Text style={styles.sectionTitle}>Reminders</Text>
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.switchRow}>
-                                        <Text style={styles.switchLabel}>Enable Reminder</Text>
-                                        <Switch
-                                            value={formData.reminder_enabled}
-                                            onValueChange={(val) => setFormData({ ...formData, reminder_enabled: val })}
-                                            trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
-                                        />
-                                    </View>
-
-                                    {formData.reminder_enabled && (
-                                        <>
+                                        <View style={styles.flex1}>
                                             <UniversalDatePicker
                                                 label="Next Due Date"
-                                                value={formData.next_due_date}
-                                                onChange={(text) => setFormData({ ...formData, next_due_date: text })}
+                                                value={nextDueDate}
+                                                onChange={setNextDueDate}
                                                 mode="date"
-                                                minDate={new Date()}
                                             />
-
-                                            <View style={styles.fieldGroup}>
-                                                <Text style={styles.label}>Remind me before</Text>
-                                                <View style={styles.buttonRow}>
-                                                    {[7, 14, 30].map(days => (
-                                                        <TouchableOpacity
-                                                            key={days}
-                                                            onPress={() => setFormData({ ...formData, reminder_days_before: days })}
-                                                            style={[styles.daysButton, formData.reminder_days_before === days && styles.daysButtonSelected]}
-                                                        >
-                                                            <Text style={[styles.daysButtonText, formData.reminder_days_before === days && styles.daysButtonTextSelected]}>
-                                                                {days} days
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </View>
-
-                                            <View style={styles.fieldGroup}>
-                                                <Text style={styles.label}>Notification Methods</Text>
-                                                <View style={styles.buttonRow}>
-                                                    {['App', 'Email', 'SMS'].map(method => (
-                                                        <TouchableOpacity
-                                                            key={method}
-                                                            onPress={() => toggleReminderMethod(method.toLowerCase())}
-                                                            style={[styles.methodButton, formData.reminder_methods.includes(method.toLowerCase()) && styles.methodButtonSelected]}
-                                                        >
-                                                            <Text style={[styles.methodButtonText, formData.reminder_methods.includes(method.toLowerCase()) && styles.methodButtonTextSelected]}>
-                                                                {method}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </View>
-                                        </>
-                                    )}
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
 
-                            {/* Provider & Cost */}
+                            {/* Clinic Details */}
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Ionicons name="location" size={20} color="#EC4899" />
-                                    <Text style={styles.sectionTitle}>Provider & Cost</Text>
+                                    <Ionicons name="business" size={20} color="#0A84FF" />
+                                    <Text style={styles.sectionTitle}>Clinic Details</Text>
                                 </View>
+
                                 <View style={styles.card}>
                                     <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Clinic Name</Text>
+                                        <Text style={styles.label}>Clinic / Vet Name</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Veterinary clinic"
+                                            placeholder="Enter clinic or vet name..."
                                             placeholderTextColor="#4B5563"
-                                            value={formData.clinic_name}
-                                            onChangeText={(text) => setFormData({ ...formData, clinic_name: text })}
+                                            value={clinicName}
+                                            onChangeText={setClinicName}
+                                        />
+                                    </View>
+
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={styles.label}>Address</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Clinic address..."
+                                            placeholderTextColor="#4B5563"
+                                            value={clinicAddress}
+                                            onChangeText={setClinicAddress}
                                         />
                                     </View>
 
                                     <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
+                                        <View style={styles.flex1}>
                                             <Text style={styles.label}>Cost</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="0.00"
-                                                keyboardType="numeric"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.cost.toString()}
-                                                onChangeText={(text) => setFormData({ ...formData, cost: parseFloat(text) || 0 })}
-                                            />
+                                            <View style={styles.costRow}>
+                                                <TextInput
+                                                    style={[styles.input, styles.costInput]}
+                                                    placeholder="0.00"
+                                                    placeholderTextColor="#4B5563"
+                                                    keyboardType="decimal-pad"
+                                                    value={cost}
+                                                    onChangeText={setCost}
+                                                />
+                                                <View style={styles.currencySelector}>
+                                                    {['EUR', 'USD', 'GBP'].map(c => (
+                                                        <TouchableOpacity
+                                                            key={c}
+                                                            style={[styles.currencyButton, currency === c && styles.currencyButtonActive]}
+                                                            onPress={() => setCurrency(c)}
+                                                        >
+                                                            <Text style={[styles.currencyText, currency === c && styles.currencyTextActive]}>
+                                                                {c === 'EUR' ? '€' : c === 'USD' ? '$' : '£'}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    ))}
+                                                </View>
+                                            </View>
                                         </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Currency</Text>
+                                        <View style={styles.flex1}>
+                                            <Text style={styles.label}>Batch/Lot Number</Text>
                                             <TextInput
                                                 style={styles.input}
-                                                value={formData.currency}
-                                                onChangeText={(text) => setFormData({ ...formData, currency: text })}
+                                                placeholder="ABC123"
+                                                placeholderTextColor="#4B5563"
+                                                value={batchNumber}
+                                                onChangeText={setBatchNumber}
                                             />
                                         </View>
                                     </View>
+                                </View>
+                            </View>
+
+                            {/* Reminder */}
+                            <View style={styles.section}>
+                                <View style={styles.reminderRow}>
+                                    <View style={styles.reminderLeft}>
+                                        <Ionicons name="notifications" size={20} color="#F59E0B" />
+                                        <Text style={styles.reminderText}>Set reminder for next dose</Text>
+                                    </View>
+                                    <Switch
+                                        value={reminderEnabled}
+                                        onValueChange={setReminderEnabled}
+                                        trackColor={{ false: '#3A3A3C', true: '#0A84FF' }}
+                                        thumbColor="#FFFFFF"
+                                    />
                                 </View>
                             </View>
 
                             {/* Notes */}
-                            <RichTextInput
-                                label="Additional Notes"
-                                placeholder="Any other details..."
-                                value={formData.notes}
-                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                                minHeight={80}
-                            />
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
+                                    <Ionicons name="document-text" size={20} color="#6B7280" />
+                                    <Text style={styles.sectionTitle}>Notes</Text>
+                                </View>
+                                <TextInput
+                                    style={[styles.input, styles.textArea]}
+                                    placeholder="Add any additional notes..."
+                                    placeholderTextColor="#4B5563"
+                                    multiline
+                                    textAlignVertical="top"
+                                    value={notes}
+                                    onChangeText={setNotes}
+                                />
+                            </View>
 
                             <View style={{ height: 40 }} />
                         </View>
@@ -540,20 +356,20 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
     },
     modalContainer: {
         width: '100%',
-        maxWidth: 500,
-        backgroundColor: '#1C1C1E',
+        maxWidth: 700,
+        backgroundColor: '#0F0F10',
         borderRadius: 24,
-        maxHeight: '90%',
+        maxHeight: '92%',
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: '#2C2C2E',
+        borderColor: '#1C1C1E',
     },
     header: {
         flexDirection: 'row',
@@ -562,7 +378,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#2C2C2E',
+        borderBottomColor: '#1C1C1E',
+        backgroundColor: '#0F0F10',
+    },
+    headerButton: {
+        minWidth: 60,
     },
     cancelText: {
         color: '#9CA3AF',
@@ -571,54 +391,46 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         color: '#FFFFFF',
-        fontSize: 17,
+        fontSize: 18,
         fontWeight: '700',
     },
     saveText: {
         color: '#0A84FF',
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: '700',
+        textAlign: 'right',
     },
     scrollView: {
         flex: 1,
     },
     formContent: {
-        padding: 20,
-        gap: 24,
-    },
-    repeatButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        backgroundColor: '#2C2C2E',
-        paddingVertical: 12,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#374151',
-    },
-    repeatButtonText: {
-        color: '#0A84FF',
-        fontWeight: '500',
+        padding: 24,
+        gap: 28,
     },
     section: {
         gap: 12,
     },
+    sectionLabel: {
+        color: '#6B7280',
+        fontSize: 11,
+        fontWeight: '700',
+        letterSpacing: 1.5,
+    },
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
     },
     sectionTitle: {
         color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
     },
     card: {
-        backgroundColor: '#2C2C2E',
+        backgroundColor: '#1C1C1E',
         borderRadius: 16,
-        padding: 16,
-        gap: 16,
+        padding: 20,
+        gap: 20,
     },
     fieldGroup: {
         gap: 8,
@@ -626,151 +438,150 @@ const styles = StyleSheet.create({
     label: {
         color: '#9CA3AF',
         fontSize: 12,
-        fontWeight: '500',
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     input: {
-        backgroundColor: '#1C1C1E',
+        backgroundColor: '#2C2C2E',
         borderRadius: 12,
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: 14,
         color: '#FFFFFF',
         fontSize: 16,
+        borderWidth: 1,
+        borderColor: '#3C3C3E',
+    },
+    textArea: {
+        minHeight: 100,
+        textAlignVertical: 'top',
+        paddingTop: 14,
     },
     row: {
         flexDirection: 'row',
         gap: 16,
     },
-    halfWidth: {
+    flex1: {
         flex: 1,
     },
-    chipScroll: {
+    petRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 16,
         marginTop: 8,
     },
-    chipRow: {
+    petItem: {
+        alignItems: 'center',
+        gap: 6,
+    },
+    petAvatar: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#2C2C2E',
+        borderWidth: 2,
+        borderColor: 'transparent',
+    },
+    petAvatarSelected: {
+        backgroundColor: '#0A84FF',
+        borderColor: '#0A84FF',
+    },
+    petImage: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+    },
+    checkmark: {
+        position: 'absolute',
+        bottom: -2,
+        right: -2,
+        backgroundColor: '#22C55E',
+        borderRadius: 8,
+        padding: 2,
+        borderWidth: 2,
+        borderColor: '#0F0F10',
+    },
+    petName: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#6B7280',
+    },
+    petNameSelected: {
+        color: '#0A84FF',
+    },
+    petSpecies: {
+        fontSize: 11,
+        color: '#4B5563',
+        textTransform: 'capitalize',
+    },
+    vaccineMeta: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginTop: -8,
+    },
+    typeBadge: {
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 8,
+    },
+    typeBadgeText: {
+        fontSize: 11,
+        fontWeight: '700',
+        letterSpacing: 0.5,
+    },
+    boosterText: {
+        fontSize: 13,
+        color: '#6B7280',
+    },
+    costRow: {
         flexDirection: 'row',
         gap: 8,
-        flexWrap: 'wrap',
     },
-    chipWrap: {
+    costInput: {
+        flex: 1,
+    },
+    currencySelector: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
+        backgroundColor: '#2C2C2E',
+        borderRadius: 12,
+        padding: 4,
     },
-    chip: {
+    currencyButton: {
         paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#374151',
-        backgroundColor: '#1C1C1E',
-    },
-    chipSelected: {
-        backgroundColor: '#0A84FF',
-        borderColor: '#0A84FF',
-    },
-    chipText: {
-        color: '#9CA3AF',
-        fontSize: 12,
-    },
-    chipTextSelected: {
-        color: '#FFFFFF',
-    },
-    chipDanger: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderColor: '#EF4444',
-    },
-    chipTextDanger: {
-        color: '#EF4444',
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    typeButton: {
-        flex: 1,
         paddingVertical: 10,
-        alignItems: 'center',
         borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#374151',
     },
-    typeButtonSelected: {
+    currencyButtonActive: {
         backgroundColor: '#0A84FF',
-        borderColor: '#0A84FF',
     },
-    typeButtonText: {
-        color: '#9CA3AF',
+    currencyText: {
         fontSize: 14,
-        fontWeight: '500',
+        fontWeight: '700',
+        color: '#6B7280',
     },
-    typeButtonTextSelected: {
+    currencyTextActive: {
         color: '#FFFFFF',
     },
-    severityButton: {
-        flex: 1,
-        paddingVertical: 10,
-        alignItems: 'center',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#374151',
-    },
-    severityNone: {
-        backgroundColor: '#10B981',
-        borderColor: '#10B981',
-    },
-    severityDanger: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderColor: '#EF4444',
-    },
-    severityText: {
-        color: '#9CA3AF',
-        fontSize: 12,
-        fontWeight: '500',
-    },
-    severityTextNone: {
-        color: '#FFFFFF',
-    },
-    severityTextDanger: {
-        color: '#EF4444',
-    },
-    switchRow: {
+    reminderRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    switchLabel: {
-        color: '#FFFFFF',
-        fontWeight: '500',
-    },
-    daysButton: {
-        flex: 1,
-        paddingVertical: 10,
-        alignItems: 'center',
-        borderRadius: 8,
         backgroundColor: '#1C1C1E',
-    },
-    daysButtonSelected: {
-        backgroundColor: '#0A84FF',
-    },
-    daysButtonText: {
-        color: '#9CA3AF',
-    },
-    daysButtonTextSelected: {
-        color: '#FFFFFF',
-    },
-    methodButton: {
+        borderRadius: 14,
         paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 8,
-        backgroundColor: '#1C1C1E',
+        paddingVertical: 14,
     },
-    methodButtonSelected: {
-        backgroundColor: '#0A84FF',
+    reminderLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
     },
-    methodButtonText: {
-        color: '#9CA3AF',
-    },
-    methodButtonTextSelected: {
+    reminderText: {
+        fontSize: 15,
+        fontWeight: '500',
         color: '#FFFFFF',
     },
 });
