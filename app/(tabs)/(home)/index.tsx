@@ -91,16 +91,11 @@ export default function DashboardPage() {
                                     </TouchableOpacity>
                                 </View>
                             ) : (
-                                <ScrollView
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    contentContainerStyle={styles.petsScrollContent}
-                                    style={styles.petsScroll}
-                                >
+                                <View style={styles.petsGrid}>
                                     {pets.map((pet) => (
-                                        <PetCardDesktop key={pet.id} pet={pet} />
+                                        <PetCardCompact key={pet.id} pet={pet} />
                                     ))}
-                                </ScrollView>
+                                </View>
                             )}
                         </View>
 
