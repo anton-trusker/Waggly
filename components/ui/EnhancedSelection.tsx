@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInput, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Platform } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/styles/commonStyles';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -46,15 +47,15 @@ export default function EnhancedSelection({
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const selectedOption = useMemo(() => 
-    options.find(opt => opt.id === value || opt.label === value), 
-  [value, options]);
+  const selectedOption = useMemo(() =>
+    options.find(opt => opt.id === value || opt.label === value),
+    [value, options]);
 
   const filteredOptions = useMemo(() => {
     if (!searchQuery) return options;
     const query = searchQuery.toLowerCase();
-    return options.filter(opt => 
-      opt.label.toLowerCase().includes(query) || 
+    return options.filter(opt =>
+      opt.label.toLowerCase().includes(query) ||
       opt.subLabel?.toLowerCase().includes(query) ||
       opt.category?.toLowerCase().includes(query)
     );
@@ -70,13 +71,13 @@ export default function EnhancedSelection({
     <View style={styles.container}>
       <View style={styles.labelContainer}>
         {icon && icon !== 'chevron.down' && (
-           <IconSymbol
-             ios_icon_name={icon as any}
-             android_material_icon_name={mapAndroidIcon(icon)}
-             size={16}
-             color={designSystem.colors.text.secondary}
-             style={styles.labelIcon}
-           />
+          <IconSymbol
+            ios_icon_name={icon as any}
+            android_material_icon_name={mapAndroidIcon(icon)}
+            size={16}
+            color={designSystem.colors.text.secondary}
+            style={styles.labelIcon}
+          />
         )}
         <Text style={styles.label}>
           {label}
@@ -94,17 +95,17 @@ export default function EnhancedSelection({
         disabled={disabled}
       >
         <Text style={[
-          styles.valueText, 
+          styles.valueText,
           !selectedOption && styles.placeholderText,
           disabled && styles.disabledText
         ]}>
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
-        <IconSymbol 
-            ios_icon_name="chevron.down" 
-            android_material_icon_name="keyboard-arrow-down" 
-            size={20} 
-            color={colors.textSecondary} 
+        <IconSymbol
+          ios_icon_name="chevron.down"
+          android_material_icon_name="keyboard-arrow-down"
+          size={20}
+          color={colors.textSecondary}
         />
       </TouchableOpacity>
 
@@ -117,60 +118,61 @@ export default function EnhancedSelection({
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>{label}</Text>
-                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-                         <IconSymbol ios_icon_name="xmark.circle.fill" android_material_icon_name="close" size={24} color={colors.textSecondary} />
-                    </TouchableOpacity>
-                </View>
-
-                {searchable && (
-                    <View style={styles.searchContainer}>
-                        <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            autoCorrect={false}
-                        />
-                    </View>
-                )}
-
-                <FlatList
-                    data={filteredOptions}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity 
-                            style={[
-                                styles.optionItem,
-                                selectedOption?.id === item.id && styles.selectedOption
-                            ]}
-                            onPress={() => handleSelect(item)}
-                        >
-                            <View style={{ flex: 1 }}>
-                                <Text style={[
-                                    styles.optionLabel,
-                                    selectedOption?.id === item.id && styles.selectedOptionText
-                                ]}>{item.label}</Text>
-                                {item.subLabel && (
-                                    <Text style={styles.optionSubLabel}>{item.subLabel}</Text>
-                                )}
-                            </View>
-                            {selectedOption?.id === item.id && (
-                                <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={20} color={colors.primary} />
-                            )}
-                        </TouchableOpacity>
-                    )}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    ListEmptyComponent={
-                        <View style={styles.emptyState}>
-                            <Text style={styles.emptyText}>No options found</Text>
-                        </View>
-                    }
-                />
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{label}</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                <IconSymbol ios_icon_name="xmark.circle.fill" android_material_icon_name="close" size={24} color={colors.textSecondary} />
+              </TouchableOpacity>
             </View>
+
+            {searchable && (
+              <View style={styles.searchContainer}>
+                <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={18} color={colors.textSecondary} style={{ marginRight: 8 }} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  autoCorrect={false}
+                />
+              </View>
+            )}
+
+            <FlashList
+              data={filteredOptions}
+              keyExtractor={item => item.id}
+              estimatedItemSize={56}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.optionItem,
+                    selectedOption?.id === item.id && styles.selectedOption
+                  ]}
+                  onPress={() => handleSelect(item)}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={[
+                      styles.optionLabel,
+                      selectedOption?.id === item.id && styles.selectedOptionText
+                    ]}>{item.label}</Text>
+                    {item.subLabel && (
+                      <Text style={styles.optionSubLabel}>{item.subLabel}</Text>
+                    )}
+                  </View>
+                  {selectedOption?.id === item.id && (
+                    <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={20} color={colors.primary} />
+                  )}
+                </TouchableOpacity>
+              )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ListEmptyComponent={
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyText}>No options found</Text>
+                </View>
+              }
+            />
+          </View>
         </View>
       </Modal>
     </View>

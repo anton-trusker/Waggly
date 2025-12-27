@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/styles/commonStyles';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -33,8 +34,8 @@ export default function SearchableSelect({
   const filteredItems = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
-    return items.filter((item) => 
-      item.label.toLowerCase().includes(q) || 
+    return items.filter((item) =>
+      item.label.toLowerCase().includes(q) ||
       item.value.toLowerCase().includes(q)
     );
   }, [query, items]);
@@ -44,10 +45,10 @@ export default function SearchableSelect({
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{t(label, { defaultValue: label })}</Text>}
-      <TouchableOpacity 
-        style={styles.input} 
-        onPress={() => setOpen(true)} 
-        accessibilityRole="button" 
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => setOpen(true)}
+        accessibilityRole="button"
         accessibilityLabel={t('open_selector', { defaultValue: `Open ${label} selector`, label })}
       >
         {selected ? (
@@ -71,9 +72,10 @@ export default function SearchableSelect({
               value={query}
               onChangeText={setQuery}
             />
-            <FlatList
+            <FlashList
               data={filteredItems}
               keyExtractor={(item) => item.value}
+              estimatedItemSize={52}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.option}
@@ -88,10 +90,10 @@ export default function SearchableSelect({
               )}
               keyboardShouldPersistTaps="handled"
             />
-            <TouchableOpacity 
-              style={styles.closeBtn} 
-              onPress={() => setOpen(false)} 
-              accessibilityRole="button" 
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={() => setOpen(false)}
+              accessibilityRole="button"
               accessibilityLabel={t('close_selector', { defaultValue: 'Close selector' })}
             >
               <Text style={styles.closeText}>{t('common.close', { defaultValue: 'Close' })}</Text>

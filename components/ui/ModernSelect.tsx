@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 
@@ -53,7 +54,7 @@ export default function ModernSelect({ label, placeholder, value, options, onCha
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
-                         {searchable ? (
+                        {searchable ? (
                             <View style={styles.searchContainer}>
                                 <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={20} color={designSystem.colors.text.tertiary} />
                                 <TextInput
@@ -71,9 +72,10 @@ export default function ModernSelect({ label, placeholder, value, options, onCha
                             <Text style={styles.closeText}>Close</Text>
                         </TouchableOpacity>
                     </View>
-                    <FlatList
+                    <FlashList
                         data={filteredOptions}
                         keyExtractor={item => item.value}
+                        estimatedItemSize={65}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={styles.optionItem}
