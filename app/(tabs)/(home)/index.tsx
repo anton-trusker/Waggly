@@ -1,8 +1,10 @@
+```
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import PetCardCompact from '@/components/dashboard/PetCardCompact';
+import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
 import UpcomingCarePanel from '@/components/desktop/dashboard/UpcomingCarePanel';
 import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPanel';
 import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
@@ -103,8 +105,8 @@ export default function DashboardPage() {
                             )}
                         </View>
 
-                        {/* Quick Actions */}
-                        <QuickActionsGrid onActionPress={handleQuickAction} />
+                        {/* Quick Actions - Desktop only, mobile uses plus button */}
+                        {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
                     </View>
 
                     {/* Sidebar Column */}
