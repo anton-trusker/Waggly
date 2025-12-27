@@ -87,243 +87,258 @@ export default function DashboardPage() {
                                         <Ionicons name="add" size={20} color="#fff" />
                                         <Text style={styles.addFirstPetText}>Add Your First Pet</Text>
                                     </TouchableOpacity>
-                                    {/* Upcoming Care */}
-                                    <UpcomingCarePanel />
                                 </View>
-
-                {/* Sidebar Column */}
-                            <View style={[styles.sidebarColumn, isMobile && styles.sidebarColumnMobile]}>
-                                {/* Priority Alerts */}
-                                <PriorityAlertsPanel />
-
-                                {/* Activity Feed */}
-                                <ActivityFeedTimeline />
-                            </View>
+                            ) : (
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={styles.petsScrollContent}
+                                    style={styles.petsScroll}
+                                >
+                                    {pets.map((pet) => (
+                                        <PetCardDesktop key={pet.id} pet={pet} />
+                                    ))}
+                                </ScrollView>
+                            )}
                         </View>
-                        {/* Add padding bottom for mobile nav */}
-                        {isMobile && <View style={{ height: 80 }} />}
 
-                        {/* Modals */}
-                        <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
-                        <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
-                        <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
-                        <HealthMetricsModal
-                            visible={healthMetricsOpen}
-                            onClose={() => setHealthMetricsOpen(false)}
-                        />
-                    </ScrollView>
-                </ResponsivePageWrapper>
-                );
+                        {/* Quick Actions */}
+                        <QuickActionsGrid onActionPress={handleQuickAction} />
+                    </View>
+
+                    {/* Sidebar Column */}
+                    <View style={[styles.sidebarColumn, isMobile && styles.sidebarColumnMobile]}>
+                        {/* Upcoming Care */}
+                        <UpcomingCarePanel />
+
+                        {/* Priority Alerts */}
+                        <PriorityAlertsPanel />
+
+                        {/* Activity Feed */}
+                        <ActivityFeedTimeline />
+                    </View>
+                </View>
+                {/* Add padding bottom for mobile nav */}
+                {isMobile && <View style={{ height: 80 }} />}
+
+                {/* Modals */}
+                <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
+                <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
+                <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
+                <HealthMetricsModal
+                    visible={healthMetricsOpen}
+                    onClose={() => setHealthMetricsOpen(false)}
+                />
+            </ScrollView>
+        </ResponsivePageWrapper>
+    );
 }
 
-                const styles = StyleSheet.create({
-                    container: {
-                    flex: 1,
-                backgroundColor: '#f8fafc',
+backgroundColor: '#f8fafc',
     },
-                content: {
-                    flexDirection: 'row',
-                gap: 32,
-                padding: 32,
+content: {
+    flexDirection: 'row',
+        gap: 32,
+            padding: 32,
                 maxWidth: 1440,
-                alignSelf: 'center',
-                width: '100%',
+                    alignSelf: 'center',
+                        width: '100%',
     },
-                contentMobile: {
-                    flexDirection: 'column',
-                padding: 16,
-                gap: 24,
+contentMobile: {
+    flexDirection: 'column',
+        padding: 16,
+            gap: 24,
     },
-                mainColumn: {
-                    flex: 2,
+mainColumn: {
+    flex: 2,
     },
-                sidebarColumn: {
-                    flex: 1,
-                minWidth: 320,
+sidebarColumn: {
+    flex: 1,
+        minWidth: 320,
     },
-                sidebarColumnMobile: {
-                    minWidth: '100%',
+sidebarColumnMobile: {
+    minWidth: '100%',
     },
-                section: {
-                    marginBottom: 32,
+section: {
+    marginBottom: 32,
     },
-                sectionHeader: {
-                    flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+sectionHeader: {
+    flexDirection: 'row',
+        justifyContent: 'space-between',
+            alignItems: 'center',
                 marginBottom: 20,
     },
-                titleRow: {
-                    flexDirection: 'row',
-                alignItems: 'center',
-                gap: 12,
+titleRow: {
+    flexDirection: 'row',
+        alignItems: 'center',
+            gap: 12,
     },
-                sectionTitle: {
-                    fontSize: 24,
-                fontWeight: '700',
-                color: '#111827',
+sectionTitle: {
+    fontSize: 24,
+        fontWeight: '700',
+            color: '#111827',
                 fontFamily: 'Plus Jakarta Sans',
     },
-                badge: {
-                    backgroundColor: '#EEF2FF',
-                paddingHorizontal: 10,
-                paddingVertical: 4,
+badge: {
+    backgroundColor: '#EEF2FF',
+        paddingHorizontal: 10,
+            paddingVertical: 4,
                 borderRadius: 12,
     },
-                badgeText: {
-                    fontSize: 14,
-                fontWeight: '600',
-                color: '#6366F1',
+badgeText: {
+    fontSize: 14,
+        fontWeight: '600',
+            color: '#6366F1',
                 fontFamily: 'Plus Jakarta Sans',
     },
-                viewAllLink: {
-                    fontSize: 14,
-                fontWeight: '600',
-                color: '#6366F1',
+viewAllLink: {
+    fontSize: 14,
+        fontWeight: '600',
+            color: '#6366F1',
                 fontFamily: 'Plus Jakarta Sans',
     },
-                loadingText: {
-                    fontSize: 14,
-                color: '#6B7280',
-                textAlign: 'center',
+loadingText: {
+    fontSize: 14,
+        color: '#6B7280',
+            textAlign: 'center',
                 paddingVertical: 40,
-                fontFamily: 'Plus Jakarta Sans',
+                    fontFamily: 'Plus Jakarta Sans',
     },
-                emptyState: {
-                    alignItems: 'center',
-                paddingVertical: 60,
+emptyState: {
+    alignItems: 'center',
+        paddingVertical: 60,
     },
-                emptyIcon: {
-                    fontSize: 64,
-                marginBottom: 16,
+emptyIcon: {
+    fontSize: 64,
+        marginBottom: 16,
     },
-                emptyTitle: {
-                    fontSize: 20,
-                fontWeight: '700',
-                color: '#111827',
+emptyTitle: {
+    fontSize: 20,
+        fontWeight: '700',
+            color: '#111827',
                 marginBottom: 8,
-                fontFamily: 'Plus Jakarta Sans',
+                    fontFamily: 'Plus Jakarta Sans',
     },
-                emptyText: {
-                    fontSize: 16,
-                color: '#6B7280',
-                textAlign: 'center',
+emptyText: {
+    fontSize: 16,
+        color: '#6B7280',
+            textAlign: 'center',
                 maxWidth: 400,
-                marginBottom: 24,
-                fontFamily: 'Plus Jakarta Sans',
+                    marginBottom: 24,
+                        fontFamily: 'Plus Jakarta Sans',
     },
-                addButton: {
-                    flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
+addButton: {
+    flexDirection: 'row',
+        alignItems: 'center',
+            gap: 8,
                 backgroundColor: '#6366F1',
-                paddingHorizontal: 24,
-                paddingVertical: 12,
-                borderRadius: 12,
+                    paddingHorizontal: 24,
+                        paddingVertical: 12,
+                            borderRadius: 12,
     },
-                addButtonText: {
-                    fontSize: 16,
-                fontWeight: '600',
-                color: '#fff',
+addButtonText: {
+    fontSize: 16,
+        fontWeight: '600',
+            color: '#fff',
                 fontFamily: 'Plus Jakarta Sans',
     },
-                petGrid: {
-                    flexDirection: 'row',
-                flexWrap: 'wrap',
-                gap: 20,
+petGrid: {
+    flexDirection: 'row',
+        flexWrap: 'wrap',
+            gap: 20,
     },
-                petGridMobile: {
-                    flexDirection: 'column',
+petGridMobile: {
+    flexDirection: 'column',
     },
-                petCardWrapper: {
-                    width: '31%', // calc replacement
-                minWidth: 250,
+petCardWrapper: {
+    width: '31%', // calc replacement
+        minWidth: 250,
     },
-                petCardWrapperMobile: {
-                    width: '100%',
+petCardWrapperMobile: {
+    width: '100%',
     },
-                addPetCard: {
-                    width: '31%',
-                minWidth: 250,
-                backgroundColor: '#fff',
+addPetCard: {
+    width: '31%',
+        minWidth: 250,
+            backgroundColor: '#fff',
                 borderRadius: 16,
-                padding: 40,
-                borderWidth: 2,
-                borderColor: '#E5E7EB',
-                borderStyle: 'dashed',
-                alignItems: 'center',
-                justifyContent: 'center',
+                    padding: 40,
+                        borderWidth: 2,
+                            borderColor: '#E5E7EB',
+                                borderStyle: 'dashed',
+                                    alignItems: 'center',
+                                        justifyContent: 'center',
     },
-                addPetCardMobile: {
-                    width: '100%',
-                paddingVertical: 32,
+addPetCardMobile: {
+    width: '100%',
+        paddingVertical: 32,
     },
-                addPetIconContainer: {
-                    width: 80,
-                height: 80,
-                borderRadius: 40,
+addPetIconContainer: {
+    width: 80,
+        height: 80,
+            borderRadius: 40,
                 backgroundColor: '#EEF2FF',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 16,
-    },
-                addPetText: {
-                    fontSize: 16,
-                fontWeight: '600',
-                color: '#6366F1',
-                fontFamily: 'Plus Jakarta Sans',
-    },
-                actionsContainer: {
-                    marginBottom: 32,
-    },
-                heading: {
-                    fontSize: 20,
-                fontWeight: '700',
-                color: '#111827',
-                marginBottom: 16,
-                fontFamily: 'Plus Jakarta Sans',
-    },
-                grid: {
-                    flexDirection: 'row',
-                gap: 16,
-                flexWrap: 'wrap',
-    },
-                actionCard: {
                     alignItems: 'center',
-                minWidth: 100,
-                paddingVertical: 6,
-                paddingHorizontal: 4,
-                borderRadius: 12,
+                        justifyContent: 'center',
+                            marginBottom: 16,
     },
-                actionCardHover: {
-                    shadowColor: '#000',
-                shadowOffset: {width: 0, height: 6 },
-                shadowOpacity: 0.15,
-                shadowRadius: 12,
-                elevation: 6,
-    },
-                actionCardFocus: {
-                    borderWidth: 2,
-                borderColor: '#6366F1',
-    },
-                iconContainer: {
-                    width: 64,
-                height: 64,
-                borderRadius: 16,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 8,
-                shadowColor: '#000',
-                shadowOffset: {width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 3,
-    },
-                label: {
-                    fontSize: 14,
-                fontWeight: '600',
-                color: '#374151',
-                textAlign: 'center',
+addPetText: {
+    fontSize: 16,
+        fontWeight: '600',
+            color: '#6366F1',
                 fontFamily: 'Plus Jakarta Sans',
+    },
+actionsContainer: {
+    marginBottom: 32,
+    },
+heading: {
+    fontSize: 20,
+        fontWeight: '700',
+            color: '#111827',
+                marginBottom: 16,
+                    fontFamily: 'Plus Jakarta Sans',
+    },
+grid: {
+    flexDirection: 'row',
+        gap: 16,
+            flexWrap: 'wrap',
+    },
+actionCard: {
+    alignItems: 'center',
+        minWidth: 100,
+            paddingVertical: 6,
+                paddingHorizontal: 4,
+                    borderRadius: 12,
+    },
+actionCardHover: {
+    shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+        shadowRadius: 12,
+            elevation: 6,
+    },
+actionCardFocus: {
+    borderWidth: 2,
+        borderColor: '#6366F1',
+    },
+iconContainer: {
+    width: 64,
+        height: 64,
+            borderRadius: 16,
+                alignItems: 'center',
+                    justifyContent: 'center',
+                        marginBottom: 8,
+                            shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+        shadowRadius: 4,
+            elevation: 3,
+    },
+label: {
+    fontSize: 14,
+        fontWeight: '600',
+            color: '#374151',
+                textAlign: 'center',
+                    fontFamily: 'Plus Jakarta Sans',
     },
 });
