@@ -16,6 +16,7 @@ export default function PetDetailLayout() {
                 tabBarActiveTintColor: designSystem.colors.primary[500],
                 tabBarInactiveTintColor: designSystem.colors.text.secondary,
                 tabBarStyle: {
+                    display: width >= 1024 ? 'none' : 'flex', // Hide on desktop
                     backgroundColor: '#fff',
                     borderTopWidth: 1,
                     borderTopColor: designSystem.colors.border.primary,
