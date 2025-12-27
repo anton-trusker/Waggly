@@ -10,11 +10,8 @@ import { useAllergies } from '@/hooks/useAllergies';
 import { useMedications } from '@/hooks/useMedications';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Pet } from '@/types';
-import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
-import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
-import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
-import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 import MobileHeader from '@/components/layout/MobileHeader';
+import WidgetGrid from '@/components/widgets/WidgetGrid';
 
 export default function OverviewTab() {
   const router = useRouter();
