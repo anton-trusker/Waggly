@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { usePets } from '@/hooks/usePets';
 import { usePersistentState } from '@/utils/persistentState';
@@ -47,14 +49,14 @@ export function PetSelector() {
             <Image source={{ uri: selectedPet.imageUri }} style={styles.petImage} />
           )}
           <Text style={styles.petName}>{selectedPet?.name}</Text>
-          <MaterialCommunityIcons 
-            name="chevron-down" 
-            size={getSpacing(6)} 
-            color={designSystem.colors.text.primary} 
+          <MaterialCommunityIcons
+            name="chevron-down"
+            size={getSpacing(6)}
+            color={designSystem.colors.text.primary}
           />
         </TouchableOpacity>
       )}
-      
+
       {/* Simple Modal Dropdown */}
       <Modal
         visible={dropdownVisible}
@@ -62,14 +64,14 @@ export function PetSelector() {
         animationType="fade"
         onRequestClose={() => setDropdownVisible(false)}
       >
-        <TouchableOpacity 
-          style={styles.modalOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
           onPress={() => setDropdownVisible(false)}
         >
           <View style={styles.dropdownContainer}>
             <Text style={styles.dropdownTitle}>{t('pets.select_pet', { defaultValue: 'Select Pet' })}</Text>
-            <FlatList
+            <FlashList
               data={dropdownItems}
               keyExtractor={(item) => item.value}
               renderItem={({ item }) => (
@@ -81,6 +83,7 @@ export function PetSelector() {
                 </TouchableOpacity>
               )}
               ItemSeparatorComponent={() => <View style={styles.dropdownSeparator} />}
+              estimatedItemSize={60}
             />
           </View>
         </TouchableOpacity>

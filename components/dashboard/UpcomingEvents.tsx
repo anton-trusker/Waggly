@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
 import { useEvents, EventType } from '@/hooks/useEvents';
@@ -46,7 +48,7 @@ export function UpcomingEvents() {
           <Text style={styles.emptyStateText}>{t('events.no_upcoming_for_pet', { defaultValue: 'No upcoming events for {{name}}.', name: selectedPet?.name || t('pets.your_pets', { defaultValue: 'your pets' }) })}</Text>
         </View>
       ) : (
-        <FlatList
+        <FlashList
           data={upcomingEvents.slice(0, 3)} // Show top 3 upcoming events
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -61,6 +63,7 @@ export function UpcomingEvents() {
             />
           )}
           scrollEnabled={false} // Disable scrolling as we only show a few items
+          estimatedItemSize={100}
         />
       )}
     </View>
