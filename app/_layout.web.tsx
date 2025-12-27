@@ -50,7 +50,7 @@ function RootLayoutNav() {
     }
     // If on desktop and in tabs group -> go to web dashboard
     else if (!isMobile && inTabsGroup) {
-      router.replace('/web/dashboard');
+      router.replace('/(tabs)/(home)');
     }
   }, [loading, isMounted, isMobile, segments, router]);
 

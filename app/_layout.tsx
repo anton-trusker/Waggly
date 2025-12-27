@@ -85,7 +85,7 @@ function RootLayoutNav() {
     const inOnboardingGroup = segments[0] === '(onboarding)';
 
     if (session && inAuthGroup) {
-      router.replace('/web/dashboard');
+      router.replace('/(tabs)/(home)');
     } else if (session && !inAuthGroup && !inOnboardingGroup) {
       // Profile check logic placeholder
     }

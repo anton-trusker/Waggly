@@ -15,5 +15,5 @@ export default function Index() {
     }
 
     // Redirect to desktop routes
-    return <Redirect href={session ? "/web/dashboard" : "/web/auth/login"} />;
+    return <Redirect href={session ? "/(tabs)/(home)" : "/web/auth/login"} />;
 }
