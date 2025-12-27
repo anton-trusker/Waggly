@@ -524,34 +524,13 @@ export default function OverviewTab() {
 
         </View>
 
-        {/* Modals */}
-        <VisitFormModal visible={visitOpen} petId={pet.id} onClose={() => setVisitOpen(false)} />
-        <VaccinationFormModal visible={vaccinationOpen} petId={pet.id} onClose={() => setVaccinationOpen(false)} />
-        <TreatmentFormModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
-        {/* MedicationFormModal logic can be similar to TreatmentFormModal or separated if needed. 
-          Assuming TreatmentFormModal handles 'Medication' type or we reuse AddMedicationModal if it wasn't refactored yet.
-          The user asked for 'Add Treatment' which includes medication type pills. 
-          If MedicationFormModal is distinct, we should check if we refactored it. 
-          I refactored TreatmentFormModal which has 'Medication' as a type. 
-          I will use TreatmentFormModal for the 'Meds' quick action for now as it aligns with the 'Treatment' modal design request 
-          that included 'Medication' as a type. 
-      */}
-        {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
+        {/* Modals removed - use global plus button */}
       </ScrollView>
     </>
   );
 }
 
-function QuickActionCard({ label, icon, color, bgColor, onPress }: { label: string, icon: string, color: string, bgColor: string, onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.quickActionCard} onPress={onPress}>
-      <View style={[styles.quickActionIcon, { backgroundColor: bgColor }]}>
-        <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
-      </View>
-      <Text style={styles.quickActionLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
+
 
 const styles = StyleSheet.create({
   container: {
