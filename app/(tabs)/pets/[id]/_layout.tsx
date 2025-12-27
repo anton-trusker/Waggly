@@ -19,15 +19,22 @@ export default function PetDetailLayout() {
                     backgroundColor: '#fff',
                     borderTopWidth: 1,
                     borderTopColor: designSystem.colors.border.primary,
-                    paddingBottom: isMobile ? 8 : 4,
-                    height: isMobile ? 60 : 50,
+                    paddingBottom: isMobile ? 12 : 4,
+                    paddingTop: isMobile ? 8 : 4,
+                    height: isMobile ? 68 : 50,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: -2 },
+                    shadowOpacity: isMobile ? 0.05 : 0.02,
+                    shadowRadius: 8,
+                    elevation: 8,
                 },
                 tabBarLabelStyle: {
-                    fontSize: isMobile ? 11 : 12,
+                    fontSize: isMobile ? 12 : 12,
                     fontWeight: '600',
+                    marginTop: isMobile ? 4 : 2,
                 },
                 tabBarIconStyle: {
-                    marginTop: isMobile ? 4 : 2,
+                    marginTop: isMobile ? 2 : 2,
                 },
             }}
         >
@@ -36,25 +43,7 @@ export default function PetDetailLayout() {
                 options={{
                     title: 'Overview',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home-outline" size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="history"
-                options={{
-                    title: 'History',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="time-outline" size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="passport"
-                options={{
-                    title: 'Passport',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="document-text-outline" size={size} color={color} />
+                        <Ionicons name="home" size={isMobile ? 24 : size} color={color} />
                     ),
                 }}
             />
@@ -63,25 +52,16 @@ export default function PetDetailLayout() {
                 options={{
                     title: 'Health',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="medical-outline" size={size} color={color} />
+                        <Ionicons name="medical" size={isMobile ? 24 : size} color={color} />
                     ),
                 }}
             />
             <Tabs.Screen
                 name="album"
                 options={{
-                    title: 'Album',
+                    title: 'Gallery',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="images-outline" size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="events"
-                options={{
-                    title: 'Events',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="calendar-outline" size={size} color={color} />
+                        <Ionicons name="images" size={isMobile ? 24 : size} color={color} />
                     ),
                 }}
             />
@@ -90,8 +70,27 @@ export default function PetDetailLayout() {
                 options={{
                     title: 'Documents',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="folder-outline" size={size} color={color} />
+                        <Ionicons name="folder" size={isMobile ? 24 : size} color={color} />
                     ),
+                }}
+            />
+            {/* Hidden tabs - still accessible via navigation but not shown in tab bar */}
+            <Tabs.Screen
+                name="history"
+                options={{
+                    href: null, // Hide from tab bar
+                }}
+            />
+            <Tabs.Screen
+                name="passport"
+                options={{
+                    href: null, // Hide from tab bar
+                }}
+            />
+            <Tabs.Screen
+                name="events"
+                options={{
+                    href: null, // Hide from tab bar
                 }}
             />
         </Tabs>
