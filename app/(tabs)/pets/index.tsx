@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,32 +8,39 @@ import {
   ActivityIndicator,
   Image,
   RefreshControl,
+  useWindowDimensions,
 } from 'react-native';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { usePets } from '@/hooks/usePets';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import { usePersistentState, persistentConfigs } from '@/utils/persistentState';
 import { Pet } from '@/types';
 import AppHeader from '@/components/layout/AppHeader';
+import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
+import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 
 export default function PetsScreen() {
   const { pets, loading, refreshPets } = usePets();
-  
+  const { width } = useWindowDimensions();
+  const [refreshing, setRefreshing] = useState(false);
+  const [visitPetId, setVisitPetId] = useState<string | null>(null);
+
+  // Responsive breakpoints
+  const isMobile = width < 768;
+  const isDesktop = width >= 1024;
+
   // Persistent state for pet selection
   const { state: lastSelectedPetId, setState: setLastSelectedPetId } = usePersistentState(
     persistentConfigs.petSelection.key,
     persistentConfigs.petSelection.defaultValue,
     { expiration: persistentConfigs.petSelection.expiration }
   );
-  
-  const [refreshing, setRefreshing] = useState(false);
 
   const handlePetPress = (pet: Pet) => {
-    // Store the selected pet ID for future reference
     setLastSelectedPetId(pet.id);
-    
-    // Navigate to pet detail
     router.push(`/(tabs)/pets/pet-detail?id=${pet.id}`);
   };
 
@@ -46,109 +52,162 @@ export default function PetsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <View style={[styles.container, styles.center]}>
-        <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
-      </View>
+      <ResponsivePageWrapper showSidebar={isDesktop}>
+        <View style={[styles.container, styles.center]}>
+          <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
+        </View>
+      </ResponsivePageWrapper>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <AppHeader title="My Pets" />
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={designSystem.colors.primary[500]}
-            colors={[designSystem.colors.primary[500]]}
-          />
-        }
-      >
-        <View style={styles.header}>
-          <EnhancedButton
-            title="Add Pet"
-            icon="add"
-            variant="primary"
-            size="sm"
-            onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
-          />
-        </View>
-
-        {pets.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>🐾</Text>
-            <Text style={styles.emptyTitle}>No Pets Yet</Text>
-            <Text style={styles.emptyText}>
-              Add your first pet to start tracking their health and care
-            </Text>
+    <ResponsivePageWrapper showSidebar={isDesktop} scrollable={false}>
+      <View style={styles.container}>
+        <AppHeader title="My Pets" />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.content, isDesktop && styles.contentDesktop]}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={designSystem.colors.primary[500]}
+              colors={[designSystem.colors.primary[500]]}
+            />
+          }
+        >
+          {/* Header with Add Button */}
+          <View style={[styles.header, isDesktop && styles.headerDesktop]}>
+            <View>
+              {isDesktop && (
+                <>
+                  <Text style={styles.title}>My Pets</Text>
+                  <Text style={styles.subtitle}>Manage your pets and their health</Text>
+                </>
+              )}
+            </View>
             <EnhancedButton
-              title="Add Your First Pet"
-              icon="pets"
+              title="Add Pet"
+              icon="add"
               variant="primary"
+              size={isMobile ? "sm" : "md"}
               onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
-              style={styles.addFirstPetButton}
             />
           </View>
-        ) : (
-          <View style={styles.petsList}>
-            {pets.map((pet, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.petCard,
-                  lastSelectedPetId === pet.id && styles.petCardSelected
-                ]}
-                onPress={() => handlePetPress(pet)}
-                activeOpacity={0.8}
-              >
-                <View style={styles.petCardHeader}>
-                  <View style={styles.petIcon}>
-                    {pet.photo_url ? (
-                      <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
-                    ) : (
-                      <Text style={styles.petIconText}>
-                        {pet.species === 'dog' ? '🐕' : 
-                         pet.species === 'cat' ? '🐈' : 
-                         pet.species === 'bird' ? '🦜' : 
-                         pet.species === 'rabbit' ? '🐰' : 
-                         pet.species === 'reptile' ? '🦎' : 
-                         '🐾'}
-                      </Text>
-                    )}
+
+          {/* Empty State */}
+          {pets.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>🐾</Text>
+              <Text style={styles.emptyTitle}>No Pets Yet</Text>
+              <Text style={styles.emptyText}>
+                Add your first pet to start tracking their health and care
+              </Text>
+              <EnhancedButton
+                title="Add Your First Pet"
+                icon="pets"
+                variant="primary"
+                onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
+                style={styles.addFirstPetButton}
+              />
+            </View>
+          ) : (
+            /* Pet Cards Grid */
+            <View style={[
+              styles.petsList,
+              !isMobile && styles.petsGrid,
+              isDesktop && styles.petsGridDesktop,
+            ]}>
+              {pets.map((pet) => (
+                isDesktop ? (
+                  /* Desktop: Use PetCardDesktop with actions */
+                  <View key={pet.id} style={styles.desktopCardWrapper}>
+                    <PetCardDesktop pet={pet} />
+                    <View style={styles.cardActions}>
+                      <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => handlePetPress(pet)}
+                      >
+                        <Ionicons name="eye-outline" size={18} color="#374151" />
+                        <Text style={styles.actionButtonText}>View</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => setVisitPetId(pet.id)}
+                      >
+                        <Ionicons name="calendar-outline" size={18} color="#374151" />
+                        <Text style={styles.actionButtonText}>Book Visit</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                  <View style={styles.petCardInfo}>
-                    <Text style={styles.petName}>{pet.name}</Text>
-                    <Text style={styles.petBreed}>{pet.breed || pet.species}</Text>
-                  </View>
-                  <Text style={styles.arrow}>›</Text>
-                </View>
-                
-                <View style={styles.petCardDetails}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Gender</Text>
-                    <Text style={styles.detailValue}>{pet.gender || 'N/A'}</Text>
-                  </View>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Weight</Text>
-                    <Text style={styles.detailValue}>
-                      {pet.weight ? `${pet.weight} kg` : 'N/A'}
-                    </Text>
-                  </View>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.detailLabel}>Size</Text>
-                    <Text style={styles.detailValue}>{pet.size || 'N/A'}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </ScrollView>
-    </View>
+                ) : (
+                  /* Mobile/Tablet: Use detailed mobile card */
+                  <TouchableOpacity
+                    key={pet.id}
+                    style={[
+                      styles.petCard,
+                      lastSelectedPetId === pet.id && styles.petCardSelected,
+                    ]}
+                    onPress={() => handlePetPress(pet)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={styles.petCardHeader}>
+                      <View style={styles.petIcon}>
+                        {pet.photo_url ? (
+                          <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
+                        ) : (
+                          <Text style={styles.petIconText}>
+                            {pet.species === 'dog' ? '🐕' :
+                              pet.species === 'cat' ? '🐈' :
+                                pet.species === 'bird' ? '🦜' :
+                                  pet.species === 'rabbit' ? '🐰' :
+                                    pet.species === 'reptile' ? '🦎' :
+                                      '🐾'}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={styles.petCardInfo}>
+                        <Text style={styles.petName}>{pet.name}</Text>
+                        <Text style={styles.petBreed}>{pet.breed || pet.species}</Text>
+                      </View>
+                      <Text style={styles.arrow}>›</Text>
+                    </View>
+
+                    <View style={styles.petCardDetails}>
+                      <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Gender</Text>
+                        <Text style={styles.detailValue}>{pet.gender || 'N/A'}</Text>
+                      </View>
+                      <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Weight</Text>
+                        <Text style={styles.detailValue}>
+                          {pet.weight ? `${pet.weight} kg` : 'N/A'}
+                        </Text>
+                      </View>
+                      <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Size</Text>
+                        <Text style={styles.detailValue}>{pet.size || 'N/A'}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                )
+              ))}
+            </View>
+          )}
+
+          {/* Bottom padding for mobile tab bar */}
+          {!isDesktop && <View style={{ height: 80 }} />}
+        </ScrollView>
+
+        {/* Desktop Modal */}
+        <VisitFormModal
+          visible={!!visitPetId}
+          petId={visitPetId || ''}
+          onClose={() => setVisitPetId(null)}
+        />
+      </View>
+    </ResponsivePageWrapper>
   );
 }
 
@@ -165,20 +224,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingTop: getSpacing(8),
-    paddingHorizontal: getSpacing(5),
-    paddingBottom: getSpacing(16),
+    paddingTop: getSpacing(6),
+    paddingHorizontal: getSpacing(4),
+    paddingBottom: getSpacing(8),
   },
+  contentDesktop: {
+    paddingHorizontal: getSpacing(8),
+    paddingTop: getSpacing(8),
+  },
+
+  // Header
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     marginBottom: getSpacing(6),
   },
-  title: {
-    ...designSystem.typography.headline.small,
-    color: designSystem.colors.text.primary,
+  headerDesktop: {
+    justifyContent: 'space-between',
+    marginBottom: getSpacing(8),
   },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+
+  // Empty State
   emptyState: {
     alignItems: 'center',
     paddingVertical: getSpacing(16),
@@ -202,9 +279,21 @@ const styles = StyleSheet.create({
   addFirstPetButton: {
     marginTop: getSpacing(4),
   },
+
+  // Pet Lists/Grid
   petsList: {
     gap: getSpacing(4),
   },
+  petsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+  },
+  petsGridDesktop: {
+    gap: 24,
+  },
+
+  // Mobile Pet Card
   petCard: {
     backgroundColor: designSystem.colors.neutral[0],
     borderRadius: designSystem.borderRadius.xl,
@@ -276,5 +365,34 @@ const styles = StyleSheet.create({
     ...designSystem.typography.label.medium,
     color: designSystem.colors.text.primary,
     fontWeight: '600',
+  },
+
+  // Desktop Card
+  desktopCardWrapper: {
+    width: 'calc(33.333% - 16px)' as any,
+    minWidth: 280,
+  },
+  cardActions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#fff',
+  },
+  actionButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
   },
 });
