@@ -21,6 +21,7 @@ import AppHeader from '@/components/layout/AppHeader';
 import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
 import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+import MobileHeader from '@/components/layout/MobileHeader';
 
 export default function PetsScreen() {
   const { pets, loading, refreshPets } = usePets();
@@ -62,6 +63,7 @@ export default function PetsScreen() {
 
   return (
     <ResponsivePageWrapper showSidebar={isDesktop} scrollable={false}>
+      <MobileHeader showLogo={true} showNotifications={true} />
       <View style={styles.container}>
         <AppHeader title="My Pets" />
         <ScrollView

@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { COUNTRIES } from '@/constants/countries';
 import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import MobileHeader from '@/components/layout/MobileHeader';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -231,6 +232,7 @@ export default function ProfilePage() {
 
   return (
     <DesktopShell>
+      <MobileHeader title="Settings" showBack={false} showNotifications={true} />
       <View style={styles.container}>
         {/* Header */}
         <View style={[styles.header, isMobile && styles.headerMobile]}>
