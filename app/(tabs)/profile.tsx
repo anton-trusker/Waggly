@@ -1000,7 +1000,7 @@ export default function ProfilePage() {
           </View>
         </Modal>
       </View>
-    </ResponsivePageWrapper>
+    </DesktopShell>
   );
 }
 

@@ -130,7 +130,7 @@ export default function DashboardPage() {
                     onClose={() => setHealthMetricsOpen(false)}
                 />
             </ScrollView>
-        </ResponsivePageWrapper>
+        </DesktopShell>
     );
 }
 
