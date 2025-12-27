@@ -1,4 +1,3 @@
-```
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -68,185 +67,252 @@ export default function OverviewTab() {
 
   return (
     <>
-      <MobileHeader title={pet.name} showBack={true} showNotifications={true} />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={[styles.content, isMobile && styles.contentMobile]}>
-
-          {/* Quick actions removed - use global plus button */}
-
-          {/* Main Grid Content */}
-          <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
-
-            {/* Left Column (1/3) */}
-            <View style={styles.leftColumn}>
-
-              {/* Key Info Card */}
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>Key Info</Text>
-                  <TouchableOpacity>
-                    <Text style={styles.editLink}>Edit</Text>
-                  </TouchableOpacity>
+      {width >= 1024 ? (
+        <DesktopShell>
+          <PetProfileHeader pet={pet} />
+          <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <View style={styles.content}>
+              <View style={styles.desktopLayout}>
+                {/* Left Column */}
+                <View style={styles.leftColumn}>
+                  <PetKeyInfoWidget pet={pet} />
+                  <PetAllergiesWidget allergies={allergies} />
+                  <PetPastConditionsWidget />
                 </View>
 
-                <View style={styles.infoList}>
-                  {/* Microchip */}
-                  <View style={styles.infoItemRow}>
-                    <View style={styles.infoItemContent}>
-                      <View style={[styles.infoIconBox, { backgroundColor: '#DBEAFE' }]}>
-                        <IconSymbol android_material_icon_name="qr-code" size={20} color="#2563EB" />
-                      </View>
-                      <View>
-                        <Text style={styles.infoLabel}>MICROCHIP ID</Text>
-                        <Text style={styles.infoValueMono}>{pet.chip_number || '—'}</Text>
-                      </View>
-                    </View>
-                    <TouchableOpacity>
-                      <IconSymbol android_material_icon_name="content-copy" size={16} color="#9CA3AF" />
-                    </TouchableOpacity>
+                {/* Right Column */}
+                <View style={styles.rightColumn}>
+                  <PetHealthStatusWidget nextVaccineDue={nextVaccineDue} />
+
+                  <View style={styles.gridRow}>
+                    <PetMedicationsWidget medications={activeMedications} />
+                    <PetVaccinationsWidget vaccinations={activeVaccines} />
                   </View>
 
-                  {/* Species & Blood Type */}
-                  <View style={styles.infoGrid2}>
-                    <View style={styles.infoBox}>
-                      <View style={styles.infoBoxHeader}>
-                        <View style={[styles.statusDot, { backgroundColor: '#10B981' }]} />
-                        <Text style={styles.infoLabel}>SPECIES</Text>
-                      </View>
-                      <Text style={styles.infoValue}>{pet.species}</Text>
-                    </View>
-                    <View style={styles.infoBox}>
-                      <View style={styles.infoBoxHeader}>
-                        <View style={[styles.statusDot, { backgroundColor: '#EF4444' }]} />
-                        <Text style={styles.infoLabel}>BLOOD TYPE</Text>
-                      </View>
-                      <Text style={styles.infoValue}>{pet.blood_type || '—'}</Text>
-                    </View>
-                  </View>
-
-                  {/* Color & DOB */}
-                  <View style={styles.infoGrid2}>
-                    <View style={styles.infoBox}>
-                      <Text style={[styles.infoLabel, { marginBottom: 4 }]}>COLOR</Text>
-                      <Text style={styles.infoValue}>{pet.color || '—'}</Text>
-                    </View>
-                    <View style={styles.infoBox}>
-                      <Text style={[styles.infoLabel, { marginBottom: 4 }]}>DATE OF BIRTH</Text>
-                      <Text style={styles.infoValue}>
-                        {pet.birth_date ? new Date(pet.birth_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
-                      </Text>
-                    </View>
-                  </View>
+                  <PetUpcomingEventsWidget events={upcomingEvents} />
                 </View>
               </View>
-
-              {/* Allergies Card */}
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>Allergies</Text>
-                  <TouchableOpacity style={styles.addButtonSmall}>
-                    <IconSymbol android_material_icon_name="add" size={16} color="#6366F1" />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.tagsContainer}>
-                  {allergies.length > 0 ? (
-                    allergies.map(a => (
-                      <View key={a.id} style={styles.allergyTag}>
-                        <Text style={styles.allergyTagText}>{a.name.toUpperCase()}</Text>
-                        <TouchableOpacity>
-                          <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
-                        </TouchableOpacity>
-                      </View>
-                    ))
-                  ) : (
-                    <View style={[styles.allergyTag, { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' }]}>
-                      <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>NO ALLERGIES</Text>
-                    </View>
-                  )}
-                  {/* Example Mock Tags if empty to match design */}
-                  {allergies.length === 0 && (
-                    <>
-                      <View style={[styles.allergyTag, { backgroundColor: '#FEF2F2', borderColor: '#FEE2E2' }]}>
-                        <Text style={[styles.allergyTagText, { color: '#EF4444' }]}>CHICKEN PROTOCOL</Text>
-                        <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
-                      </View>
-                      <View style={[styles.allergyTag, { backgroundColor: '#FEFCE8', borderColor: '#FEF9C3' }]}>
-                        <Text style={[styles.allergyTagText, { color: '#CA8A04' }]}>POLLEN</Text>
-                        <IconSymbol android_material_icon_name="close" size={14} color="#CA8A04" />
-                      </View>
-                    </>
-                  )}
-                </View>
-              </View>
-
-              {/* Past Conditions Card (Mock Data based on Design) */}
-              <View style={styles.card}>
-                <Text style={[styles.cardTitle, { marginBottom: 16 }]}>Past Conditions</Text>
-                <View style={styles.timelineList}>
-                  <View style={styles.timelineItem}>
-                    <View style={styles.timelineLine} />
-                    <View style={styles.timelineDotGray} />
-                    <View style={styles.timelineContentBox}>
-                      <View style={styles.timelineHeaderRow}>
-                        <Text style={styles.timelineItemTitle}>Otitis Externa</Text>
-                        <View style={styles.timelineDateBadge}>
-                          <Text style={styles.timelineDateBadgeText}>Oct 2023</Text>
-                        </View>
-                      </View>
-                      <Text style={styles.timelineItemDesc}>Resolved with drops.</Text>
-                    </View>
-                  </View>
-                  <View style={styles.timelineItem}>
-                    <View style={styles.timelineDotGray} />
-                    <View style={styles.timelineContentBox}>
-                      <View style={styles.timelineHeaderRow}>
-                        <Text style={styles.timelineItemTitle}>Mild Gastroenteritis</Text>
-                        <View style={styles.timelineDateBadge}>
-                          <Text style={styles.timelineDateBadgeText}>Feb 2023</Text>
-                        </View>
-                      </View>
-                      <Text style={styles.timelineItemDesc}>Dietary indiscretion.</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-
             </View>
+          </ScrollView>
+        </DesktopShell>
+      ) : (
+        <>
+          <MobileHeader title={pet.name} showBack={true} showNotifications={true} />
+          <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <View style={styles.content}>
+              <PetHealthStatusWidget nextVaccineDue={nextVaccineDue} />
+              <PetUpcomingEventsWidget events={upcomingEvents} />
 
-            {/* Right Column (2/3) */}
-            <View style={styles.rightColumn}>
+              <View style={styles.gridRow}>
+                <PetMedicationsWidget medications={activeMedications} />
+                <PetVaccinationsWidget vaccinations={activeVaccines} />
+              </View>
 
-              {/* Health Status Gradient Card */}
-              <LinearGradient
-                colors={['#6366F1', '#9333EA']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.gradientCard}
-              >
-                <View style={styles.gradientCardContent}>
-                  <View>
-                    <Text style={styles.gradientCardLabel}>HEALTH STATUS</Text>
-                    <Text style={styles.gradientCardTitle}>Vaccines Up to Date</Text>
-                    {nextVaccineDue && (
-                      <View style={styles.gradientCardSubtitleRow}>
-                        <IconSymbol android_material_icon_name="event" size={16} color="#E0E7FF" />
-                        <Text style={styles.gradientCardSubtitle}>
-                          Next Due: {new Date(nextVaccineDue.next_due_date!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <View style={styles.verifiedIconBox}>
-                    <IconSymbol android_material_icon_name="verified-user" size={24} color="#6366F1" />
-                  </View>
-                </View>
-              </LinearGradient>
+              <PetKeyInfoWidget pet={pet} />
+              <PetAllergiesWidget allergies={allergies} />
+              <PetPastConditionsWidget />
+            </View>
+          </ScrollView>
+        </>
+      )}
+    </>
+  );
+}
 
-              {/* Grid for Meds and Vaccines */}
-              <View style={[styles.subGrid, isLargeScreen && styles.subGridLarge]}>
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F6F8',
+  },
+  content: {
+    padding: 24,
+    maxWidth: 1280,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  desktopLayout: {
+    flexDirection: 'row',
+    gap: 24,
+  },
+  leftColumn: {
+    flex: 1,
+  },
+  rightColumn: {
+    flex: 2,
+  },
+  gridRow: {
+    flexDirection: 'row',
+    gap: 24,
+  },
+});
 
-                {/* Current Medications */}
-                <View style={[styles.card, styles.flex1]}>
+{/* Key Info Card */ }
+<View style={styles.card}>
+  <View style={styles.cardHeader}>
+    <Text style={styles.cardTitle}>Key Info</Text>
+    <TouchableOpacity>
+      <Text style={styles.editLink}>Edit</Text>
+    </TouchableOpacity>
+  </View>
+
+  <View style={styles.infoList}>
+    {/* Microchip */}
+    <View style={styles.infoItemRow}>
+      <View style={styles.infoItemContent}>
+        <View style={[styles.infoIconBox, { backgroundColor: '#DBEAFE' }]}>
+          <IconSymbol android_material_icon_name="qr-code" size={20} color="#2563EB" />
+        </View>
+        <View>
+          <Text style={styles.infoLabel}>MICROCHIP ID</Text>
+          <Text style={styles.infoValueMono}>{pet.chip_number || '—'}</Text>
+        </View>
+      </View>
+      <TouchableOpacity>
+        <IconSymbol android_material_icon_name="content-copy" size={16} color="#9CA3AF" />
+      </TouchableOpacity>
+    </View>
+
+    {/* Species & Blood Type */}
+    <View style={styles.infoGrid2}>
+      <View style={styles.infoBox}>
+        <View style={styles.infoBoxHeader}>
+          <View style={[styles.statusDot, { backgroundColor: '#10B981' }]} />
+          <Text style={styles.infoLabel}>SPECIES</Text>
+        </View>
+        <Text style={styles.infoValue}>{pet.species}</Text>
+      </View>
+      <View style={styles.infoBox}>
+        <View style={styles.infoBoxHeader}>
+          <View style={[styles.statusDot, { backgroundColor: '#EF4444' }]} />
+          <Text style={styles.infoLabel}>BLOOD TYPE</Text>
+        </View>
+        <Text style={styles.infoValue}>{pet.blood_type || '—'}</Text>
+      </View>
+    </View>
+
+    {/* Color & DOB */}
+    <View style={styles.infoGrid2}>
+      <View style={styles.infoBox}>
+        <Text style={[styles.infoLabel, { marginBottom: 4 }]}>COLOR</Text>
+        <Text style={styles.infoValue}>{pet.color || '—'}</Text>
+      </View>
+      <View style={styles.infoBox}>
+        <Text style={[styles.infoLabel, { marginBottom: 4 }]}>DATE OF BIRTH</Text>
+        <Text style={styles.infoValue}>
+          {pet.birth_date ? new Date(pet.birth_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+
+{/* Allergies Card */ }
+<View style={styles.card}>
+  <View style={styles.cardHeader}>
+    <Text style={styles.cardTitle}>Allergies</Text>
+    <TouchableOpacity style={styles.addButtonSmall}>
+      <IconSymbol android_material_icon_name="add" size={16} color="#6366F1" />
+    </TouchableOpacity>
+  </View>
+  <View style={styles.tagsContainer}>
+    {allergies.length > 0 ? (
+      allergies.map(a => (
+        <View key={a.id} style={styles.allergyTag}>
+          <Text style={styles.allergyTagText}>{a.name.toUpperCase()}</Text>
+          <TouchableOpacity>
+            <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
+      ))
+    ) : (
+      <View style={[styles.allergyTag, { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' }]}>
+        <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>NO ALLERGIES</Text>
+      </View>
+    )}
+    {/* Example Mock Tags if empty to match design */}
+    {allergies.length === 0 && (
+      <>
+        <View style={[styles.allergyTag, { backgroundColor: '#FEF2F2', borderColor: '#FEE2E2' }]}>
+          <Text style={[styles.allergyTagText, { color: '#EF4444' }]}>CHICKEN PROTOCOL</Text>
+          <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
+        </View>
+        <View style={[styles.allergyTag, { backgroundColor: '#FEFCE8', borderColor: '#FEF9C3' }]}>
+          <Text style={[styles.allergyTagText, { color: '#CA8A04' }]}>POLLEN</Text>
+          <IconSymbol android_material_icon_name="close" size={14} color="#CA8A04" />
+        </View>
+      </>
+    )}
+  </View>
+</View>
+
+{/* Past Conditions Card (Mock Data based on Design) */ }
+<View style={styles.card}>
+  <Text style={[styles.cardTitle, { marginBottom: 16 }]}>Past Conditions</Text>
+  <View style={styles.timelineList}>
+    <View style={styles.timelineItem}>
+      <View style={styles.timelineLine} />
+      <View style={styles.timelineDotGray} />
+      <View style={styles.timelineContentBox}>
+        <View style={styles.timelineHeaderRow}>
+          <Text style={styles.timelineItemTitle}>Otitis Externa</Text>
+          <View style={styles.timelineDateBadge}>
+            <Text style={styles.timelineDateBadgeText}>Oct 2023</Text>
+          </View>
+        </View>
+        <Text style={styles.timelineItemDesc}>Resolved with drops.</Text>
+      </View>
+    </View>
+    <View style={styles.timelineItem}>
+      <View style={styles.timelineDotGray} />
+      <View style={styles.timelineContentBox}>
+        <View style={styles.timelineHeaderRow}>
+          <Text style={styles.timelineItemTitle}>Mild Gastroenteritis</Text>
+          <View style={styles.timelineDateBadge}>
+            <Text style={styles.timelineDateBadgeText}>Feb 2023</Text>
+          </View>
+        </View>
+        <Text style={styles.timelineItemDesc}>Dietary indiscretion.</Text>
+      </View>
+    </View>
+  </View>
+</View>
+
+            </View >
+
+  {/* Right Column (2/3) */ }
+  < View style = { styles.rightColumn } >
+
+    {/* Health Status Gradient Card */ }
+    < LinearGradient
+colors = { ['#6366F1', '#9333EA']}
+start = {{ x: 0, y: 0 }}
+end = {{ x: 1, y: 0 }}
+style = { styles.gradientCard }
+  >
+  <View style={styles.gradientCardContent}>
+    <View>
+      <Text style={styles.gradientCardLabel}>HEALTH STATUS</Text>
+      <Text style={styles.gradientCardTitle}>Vaccines Up to Date</Text>
+      {nextVaccineDue && (
+        <View style={styles.gradientCardSubtitleRow}>
+          <IconSymbol android_material_icon_name="event" size={16} color="#E0E7FF" />
+          <Text style={styles.gradientCardSubtitle}>
+            Next Due: {new Date(nextVaccineDue.next_due_date!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          </Text>
+        </View>
+      )}
+    </View>
+    <View style={styles.verifiedIconBox}>
+      <IconSymbol android_material_icon_name="verified-user" size={24} color="#6366F1" />
+    </View>
+  </View>
+              </LinearGradient >
+
+  {/* Grid for Meds and Vaccines */ }
+  < View style = { [styles.subGrid, isLargeScreen && styles.subGridLarge]} >
+
+    {/* Current Medications */ }
+    < View style = { [styles.card, styles.flex1]} >
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardTitle}>Current Medications</Text>
                     <TouchableOpacity><Text style={styles.editLink}>Manage</Text></TouchableOpacity>
@@ -295,10 +361,10 @@ export default function OverviewTab() {
                       </>
                     )}
                   </View>
-                </View>
+                </View >
 
-                {/* Vaccinations */}
-                <View style={[styles.card, styles.flex1]}>
+  {/* Vaccinations */ }
+  < View style = { [styles.card, styles.flex1]} >
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardTitle}>Vaccinations</Text>
                     <TouchableOpacity><Text style={styles.editLink}>See All</Text></TouchableOpacity>
@@ -347,103 +413,105 @@ export default function OverviewTab() {
                       </>
                     )}
                   </View>
-                </View>
-              </View>
+                </View >
+              </View >
 
-              {/* Upcoming */}
-              <View style={styles.card}>
-                <View style={[styles.cardHeader, { justifyContent: 'flex-start', gap: 8 }]}>
-                  <View style={styles.orangeDot} />
-                  <Text style={styles.cardTitle}>Upcoming</Text>
-                  <View style={{ flex: 1 }} />
-                  <TouchableOpacity><Text style={styles.editLink}>See All</Text></TouchableOpacity>
-                </View>
+  {/* Upcoming */ }
+  < View style = { styles.card } >
+    <View style={[styles.cardHeader, { justifyContent: 'flex-start', gap: 8 }]}>
+      <View style={styles.orangeDot} />
+      <Text style={styles.cardTitle}>Upcoming</Text>
+      <View style={{ flex: 1 }} />
+      <TouchableOpacity><Text style={styles.editLink}>See All</Text></TouchableOpacity>
+    </View>
 
-                {isMobile ? (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.mobileUpcomingContainer}
-                    style={{ marginHorizontal: -24, paddingHorizontal: 24 }} // Offset card padding
-                  >
-                    <View style={styles.mobileUpcomingCard}>
-                      <View style={styles.upcomingHeader}>
-                        <View style={[styles.upcomingIconBox, { backgroundColor: '#FEE2E2' }]}>
-                          <IconSymbol android_material_icon_name="healing" size={20} color="#DC2626" />
-                        </View>
-                        <View style={[styles.upcomingBadge, { backgroundColor: '#FEE2E2' }]}>
-                          <Text style={[styles.upcomingBadgeText, { color: '#DC2626' }]}>3 DAYS</Text>
-                        </View>
-                      </View>
-                      <View style={{ marginBottom: 12 }}>
-                        <Text style={styles.upcomingTitle}>Rabies Booster</Text>
-                        <Text style={styles.upcomingSubtitle}>Downtown Vet Clinic</Text>
-                      </View>
-                      <View style={styles.upcomingFooter}>
-                        <Text style={styles.upcomingDate}>Oct 15, 09:00 AM</Text>
-                      </View>
-                    </View>
+{
+  isMobile ? (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.mobileUpcomingContainer}
+      style={{ marginHorizontal: -24, paddingHorizontal: 24 }} // Offset card padding
+    >
+      <View style={styles.mobileUpcomingCard}>
+        <View style={styles.upcomingHeader}>
+          <View style={[styles.upcomingIconBox, { backgroundColor: '#FEE2E2' }]}>
+            <IconSymbol android_material_icon_name="healing" size={20} color="#DC2626" />
+          </View>
+          <View style={[styles.upcomingBadge, { backgroundColor: '#FEE2E2' }]}>
+            <Text style={[styles.upcomingBadgeText, { color: '#DC2626' }]}>3 DAYS</Text>
+          </View>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <Text style={styles.upcomingTitle}>Rabies Booster</Text>
+          <Text style={styles.upcomingSubtitle}>Downtown Vet Clinic</Text>
+        </View>
+        <View style={styles.upcomingFooter}>
+          <Text style={styles.upcomingDate}>Oct 15, 09:00 AM</Text>
+        </View>
+      </View>
 
-                    <View style={styles.mobileUpcomingCard}>
-                      <View style={styles.upcomingHeader}>
-                        <View style={[styles.upcomingIconBox, { backgroundColor: '#DBEAFE' }]}>
-                          <IconSymbol android_material_icon_name="content-cut" size={20} color="#2563EB" />
-                        </View>
-                        <View style={[styles.upcomingBadge, { backgroundColor: '#DBEAFE' }]}>
-                          <Text style={[styles.upcomingBadgeText, { color: '#2563EB' }]}>5 DAYS</Text>
-                        </View>
-                      </View>
-                      <View style={{ marginBottom: 12 }}>
-                        <Text style={styles.upcomingTitle}>Grooming</Text>
-                        <Text style={styles.upcomingSubtitle}>Paw Spa & Resort</Text>
-                      </View>
-                      <View style={styles.upcomingFooter}>
-                        <Text style={styles.upcomingDate}>Oct 20, 02:00 PM</Text>
-                      </View>
-                    </View>
-                  </ScrollView>
-                ) : (
-                  <View style={[styles.subGrid, isLargeScreen && styles.subGridLarge]}>
-                    <View style={[styles.upcomingCard, styles.flex1]}>
-                      <View style={styles.upcomingHeader}>
-                        <View style={[styles.upcomingIconBox, { backgroundColor: '#FEE2E2' }]}>
-                          <IconSymbol android_material_icon_name="healing" size={20} color="#DC2626" />
-                        </View>
-                        <View style={[styles.upcomingBadge, { backgroundColor: '#FEE2E2' }]}>
-                          <Text style={[styles.upcomingBadgeText, { color: '#DC2626' }]}>3 DAYS</Text>
-                        </View>
-                      </View>
-                      <View style={{ marginBottom: 12 }}>
-                        <Text style={styles.upcomingTitle}>Rabies Booster</Text>
-                        <Text style={styles.upcomingSubtitle}>Downtown Vet Clinic</Text>
-                      </View>
-                      <View style={styles.upcomingFooter}>
-                        <Text style={styles.upcomingDate}>Oct 15, 09:00 AM</Text>
-                        <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
-                      </View>
-                    </View>
+      <View style={styles.mobileUpcomingCard}>
+        <View style={styles.upcomingHeader}>
+          <View style={[styles.upcomingIconBox, { backgroundColor: '#DBEAFE' }]}>
+            <IconSymbol android_material_icon_name="content-cut" size={20} color="#2563EB" />
+          </View>
+          <View style={[styles.upcomingBadge, { backgroundColor: '#DBEAFE' }]}>
+            <Text style={[styles.upcomingBadgeText, { color: '#2563EB' }]}>5 DAYS</Text>
+          </View>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <Text style={styles.upcomingTitle}>Grooming</Text>
+          <Text style={styles.upcomingSubtitle}>Paw Spa & Resort</Text>
+        </View>
+        <View style={styles.upcomingFooter}>
+          <Text style={styles.upcomingDate}>Oct 20, 02:00 PM</Text>
+        </View>
+      </View>
+    </ScrollView>
+  ) : (
+    <View style={[styles.subGrid, isLargeScreen && styles.subGridLarge]}>
+      <View style={[styles.upcomingCard, styles.flex1]}>
+        <View style={styles.upcomingHeader}>
+          <View style={[styles.upcomingIconBox, { backgroundColor: '#FEE2E2' }]}>
+            <IconSymbol android_material_icon_name="healing" size={20} color="#DC2626" />
+          </View>
+          <View style={[styles.upcomingBadge, { backgroundColor: '#FEE2E2' }]}>
+            <Text style={[styles.upcomingBadgeText, { color: '#DC2626' }]}>3 DAYS</Text>
+          </View>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <Text style={styles.upcomingTitle}>Rabies Booster</Text>
+          <Text style={styles.upcomingSubtitle}>Downtown Vet Clinic</Text>
+        </View>
+        <View style={styles.upcomingFooter}>
+          <Text style={styles.upcomingDate}>Oct 15, 09:00 AM</Text>
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
+        </View>
+      </View>
 
-                    <View style={[styles.upcomingCard, styles.flex1]}>
-                      <View style={styles.upcomingHeader}>
-                        <View style={[styles.upcomingIconBox, { backgroundColor: '#DBEAFE' }]}>
-                          <IconSymbol android_material_icon_name="content-cut" size={20} color="#2563EB" />
-                        </View>
-                      </View>
-                      <View style={{ marginBottom: 12 }}>
-                        <Text style={styles.upcomingTitle}>Grooming</Text>
-                        <Text style={styles.upcomingSubtitle}>Paw Spa & Resort</Text>
-                      </View>
-                      <View style={styles.upcomingFooter}>
-                        <Text style={styles.upcomingDate}>Oct 20, 02:00 PM</Text>
-                        <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
-                      </View>
-                    </View>
-                  </View>
-                )}
-              </View>
+      <View style={[styles.upcomingCard, styles.flex1]}>
+        <View style={styles.upcomingHeader}>
+          <View style={[styles.upcomingIconBox, { backgroundColor: '#DBEAFE' }]}>
+            <IconSymbol android_material_icon_name="content-cut" size={20} color="#2563EB" />
+          </View>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <Text style={styles.upcomingTitle}>Grooming</Text>
+          <Text style={styles.upcomingSubtitle}>Paw Spa & Resort</Text>
+        </View>
+        <View style={styles.upcomingFooter}>
+          <Text style={styles.upcomingDate}>Oct 20, 02:00 PM</Text>
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
+        </View>
+      </View>
+    </View>
+  )
+}
+              </View >
 
-              {/* History Timeline */}
-              <View style={styles.card}>
+  {/* History Timeline */ }
+  < View style = { styles.card } >
                 <Text style={[styles.cardTitle, { marginBottom: 24 }]}>History & Timeline</Text>
                 <View style={styles.timelineList}>
                   {/* Item 1 */}
@@ -518,23 +586,25 @@ export default function OverviewTab() {
                 <TouchableOpacity style={styles.viewTimelineBtn}>
                   <Text style={styles.viewTimelineText}>View Full Timeline</Text>
                 </TouchableOpacity>
-              </View>
+              </View >
 
-            </View>
-          </View>
+            </View >
+          </View >
 
-          {/* Floating Add Button for Mobile */}
-          {!isLargeScreen && (
-            <TouchableOpacity style={styles.fab}>
-              <IconSymbol android_material_icon_name="add" size={24} color="#fff" />
-            </TouchableOpacity>
-          )}
+  {/* Floating Add Button for Mobile */ }
+{
+  !isLargeScreen && (
+    <TouchableOpacity style={styles.fab}>
+      <IconSymbol android_material_icon_name="add" size={24} color="#fff" />
+    </TouchableOpacity>
+  )
+}
 
-        </View>
+        </View >
 
-        {/* Modals removed - use global plus button */}
-      </ScrollView>
-      {width >= 1024 ? (
+  {/* Modals removed - use global plus button */ }
+      </ScrollView >
+  { width >= 1024 ? (
               </DesktopShell >
             ) : (
           </>
