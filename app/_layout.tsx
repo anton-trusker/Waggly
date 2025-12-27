@@ -6,6 +6,7 @@ import { designSystem } from '@/constants/designSystem';
 import * as Linking from 'expo-linking';
 import { supabase } from '@/lib/supabase';
 import { Alert } from 'react-native';
+import { DesignSystemProvider } from '@/design-system/DesignSystemProvider';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { ThemeProvider as ThemeContextProvider } from '@/contexts/ThemeContext';
@@ -136,12 +137,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeContextProvider>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
-      </ThemeContextProvider>
-    </GestureHandlerRootView>
+    <DesignSystemProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeContextProvider>
+          <AuthProvider>
+            <RootLayoutNav />
+          </AuthProvider>
+        </ThemeContextProvider>
+      </GestureHandlerRootView>
+    </DesignSystemProvider>
   );
 }
