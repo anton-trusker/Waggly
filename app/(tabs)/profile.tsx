@@ -9,7 +9,7 @@ import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { COUNTRIES } from '@/constants/countries';
 import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
-import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -230,7 +230,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <ResponsivePageWrapper scrollable={false}>
+    <DesktopShell>
       <View style={styles.container}>
         {/* Header */}
         <View style={[styles.header, isMobile && styles.headerMobile]}>

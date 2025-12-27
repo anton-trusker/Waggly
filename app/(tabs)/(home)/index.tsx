@@ -8,7 +8,7 @@ import UpcomingCarePanel from '@/components/desktop/dashboard/UpcomingCarePanel'
 import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPanel';
 import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
 import { usePets } from '@/hooks/usePets';
-import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
 
 // New Modal Imports
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     };
 
     return (
-        <ResponsivePageWrapper scrollable={false}>
+        <DesktopShell>
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 {/* Header removed (use global Topbar) */}
                 <View style={[styles.content, isMobile && styles.contentMobile]}>
