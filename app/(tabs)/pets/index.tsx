@@ -41,7 +41,7 @@ export default function PetsScreen() {
 
   const handlePetPress = (pet: Pet) => {
     setLastSelectedPetId(pet.id);
-    router.push(`/(tabs)/pets/pet-detail?id=${pet.id}`);
+    router.push(`/(tabs)/pets/[id]/overview?id=${pet.id}`);
   };
 
   const onRefresh = async () => {
