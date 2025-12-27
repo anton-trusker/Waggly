@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+
 import { Ionicons } from '@expo/vector-icons';
 import { useVaccines, RefVaccine } from '@/hooks/useReferenceData';
 
@@ -133,11 +135,12 @@ export default function VaccineSelector({
                             <ActivityIndicator color="#0A84FF" />
                         </View>
                     ) : filteredVaccines.length > 0 ? (
-                        <FlatList
+                        <FlashList
                             data={filteredVaccines}
                             keyExtractor={item => item.id}
                             style={styles.list}
                             keyboardShouldPersistTaps="handled"
+                            estimatedItemSize={68}
                             renderItem={({ item }) => (
                                 <TouchableOpacity
                                     style={styles.listItem}
@@ -146,8 +149,7 @@ export default function VaccineSelector({
                                     <View style={styles.itemContent}>
                                         <View style={styles.itemHeader}>
                                             <Text style={styles.itemName}>{item.vaccine_name}</Text>
-                                            {item.abbreviation && (
-                                                <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
+                                            {item.abbreviation && (\n                                                <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
                                             )}
                                         </View>
                                         <View style={styles.itemMeta}>
