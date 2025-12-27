@@ -93,9 +93,9 @@ function RootLayoutNav() {
     // Simple check: If no session, go to login.
     if (!session) {
       if (inOnboardingGroup) {
-        router.replace('/web/auth/login');
-      } else if (!inAuthGroup && segments[0] !== 'welcome') {
-        router.replace('/web/auth/login');
+        router.replace('/(auth)/login');
+      } else if (!inAuthGroup) {
+        router.replace('/(auth)/login');
       }
     }
   }, [session, segments]);
@@ -125,9 +125,7 @@ function NavigationThemeProvider() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
