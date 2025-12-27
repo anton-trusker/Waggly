@@ -1,7 +1,7 @@
+```
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
@@ -11,9 +11,15 @@ import { useMedications } from '@/hooks/useMedications';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Pet } from '@/types';
 import MobileHeader from '@/components/layout/MobileHeader';
-import WidgetGrid from '@/components/widgets/WidgetGrid';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
 import PetProfileHeader from '@/components/desktop/pets/PetProfileHeader';
+import PetKeyInfoWidget from '@/components/widgets/PetKeyInfoWidget';
+import PetAllergiesWidget from '@/components/widgets/PetAllergiesWidget';
+import PetPastConditionsWidget from '@/components/widgets/PetPastConditionsWidget';
+import PetHealthStatusWidget from '@/components/widgets/PetHealthStatusWidget';
+import PetMedicationsWidget from '@/components/widgets/PetMedicationsWidget';
+import PetVaccinationsWidget from '@/components/widgets/PetVaccinationsWidget';
+import PetUpcomingEventsWidget from '@/components/widgets/PetUpcomingEventsWidget';
 
 export default function OverviewTab() {
   const router = useRouter();
