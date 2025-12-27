@@ -57,7 +57,7 @@ export default function EventsTab() {
             </View>
             <View className="flex items-center gap-3 w-full sm:w-auto">
               <Pressable 
-                onPress={() => router.push(`/web/pets/events/new?petId=${id}`)}
+                onPress={() => router.push(`/(tabs)/pets/events/new?petId=${id}`)}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl shadow-lg shadow-primary/30 text-sm font-medium transition-all transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <IconSymbol name="add" size={20} />
@@ -146,7 +146,7 @@ export default function EventsTab() {
               <Text className="text-lg font-bold text-text-light dark:text-text-dark mb-2">No events yet</Text>
               <Text className="text-sm text-muted-light dark:text-muted-dark mb-4">Add events to track your pet's care schedule</Text>
               <Pressable 
-                onPress={() => router.push(`/web/pets/events/new?petId=${id}`)}
+                onPress={() => router.push(`/(tabs)/pets/events/new?petId=${id}`)}
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <IconSymbol name="add" size={16} />

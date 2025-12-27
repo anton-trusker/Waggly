@@ -71,7 +71,7 @@ export default function PetDetailsPage() {
                                 <Ionicons name="share-outline" size={20} color="#475569" />
                             </TouchableOpacity>
                             {canEdit && (
-                                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(`/web/pets/${petId}/edit` as any)}>
+                                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(`/(tabs)/pets/${petId}/edit` as any)}>
                                     <Ionicons name="create-outline" size={20} color="#475569" />
                                 </TouchableOpacity>
                             )}

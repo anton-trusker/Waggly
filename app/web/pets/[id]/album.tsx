@@ -67,14 +67,14 @@ export default function AlbumTab() {
           <View style={styles.headerActions}>
             <TouchableOpacity 
               style={styles.btnSecondary}
-              onPress={() => router.push(`/web/pets/albums/new?petId=${id}` as any)}
+              onPress={() => router.push(`/(tabs)/pets/albums/new?petId=${id}` as any)}
             >
               <IconSymbol android_material_icon_name="create-new-folder" size={20} color="#6B7280" />
               <Text style={styles.btnTextSecondary}>New Album</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.btnPrimary}
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}` as any)}
+              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}` as any)}
             >
               <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#fff" />
               <Text style={styles.btnTextPrimary}>Add Media</Text>
@@ -118,7 +118,7 @@ export default function AlbumTab() {
             {/* Create Album Card */}
             <TouchableOpacity 
               style={styles.createAlbumCard}
-              onPress={() => router.push(`/web/pets/albums/new?petId=${id}` as any)}
+              onPress={() => router.push(`/(tabs)/pets/albums/new?petId=${id}` as any)}
             >
               <View style={styles.createIconCircle}>
                 <IconSymbol android_material_icon_name="add" size={32} color="#9CA3AF" />

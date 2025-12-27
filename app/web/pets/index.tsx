@@ -21,7 +21,7 @@ export default function PetsListPage() {
           <Text style={styles.subtitle}>Manage your pets and quick actions</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/web/pets/add' as any)}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/add' as any)}>
             <Ionicons name="add" size={20} color="#fff" />
             <Text style={styles.addButtonText}>Add Pet</Text>
           </TouchableOpacity>
@@ -35,7 +35,7 @@ export default function PetsListPage() {
           <Text style={styles.emptyIcon}>🐾</Text>
           <Text style={styles.emptyTitle}>No Pets Yet</Text>
           <Text style={styles.emptyText}>Add your first pet to start managing their health and care</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/web/pets/add' as any)}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/add' as any)}>
             <Ionicons name="add" size={20} color="#fff" />
             <Text style={styles.addButtonText}>Add Your First Pet</Text>
           </TouchableOpacity>
@@ -46,7 +46,7 @@ export default function PetsListPage() {
             <View key={pet.id} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
               <PetCardDesktop pet={pet} />
               <View style={styles.cardActions}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push(`/web/pets/${pet.id}` as any)}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}>
                   <Ionicons name="eye-outline" size={18} color="#374151" />
                   <Text style={styles.secondaryButtonText}>View</Text>
                 </TouchableOpacity>

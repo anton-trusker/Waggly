@@ -88,7 +88,7 @@ export default function OverviewTab() {
     { label: "Visit", icon: "calendar-today", color: "#2563EB", bgColor: "#DBEAFE", onPress: () => setVisitOpen(true) },
     { label: "Vaccine", icon: "vaccines", color: "#DB2777", bgColor: "#FCE7F3", onPress: () => setVaccinationOpen(true) },
     { label: "Meds", icon: "medication", color: "#9333EA", bgColor: "#F3E8FF", onPress: () => setTreatmentOpen(true) },
-    { label: "Doc", icon: "note-add", color: "#EA580C", bgColor: "#FFEDD5", onPress: () => router.push(`/web/pets/documents/add?petId=${pet.id}` as any) },
+    { label: "Doc", icon: "note-add", color: "#EA580C", bgColor: "#FFEDD5", onPress: () => router.push(`/(tabs)/pets/documents/add?petId=${pet.id}` as any) },
   ];
 
   return (

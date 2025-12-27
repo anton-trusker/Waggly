@@ -118,7 +118,7 @@ export default function AddPetPage() {
             }
 
             Alert.alert('Success', 'Pet added successfully!');
-            router.push(`/web/pets/${data.id}` as any);
+            router.push(`/(tabs)/pets/${data.id}` as any);
         } catch (error: any) {
             Alert.alert('Error', error.message);
         } finally {

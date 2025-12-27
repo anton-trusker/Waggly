@@ -180,7 +180,7 @@ export default function PassportTab() {
                             </View>
                             <TouchableOpacity
                                 style={styles.addEntryBtn}
-                                onPress={() => router.push(`/web/pets/vaccination/add?petId=${petId}` as any)}
+                                onPress={() => router.push(`/(tabs)/pets/vaccination/add?petId=${petId}` as any)}
                             >
                                 <Ionicons name="add" size={16} color="#fff" />
                                 <Text style={styles.addEntryText}>Add Entry</Text>

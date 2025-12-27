@@ -73,7 +73,7 @@ export default function HealthTab() {
               icon="calendar_today" 
               color="#2563EB" 
               bgColor="#DBEAFE" 
-              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)} 
               isMobile={true}
             />
             <QuickActionButton 
@@ -81,7 +81,7 @@ export default function HealthTab() {
               icon="vaccines" 
               color="#DB2777" 
               bgColor="#FCE7F3" 
-              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)} 
               isMobile={true}
             />
             <QuickActionButton 
@@ -89,7 +89,7 @@ export default function HealthTab() {
               icon="medication" 
               color="#9333EA" 
               bgColor="#F3E8FF" 
-              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)} 
               isMobile={true}
             />
             <QuickActionButton 
@@ -97,7 +97,7 @@ export default function HealthTab() {
               icon="add_a_photo" 
               color="#D97706" 
               bgColor="#FEF3C7" 
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)} 
               isMobile={true}
             />
             <QuickActionButton 
@@ -105,7 +105,7 @@ export default function HealthTab() {
               icon="note_add" 
               color="#EA580C" 
               bgColor="#FFEDD5" 
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)} 
               isMobile={true}
             />
             <QuickActionButton 
@@ -113,7 +113,7 @@ export default function HealthTab() {
               icon="history_edu" 
               color="#059669" 
               bgColor="#D1FAE5" 
-              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)} 
               isMobile={true}
             />
           </ScrollView>
@@ -124,42 +124,42 @@ export default function HealthTab() {
               icon="calendar_today" 
               color="#2563EB" 
               bgColor="#DBEAFE" 
-              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)} 
             />
             <QuickActionButton 
               label="Add Vaccine" 
               icon="vaccines" 
               color="#DB2777" 
               bgColor="#FCE7F3" 
-              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)} 
             />
             <QuickActionButton 
               label="Add Tx" 
               icon="medication" 
               color="#9333EA" 
               bgColor="#F3E8FF" 
-              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)} 
             />
             <QuickActionButton 
               label="Add Image" 
               icon="add_a_photo" 
               color="#D97706" 
               bgColor="#FEF3C7" 
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)} 
             />
             <QuickActionButton 
               label="Add Doc" 
               icon="note_add" 
               color="#EA580C" 
               bgColor="#FFEDD5" 
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)} 
             />
             <QuickActionButton 
               label="Add Record" 
               icon="history_edu" 
               color="#059669" 
               bgColor="#D1FAE5" 
-              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)} 
             />
           </View>
         )}
@@ -185,7 +185,7 @@ export default function HealthTab() {
                   </Pressable>
                   <Pressable 
                     style={styles.primaryBtn}
-                    onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
+                    onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)}
                   >
                     <IconSymbol android_material_icon_name="add" size={16} color="#fff" />
                     <Text style={styles.primaryBtnText}>New Visit</Text>
@@ -273,7 +273,7 @@ export default function HealthTab() {
                   </View>
                   <Text style={styles.cardTitle}>Vaccinations</Text>
                 </View>
-                <Pressable onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}>
+                <Pressable onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)}>
                   <Text style={styles.linkText}>+ Add New</Text>
                 </Pressable>
               </View>
@@ -338,7 +338,7 @@ export default function HealthTab() {
                   <Pressable style={styles.iconBtn}>
                     <IconSymbol android_material_icon_name="filter-list" size={24} color="#6B7280" />
                   </Pressable>
-                  <Pressable onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}>
+                  <Pressable onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)}>
                     <Text style={styles.linkText}>+ Add Tx</Text>
                   </Pressable>
                 </View>

@@ -74,14 +74,14 @@ export default function DocumentsTab() {
           <View style={styles.desktopActions}>
             <TouchableOpacity 
               style={styles.desktopBtnSecondary}
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}&mode=scan` as any)}
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any)}
             >
               <IconSymbol android_material_icon_name="document-scanner" size={20} color="#6366F1" />
               <Text style={styles.desktopBtnTextSecondary}>Scan Doc</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.desktopBtnPrimary}
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}&mode=upload` as any)}
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
               <Text style={styles.desktopBtnTextPrimary}>Upload File</Text>
@@ -93,8 +93,8 @@ export default function DocumentsTab() {
       {/* Mobile Actions */}
       {isMobile && (
         <View style={styles.mobileActionsContainer}>
-          {renderActionTile('Scan Doc', 'document-scanner', '#6366F1', '#E0E7FF', () => router.push(`/web/pets/documents/add?petId=${id}&mode=scan` as any))}
-          {renderActionTile('Upload', 'upload-file', '#059669', '#D1FAE5', () => router.push(`/web/pets/documents/add?petId=${id}&mode=upload` as any))}
+          {renderActionTile('Scan Doc', 'document-scanner', '#6366F1', '#E0E7FF', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any))}
+          {renderActionTile('Upload', 'upload-file', '#059669', '#D1FAE5', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any))}
           {renderActionTile('Auto-Fill', 'auto-fix-high', '#EA580C', '#FFEDD5', () => {})}
         </View>
       )}
@@ -185,7 +185,7 @@ export default function DocumentsTab() {
             <Text style={styles.emptyStateText}>No documents found</Text>
             <TouchableOpacity 
               style={styles.desktopBtnPrimary}
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}&mode=upload` as any)}
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
               <Text style={styles.desktopBtnTextPrimary}>Upload a Document</Text>

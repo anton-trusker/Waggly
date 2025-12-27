@@ -66,7 +66,7 @@ export default function AddDocument() {
       if (error) {
         console.error('Upload failed:', error);
       } else {
-        router.push(`/web/pets/${targetPetId}/documents` as any);
+        router.push(`/(tabs)/pets/${targetPetId}/documents` as any);
       }
     } catch (error) {
       console.error('Upload exception:', error);
