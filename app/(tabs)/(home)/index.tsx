@@ -120,7 +120,7 @@ export default function HomePage() {
                 <DashboardPetCard
                   key={pet.id}
                   pet={pet}
-                  onPress={(p) => router.push(`/(tabs)/pets/pet-detail?id=${p.id}`)}
+                  onPress={(p) => router.push(`/(tabs)/pets/[id]/overview?id=${p.id}`)}
                 />
               ))}
             </ScrollView>
