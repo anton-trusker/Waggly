@@ -29,7 +29,7 @@ import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
 
 export default function HomePage() {
   const router = useRouter();
-  const { pets, loading, refresh: refreshPets } = usePets();
+  const { pets, loading, refreshPets } = usePets();
   const { width } = useWindowDimensions();
   const [refreshing, setRefreshing] = useState(false);
 
