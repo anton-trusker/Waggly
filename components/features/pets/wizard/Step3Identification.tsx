@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
-import { Picker } from '@react-native-picker/picker'; // You might need to install this if not available, or use a custom select
+import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import ModernSelect from '@/components/ui/ModernSelect';
 
 export interface Step3Data {
     microchipNumber: string;
     registryProvider: string;
+    implantationDate?: Date;
     tagId: string;
+    weight: number;
+    weightUnit: 'kg' | 'lbs';
+    height: number;
+    heightUnit: 'cm' | 'in';
+    bloodType: string;
 }
 
 interface Step3Props {
@@ -16,7 +23,6 @@ interface Step3Props {
 }
 
 const REGISTRY_PROVIDERS = [
-    { label: 'Select provider', value: '' },
     { label: 'HomeAgain', value: 'homeagain' },
     { label: 'Avid', value: 'avid' },
     { label: 'AKC Reunite', value: 'akc' },
@@ -24,17 +30,49 @@ const REGISTRY_PROVIDERS = [
     { label: 'Other', value: 'other' },
 ];
 
+const BLOOD_TYPES = [
+    { label: 'DEA 1.1 Positive', value: 'DEA 1.1 Positive' },
+    { label: 'DEA 1.1 Negative', value: 'DEA 1.1 Negative' },
+    { label: 'Type A', value: 'Type A' },
+    { label: 'Type B', value: 'Type B' },
+    { label: 'Type AB', value: 'Type AB' },
+    { label: 'Unknown', value: 'Unknown' },
+];
+
 export default function Step3Identification({ initialData, onNext }: Step3Props) {
+    // Microchip
     const [microchipNumber, setMicrochipNumber] = useState(initialData.microchipNumber);
     const [registryProvider, setRegistryProvider] = useState(initialData.registryProvider);
+    const [implantationDate, setImplantationDate] = useState<Date | undefined>(initialData.implantationDate);
     const [tagId, setTagId] = useState(initialData.tagId);
+
+    // Health
+    const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
+    const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData.weightUnit);
+    const [height, setHeight] = useState(initialData.height ? initialData.height.toString() : '');
+    const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>(initialData.heightUnit);
+    const [bloodType, setBloodType] = useState(initialData.bloodType);
+
+    // Modals
+    const [showDateModal, setShowDateModal] = useState(false);
 
     const handleNext = () => {
         onNext({
             microchipNumber,
             registryProvider,
-            tagId
+            implantationDate,
+            tagId,
+            weight: parseFloat(weight) || 0,
+            weightUnit,
+            height: parseFloat(height) || 0,
+            heightUnit,
+            bloodType,
         });
+    };
+
+    const onDateConfirm = (date: Date) => {
+        setImplantationDate(date);
+        setShowDateModal(false);
     };
 
     return (
@@ -42,24 +80,23 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Identification Details</Text>
-                    <Text style={styles.subtitle}>Microchip and tag details help bring your pet home safely.</Text>
+                    <Text style={styles.title}>Health & Identification</Text>
+                    <Text style={styles.subtitle}>Important medical and tracking details.</Text>
                 </View>
 
                 <View style={styles.formSection}>
-                    {/* Microchip */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>MICROCHIP NUMBER</Text>
-                        <View style={styles.inputContainer}>
-                            <IconSymbol
-                                ios_icon_name="memorychip"
-                                android_material_icon_name="memory"
-                                size={20}
-                                color={designSystem.colors.primary[500]}
-                                style={styles.inputIcon}
-                            />
+                    {/* --- Microchip Card --- */}
+                    <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <IconSymbol ios_icon_name="memorychip" android_material_icon_name="memory" size={24} color={designSystem.colors.primary[500]} />
+                            <Text style={styles.cardTitle}>Microchip Details</Text>
+                        </View>
+                        
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>MICROCHIP NUMBER</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="e.g. 985112345678900"
@@ -69,45 +106,107 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                                 onChangeText={setMicrochipNumber}
                             />
                         </View>
-                        <Text style={styles.hint}>Usually a 9, 10 or 15-digit number.</Text>
-                    </View>
 
-                    {/* Registry Provider */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>REGISTRY PROVIDER</Text>
-                        <View style={styles.selectContainer}>
-                            <IconSymbol
-                                ios_icon_name="building.2"
-                                android_material_icon_name="domain"
-                                size={20}
-                                color={designSystem.colors.primary[500]}
-                                style={styles.inputIcon}
-                            />
-                            {Platform.OS === 'ios' ? (
-                                // Simplified Select for iOS artifact, usually would use ActionSheet or PickerOverlay
-                                <TouchableOpacity style={styles.selectButton}>
-                                    <Text style={styles.selectText}>{REGISTRY_PROVIDERS.find(p => p.value === registryProvider)?.label || 'Select provider'}</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <Picker
-                                    selectedValue={registryProvider}
-                                    onValueChange={(itemValue) => setRegistryProvider(itemValue)}
-                                    style={styles.picker}
-                                >
-                                    {REGISTRY_PROVIDERS.map((p) => (
-                                        <Picker.Item key={p.value} label={p.label} value={p.value} />
-                                    ))}
-                                </Picker>
-                            )}
+                        <ModernSelect
+                            label="REGISTRY PROVIDER"
+                            placeholder="Select provider"
+                            value={registryProvider}
+                            options={REGISTRY_PROVIDERS}
+                            onChange={setRegistryProvider}
+                            searchable
+                        />
 
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>IMPLANTATION DATE</Text>
+                            <TouchableOpacity
+                                style={styles.dateTrigger}
+                                onPress={() => setShowDateModal(true)}
+                            >
+                                <Text style={implantationDate ? styles.inputText : styles.placeholderText}>
+                                    {implantationDate ? implantationDate.toLocaleDateString() : 'Select date'}
+                                </Text>
+                                <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.primary[500]} />
+                            </TouchableOpacity>
                         </View>
                     </View>
 
-                    {/* Tag ID */}
+                    {/* --- Health Card --- */}
+                    <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <IconSymbol ios_icon_name="heart.fill" android_material_icon_name="favorite" size={24} color={designSystem.colors.error[500]} />
+                            <Text style={styles.cardTitle}>Health Metrics</Text>
+                        </View>
+
+                        {/* Weight */}
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>WEIGHT</Text>
+                            <View style={styles.row}>
+                                <TextInput
+                                    style={[styles.input, { flex: 1 }]}
+                                    placeholder="0.0"
+                                    keyboardType="numeric"
+                                    value={weight}
+                                    onChangeText={setWeight}
+                                />
+                                <View style={styles.toggle}>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, weightUnit === 'kg' && styles.toggleSelected]}
+                                        onPress={() => setWeightUnit('kg')}
+                                    >
+                                        <Text style={[styles.toggleText, weightUnit === 'kg' && styles.toggleTextSelected]}>KG</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, weightUnit === 'lbs' && styles.toggleSelected]}
+                                        onPress={() => setWeightUnit('lbs')}
+                                    >
+                                        <Text style={[styles.toggleText, weightUnit === 'lbs' && styles.toggleTextSelected]}>LBS</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+
+                        {/* Height */}
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>HEIGHT (Optional)</Text>
+                            <View style={styles.row}>
+                                <TextInput
+                                    style={[styles.input, { flex: 1 }]}
+                                    placeholder="0.0"
+                                    keyboardType="numeric"
+                                    value={height}
+                                    onChangeText={setHeight}
+                                />
+                                <View style={styles.toggle}>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, heightUnit === 'cm' && styles.toggleSelected]}
+                                        onPress={() => setHeightUnit('cm')}
+                                    >
+                                        <Text style={[styles.toggleText, heightUnit === 'cm' && styles.toggleTextSelected]}>CM</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, heightUnit === 'in' && styles.toggleSelected]}
+                                        onPress={() => setHeightUnit('in')}
+                                    >
+                                        <Text style={[styles.toggleText, heightUnit === 'in' && styles.toggleTextSelected]}>IN</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+
+                         <ModernSelect
+                            label="BLOOD TYPE (Optional)"
+                            placeholder="Select blood type"
+                            value={bloodType}
+                            options={BLOOD_TYPES}
+                            onChange={setBloodType}
+                        />
+                    </View>
+
+                     {/* Tag ID */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>COLLAR TAG ID <Text style={styles.optional}>(Optional)</Text></Text>
-                        <View style={styles.inputContainer}>
-                            <IconSymbol
+                         <View style={styles.inputContainer}>
+                             <IconSymbol
                                 ios_icon_name="tag"
                                 android_material_icon_name="sell"
                                 size={20}
@@ -115,7 +214,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                                 style={styles.inputIcon}
                             />
                             <TextInput
-                                style={styles.input}
+                                style={styles.inputWithIcon}
                                 placeholder="Tag or License #"
                                 placeholderTextColor={designSystem.colors.text.tertiary}
                                 value={tagId}
@@ -123,20 +222,10 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             />
                         </View>
                     </View>
-
-                    {/* Info Box */}
-                    <View style={styles.infoBox}>
-                        <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={20} color={designSystem.colors.primary[500]} />
-                        <View style={styles.infoContent}>
-                            <Text style={styles.infoTitle}>Why is this important?</Text>
-                            <Text style={styles.infoText}>Microchips are the only permanent form of identification. Keeping this updated ensures your pet can be returned to you.</Text>
-                        </View>
-                    </View>
                 </View>
                 <View style={{ height: 100 }} />
             </ScrollView>
 
-            {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity
                     style={styles.continueButton}
@@ -151,57 +240,89 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                     />
                 </TouchableOpacity>
             </View>
+
+            <CustomDatePicker
+                visible={showDateModal}
+                date={implantationDate || new Date()}
+                onClose={() => setShowDateModal(false)}
+                onConfirm={onDateConfirm}
+                title="Implantation Date"
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    container: { flex: 1 },
+    scrollContent: { paddingHorizontal: 24, paddingTop: 16 },
+    headerSection: { marginBottom: 24 },
+    title: { ...designSystem.typography.title.large, color: designSystem.colors.text.primary, marginBottom: 6 },
+    subtitle: { ...designSystem.typography.body.medium, color: designSystem.colors.text.secondary },
+    formSection: { gap: 24 },
+    card: {
+        backgroundColor: designSystem.colors.neutral[0],
+        borderRadius: 16,
+        padding: 16,
+        gap: 16,
+        ...designSystem.shadows.sm,
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[100],
     },
-    scrollContent: {
-        paddingHorizontal: 24,
-        paddingTop: 16,
-    },
-    headerSection: {
-        marginBottom: 24,
-    },
-    title: {
-        ...designSystem.typography.title.large,
+    cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 4 },
+    cardTitle: { ...designSystem.typography.title.medium, color: designSystem.colors.text.primary },
+    inputGroup: { gap: 8 },
+    label: { ...designSystem.typography.label.small, color: designSystem.colors.text.secondary, letterSpacing: 1, fontWeight: '700' },
+    input: {
+        backgroundColor: designSystem.colors.background.primary,
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        fontSize: 16,
         color: designSystem.colors.text.primary,
-        marginBottom: 6,
     },
-    subtitle: {
-        ...designSystem.typography.body.medium,
-        color: designSystem.colors.text.secondary,
+    dateTrigger: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+        backgroundColor: designSystem.colors.background.primary,
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
     },
-    formSection: {
-        gap: 20,
+    inputText: { fontSize: 16, color: designSystem.colors.text.primary },
+    placeholderText: { fontSize: 16, color: designSystem.colors.text.tertiary },
+    row: { flexDirection: 'row', gap: 12 },
+    toggle: {
+        flexDirection: 'row',
+        backgroundColor: designSystem.colors.neutral[100],
+        borderRadius: 12,
+        padding: 4,
+        height: 50, // Match input height roughly
     },
-    inputGroup: {
-        gap: 8,
+    toggleOption: {
+        paddingHorizontal: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
     },
-    label: {
+    toggleSelected: {
+        backgroundColor: designSystem.colors.neutral[0],
+        ...designSystem.shadows.sm,
+    },
+    toggleText: {
         ...designSystem.typography.label.small,
-        color: designSystem.colors.text.secondary,
-        letterSpacing: 1,
+        color: designSystem.colors.text.tertiary,
         fontWeight: '700',
     },
-    optional: {
-        fontWeight: '400',
-        color: designSystem.colors.text.tertiary,
-        fontSize: 12,
+    toggleTextSelected: {
+        color: designSystem.colors.primary[500],
     },
-    inputContainer: {
-        position: 'relative',
-    },
-    inputIcon: {
-        position: 'absolute',
-        left: 16,
-        top: 18,
-        zIndex: 1,
-    },
-    input: {
+    optional: { fontWeight: '400', color: designSystem.colors.text.tertiary, fontSize: 12 },
+    inputContainer: { position: 'relative' },
+    inputIcon: { position: 'absolute', left: 16, top: 18, zIndex: 1 },
+    inputWithIcon: {
         backgroundColor: designSystem.colors.neutral[0],
         borderWidth: 1,
         borderColor: designSystem.colors.neutral[200],
@@ -213,78 +334,14 @@ const styles = StyleSheet.create({
         color: designSystem.colors.text.primary,
         ...designSystem.shadows.sm,
     },
-    selectContainer: {
-        backgroundColor: designSystem.colors.neutral[0],
-        borderWidth: 1,
-        borderColor: designSystem.colors.neutral[200],
-        borderRadius: 12,
-        overflow: 'hidden',
-        position: 'relative',
-        minHeight: 56,
-        justifyContent: 'center',
-    },
-    picker: {
-        marginLeft: 40,
-    },
-    selectButton: {
-        paddingLeft: 48,
-        paddingVertical: 16,
-    },
-    selectText: {
-        fontSize: 16,
-        color: designSystem.colors.text.primary,
-    },
-    hint: {
-        ...designSystem.typography.label.small,
-        color: designSystem.colors.text.tertiary,
-    },
-    infoBox: {
-        backgroundColor: designSystem.colors.primary[50],
-        borderWidth: 1,
-        borderColor: designSystem.colors.primary[100],
-        borderRadius: 12,
-        padding: 16,
-        flexDirection: 'row',
-        gap: 12,
-        alignItems: 'flex-start',
-    },
-    infoContent: {
-        flex: 1,
-    },
-    infoTitle: {
-        ...designSystem.typography.label.medium,
-        color: designSystem.colors.text.primary,
-        fontWeight: '700',
-        marginBottom: 2,
-    },
-    infoText: {
-        ...designSystem.typography.body.small,
-        color: designSystem.colors.text.secondary,
-    },
     footer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: 16,
-        backgroundColor: designSystem.colors.background.primary,
-        borderTopWidth: 1,
-        borderTopColor: designSystem.colors.neutral[100],
+        position: 'absolute', bottom: 0, left: 0, right: 0, padding: 16,
+        backgroundColor: designSystem.colors.background.primary, borderTopWidth: 1, borderTopColor: designSystem.colors.neutral[100],
         paddingBottom: Platform.OS === 'ios' ? 34 : 16,
     },
     continueButton: {
-        backgroundColor: designSystem.colors.primary[500],
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        borderRadius: 12,
-        gap: 8,
-        ...designSystem.shadows.md,
+        backgroundColor: designSystem.colors.primary[500], flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+        paddingVertical: 16, borderRadius: 12, gap: 8, ...designSystem.shadows.md,
     },
-    continueButtonText: {
-        ...designSystem.typography.title.medium,
-        color: designSystem.colors.neutral[0],
-        fontWeight: '800',
-    },
+    continueButtonText: { ...designSystem.typography.title.medium, color: designSystem.colors.neutral[0], fontWeight: '800' },
 });

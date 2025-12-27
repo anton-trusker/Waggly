@@ -45,7 +45,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
 
                     <View style={styles.divider} />
 
-                    {/* Details Grid */}
+                    {/* Basic Info Grid */}
                     <View style={styles.detailsGrid}>
                         <View style={styles.detailItem}>
                             <Text style={styles.detailLabel}>GENDER</Text>
@@ -55,9 +55,23 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                             <Text style={styles.detailLabel}>AGE</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.dateOfBirth ? formatAge(data.dateOfBirth) : '-'}</Text>
                         </View>
+                    </View>
+                    
+                    <View style={[styles.divider, { marginTop: 16 }]} />
+
+                    {/* Health Grid */}
+                    <View style={styles.detailsGrid}>
                         <View style={styles.detailItem}>
                             <Text style={styles.detailLabel}>WEIGHT</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.weight ? `${data.weight} ${data.weightUnit}` : '-'}</Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                            <Text style={styles.detailLabel}>HEIGHT</Text>
+                            <Text style={styles.detailValue} numberOfLines={1}>{data.height ? `${data.height} ${data.heightUnit}` : '-'}</Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                            <Text style={styles.detailLabel}>BLOOD</Text>
+                            <Text style={styles.detailValue} numberOfLines={1}>{data.bloodType || '-'}</Text>
                         </View>
                     </View>
                 </View>
@@ -66,12 +80,36 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                     <Text style={styles.sectionHeader}>IDENTIFICATION</Text>
                     <View style={styles.infoRow}>
                         <IconSymbol ios_icon_name="memorychip" android_material_icon_name="memory" size={20} color={designSystem.colors.text.secondary} />
-                        <Text style={styles.infoText}>{data.microchipNumber || 'No Microchip'}</Text>
+                        <View>
+                             <Text style={styles.infoLabel}>Microchip</Text>
+                             <Text style={styles.infoText}>{data.microchipNumber || 'Not provided'}</Text>
+                        </View>
                     </View>
                     {data.registryProvider && (
                         <View style={styles.infoRow}>
                             <IconSymbol ios_icon_name="building.2" android_material_icon_name="domain" size={20} color={designSystem.colors.text.secondary} />
-                            <Text style={styles.infoText}>{data.registryProvider}</Text>
+                            <View>
+                                <Text style={styles.infoLabel}>Registry</Text>
+                                <Text style={styles.infoText}>{data.registryProvider}</Text>
+                            </View>
+                        </View>
+                    )}
+                     {data.implantationDate && (
+                        <View style={styles.infoRow}>
+                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.secondary} />
+                            <View>
+                                <Text style={styles.infoLabel}>Implantation Date</Text>
+                                <Text style={styles.infoText}>{data.implantationDate.toLocaleDateString()}</Text>
+                            </View>
+                        </View>
+                    )}
+                     {data.tagId && (
+                        <View style={styles.infoRow}>
+                            <IconSymbol ios_icon_name="tag" android_material_icon_name="sell" size={20} color={designSystem.colors.text.secondary} />
+                            <View>
+                                <Text style={styles.infoLabel}>Tag ID</Text>
+                                <Text style={styles.infoText}>{data.tagId}</Text>
+                            </View>
                         </View>
                     )}
                 </View>
@@ -234,6 +272,11 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         borderWidth: 1,
         borderColor: designSystem.colors.neutral[100],
+    },
+    infoLabel: {
+        ...designSystem.typography.label.small,
+        color: designSystem.colors.text.tertiary,
+        marginBottom: 2,
     },
     infoText: {
         ...designSystem.typography.body.medium,

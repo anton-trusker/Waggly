@@ -10,8 +10,6 @@ export interface Step2Data {
     breed: string;
     gender: 'male' | 'female';
     dateOfBirth?: Date;
-    weight: number;
-    weightUnit: 'kg' | 'lbs';
 }
 
 interface Step2Props {
@@ -24,8 +22,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
     const [breed, setBreed] = useState(initialData.breed);
     const [gender, setGender] = useState<'male' | 'female'>(initialData.gender);
     const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(initialData.dateOfBirth);
-    const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
-    const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData.weightUnit);
 
     // Custom Modal States
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -43,8 +39,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
             breed,
             gender,
             dateOfBirth,
-            weight: parseFloat(weight) || 0,
-            weightUnit,
         });
     };
 
@@ -156,47 +150,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                         {dateOfBirth && (
                             <Text style={styles.hint}>Age: {formatAge(dateOfBirth)}</Text>
                         )}
-                    </View>
-
-                    {/* Weight */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>WEIGHT</Text>
-                        <View style={styles.weightRow}>
-                            <View style={styles.weightInputContainer}>
-                                <TextInput
-                                    style={styles.weightInput}
-                                    placeholder="0.0"
-                                    keyboardType="numeric"
-                                    value={weight}
-                                    onChangeText={setWeight}
-                                />
-                                <IconSymbol
-                                    ios_icon_name="scalemass"
-                                    android_material_icon_name="scale"
-                                    size={20}
-                                    color={designSystem.colors.text.tertiary}
-                                    style={styles.weightIcon}
-                                />
-                            </View>
-                            <View style={styles.unitToggle}>
-                                <TouchableOpacity
-                                    style={[styles.unitOption, weightUnit === 'kg' && styles.unitOptionSelected]}
-                                    onPress={() => setWeightUnit('kg')}
-                                >
-                                    <Text style={[styles.unitText, weightUnit === 'kg' && styles.unitTextSelected]}>KG</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.unitOption, weightUnit === 'lbs' && styles.unitOptionSelected]}
-                                    onPress={() => setWeightUnit('lbs')}
-                                >
-                                    <Text style={[styles.unitText, weightUnit === 'lbs' && styles.unitTextSelected]}>LBS</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={styles.infoRow}>
-                            <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={14} color={designSystem.colors.text.tertiary} />
-                            <Text style={styles.hint}>Estimate is fine if exact weight is unknown.</Text>
-                        </View>
                     </View>
                 </View>
                 <View style={{ height: 100 }} />
