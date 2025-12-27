@@ -585,7 +585,7 @@ export default function OverviewTab() {
           that included 'Medication' as a type. 
       */}
         {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
-      </ScrollView>
+      </>
       );
 }
 
