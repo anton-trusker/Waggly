@@ -3,12 +3,12 @@ import {
     View,
     Text,
     TextInput,
-    FlatList,
     TouchableOpacity,
     StyleSheet,
     ActivityIndicator,
     Platform
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
@@ -213,41 +213,40 @@ export default function PlacesAutocomplete({
 
             {error && <Text style={styles.errorText}>{error}</Text>}
 
-            {showPredictions && predictions.length > 0 && (
-                <View style={styles.predictionsContainer}>
-                    <FlatList
-                        data={predictions}
-                        keyExtractor={(item) => item.place_id}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={styles.predictionItem}
-                                onPress={() => selectPlace(item.place_id, item.description)}
-                            >
-                                <IconSymbol
-                                    ios_icon_name="mappin.circle"
-                                    android_material_icon_name="place"
-                                    size={16}
-                                    color={colors.primary}
-                                    style={styles.predictionIcon}
-                                />
-                                <View style={styles.predictionTextContainer}>
-                                    <Text style={styles.predictionMainText}>
-                                        {item.structured_formatting?.main_text || item.description}
+            <View style={styles.predictionsContainer}>
+                <FlashList
+                    data={predictions}
+                    keyExtractor={(item) => item.place_id}
+                    estimatedItemSize={62}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.predictionItem}
+                            onPress={() => selectPlace(item.place_id, item.description)}
+                        >
+                            <IconSymbol
+                                ios_icon_name="mappin.circle"
+                                android_material_icon_name="place"
+                                size={16}
+                                color={colors.primary}
+                                style={styles.predictionIcon}
+                            />
+                            <View style={styles.predictionTextContainer}>
+                                <Text style={styles.predictionMainText}>
+                                    {item.structured_formatting?.main_text || item.description}
+                                </Text>
+                                {item.structured_formatting?.secondary_text && (
+                                    <Text style={styles.predictionSecondaryText}>
+                                        {item.structured_formatting.secondary_text}
                                     </Text>
-                                    {item.structured_formatting?.secondary_text && (
-                                        <Text style={styles.predictionSecondaryText}>
-                                            {item.structured_formatting.secondary_text}
-                                        </Text>
-                                    )}
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        style={styles.predictionsList}
-                        keyboardShouldPersistTaps="handled"
-                        nestedScrollEnabled
-                    />
-                </View>
-            )}
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                    style={styles.predictionsList}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled
+                />
+            </View>
         </View>
     );
 }

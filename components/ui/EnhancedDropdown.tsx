@@ -6,11 +6,11 @@ import {
   StyleSheet,
   Modal,
   TextInput,
-  FlatList,
   Dimensions,
   Platform,
   Keyboard,
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocale } from '@/hooks/useLocale';
@@ -76,9 +76,9 @@ export default function EnhancedDropdown({
 
   const filteredOptions = useMemo(() => {
     if (!searchQuery.trim()) return options;
-    
+
     const query = searchQuery.toLowerCase();
-    return options.filter(option => 
+    return options.filter(option =>
       option.label.toLowerCase().includes(query) ||
       option.value.toLowerCase().includes(query)
     );
@@ -110,7 +110,7 @@ export default function EnhancedDropdown({
 
   const renderOption = useCallback(({ item, index }: { item: EnhancedDropdownOption; index: number }) => {
     const isSelected = item.value === value;
-    
+
     return (
       <TouchableOpacity
         style={[
@@ -298,10 +298,11 @@ export default function EnhancedDropdown({
             )}
 
             {/* Options List */}
-            <FlatList
+            <FlashList
               data={filteredOptions}
               renderItem={renderOption}
               keyExtractor={(item) => item.value}
+              estimatedItemSize={56}
               style={styles.optionsList}
               contentContainerStyle={[
                 styles.optionsContent,

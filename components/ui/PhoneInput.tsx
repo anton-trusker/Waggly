@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Image } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { COUNTRIES, Country } from '@/constants/countries';
@@ -138,9 +139,10 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
                             </TouchableOpacity>
                         )}
                     </View>
-                    <FlatList
+                    <FlashList
                         data={filteredCountries}
                         keyExtractor={item => item.code}
+                        estimatedItemSize={65}
                         keyboardShouldPersistTaps="handled"
                         renderItem={({ item }) => (
                             <TouchableOpacity
