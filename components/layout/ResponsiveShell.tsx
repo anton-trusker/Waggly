@@ -44,7 +44,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
             name: 'dashboard',
             label: 'Home',
             icon: 'home' as any,
-            route: '/web/dashboard',
+            route: '/(tabs)/(home)',
         },
         {
             name: 'calendar',

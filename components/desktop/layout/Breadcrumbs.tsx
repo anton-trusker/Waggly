@@ -11,7 +11,7 @@ export default function Breadcrumbs() {
     const { pets } = usePets();
 
     // Don't show on dashboard root
-    if (pathname === '/web/dashboard' || segments.length <= 2) return null;
+    if (pathname === '/(tabs)/(home)' || segments.length <= 2) return null;
 
     const getBreadcrumbs = () => {
         // Filter out 'web', '(auth)', etc.

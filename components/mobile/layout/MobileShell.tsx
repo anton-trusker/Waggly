@@ -26,7 +26,7 @@ const MobileShell: React.FC<MobileShellProps> = ({ children }) => {
             name: 'dashboard',
             label: 'Home',
             icon: 'home' as any,
-            route: '/web/dashboard',
+            route: '/(tabs)/(home)',
         },
         {
             name: 'calendar',
@@ -59,9 +59,9 @@ const MobileShell: React.FC<MobileShellProps> = ({ children }) => {
             <View style={styles.content}>
                 {children}
             </View>
-            <FloatingTabBar 
-                tabs={tabs} 
-                containerWidth={Math.min(width - 32, 400)} 
+            <FloatingTabBar
+                tabs={tabs}
+                containerWidth={Math.min(width - 32, 400)}
                 borderRadius={24}
             />
         </View>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         // Add padding bottom to avoid overlap with floating tab bar
-        paddingBottom: 80, 
+        paddingBottom: 80,
     },
 });
 
