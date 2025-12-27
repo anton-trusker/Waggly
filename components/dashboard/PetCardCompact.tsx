@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import { Pet } from '@/types';
 import { designSystem } from '@/constants/designSystem';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface PetCardCompactProps {
     pet: Pet;
@@ -13,22 +14,24 @@ export default function PetCardCompact({ pet }: PetCardCompactProps) {
         router.push(`/(tabs)/pets/${pet.id}/overview` as any);
     };
 
-    const getImageSource = () => {
-        if (pet.photo_url) {
-            return { uri: pet.photo_url };
-        }
-        // Default pet avatar based on species
-        return require('@/assets/images/default-pet.png');
-    };
-
     return (
         <TouchableOpacity style={styles.container} onPress={handlePress} activeOpacity={0.7}>
             <View style={styles.imageContainer}>
-                <Image
-                    source={getImageSource()}
-                    style={styles.image}
-                    resizeMode="cover"
-                />
+                {pet.photo_url ? (
+                    <Image
+                        source={{ uri: pet.photo_url }}
+                        style={styles.image}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <View style={styles.placeholderContainer}>
+                        <IconSymbol
+                            android_material_icon_name="pets"
+                            size={32}
+                            color="#9CA3AF"
+                        />
+                    </View>
+                )}
             </View>
             <Text style={styles.name} numberOfLines={1}>
                 {pet.name}
@@ -64,6 +67,13 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
+    },
+    placeholderContainer: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F9FAFB',
     },
     name: {
         fontSize: 13,
