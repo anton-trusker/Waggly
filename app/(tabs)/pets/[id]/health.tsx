@@ -74,7 +74,7 @@ export default function PetHealthTab() {
           >
             <QuickActionButton
               label="Add Visit"
-              icon="calendar_today"
+              icon="calendar"
               color="#2563EB"
               bgColor="#DBEAFE"
               onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
@@ -98,7 +98,7 @@ export default function PetHealthTab() {
             />
             <QuickActionButton
               label="Add Image"
-              icon="add_a_photo"
+              icon="camera"
               color="#D97706"
               bgColor="#FEF3C7"
               onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)}
@@ -125,7 +125,7 @@ export default function PetHealthTab() {
           <View style={styles.quickActionsGrid}>
             <QuickActionButton
               label="Add Visit"
-              icon="calendar_today"
+              icon="calendar"
               color="#2563EB"
               bgColor="#DBEAFE"
               onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
@@ -146,7 +146,7 @@ export default function PetHealthTab() {
             />
             <QuickActionButton
               label="Add Image"
-              icon="add_a_photo"
+              icon="camera"
               color="#D97706"
               bgColor="#FEF3C7"
               onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)}
