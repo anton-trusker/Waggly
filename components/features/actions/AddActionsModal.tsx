@@ -30,14 +30,13 @@ const actions: ActionItem[] = [
   { id: 'vaccine', title: 'Vaccine', icon: 'needle', route: '/(tabs)/pets/add-vaccination', color: '#EC4899' },
 ];
 
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.85;
+const { width, height } = Dimensions.get('window');
 
 export default function AddActionsModal({ visible, onClose }: Props) {
   const { pets } = usePets();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const slideAnim = useRef(new Animated.Value(height)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     if (visible) {
@@ -47,13 +46,13 @@ export default function AddActionsModal({ visible, onClose }: Props) {
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 200,
+          duration: 250,
           useNativeDriver: true,
         }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          friction: 8,
-          tension: 40,
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          damping: 20,
+          stiffness: 90,
           useNativeDriver: true,
         }),
       ]).start();
@@ -61,12 +60,12 @@ export default function AddActionsModal({ visible, onClose }: Props) {
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 150,
+          duration: 200,
           useNativeDriver: true,
         }),
-        Animated.timing(scaleAnim, {
-          toValue: 0.9,
-          duration: 150,
+        Animated.timing(slideAnim, {
+          toValue: height,
+          duration: 200,
           useNativeDriver: true,
         }),
       ]).start();
@@ -75,126 +74,100 @@ export default function AddActionsModal({ visible, onClose }: Props) {
 
   const handleActionPress = (action: ActionItem) => {
     onClose();
-    // Small delay to allow modal to close smoothly
     setTimeout(() => {
-        if (!selectedPet) {
-          router.push('/(tabs)/pets/add-pet-wizard');
-          return;
-        }
-        router.push({ pathname: action.route as any, params: { petId: selectedPet.id } });
+      if (!selectedPet) {
+        router.push('/(tabs)/pets/add-pet-wizard');
+        return;
+      }
+      router.push({ pathname: action.route as any, params: { petId: selectedPet.id } });
     }, 100);
   };
-
-  const PetCard = ({ pet, isSelected }: { pet: Pet; isSelected: boolean }) => (
-    <TouchableOpacity 
-      style={[styles.petCard, isSelected && styles.petCardSelected]} 
-      onPress={() => setSelectedPet(pet)}
-      activeOpacity={0.9}
-    >
-      <View style={styles.petImageContainer}>
-        {pet.photo_url ? (
-          <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
-        ) : (
-          <View style={[styles.petImagePlaceholder, { backgroundColor: isSelected ? colors.primary : colors.card }]}>
-            <Text style={styles.petEmoji}>
-              {pet.species === 'dog' ? '🐕' : pet.species === 'cat' ? '🐈' : '🐾'}
-            </Text>
-          </View>
-        )}
-        {isSelected && (
-          <View style={styles.checkmark}>
-            <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={12} color="#fff" />
-          </View>
-        )}
-      </View>
-      <Text style={[styles.petName, isSelected && styles.petNameSelected]} numberOfLines={1}>
-        {pet.name}
-      </Text>
-    </TouchableOpacity>
-  );
 
   if (!visible) return null;
 
   return (
-    <Modal transparent visible={visible} onRequestClose={onClose}>
+    <Modal transparent visible={visible} onRequestClose={onClose} animationType="none">
       <View style={styles.container}>
+        {/* Backdrop */}
         <Animated.View style={[styles.backdrop, { opacity: fadeAnim }]}>
-          <TouchableOpacity style={styles.backdropTouch} onPress={onClose} />
-          {Platform.OS === 'ios' && <BlurView intensity={20} style={StyleSheet.absoluteFill} />}
+          <TouchableOpacity style={styles.backdropTouch} onPress={onClose} activeOpacity={1} />
+          {Platform.OS === 'ios' && <BlurView intensity={10} style={StyleSheet.absoluteFill} />}
         </Animated.View>
 
-        <Animated.View style={[styles.modalContent, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+        {/* Bottom Sheet */}
+        <Animated.View style={[styles.bottomSheet, { transform: [{ translateY: slideAnim }] }]}>
+          {/* Handle */}
+          <View style={styles.handleContainer}>
+            <View style={styles.handle} />
+          </View>
+
+          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Quick Actions</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-               <IconSymbol ios_icon_name="xmark.circle.fill" android_material_icon_name="close" size={28} color={colors.textSecondary} />
-            </TouchableOpacity>
+            {selectedPet && (
+              <Text style={styles.subtitle}>for {selectedPet.name}</Text>
+            )}
           </View>
 
-          {/* Pet Selector */}
-          {pets.length > 0 ? (
-             <View style={styles.petSelectorContainer}>
-                <ScrollView 
-                  horizontal 
-                  showsHorizontalScrollIndicator={false} 
-                  contentContainerStyle={styles.petList}
-                >
-                  {pets.map(pet => (
-                    <PetCard 
-                      key={pet.id} 
-                      pet={pet} 
-                      isSelected={selectedPet?.id === pet.id} 
-                    />
-                  ))}
-                  <TouchableOpacity style={styles.addPetCard} onPress={() => { onClose(); router.push('/(tabs)/pets/add-pet-wizard'); }}>
-                    <View style={styles.addPetIcon}>
-                        <IconSymbol ios_icon_name="plus" android_material_icon_name="add" size={20} color={colors.primary} />
-                    </View>
-                    <Text style={styles.addPetText}>New Pet</Text>
-                  </TouchableOpacity>
-                </ScrollView>
-             </View>
-          ) : (
-             <View style={styles.emptyState}>
-                 <Text style={styles.emptyText}>No pets found. Add a pet first!</Text>
-                 <TouchableOpacity style={styles.addFirstPetButton} onPress={() => { onClose(); router.push('/(tabs)/pets/add-pet-wizard'); }}>
-                     <Text style={styles.addFirstPetText}>Add Pet</Text>
-                 </TouchableOpacity>
-             </View>
-          )}
-
-          {/* Current Pet Display (Large) */}
-          {selectedPet && (
-             <View style={styles.currentPetDisplay}>
-                <View style={styles.largeAvatar}>
-                    {selectedPet.photo_url ? (
-                        <Image source={{ uri: selectedPet.photo_url }} style={styles.largeAvatarImage} />
-                    ) : (
-                        <Text style={styles.largeEmoji}>
-                             {selectedPet.species === 'dog' ? '🐕' : selectedPet.species === 'cat' ? '🐈' : '🐾'}
-                        </Text>
-                    )}
-                </View>
-                <Text style={styles.largePetName}>{selectedPet.name}</Text>
-             </View>
-          )}
-
-          {/* Actions Grid */}
-          <View style={styles.actionsGrid}>
-            {actions.map((action) => (
-              <TouchableOpacity 
-                key={action.id} 
-                style={styles.actionItem} 
-                onPress={() => handleActionPress(action)}
-                activeOpacity={0.7}
+          {/* Pet Selector - Clean dropdown style */}
+          {pets.length > 0 && (
+            <View style={styles.petSelectorContainer}>
+              <Text style={styles.sectionLabel}>Select Pet</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.petList}
               >
-                <View style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}>
-                   <MaterialCommunityIcons name={action.icon} size={28} color={action.color} />
-                </View>
-                <Text style={styles.actionLabel}>{action.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                {pets.map(pet => (
+                  <TouchableOpacity
+                    key={pet.id}
+                    style={[
+                      styles.petButton,
+                      selectedPet?.id === pet.id && styles.petButtonSelected
+                    ]}
+                    onPress={() => setSelectedPet(pet)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.petButtonText,
+                      selectedPet?.id === pet.id && styles.petButtonTextSelected
+                    ]}>
+                      {pet.name}
+                    </Text>
+                    {selectedPet?.id === pet.id && (
+                      <View style={styles.selectedIndicator} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Actions Grid - Mobile optimized */}
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.sectionLabel}>Actions</Text>
+            <View style={styles.actionsGrid}>
+              {actions.map((action) => (
+                <TouchableOpacity
+                  key={action.id}
+                  style={styles.actionItem}
+                  onPress={() => handleActionPress(action)}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.actionIcon, { backgroundColor: action.color }]}>
+                    <MaterialCommunityIcons name={action.icon} size={28} color="#fff" />
+                  </View>
+                  <Text style={styles.actionLabel} numberOfLines={2}>
+                    {action.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </Animated.View>
       </View>
     </Modal>
@@ -204,206 +177,139 @@ export default function AddActionsModal({ visible, onClose }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
+    justifyContent: 'flex-end',
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   backdropTouch: {
     flex: 1,
   },
-  modalContent: {
-    width: CARD_WIDTH,
-    backgroundColor: colors.background,
-    borderRadius: 24,
-    padding: 20,
-    zIndex: 2,
+  bottomSheet: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+    maxHeight: height * 0.85,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 8,
-    maxHeight: '85%',
+  },
+  handleContainer: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  handle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#D1D5DB',
+    borderRadius: 2,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  petSelectorContainer: {
-    marginBottom: 20,
-  },
-  petList: {
-    gap: 12,
-    paddingHorizontal: 4,
-  },
-  petCard: {
-    alignItems: 'center',
-    width: 64,
-    opacity: 0.6,
-  },
-  petCardSelected: {
-    opacity: 1,
-  },
-  petImageContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    marginBottom: 6,
-    position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  petImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 28,
-  },
-  petImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  petEmoji: {
-    fontSize: 24,
-  },
-  checkmark: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: colors.success,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#fff',
-  },
-  petName: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.text,
-    textAlign: 'center',
-  },
-  petNameSelected: {
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  addPetCard: {
-    alignItems: 'center',
-    width: 64,
-    opacity: 0.8,
-  },
-  addPetIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.iconBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
-  },
-  addPetText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textSecondary,
-  },
-  currentPetDisplay: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  largeAvatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  largeAvatarImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 50,
-  },
-  largeEmoji: {
-    fontSize: 48,
-  },
-  largePetName: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.text,
+    color: '#111827',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  petSelectorContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 12,
+  },
+  sectionLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#6B7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 12,
+  },
+  petList: {
+    gap: 8,
+  },
+  petButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minHeight: 48,
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  petButtonSelected: {
+    backgroundColor: '#EEF2FF',
+    borderColor: '#6366F1',
+  },
+  petButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#4B5563',
+  },
+  petButtonTextSelected: {
+    color: '#6366F1',
+  },
+  selectedIndicator: {
+    position: 'absolute',
+    bottom: -1,
+    left: '20%',
+    right: '20%',
+    height: 2,
+    backgroundColor: '#6366F1',
+    borderRadius: 1,
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 12,
     justifyContent: 'space-between',
-    gap: 16,
   },
   actionItem: {
-    width: '30%', // 3 columns
+    width: '31%',
     alignItems: 'center',
-    marginBottom: 8,
+    minHeight: 56,
   },
   actionIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   actionLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    color: colors.text,
-    textAlign: 'center',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 20,
-    marginBottom: 20,
-  },
-  emptyText: {
-    marginBottom: 12,
-    color: colors.textSecondary,
-  },
-  addFirstPetButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  addFirstPetText: {
-    color: '#fff',
     fontWeight: '600',
+    color: '#374151',
+    textAlign: 'center',
+    lineHeight: 16,
   },
 });
