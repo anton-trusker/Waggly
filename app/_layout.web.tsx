@@ -21,7 +21,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: "web",
+  initialRouteName: "(tabs)",
 };
 
 function RootLayoutNav() {
@@ -44,20 +44,16 @@ function RootLayoutNav() {
 
     // If on mobile and in web group -> go to mobile tabs
     if (isMobile && inWebGroup) {
-      // Preserve sub-path if possible? For now, just go to root tabs
-      // or map specific routes. Simplest is root tabs.
       router.replace('/(tabs)' as any);
     }
-    // If on desktop and in tabs group -> go to web dashboard
-    else if (!isMobile && inTabsGroup) {
-      router.replace('/(tabs)/(home)');
-    }
+    // Desktop stays in (tabs) - no redirect needed
+    // Web routes are deprecated, (tabs) is the new unified route
   }, [loading, isMounted, isMobile, segments, router]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
-        <Stack.Screen name="web" />
+        {/* <Stack.Screen name="web" /> */}
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
       </Stack>
