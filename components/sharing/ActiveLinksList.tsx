@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+
 import { usePublicShare, PublicShare } from '@/hooks/usePublicShare';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
@@ -108,12 +110,13 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
 
   return (
     <>
-      <FlatList
+      <FlashList
         data={links}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         scrollEnabled={false} // Assuming it's nested in a ScrollView
+        estimatedItemSize={72}
       />
       <ShareDetailsModal
         visible={detailsModalVisible}

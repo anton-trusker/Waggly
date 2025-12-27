@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator, Modal, useWindowDimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Modal, useWindowDimensions, Platform } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -149,13 +151,14 @@ export default function PetGallery({ petId, gallery }: Props) {
           <Text style={styles.emptyText}>Add photos of your pet to create memories</Text>
         </View>
       ) : (
-        <FlatList
+        <FlashList
           data={images}
           numColumns={4}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderImageItem}
           contentContainerStyle={styles.listContent}
           scrollEnabled={false}
+          estimatedItemSize={90}
         />
       )}
 
