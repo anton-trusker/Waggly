@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, Modal } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { useBreeds } from '@/hooks/useBreeds';
@@ -201,9 +202,10 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             <Text style={styles.closeText}>Close</Text>
                         </TouchableOpacity>
                     </View>
-                    <FlatList
+                    <FlashList
                         data={breeds}
                         keyExtractor={item => item.id}
+                        estimatedItemSize={56}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={styles.breedItem}
