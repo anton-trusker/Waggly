@@ -585,551 +585,552 @@ export default function OverviewTab() {
           that included 'Medication' as a type. 
       */}
         {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
-      </>
-      );
+      </ScrollView>
+    </>
+  );
 }
 
-      function QuickActionCard({label, icon, color, bgColor, onPress}: {label: string, icon: string, color: string, bgColor: string, onPress: () => void }) {
+function QuickActionCard({ label, icon, color, bgColor, onPress }: { label: string, icon: string, color: string, bgColor: string, onPress: () => void }) {
   return (
-      <TouchableOpacity style={styles.quickActionCard} onPress={onPress}>
-        <View style={[styles.quickActionIcon, { backgroundColor: bgColor }]}>
-          <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
-        </View>
-        <Text style={styles.quickActionLabel}>{label}</Text>
-      </TouchableOpacity>
-      );
+    <TouchableOpacity style={styles.quickActionCard} onPress={onPress}>
+      <View style={[styles.quickActionIcon, { backgroundColor: bgColor }]}>
+        <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
+      </View>
+      <Text style={styles.quickActionLabel}>{label}</Text>
+    </TouchableOpacity>
+  );
 }
 
-      const styles = StyleSheet.create({
-        container: {
-        flex: 1,
-      backgroundColor: '#F6F6F8',
-  },
-      content: {
-        gap: 24,
-      maxWidth: 1280,
-      width: '100%',
-      alignSelf: 'center',
-  },
-      contentMobile: {
-        paddingHorizontal: 0, // Edge-to-edge for scrolling
-      paddingVertical: 12,
-  },
-      mobileQuickActionsScroll: {
-        marginBottom: 24,
-      paddingLeft: 24,
-  },
-      mobileQuickActionsContainer: {
-        gap: 16,
-      paddingRight: 24, // End padding
-  },
-      mobileQuickAction: {
-        alignItems: 'center',
-      gap: 8,
-  },
-      mobileQuickActionIcon: {
-        width: 56,
-      height: 56,
-      borderRadius: 28,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      mobileQuickActionLabel: {
-        fontSize: 12,
-      fontWeight: '500',
-      color: '#4B5563',
-  },
-      quickActionsRow: {
-        flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 16,
-  },
-      mobileUpcomingContainer: {
-        gap: 12,
-      paddingRight: 24,
-  },
-      mobileUpcomingCard: {
-        width: 260, // Fixed width for horizontal items
-      backgroundColor: '#F9FAFB',
-      borderRadius: 12,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: '#F3F4F6',
-  },
-      quickActionCard: {
-        flex: 1,
-      minWidth: 100,
-      backgroundColor: '#fff',
-      borderRadius: 16,
-      padding: 16,
-      alignItems: 'center',
-      gap: 12,
-      borderWidth: 1,
-      borderColor: '#E5E7EB',
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-      elevation: 2,
-  },
-      quickActionIcon: {
-        width: 48,
-      height: 48,
-      borderRadius: 24,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      quickActionLabel: {
-        fontSize: 12,
-      fontWeight: '600',
-      color: '#6B7280',
-  },
-      mainGrid: {
-        flexDirection: 'column',
-      gap: 24,
-  },
-      mainGridLarge: {
-        flexDirection: 'row',
-  },
-      leftColumn: {
-        flex: 1,
-      gap: 24,
-  },
-      rightColumn: {
-        flex: 2,
-      gap: 24,
-  },
-      card: {
-        backgroundColor: '#fff',
-      borderRadius: 16,
-      padding: 24,
-      borderWidth: 1,
-      borderColor: '#E5E7EB',
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-      elevation: 2,
-  },
-      cardHeader: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-  },
-      cardTitle: {
-        fontSize: 18,
-      fontWeight: '700',
-      color: '#1F2937',
-  },
-      editLink: {
-        fontSize: 14,
-      fontWeight: '600',
-      color: '#6366F1',
-  },
-      infoList: {
-        gap: 16,
-  },
-      infoItemRow: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: '#F9FAFB',
-      padding: 12,
-      borderRadius: 12,
-  },
-      infoItemContent: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-  },
-      infoIconBox: {
-        width: 36,
-      height: 36,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      infoLabel: {
-        fontSize: 11,
-      fontWeight: '700',
-      color: '#6B7280',
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-      marginBottom: 2,
-  },
-      infoValueMono: {
-        fontSize: 16,
-      fontWeight: '600',
-      color: '#1F2937',
-      fontFamily: 'monospace',
-  },
-      infoGrid2: {
-        flexDirection: 'row',
-      gap: 12,
-  },
-      infoBox: {
-        flex: 1,
-      backgroundColor: '#F9FAFB',
-      padding: 12,
-      borderRadius: 12,
-  },
-      infoBoxHeader: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      marginBottom: 4,
-  },
-      statusDot: {
-        width: 8,
-      height: 8,
-      borderRadius: 4,
-  },
-      infoValue: {
-        fontSize: 15,
-      fontWeight: '600',
-      color: '#1F2937',
-  },
-      addButtonSmall: {
-        width: 24,
-      height: 24,
-      borderRadius: 12,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(99, 102, 241, 0.1)',
-  },
-      tagsContainer: {
-        flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-  },
-      allergyTag: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: '#E5E7EB',
-  },
-      allergyTagText: {
-        fontSize: 13,
-      fontWeight: '600',
-  },
-      gradientCard: {
-        borderRadius: 16,
-      padding: 24,
-      shadowColor: '#6366F1',
-      shadowOffset: {width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 12,
-      elevation: 8,
-  },
-      gradientCardContent: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-  },
-      gradientCardLabel: {
-        fontSize: 11,
-      fontWeight: '700',
-      color: '#E0E7FF',
-      letterSpacing: 1,
-      marginBottom: 4,
-  },
-      gradientCardTitle: {
-        fontSize: 24,
-      fontWeight: '700',
-      color: '#fff',
-      marginBottom: 8,
-  },
-      gradientCardSubtitleRow: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-  },
-      gradientCardSubtitle: {
-        fontSize: 14,
-      color: '#E0E7FF',
-  },
-      verifiedIconBox: {
-        width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: 'rgba(255,255,255,0.2)',
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      subGrid: {
-        flexDirection: 'column',
-      gap: 24,
-  },
-      subGridLarge: {
-        flexDirection: 'row',
-  },
-      flex1: {
-        flex: 1,
-  },
-      listContainer: {
-        gap: 12,
-  },
-      listItem: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      padding: 12,
-      backgroundColor: '#F9FAFB',
-      borderRadius: 12,
-  },
-      listIconBox: {
-        width: 40,
-      height: 40,
-      borderRadius: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      listItemContent: {
-        flex: 1,
-  },
-      listItemTitle: {
-        fontSize: 14,
-      fontWeight: '600',
-      color: '#1F2937',
-  },
-      listItemSubtitle: {
-        fontSize: 12,
-      color: '#6B7280',
-  },
-      badgePill: {
-        paddingHorizontal: 8,
-      paddingVertical: 2,
-      borderRadius: 4,
-  },
-      badgePillText: {
-        fontSize: 10,
-      fontWeight: '700',
-      color: '#fff',
-  },
-      statusBadge: {
-        paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      borderWidth: 1,
-  },
-      statusBadgeText: {
-        fontSize: 10,
-      fontWeight: '700',
-      textTransform: 'uppercase',
-  },
-      orangeDot: {
-        width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: '#F97316',
-  },
-      upcomingCard: {
-        backgroundColor: '#F9FAFB',
-      borderRadius: 12,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: 'transparent',
-  },
-      upcomingHeader: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: 12,
-  },
-      upcomingIconBox: {
-        width: 36,
-      height: 36,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-  },
-      upcomingBadge: {
-        paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-  },
-      upcomingBadgeText: {
-        fontSize: 10,
-      fontWeight: '700',
-  },
-      upcomingTitle: {
-        fontSize: 16,
-      fontWeight: '700',
-      color: '#1F2937',
-  },
-      upcomingSubtitle: {
-        fontSize: 14,
-      color: '#6B7280',
-  },
-      upcomingFooter: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 16,
-      paddingTop: 12,
-      borderTopWidth: 1,
-      borderTopColor: '#E5E7EB',
-  },
-      upcomingDate: {
-        fontSize: 14,
-      color: '#6B7280',
-  },
-      timelineList: {
-        paddingLeft: 16,
-  },
-      timelineItem: {
-        flexDirection: 'row',
-      gap: 16,
-      position: 'relative',
-      paddingBottom: 32,
-  },
-      timelineLine: {
-        position: 'absolute',
-      left: 15,
-      top: 24,
-      bottom: 0,
-      width: 2,
-      backgroundColor: '#E5E7EB',
-      zIndex: -1,
-  },
-      timelineDotPrimary: {
-        width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: '#fff',
-      borderWidth: 2,
-      borderColor: '#6366F1',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1,
-  },
-      timelineDotInner: {
-        width: 10,
-      height: 10,
-      borderRadius: 5,
-      backgroundColor: '#6366F1',
-  },
-      timelineDotGray: {
-        width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: '#fff',
-      borderWidth: 2,
-      borderColor: '#D1D5DB',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1,
-  },
-      timelineDotInnerGray: {
-        width: 10,
-      height: 10,
-      borderRadius: 5,
-      backgroundColor: '#D1D5DB',
-  },
-      timelineContentBox: {
-        flex: 1,
-      backgroundColor: '#F9FAFB',
-      borderRadius: 12,
-      padding: 16,
-  },
-      timelineHeaderRow: {
-        flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: 8,
-  },
-      timelineTitleGroup: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-  },
-      timelineIconSmall: {
-        padding: 6,
-      borderRadius: 8,
-  },
-      timelineItemTitle: {
-        fontSize: 15,
-      fontWeight: '700',
-      color: '#1F2937',
-  },
-      timelineDateText: {
-        fontSize: 12,
-      fontWeight: '500',
-      color: '#6B7280',
-  },
-      timelineSubtitle: {
-        fontSize: 14,
-      color: '#6B7280',
-      marginBottom: 8,
-  },
-      timelineNoteBox: {
-        backgroundColor: '#fff',
-      padding: 12,
-      borderRadius: 8,
-  },
-      timelineNoteText: {
-        fontSize: 14,
-      color: '#4B5563',
-      lineHeight: 20,
-  },
-      timelineDateBadge: {
-        backgroundColor: '#E5E7EB',
-      paddingHorizontal: 8,
-      paddingVertical: 2,
-      borderRadius: 4,
-  },
-      timelineDateBadgeText: {
-        fontSize: 12,
-      color: '#4B5563',
-  },
-      timelineItemDesc: {
-        fontSize: 13,
-      color: '#6B7280',
-      marginTop: 4,
-  },
-      weightRow: {
-        flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-  },
-      weightValue: {
-        fontSize: 20,
-      fontWeight: '700',
-      color: '#1F2937',
-  },
-      weightChange: {
-        fontSize: 14,
-      fontWeight: '600',
-      color: '#10B981',
-  },
-      viewTimelineBtn: {
-        alignItems: 'center',
-      marginTop: -8,
-  },
-      viewTimelineText: {
-        fontSize: 14,
-      fontWeight: '600',
-      color: '#6366F1',
-  },
-      fab: {
-        position: 'absolute',
-      bottom: 24,
-      right: 24,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: '#6366F1',
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: '#6366F1',
-      shadowOffset: {width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 8,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F6F8',
+  },
+  content: {
+    gap: 24,
+    maxWidth: 1280,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  contentMobile: {
+    paddingHorizontal: 0, // Edge-to-edge for scrolling
+    paddingVertical: 12,
+  },
+  mobileQuickActionsScroll: {
+    marginBottom: 24,
+    paddingLeft: 24,
+  },
+  mobileQuickActionsContainer: {
+    gap: 16,
+    paddingRight: 24, // End padding
+  },
+  mobileQuickAction: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  mobileQuickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mobileQuickActionLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#4B5563',
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  mobileUpcomingContainer: {
+    gap: 12,
+    paddingRight: 24,
+  },
+  mobileUpcomingCard: {
+    width: 260, // Fixed width for horizontal items
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  quickActionCard: {
+    flex: 1,
+    minWidth: 100,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  quickActionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  mainGrid: {
+    flexDirection: 'column',
+    gap: 24,
+  },
+  mainGridLarge: {
+    flexDirection: 'row',
+  },
+  leftColumn: {
+    flex: 1,
+    gap: 24,
+  },
+  rightColumn: {
+    flex: 2,
+    gap: 24,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  editLink: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6366F1',
+  },
+  infoList: {
+    gap: 16,
+  },
+  infoItemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: 12,
+  },
+  infoItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  infoIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6B7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  infoValueMono: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    fontFamily: 'monospace',
+  },
+  infoGrid2: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  infoBox: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: 12,
+  },
+  infoBoxHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  infoValue: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  addButtonSmall: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  allergyTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  allergyTagText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  gradientCard: {
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  gradientCardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  gradientCardLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#E0E7FF',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  gradientCardTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  gradientCardSubtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  gradientCardSubtitle: {
+    fontSize: 14,
+    color: '#E0E7FF',
+  },
+  verifiedIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subGrid: {
+    flexDirection: 'column',
+    gap: 24,
+  },
+  subGridLarge: {
+    flexDirection: 'row',
+  },
+  flex1: {
+    flex: 1,
+  },
+  listContainer: {
+    gap: 12,
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+  },
+  listIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listItemContent: {
+    flex: 1,
+  },
+  listItemTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  listItemSubtitle: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  badgePill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  badgePillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  orangeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#F97316',
+  },
+  upcomingCard: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  upcomingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  upcomingIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  upcomingBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  upcomingBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  upcomingTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  upcomingSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  upcomingFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  upcomingDate: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  timelineList: {
+    paddingLeft: 16,
+  },
+  timelineItem: {
+    flexDirection: 'row',
+    gap: 16,
+    position: 'relative',
+    paddingBottom: 32,
+  },
+  timelineLine: {
+    position: 'absolute',
+    left: 15,
+    top: 24,
+    bottom: 0,
+    width: 2,
+    backgroundColor: '#E5E7EB',
+    zIndex: -1,
+  },
+  timelineDotPrimary: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#6366F1',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  timelineDotInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#6366F1',
+  },
+  timelineDotGray: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  timelineDotInnerGray: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#D1D5DB',
+  },
+  timelineContentBox: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    padding: 16,
+  },
+  timelineHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  timelineTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  timelineIconSmall: {
+    padding: 6,
+    borderRadius: 8,
+  },
+  timelineItemTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  timelineDateText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  timelineSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  timelineNoteBox: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+  },
+  timelineNoteText: {
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+  },
+  timelineDateBadge: {
+    backgroundColor: '#E5E7EB',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  timelineDateBadgeText: {
+    fontSize: 12,
+    color: '#4B5563',
+  },
+  timelineItemDesc: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  weightRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  weightValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  weightChange: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#10B981',
+  },
+  viewTimelineBtn: {
+    alignItems: 'center',
+    marginTop: -8,
+  },
+  viewTimelineText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6366F1',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#6366F1',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6366F1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
