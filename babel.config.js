@@ -4,11 +4,11 @@ module.exports = function (api) {
 
   const EDITABLE_COMPONENTS =
     process.env.EXPO_PUBLIC_ENABLE_EDIT_MODE === "TRUE" &&
-    process.env.NODE_ENV === "development"
+      process.env.NODE_ENV === "development"
       ? [
-          ["./babel-plugins/editable-elements.js", {}],
-          ["./babel-plugins/inject-source-location.js", {}],
-        ]
+        ["./babel-plugins/editable-elements.js", {}],
+        ["./babel-plugins/inject-source-location.js", {}],
+      ]
       : [];
 
   return {
@@ -43,7 +43,16 @@ module.exports = function (api) {
       ],
       ...EDITABLE_COMPONENTS,
       "@babel/plugin-proposal-export-namespace-from",
-      "react-native-reanimated/plugin",
+      [
+        "@tamagui/babel-plugin",
+        {
+          components: ["tamagui"],
+          config: "./tamagui.config.ts",
+          logTimings: true,
+          disableExtraction: process.env.NODE_ENV === "development",
+        },
+      ],
+      "react-native-reanimated/plugin", // Must be last
     ],
   };
 };
