@@ -1,18 +1,22 @@
 import React from 'react';
-import { View, ScrollView, Text, Pressable } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { usePets } from '@/hooks/usePets';
+import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import PetEventsHeader from '@/components/features/pets/PetEventsHeader';
+import PetEventsList from '@/components/features/pets/PetEventsList';
 import { useEvents } from '@/hooks/useEvents';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { usePets } from '@/hooks/usePets'; // Keep usePets for pet details
 
-export default function EventsTab() {
+export default function PetEventsTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { pets } = usePets();
-  const { events } = useEvents({ petIds: [id] });
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const { pets } = usePets(); // Fetch pets to find the current pet
+  const { events } = useEvents({ petIds: id ? [id] : [] });
 
   const pet = pets?.find(p => p.id === id);
   if (!pet) return null;
 
+  // The rest of the original file's logic, adapted to the new structure
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -56,7 +60,7 @@ export default function EventsTab() {
               <Text className="text-sm text-muted-light dark:text-muted-dark mt-1">Manage {pet.name}'s appointments and activities.</Text>
             </View>
             <View className="flex items-center gap-3 w-full sm:w-auto">
-              <Pressable 
+              <Pressable
                 onPress={() => router.push(`/web/pets/events/new?petId=${id}`)}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl shadow-lg shadow-primary/30 text-sm font-medium transition-all transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
@@ -145,7 +149,7 @@ export default function EventsTab() {
               <IconSymbol name="event" size={48} className="text-muted-light dark:text-muted-dark mx-auto mb-4" />
               <Text className="text-lg font-bold text-text-light dark:text-text-dark mb-2">No events yet</Text>
               <Text className="text-sm text-muted-light dark:text-muted-dark mb-4">Add events to track your pet's care schedule</Text>
-              <Pressable 
+              <Pressable
                 onPress={() => router.push(`/web/pets/events/new?petId=${id}`)}
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >

@@ -1,26 +1,30 @@
-import React from 'react';
-import { View, ScrollView, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { usePets } from '@/hooks/usePets';
-import { useEvents } from '@/hooks/useEvents';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import PetHealthHeader from '@/components/features/pets/PetHealthHeader';
+import HealthNotesList from '@/components/features/health/HealthNotesList';
+import MedicationList from '@/components/features/health/MedicationList';
+import VaccinationList from '@/components/features/health/VaccinationList';
+import TreatmentList from '@/components/features/health/TreatmentList';
 import { useVaccinations } from '@/hooks/useVaccinations';
+import { useMedications } from '@/hooks/useMedications';
 import { useTreatments } from '@/hooks/useTreatments';
-import { useAllergies } from '@/hooks/useAllergies';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useEvents } from '@/hooks/useEvents';
+import { useAllergies } from '@/hooks/useAllergies'; // Added this import based on context
+import { usePets } from '@/hooks/usePets'; // Added this import based on context
 
-export default function HealthTab() {
+export default function PetHealthTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const { width } = useWindowDimensions();
-  const isLargeScreen = width >= 1024;
   const isMobile = width < 768;
 
-  const { pets } = usePets();
-  const { events } = useEvents({ petIds: [id] });
+  const [activeTab, setActiveTab] = useState<'vaccinations' | 'medications' | 'treatments' | 'notes'>('vaccinations');
+  const { pets } = usePets(); // Added this hook based on context
+  const { events } = useEvents({ petIds: id ? [id] : [] });
   const { vaccinations } = useVaccinations(id);
   const { treatments } = useTreatments(id);
-  const { allergies } = useAllergies(id);
+  const { allergies } = useAllergies(id); // Added this hook based on context
+  const { medications } = useMedications(id); // Added this hook based on context
 
   const pet = pets?.find(p => p.id === id);
   if (!pet) return null;
@@ -59,116 +63,116 @@ export default function HealthTab() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
-        
+
         {/* Quick Actions */}
         {isMobile ? (
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.mobileQuickActionsContainer}
             style={styles.mobileQuickActionsScroll}
           >
-            <QuickActionButton 
-              label="Add Visit" 
-              icon="calendar_today" 
-              color="#2563EB" 
-              bgColor="#DBEAFE" 
-              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Visit"
+              icon="calendar_today"
+              color="#2563EB"
+              bgColor="#DBEAFE"
+              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Vaccine" 
-              icon="vaccines" 
-              color="#DB2777" 
-              bgColor="#FCE7F3" 
-              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Vaccine"
+              icon="vaccines"
+              color="#DB2777"
+              bgColor="#FCE7F3"
+              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Tx" 
-              icon="medication" 
-              color="#9333EA" 
-              bgColor="#F3E8FF" 
-              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Tx"
+              icon="medication"
+              color="#9333EA"
+              bgColor="#F3E8FF"
+              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Image" 
-              icon="add_a_photo" 
-              color="#D97706" 
-              bgColor="#FEF3C7" 
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Image"
+              icon="add_a_photo"
+              color="#D97706"
+              bgColor="#FEF3C7"
+              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Doc" 
-              icon="note_add" 
-              color="#EA580C" 
-              bgColor="#FFEDD5" 
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Doc"
+              icon="note_add"
+              color="#EA580C"
+              bgColor="#FFEDD5"
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Record" 
-              icon="history_edu" 
-              color="#059669" 
-              bgColor="#D1FAE5" 
-              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Record"
+              icon="history_edu"
+              color="#059669"
+              bgColor="#D1FAE5"
+              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)}
               isMobile={true}
             />
           </ScrollView>
         ) : (
           <View style={styles.quickActionsGrid}>
-            <QuickActionButton 
-              label="Add Visit" 
-              icon="calendar_today" 
-              color="#2563EB" 
-              bgColor="#DBEAFE" 
-              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Visit"
+              icon="calendar_today"
+              color="#2563EB"
+              bgColor="#DBEAFE"
+              onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Vaccine" 
-              icon="vaccines" 
-              color="#DB2777" 
-              bgColor="#FCE7F3" 
-              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Vaccine"
+              icon="vaccines"
+              color="#DB2777"
+              bgColor="#FCE7F3"
+              onPress={() => router.push(`/web/pets/vaccination/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Tx" 
-              icon="medication" 
-              color="#9333EA" 
-              bgColor="#F3E8FF" 
-              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Tx"
+              icon="medication"
+              color="#9333EA"
+              bgColor="#F3E8FF"
+              onPress={() => router.push(`/web/pets/treatment/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Image" 
-              icon="add_a_photo" 
-              color="#D97706" 
-              bgColor="#FEF3C7" 
-              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Image"
+              icon="add_a_photo"
+              color="#D97706"
+              bgColor="#FEF3C7"
+              onPress={() => router.push(`/web/pets/photos/add?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Doc" 
-              icon="note_add" 
-              color="#EA580C" 
-              bgColor="#FFEDD5" 
-              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Doc"
+              icon="note_add"
+              color="#EA580C"
+              bgColor="#FFEDD5"
+              onPress={() => router.push(`/web/pets/documents/add?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Record" 
-              icon="history_edu" 
-              color="#059669" 
-              bgColor="#D1FAE5" 
-              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)} 
+            <QuickActionButton
+              label="Add Record"
+              icon="history_edu"
+              color="#059669"
+              bgColor="#D1FAE5"
+              onPress={() => router.push(`/web/pets/record/new?petId=${id}`)}
             />
           </View>
         )}
 
         <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
-          
+
           {/* Main Column */}
           <View style={styles.mainColumn}>
-            
+
             {/* Visits Section */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
@@ -183,7 +187,7 @@ export default function HealthTab() {
                     <IconSymbol android_material_icon_name="filter-list" size={16} color="#6B7280" />
                     <Text style={styles.filterBtnText}>Filter</Text>
                   </Pressable>
-                  <Pressable 
+                  <Pressable
                     style={styles.primaryBtn}
                     onPress={() => router.push(`/web/pets/visit/new?petId=${id}`)}
                   >
@@ -389,7 +393,7 @@ export default function HealthTab() {
 
           {/* Sidebar Column */}
           <View style={styles.sidebarColumn}>
-            
+
             {/* Allergies Sidebar */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
@@ -406,9 +410,9 @@ export default function HealthTab() {
                       styles.allergyItem,
                       allergy.severity === 'severe' ? styles.allergySevere : styles.allergyMild
                     ]}>
-                      <IconSymbol 
-                        android_material_icon_name={allergy.severity === 'severe' ? 'warning' : 'eco'} 
-                        size={20} 
+                      <IconSymbol
+                        android_material_icon_name={allergy.severity === 'severe' ? 'warning' : 'eco'}
+                        size={20}
                         color={allergy.severity === 'severe' ? '#EF4444' : '#CA8A04'}
                       />
                       <View style={styles.allergyContent}>
@@ -449,12 +453,12 @@ export default function HealthTab() {
 
               <View style={styles.logList}>
                 <View style={styles.logLine} />
-                
+
                 {/* Log Items (Mock Data) */}
-                <LogItem 
-                  color="#6366F1" 
-                  title="Weight Check" 
-                  date="Oct 20" 
+                <LogItem
+                  color="#6366F1"
+                  title="Weight Check"
+                  date="Oct 20"
                   desc="Recorded at home."
                 >
                   <View style={styles.weightBadge}>
@@ -463,24 +467,24 @@ export default function HealthTab() {
                   </View>
                 </LogItem>
 
-                <LogItem 
-                  color="#9CA3AF" 
-                  title="Symptom Log" 
-                  date="Oct 12" 
+                <LogItem
+                  color="#9CA3AF"
+                  title="Symptom Log"
+                  date="Oct 12"
                   desc="Mild lethargy noted in the evening. Appetite normal."
                 />
 
-                <LogItem 
-                  color="#3B82F6" 
-                  title="Condition Resolved" 
-                  date="Oct 10" 
+                <LogItem
+                  color="#3B82F6"
+                  title="Condition Resolved"
+                  date="Oct 10"
                   desc="Otitis Externa (Ear Infection) marked as resolved."
                 />
 
-                <LogItem 
-                  color="#9CA3AF" 
-                  title="Note Added" 
-                  date="Sep 15" 
+                <LogItem
+                  color="#9CA3AF"
+                  title="Note Added"
+                  date="Sep 15"
                   desc="Started new bag of food. Transitioning over 7 days."
                 />
 
