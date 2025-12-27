@@ -22,12 +22,12 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
 
     // Global keyboard shortcuts (Desktop only mainly, but safe to have)
     useKeyboardShortcuts({
-        [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/web/dashboard'),
-        [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/web/calendar'),
-        [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/web/dashboard'),
-        [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/web/notifications'),
-        [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/web/settings'),
-        [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/web/pets/add'),
+        [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/(tabs)/(home)'),
+        [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/(tabs)/calendar'),
+        [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/(tabs)/pets'),
+        [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/(tabs)/notifications'),
+        [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/(tabs)/profile'),
+        [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/(tabs)/pets/add-pet-wizard'),
         [KEYBOARD_SHORTCUTS.HELP]: () => setShowShortcuts(prev => !prev),
     });
 
@@ -75,18 +75,18 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     return (
         <View style={styles.container}>
             {isDesktop && <SidebarNav />}
-            
+
             <View style={styles.mainContent}>
                 {isDesktop && <Topbar />}
-                
+
                 <View style={[styles.content, !isDesktop && styles.contentMobile]}>
                     {children}
                 </View>
 
                 {!isDesktop && (
-                    <FloatingTabBar 
-                        tabs={mobileTabs} 
-                        containerWidth={Math.min(width - 32, 400)} 
+                    <FloatingTabBar
+                        tabs={mobileTabs}
+                        containerWidth={Math.min(width - 32, 400)}
                         borderRadius={24}
                     />
                 )}

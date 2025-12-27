@@ -52,7 +52,7 @@ const SidebarNav: React.FC = () => {
 
             {/* User Profile Card (Bottom) */}
             <View style={styles.userCardContainer}>
-                <TouchableOpacity style={styles.userCard} onPress={() => router.push('/web/settings')}>
+                <TouchableOpacity style={styles.userCard} onPress={() => router.push('/(tabs)/profile')}>
                     {profile?.photo_url ? (
                         <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
                     ) : (

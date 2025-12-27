@@ -57,7 +57,7 @@ const UpcomingCarePanel: React.FC = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.heading}>Upcoming Care</Text>
-                <TouchableOpacity onPress={() => router.push('/web/calendar' as any)}>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/calendar' as any)}>
                     <Text style={styles.viewAllLink}>View All</Text>
                 </TouchableOpacity>
             </View>
@@ -90,7 +90,7 @@ const UpcomingCarePanel: React.FC = () => {
                             <TouchableOpacity
                                 key={event.id}
                                 style={styles.eventCard}
-                                onPress={() => router.push('/web/calendar' as any)}
+                                onPress={() => router.push('/(tabs)/calendar' as any)}
                             >
                                 {/* Date Badge */}
                                 <View style={styles.dateBadge}>

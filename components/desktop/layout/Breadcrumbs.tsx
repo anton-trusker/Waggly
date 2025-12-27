@@ -34,7 +34,7 @@ export default function Breadcrumbs() {
 
             // Handle known segments
             if (segment === 'add') label = 'Add New';
-            
+
             // Handle "pets" segment specifically if needed, but Title Case "Pets" is fine.
 
             return {
@@ -50,7 +50,7 @@ export default function Breadcrumbs() {
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                onPress={() => router.push('/web/dashboard')}
+                onPress={() => router.push('/(tabs)/(home)')}
                 style={styles.homeButton}
             >
                 <Text style={styles.crumbText}>Home</Text>

@@ -20,12 +20,12 @@ const DesktopShell: React.FC<DesktopShellProps> = ({ children }) => {
 
     // Global keyboard shortcuts
     useKeyboardShortcuts({
-        [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/web/dashboard'),
-        [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/web/calendar'),
-        [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/web/dashboard'), // Determine where pets link goes
-        [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/web/notifications'),
-        [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/web/settings'),
-        [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/web/pets/add'),
+        [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/(tabs)/(home)'),
+        [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/(tabs)/calendar'),
+        [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/(tabs)/pets'),
+        [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/(tabs)/notifications'),
+        [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/(tabs)/profile'),
+        [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/(tabs)/pets/add-pet-wizard'),
         [KEYBOARD_SHORTCUTS.HELP]: () => setShowShortcuts(prev => !prev),
     });
 
