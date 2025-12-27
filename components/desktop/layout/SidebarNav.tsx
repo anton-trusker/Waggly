@@ -12,10 +12,10 @@ const SidebarNav: React.FC = () => {
     const { profile } = useProfile();
 
     const navItems = [
-        { label: 'Dashboard', icon: 'grid-outline', path: '/web/dashboard' },
-        { label: 'My Pets', icon: 'paw-outline', path: '/web/pets' },
-        { label: 'Calendar', icon: 'calendar-outline', path: '/web/calendar' },
-        { label: 'Documents', icon: 'folder-open-outline', path: '/web/documents' },
+        { label: 'Dashboard', icon: 'grid-outline', path: '/(tabs)/(home)' },
+        { label: 'My Pets', icon: 'paw-outline', path: '/(tabs)/pets' },
+        { label: 'Calendar', icon: 'calendar-outline', path: '/(tabs)/calendar' },
+        { label: 'Documents', icon: 'folder-open-outline', path: '/(tabs)/documents' },
         // Hidden: Vets & Clinics, Community
     ];
 
