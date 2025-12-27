@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Card, YStack, XStack, Text, Badge } from '@/components';
 
 export default function PetPastConditionsWidget() {
     // Mock data for now - can be prop-driven later
@@ -9,99 +9,56 @@ export default function PetPastConditionsWidget() {
     ];
 
     return (
-        <View style={styles.card}>
-            <Text style={[styles.cardTitle, { marginBottom: 16 }]}>Past Conditions</Text>
-            <View style={styles.timelineList}>
-                {conditions.map((condition, index) => (
-                    <View key={condition.id} style={styles.timelineItem}>
-                        {index < conditions.length - 1 && <View style={styles.timelineLine} />}
-                        <View style={styles.timelineDot} />
-                        <View style={styles.timelineContentBox}>
-                            <View style={styles.timelineHeaderRow}>
-                                <Text style={styles.timelineItemTitle}>{condition.title}</Text>
-                                <View style={styles.timelineDateBadge}>
-                                    <Text style={styles.timelineDateBadgeText}>{condition.date}</Text>
-                                </View>
-                            </View>
-                            <Text style={styles.timelineItemDesc}>{condition.description}</Text>
-                        </View>
-                    </View>
-                ))}
-            </View>
-        </View>
+        <Card variant="elevated">
+            <YStack gap="$4">
+                <Text fontSize="$xl" fontWeight="700" color="$textPrimary">
+                    Past Conditions
+                </Text>
+
+                <YStack gap="$4">
+                    {conditions.map((condition, index) => (
+                        <YStack key={condition.id} position="relative" paddingLeft="$8">
+                            {/* Timeline line */}
+                            {index < conditions.length - 1 && (
+                                <YStack
+                                    position="absolute"
+                                    left={7}
+                                    top={20}
+                                    bottom={-16}
+                                    width={2}
+                                    backgroundColor="$borderLight"
+                                />
+                            )}
+
+                            {/* Timeline dot */}
+                            <YStack
+                                position="absolute"
+                                left={0}
+                                top={8}
+                                width={16}
+                                height={16}
+                                borderRadius="$full"
+                                backgroundColor="$gray400"
+                                borderWidth={3}
+                                borderColor="$white"
+                            />
+
+                            {/* Content */}
+                            <YStack flex={1}>
+                                <XStack justifyContent="space-between" alignItems="center" marginBottom="$1">
+                                    <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                                        {condition.title}
+                                    </Text>
+                                    <Badge variant="outline" size="small">{condition.date}</Badge>
+                                </XStack>
+                                <Text fontSize="$sm" color="$textSecondary">
+                                    {condition.description}
+                                </Text>
+                            </YStack>
+                        </YStack>
+                    ))}
+                </YStack>
+            </YStack>
+        </Card>
     );
 }
-
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#1F2937',
-    },
-    timelineList: {
-        gap: 16,
-    },
-    timelineItem: {
-        position: 'relative',
-        paddingLeft: 32,
-    },
-    timelineLine: {
-        position: 'absolute',
-        left: 7,
-        top: 20,
-        bottom: -16,
-        width: 2,
-        backgroundColor: '#E5E7EB',
-    },
-    timelineDot: {
-        position: 'absolute',
-        left: 0,
-        top: 8,
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: '#9CA3AF',
-        borderWidth: 3,
-        borderColor: '#fff',
-    },
-    timelineContentBox: {
-        flex: 1,
-    },
-    timelineHeaderRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 4,
-    },
-    timelineItemTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#1F2937',
-    },
-    timelineDateBadge: {
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        backgroundColor: '#F3F4F6',
-        borderRadius: 8,
-    },
-    timelineDateBadgeText: {
-        fontSize: 11,
-        fontWeight: '600',
-        color: '#6B7280',
-    },
-    timelineItemDesc: {
-        fontSize: 13,
-        color: '#6B7280',
-    },
-});

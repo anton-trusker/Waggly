@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { Card, YStack, XStack, Text, EmptyState } from '@/components';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Event } from '@/types';
 
@@ -10,100 +11,63 @@ interface PetUpcomingEventsWidgetProps {
 
 export default function PetUpcomingEventsWidget({ events, onViewAll }: PetUpcomingEventsWidgetProps) {
     return (
-        <View style={styles.card}>
-            <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Upcoming Events</Text>
-                <TouchableOpacity onPress={onViewAll}>
-                    <Text style={styles.editLink}>View All</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.listContainer}>
-                {events.length > 0 ? (
-                    events.map(event => (
-                        <View key={event.id} style={styles.listItem}>
-                            <View style={[styles.listIconBox, { backgroundColor: '#FEF3C7' }]}>
-                                <IconSymbol android_material_icon_name="event" size={20} color="#D97706" />
-                            </View>
-                            <View style={styles.listItemContent}>
-                                <Text style={styles.listItemTitle}>{event.title}</Text>
-                                <Text style={styles.listItemSubtitle}>
-                                    {new Date(event.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                                </Text>
-                            </View>
-                        </View>
-                    ))
-                ) : (
-                    <Text style={styles.emptyText}>No upcoming events</Text>
-                )}
-            </View>
-        </View>
+        <Card variant="elevated">
+            <YStack gap="$4">
+                <XStack justifyContent="space-between" alignItems="center">
+                    <Text fontSize="$xl" fontWeight="700" color="$textPrimary">
+                        Upcoming Events
+                    </Text>
+                    <TouchableOpacity onPress={onViewAll}>
+                        <Text fontSize="$sm" fontWeight="600" color="$primary500">
+                            View All
+                        </Text>
+                    </TouchableOpacity>
+                </XStack>
+
+                <YStack gap="$3">
+                    {events.length > 0 ? (
+                        events.map(event => (
+                            <XStack
+                                key={event.id}
+                                alignItems="center"
+                                gap="$3"
+                                paddingVertical="$3"
+                                paddingHorizontal="$4"
+                                backgroundColor="$gray50"
+                                borderRadius="$md"
+                            >
+                                <XStack
+                                    width={40}
+                                    height={40}
+                                    borderRadius="$base"
+                                    backgroundColor="#FEF3C7"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
+                                    <IconSymbol android_material_icon_name="event" size={20} color="#D97706" />
+                                </XStack>
+                                <YStack flex={1}>
+                                    <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                                        {event.title}
+                                    </Text>
+                                    <Text fontSize="$sm" color="$textSecondary" marginTop={2}>
+                                        {new Date(event.start_time).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: '2-digit'
+                                        })}
+                                    </Text>
+                                </YStack>
+                            </XStack>
+                        ))
+                    ) : (
+                        <Text fontSize="$sm" color="$textTertiary" textAlign="center" paddingVertical="$4">
+                            No upcoming events
+                        </Text>
+                    )}
+                </YStack>
+            </YStack>
+        </Card>
     );
 }
-
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#1F2937',
-    },
-    editLink: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
-    },
-    listContainer: {
-        gap: 12,
-    },
-    listItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-    },
-    listIconBox: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    listItemContent: {
-        flex: 1,
-    },
-    listItemTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#1F2937',
-        marginBottom: 2,
-    },
-    listItemSubtitle: {
-        fontSize: 13,
-        color: '#6B7280',
-    },
-    emptyText: {
-        fontSize: 14,
-        color: '#9CA3AF',
-        textAlign: 'center',
-        paddingVertical: 16,
-    },
-});

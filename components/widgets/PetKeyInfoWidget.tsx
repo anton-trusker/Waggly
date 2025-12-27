@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { Card, YStack, XStack, Text, Badge, Divider } from '@/components';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Pet } from '@/types';
 
@@ -10,159 +11,142 @@ interface PetKeyInfoWidgetProps {
 
 export default function PetKeyInfoWidget({ pet, onEdit }: PetKeyInfoWidgetProps) {
     return (
-        <View style={styles.card}>
-            <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Key Info</Text>
-                <TouchableOpacity onPress={onEdit}>
-                    <Text style={styles.editLink}>Edit</Text>
-                </TouchableOpacity>
-            </View>
+        <Card variant="elevated">
+            <YStack gap="$4">
+                {/* Header */}
+                <XStack justifyContent="space-between" alignItems="center">
+                    <Text fontSize="$xl" fontWeight="700" color="$textPrimary">
+                        Key Info
+                    </Text>
+                    <TouchableOpacity onPress={onEdit}>
+                        <Text fontSize="$sm" fontWeight="600" color="$primary500">
+                            Edit
+                        </Text>
+                    </TouchableOpacity>
+                </XStack>
 
-            <View style={styles.infoList}>
                 {/* Microchip */}
-                <View style={styles.infoItemRow}>
-                    <View style={styles.infoItemContent}>
-                        <View style={[styles.infoIconBox, { backgroundColor: '#DBEAFE' }]}>
+                <XStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    padding="$4"
+                    backgroundColor="$gray50"
+                    borderRadius="$md"
+                >
+                    <XStack alignItems="center" gap="$3" flex={1}>
+                        <XStack
+                            width={40}
+                            height={40}
+                            borderRadius="$base"
+                            backgroundColor="#DBEAFE"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
                             <IconSymbol android_material_icon_name="qr-code" size={20} color="#2563EB" />
-                        </View>
-                        <View>
-                            <Text style={styles.infoLabel}>MICROCHIP ID</Text>
-                            <Text style={styles.infoValueMono}>{pet.chip_number || '—'}</Text>
-                        </View>
-                    </View>
+                        </XStack>
+                        <YStack>
+                            <Text fontSize={11} fontWeight="600" color="$textSecondary" textTransform="uppercase" letterSpacing={0.5}>
+                                MICROCHIP ID
+                            </Text>
+                            <Text fontSize="$sm" fontWeight="500" fontFamily="monospace" color="$textPrimary" marginTop={2}>
+                                {pet.chip_number || '—'}
+                            </Text>
+                        </YStack>
+                    </XStack>
                     <TouchableOpacity>
                         <IconSymbol android_material_icon_name="content-copy" size={16} color="#9CA3AF" />
                     </TouchableOpacity>
-                </View>
+                </XStack>
 
                 {/* Species & Blood Type */}
-                <View style={styles.infoGrid2}>
-                    <View style={styles.infoBox}>
-                        <View style={styles.infoBoxHeader}>
-                            <View style={[styles.statusDot, { backgroundColor: '#10B981' }]} />
-                            <Text style={styles.infoLabel}>SPECIES</Text>
-                        </View>
-                        <Text style={styles.infoValue}>{pet.species}</Text>
-                    </View>
-                    <View style={styles.infoBox}>
-                        <View style={styles.infoBoxHeader}>
-                            <View style={[styles.statusDot, { backgroundColor: '#EF4444' }]} />
-                            <Text style={styles.infoLabel}>BLOOD TYPE</Text>
-                        </View>
-                        <Text style={styles.infoValue}>{pet.blood_type || '—'}</Text>
-                    </View>
-                </View>
+                <XStack gap="$3">
+                    <YStack
+                        flex={1}
+                        padding="$3"
+                        backgroundColor="$gray50"
+                        borderRadius="$md"
+                        gap="$2"
+                    >
+                        <XStack alignItems="center" gap="$2">
+                            <YStack
+                                width={8}
+                                height={8}
+                                borderRadius="$full"
+                                backgroundColor="$success500"
+                            />
+                            <Text fontSize={11} fontWeight="600" color="$textSecondary" textTransform="uppercase" letterSpacing={0.5}>
+                                SPECIES
+                            </Text>
+                        </XStack>
+                        <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                            {pet.species}
+                        </Text>
+                    </YStack>
+
+                    <YStack
+                        flex={1}
+                        padding="$3"
+                        backgroundColor="$gray50"
+                        borderRadius="$md"
+                        gap="$2"
+                    >
+                        <XStack alignItems="center" gap="$2">
+                            <YStack
+                                width={8}
+                                height={8}
+                                borderRadius="$full"
+                                backgroundColor="$error500"
+                            />
+                            <Text fontSize={11} fontWeight="600" color="$textSecondary" textTransform="uppercase" letterSpacing={0.5}>
+                                BLOOD TYPE
+                            </Text>
+                        </XStack>
+                        <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                            {pet.blood_type || '—'}
+                        </Text>
+                    </YStack>
+                </XStack>
 
                 {/* Color & DOB */}
-                <View style={styles.infoGrid2}>
-                    <View style={styles.infoBox}>
-                        <Text style={[styles.infoLabel, { marginBottom: 4 }]}>COLOR</Text>
-                        <Text style={styles.infoValue}>{pet.color || '—'}</Text>
-                    </View>
-                    <View style={styles.infoBox}>
-                        <Text style={[styles.infoLabel, { marginBottom: 4 }]}>DATE OF BIRTH</Text>
-                        <Text style={styles.infoValue}>
-                            {pet.birth_date ? new Date(pet.birth_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                <XStack gap="$3">
+                    <YStack
+                        flex={1}
+                        padding="$3"
+                        backgroundColor="$gray50"
+                        borderRadius="$md"
+                        gap="$1"
+                    >
+                        <Text fontSize={11} fontWeight="600" color="$textSecondary" textTransform="uppercase" letterSpacing={0.5}>
+                            COLOR
                         </Text>
-                    </View>
-                </View>
-            </View>
-        </View>
+                        <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                            {pet.color || '—'}
+                        </Text>
+                    </YStack>
+
+                    <YStack
+                        flex={1}
+                        padding="$3"
+                        backgroundColor="$gray50"
+                        borderRadius="$md"
+                        gap="$1"
+                    >
+                        <Text fontSize={11} fontWeight="600" color="$textSecondary" textTransform="uppercase" letterSpacing={0.5}>
+                            DATE OF BIRTH
+                        </Text>
+                        <Text fontSize="$base" fontWeight="600" color="$textPrimary">
+                            {pet.birth_date
+                                ? new Date(pet.birth_date).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                })
+                                : '—'
+                            }
+                        </Text>
+                    </YStack>
+                </XStack>
+            </YStack>
+        </Card>
     );
 }
-
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#1F2937',
-    },
-    editLink: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
-    },
-    infoList: {
-        gap: 16,
-    },
-    infoItemRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-    },
-    infoItemContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        flex: 1,
-    },
-    infoIconBox: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    infoLabel: {
-        fontSize: 11,
-        fontWeight: '600',
-        color: '#6B7280',
-        letterSpacing: 0.5,
-        textTransform: 'uppercase',
-    },
-    infoValue: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#1F2937',
-        marginTop: 2,
-    },
-    infoValueMono: {
-        fontSize: 14,
-        fontWeight: '500',
-        fontFamily: 'monospace',
-        color: '#1F2937',
-        marginTop: 2,
-    },
-    infoGrid2: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    infoBox: {
-        flex: 1,
-        padding: 12,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-    },
-    infoBoxHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        marginBottom: 8,
-    },
-    statusDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-    },
-});
