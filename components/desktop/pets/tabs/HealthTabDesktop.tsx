@@ -3,8 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useAllergies } from '@/hooks/useAllergies';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
+import { useVaccinations } from '@/hooks/useVaccinations';
+import { useTreatments } from '@/hooks/useTreatments';
 import AllergyModal from '@/components/desktop/modals/AllergyModal';
 import WeightModal from '@/components/desktop/modals/WeightModal';
+import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
+import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 
 interface HealthTabProps {
     petId: string;
@@ -13,9 +17,13 @@ interface HealthTabProps {
 export default function HealthTabDesktop({ petId }: HealthTabProps) {
     const { allergies, loading: allergiesLoading } = useAllergies(petId);
     const { weightEntries, loading: weightLoading } = useWeightEntries(petId);
+    const { vaccinations, loading: vaccinationsLoading } = useVaccinations(petId);
+    const { treatments, loading: treatmentsLoading } = useTreatments(petId);
 
     const [allergyModalVisible, setAllergyModalVisible] = useState(false);
     const [weightModalVisible, setWeightModalVisible] = useState(false);
+    const [vaccineModalVisible, setVaccineModalVisible] = useState(false);
+    const [treatmentModalVisible, setTreatmentModalVisible] = useState(false);
 
     // Get latest weight
     const currentWeight = weightEntries[0];
@@ -31,6 +39,14 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
                 <TouchableOpacity style={styles.actionButton} onPress={() => setWeightModalVisible(true)}>
                     <Ionicons name="scale-outline" size={20} color="#10B981" />
                     <Text style={styles.actionButtonText}>Log Weight</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={() => setVaccineModalVisible(true)}>
+                    <Ionicons name="syringe-outline" size={20} color="#8B5CF6" />
+                    <Text style={styles.actionButtonText}>Add Vaccine</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={() => setTreatmentModalVisible(true)}>
+                    <Ionicons name="medkit-outline" size={20} color="#F59E0B" />
+                    <Text style={styles.actionButtonText}>Add Treatment</Text>
                 </TouchableOpacity>
             </View>
 
@@ -89,6 +105,73 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
                 </View>
             </View>
 
+            <View style={[styles.grid, { marginTop: 24 }]}>
+                {/* Vaccinations Card */}
+                <View style={[styles.card, { flex: 1 }]}>
+                    <View style={styles.cardHeader}>
+                        <View style={[styles.cardIcon, { backgroundColor: '#EDE9FE' }]}>
+                            <Ionicons name="syringe" size={20} color="#8B5CF6" />
+                        </View>
+                        <Text style={styles.cardTitle}>Vaccinations</Text>
+                    </View>
+
+                    {vaccinations.length > 0 ? (
+                        <View style={styles.listContainer}>
+                            {vaccinations.slice(0, 5).map((v) => (
+                                <View key={v.id} style={styles.listItem}>
+                                    <View>
+                                        <Text style={styles.itemTitle}>{v.vaccine_name}</Text>
+                                        <Text style={styles.itemSubtitle}>
+                                            Given: {new Date(v.date_given).toLocaleDateString()}
+                                        </Text>
+                                    </View>
+                                    {v.next_due_date && (
+                                        <View style={styles.statusBadge}>
+                                            <Text style={styles.statusText}>
+                                                Due: {new Date(v.next_due_date).toLocaleDateString()}
+                                            </Text>
+                                        </View>
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={styles.emptyCard}>
+                            <Text style={styles.emptyText}>No vaccinations recorded</Text>
+                        </View>
+                    )}
+                </View>
+
+                {/* Treatments Card */}
+                <View style={[styles.card, { flex: 1 }]}>
+                    <View style={styles.cardHeader}>
+                        <View style={[styles.cardIcon, { backgroundColor: '#FEF3C7' }]}>
+                            <Ionicons name="medkit" size={20} color="#F59E0B" />
+                        </View>
+                        <Text style={styles.cardTitle}>Treatments</Text>
+                    </View>
+
+                    {treatments.length > 0 ? (
+                        <View style={styles.listContainer}>
+                            {treatments.slice(0, 5).map((t) => (
+                                <View key={t.id} style={styles.listItem}>
+                                    <View>
+                                        <Text style={styles.itemTitle}>{t.name}</Text>
+                                        <Text style={styles.itemSubtitle}>
+                                            {t.type} • {t.status}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={styles.emptyCard}>
+                            <Text style={styles.emptyText}>No treatments recorded</Text>
+                        </View>
+                    )}
+                </View>
+            </View>
+
             {/* Modals */}
             <AllergyModal
                 visible={allergyModalVisible}
@@ -98,6 +181,16 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
             <WeightModal
                 visible={weightModalVisible}
                 onClose={() => setWeightModalVisible(false)}
+                petId={petId}
+            />
+            <VaccinationFormModal
+                visible={vaccineModalVisible}
+                onClose={() => setVaccineModalVisible(false)}
+                petId={petId}
+            />
+            <TreatmentFormModal
+                visible={treatmentModalVisible}
+                onClose={() => setTreatmentModalVisible(false)}
                 petId={petId}
             />
         </ScrollView>
@@ -213,5 +306,37 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#991B1B',
         fontWeight: '500',
+    },
+    listContainer: {
+        gap: 12,
+    },
+    listItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    itemTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#374151',
+    },
+    itemSubtitle: {
+        fontSize: 12,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        backgroundColor: '#F3F4F6',
+    },
+    statusText: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#4B5563',
     },
 });

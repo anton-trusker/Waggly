@@ -1,55 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DragDropZone from '@/components/desktop/DragDropZone';
-
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
-
-// Mock data (shared structure with DocumentsPage)
-const MOCK_DOCUMENTS = [
-    {
-        id: '1',
-        name: 'Vaccination_Certificate_2024.pdf',
-        type: 'vaccination',
-        size: '245 KB',
-        uploadedAt: '2024-01-15',
-        petName: 'Max',
-        petId: '1' // Mock ID
-    },
-    {
-        id: '4',
-        name: 'Insurance_Policy.pdf',
-        type: 'insurance',
-        size: '890 KB',
-        uploadedAt: '2023-11-05',
-        petName: 'Bella',
-        petId: '2'
-    },
-];
+import { useDocuments } from '@/hooks/useDocuments';
+import { Document } from '@/types';
 
 interface DocumentsTabProps {
     petId: string;
 }
 
 export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
-    // Filter documents for this pet (mock logic)
-    // In real app, fetch from DB where pet_id = petId
-    const [documents, setDocuments] = useState(MOCK_DOCUMENTS);
+    const { documents, loading, deleteDocument, fetchDocuments } = useDocuments(petId);
     const [uploadModalVisible, setUploadModalVisible] = useState(false);
+    const [droppedFile, setDroppedFile] = useState<File | null>(null);
 
-    // For demo purposes, we show all if petId matches, or empty if not
-    // Since mock IDs might not match real UUIDs, we'll just show sample docs
-    const filteredDocuments = documents;
+    // Refresh documents when tab mounts or petId changes
+    useEffect(() => {
+        fetchDocuments();
+    }, [petId, fetchDocuments]);
 
     const handleDrop = (files: File[]) => {
-        const fileNames = files.map(f => f.name).join(', ');
-        Alert.alert('Files Dropped', `Ready to upload for this pet: ${fileNames}`);
-        // In real app, this would open modal or start upload
-        setUploadModalVisible(true);
+        if (files.length > 0) {
+            setDroppedFile(files[0]);
+            setUploadModalVisible(true);
+        }
     };
 
     const handleUpload = () => {
+        setDroppedFile(null);
         setUploadModalVisible(true);
+    };
+
+    const handleDelete = (doc: Document) => {
+        Alert.alert(
+            "Delete Document",
+            `Are you sure you want to delete "${doc.name}"?`,
+            [
+                { text: "Cancel", style: "cancel" },
+                { 
+                    text: "Delete", 
+                    style: "destructive",
+                    onPress: async () => {
+                        const { error } = await deleteDocument(doc.id, doc.file_url || '');
+                        if (error) {
+                            Alert.alert("Error", "Failed to delete document");
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const getDocumentIcon = (type: string) => {
@@ -58,8 +58,18 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
             case 'medical': return { icon: 'fitness', color: '#6366F1' };
             case 'legal': return { icon: 'shield-checkmark', color: '#F59E0B' };
             case 'insurance': return { icon: 'umbrella', color: '#8B5CF6' };
+            case 'prescription': return { icon: 'bandage', color: '#EC4899' };
+            case 'lab_result': return { icon: 'flask', color: '#06B6D4' };
+            case 'invoice': return { icon: 'receipt', color: '#64748B' };
             default: return { icon: 'document', color: '#6B7280' };
         }
+    };
+
+    const formatSize = (bytes?: number) => {
+        if (!bytes) return 'Unknown size';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     };
 
     return (
@@ -73,7 +83,11 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                     </TouchableOpacity>
                 </View>
 
-                {filteredDocuments.length === 0 ? (
+                {loading ? (
+                    <View style={styles.centerState}>
+                        <ActivityIndicator size="small" color="#6366F1" />
+                    </View>
+                ) : documents.length === 0 ? (
                     <View style={styles.emptyState}>
                         <Ionicons name="folder-open-outline" size={48} color="#D1D5DB" />
                         <Text style={styles.emptyStateText}>No documents yet</Text>
@@ -81,7 +95,7 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                     </View>
                 ) : (
                     <View style={styles.grid}>
-                        {filteredDocuments.map((doc) => {
+                        {documents.map((doc) => {
                             const { icon, color } = getDocumentIcon(doc.type);
                             return (
                                 <View key={doc.id} style={styles.card}>
@@ -90,10 +104,15 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                                     </View>
                                     <View style={styles.fileInfo}>
                                         <Text style={styles.fileName} numberOfLines={1}>{doc.name}</Text>
-                                        <Text style={styles.fileMeta}>{doc.size} • {doc.uploadedAt}</Text>
+                                        <Text style={styles.fileMeta}>
+                                            {formatSize(doc.size_bytes)} • {new Date(doc.created_at).toLocaleDateString()}
+                                        </Text>
                                     </View>
-                                    <TouchableOpacity style={styles.actionButton}>
-                                        <Ionicons name="ellipsis-vertical" size={16} color="#9CA3AF" />
+                                    <TouchableOpacity 
+                                        style={styles.actionButton}
+                                        onPress={() => handleDelete(doc)}
+                                    >
+                                        <Ionicons name="trash-outline" size={16} color="#EF4444" />
                                     </TouchableOpacity>
                                 </View>
                             );
@@ -103,8 +122,13 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
             </View>
             <DocumentUploadModal
                 visible={uploadModalVisible}
-                onClose={() => setUploadModalVisible(false)}
+                onClose={() => {
+                    setUploadModalVisible(false);
+                    setDroppedFile(null);
+                    fetchDocuments();
+                }}
                 petId={petId}
+                initialFile={droppedFile}
             />
         </DragDropZone>
     );
@@ -140,6 +164,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         color: '#6366F1',
+    },
+    centerState: {
+        alignItems: 'center',
+        paddingVertical: 32,
     },
     emptyState: {
         alignItems: 'center',
