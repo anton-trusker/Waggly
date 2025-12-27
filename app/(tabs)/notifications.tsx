@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  useWindowDimensions,
 } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 import { supabase } from '@/lib/supabase';
@@ -14,6 +15,7 @@ import { Notification } from '@/types';
 import { router } from 'expo-router';
 import type { TablesUpdate } from '@/types/db';
 import AppHeader from '@/components/layout/AppHeader';
+import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
 
 export default function NotificationsScreen() {
   const { user } = useAuth();
@@ -60,46 +62,46 @@ export default function NotificationsScreen() {
   const handleNotificationPress = async (notification: Notification) => {
     // Mark as read
     if (!notification.is_read) {
-        try {
-          await supabase
-            .from('notifications')
-            .update({ is_read: true } as any)
-            .eq('id', notification.id);
-          
-          // Optimistic update
-          setNotifications(prev => prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n));
-        } catch (error) {
-          console.error('Error marking notification as read:', error);
-        }
+      try {
+        await supabase
+          .from('notifications')
+          .update({ is_read: true } as any)
+          .eq('id', notification.id);
+
+        // Optimistic update
+        setNotifications(prev => prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n));
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
     }
 
     // Navigation
     if (['co_owner_invite', 'co_owner_request', 'co_owner_accepted', 'co_owner_declined'].includes(notification.type)) {
-        router.push('/(tabs)/profile/co-owners');
+      router.push('/(tabs)/profile/co-owners');
     } else if (['vaccination', 'treatment', 'vet_visit'].includes(notification.type)) {
-        // If we had a way to navigate to specific pet record, we would.
-        // For now, maybe just Pets tab or Calendar?
-        // Assuming related_id is pet_id or event_id.
-        // For simplicity, just go to Pets list or stay here.
+      // If we had a way to navigate to specific pet record, we would.
+      // For now, maybe just Pets tab or Calendar?
+      // Assuming related_id is pet_id or event_id.
+      // For simplicity, just go to Pets list or stay here.
     }
   };
 
   const getIcon = (type: string) => {
-    switch(type) {
-        case 'vaccination': return '💉';
-        case 'treatment': return '💊';
-        case 'vet_visit': return '🏥';
-        case 'co_owner_invite': return '📩';
-        case 'co_owner_request': return '🙋';
-        case 'co_owner_accepted': return '✅';
-        case 'co_owner_declined': return '❌';
-        default: return '🔔';
+    switch (type) {
+      case 'vaccination': return '💉';
+      case 'treatment': return '💊';
+      case 'vet_visit': return '🏥';
+      case 'co_owner_invite': return '📩';
+      case 'co_owner_request': return '🙋';
+      case 'co_owner_accepted': return '✅';
+      case 'co_owner_declined': return '❌';
+      default: return '🔔';
     }
   };
 
   const getStatusForNotification = (notification: Notification) => {
     if (!notification.due_date) return null; // No status if no due date (like system messages)
-    
+
     const today = new Date();
     const dueDate = new Date(notification.due_date);
     const daysUntilDue = Math.floor((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -177,9 +179,9 @@ export default function NotificationsScreen() {
                         <Text style={styles.notificationTitle}>{notification.title}</Text>
                         <Text style={styles.notificationMessage}>{notification.message}</Text>
                         {notification.due_date && (
-                            <Text style={styles.notificationDate}>
+                          <Text style={styles.notificationDate}>
                             Due: {formatDate(notification.due_date)}
-                            </Text>
+                          </Text>
                         )}
                       </View>
                       {status && status !== 'upcoming' && (
@@ -219,9 +221,9 @@ export default function NotificationsScreen() {
                         <Text style={[styles.notificationTitle, styles.readText]}>{notification.title}</Text>
                         <Text style={[styles.notificationMessage, styles.readText]}>{notification.message}</Text>
                         {notification.due_date && (
-                            <Text style={styles.notificationDate}>
+                          <Text style={styles.notificationDate}>
                             Due: {formatDate(notification.due_date)}
-                            </Text>
+                          </Text>
                         )}
                       </View>
                       {status && status !== 'upcoming' && (
