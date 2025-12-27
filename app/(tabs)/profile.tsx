@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { COUNTRIES } from '@/constants/countries';
 import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
+import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -229,775 +230,777 @@ export default function ProfilePage() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={[styles.header, isMobile && styles.headerMobile]}>
-        <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Manage your account and preferences</Text>
-      </View>
+    <ResponsivePageWrapper scrollable={false}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={[styles.header, isMobile && styles.headerMobile]}>
+          <Text style={styles.title}>Settings</Text>
+          <Text style={styles.subtitle}>Manage your account and preferences</Text>
+        </View>
 
-      <View style={[styles.content, isMobile && styles.contentMobile]}>
-        {/* Sidebar Tabs */}
-        <View style={[styles.sidebar, isMobile && styles.sidebarMobile]}>
-          <ScrollView
-            horizontal={isMobile}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={isMobile ? styles.sidebarScrollMobile : undefined}
-          >
-            <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
-              onPress={() => setActiveTab('account')}
+        <View style={[styles.content, isMobile && styles.contentMobile]}>
+          {/* Sidebar Tabs */}
+          <View style={[styles.sidebar, isMobile && styles.sidebarMobile]}>
+            <ScrollView
+              horizontal={isMobile}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={isMobile ? styles.sidebarScrollMobile : undefined}
             >
-              <Ionicons
-                name="person-outline"
-                size={20}
-                color={activeTab === 'account' ? '#6366F1' : '#6B7280'}
-              />
-              <Text style={[styles.sidebarText, activeTab === 'account' && styles.sidebarTextActive]}>
-                Account
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
-              onPress={() => setActiveTab('notifications')}
-            >
-              <Ionicons
-                name="notifications-outline"
-                size={20}
-                color={activeTab === 'notifications' ? '#6366F1' : '#6B7280'}
-              />
-              <Text style={[styles.sidebarText, activeTab === 'notifications' && styles.sidebarTextActive]}>
-                Notifications
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
-              onPress={() => setActiveTab('privacy')}
-            >
-              <Ionicons
-                name="lock-closed-outline"
-                size={20}
-                color={activeTab === 'privacy' ? '#6366F1' : '#6B7280'}
-              />
-              <Text style={[styles.sidebarText, activeTab === 'privacy' && styles.sidebarTextActive]}>
-                Privacy
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                onPress={() => setActiveTab('account')}
+              >
+                <Ionicons
+                  name="person-outline"
+                  size={20}
+                  color={activeTab === 'account' ? '#6366F1' : '#6B7280'}
+                />
+                <Text style={[styles.sidebarText, activeTab === 'account' && styles.sidebarTextActive]}>
+                  Account
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                onPress={() => setActiveTab('notifications')}
+              >
+                <Ionicons
+                  name="notifications-outline"
+                  size={20}
+                  color={activeTab === 'notifications' ? '#6366F1' : '#6B7280'}
+                />
+                <Text style={[styles.sidebarText, activeTab === 'notifications' && styles.sidebarTextActive]}>
+                  Notifications
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+                onPress={() => setActiveTab('privacy')}
+              >
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={20}
+                  color={activeTab === 'privacy' ? '#6366F1' : '#6B7280'}
+                />
+                <Text style={[styles.sidebarText, activeTab === 'privacy' && styles.sidebarTextActive]}>
+                  Privacy
+                </Text>
+              </TouchableOpacity>
 
-            {!isMobile && (
-              <>
-                <View style={styles.sidebarDivider} />
-                <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
-                  <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                  <Text style={[styles.sidebarText, { color: '#EF4444' }]}>Sign Out</Text>
-                </TouchableOpacity>
-              </>
+              {!isMobile && (
+                <>
+                  <View style={styles.sidebarDivider} />
+                  <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
+                    <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+                    <Text style={[styles.sidebarText, { color: '#EF4444' }]}>Sign Out</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </ScrollView>
+          </View>
+
+          {/* Main Content */}
+          <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
+            {activeTab === 'account' && (
+              <View style={styles.tabContent}>
+                <View style={styles.profileHeader}>
+                  <View style={styles.avatarSection}>
+                    <View style={styles.avatarContainer}>
+                      {photoUrl ? (
+                        <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
+                      ) : (
+                        <View style={styles.avatarPlaceholder}>
+                          <Text style={styles.avatarText}>
+                            {(firstName?.charAt(0) || '') + (lastName?.charAt(0) || '')}
+                          </Text>
+                        </View>
+                      )}
+                      {isEditing && (
+                        <TouchableOpacity style={styles.avatarEditButton} onPress={handlePhotoUpload}>
+                          <Ionicons name="camera" size={16} color="#fff" />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <View style={styles.userInfo}>
+                      <Text style={styles.userName}>
+                        {firstName} {lastName}
+                      </Text>
+                      <Text style={styles.userEmail}>{user?.email}</Text>
+                      {address && <Text style={styles.userLocation}>{address}</Text>}
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => setIsEditing(!isEditing)}
+                  >
+                    <Ionicons name={isEditing ? "close" : "pencil"} size={20} color="#6366F1" />
+                    <Text style={styles.editButtonText}>{isEditing ? 'Cancel' : 'Edit Profile'}</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {isEditing ? (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Personal Information</Text>
+
+                    <View style={[styles.row, isMobile && styles.rowMobile]}>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>First Name</Text>
+                        <TextInput
+                          style={styles.input}
+                          value={firstName}
+                          onChangeText={setFirstName}
+                          placeholder="John"
+                        />
+                      </View>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>Last Name</Text>
+                        <TextInput
+                          style={styles.input}
+                          value={lastName}
+                          onChangeText={setLastName}
+                          placeholder="Doe"
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Email</Text>
+                      <View style={styles.emailContainer}>
+                        <Ionicons name="mail-outline" size={20} color="#6B7280" style={{ marginRight: 10 }} />
+                        <Text style={styles.emailText}>{user?.email || 'No email set'}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.row}>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>Date of Birth</Text>
+                        {Platform.OS === 'web' ? (
+                          <input
+                            type="date"
+                            value={dateOfBirth}
+                            onChange={(e) => setDateOfBirth(e.target.value)}
+                            style={{
+                              height: 48,
+                              borderWidth: 1,
+                              borderColor: '#E5E7EB',
+                              borderRadius: 12,
+                              backgroundColor: '#fff',
+                              paddingLeft: 16,
+                              paddingRight: 16,
+                              fontSize: 16,
+                              color: '#111827',
+                              outline: 'none',
+                              border: '1px solid #E5E7EB',
+                            }}
+                          />
+                        ) : (
+                          <TextInput
+                            style={styles.input}
+                            value={dateOfBirth}
+                            onChangeText={setDateOfBirth}
+                            placeholder="dd/mm/yyyy"
+                          />
+                        )}
+                      </View>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>Gender</Text>
+                        <View style={styles.genderRow}>
+                          {['male', 'female', 'other'].map((g) => (
+                            <TouchableOpacity
+                              key={g}
+                              style={[
+                                styles.genderChip,
+                                gender === g && styles.genderChipActive
+                              ]}
+                              onPress={() => setGender(g)}
+                            >
+                              <Text style={[
+                                styles.genderText,
+                                gender === g && styles.genderTextActive
+                              ]}>
+                                {g.charAt(0).toUpperCase() + g.slice(1)}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Phone</Text>
+                      <View style={styles.phoneRow}>
+                        <TouchableOpacity
+                          style={styles.phoneCountryButton}
+                          onPress={() => setShowPhoneCountryPicker(true)}
+                        >
+                          <Text style={styles.phoneFlag}>
+                            {COUNTRIES.find(c => c.code === phoneCountryCode)?.flag || '🇺🇸'}
+                          </Text>
+                          <Text style={styles.phoneDialCode}>
+                            {COUNTRIES.find(c => c.code === phoneCountryCode)?.dialCode || '+1'}
+                          </Text>
+                          <Ionicons name="chevron-down" size={16} color="#6B7280" />
+                        </TouchableOpacity>
+                        <TextInput
+                          style={[styles.input, styles.phoneInput]}
+                          value={phone}
+                          onChangeText={setPhone}
+                          placeholder="(555) 123-4567"
+                          keyboardType="phone-pad"
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Website</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={website}
+                        onChangeText={setWebsite}
+                        placeholder="https://example.com"
+                        keyboardType="url"
+                        autoCapitalize="none"
+                      />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Address</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={address}
+                        onChangeText={setAddress}
+                        placeholder="123 Main St, City, State"
+                      />
+                    </View>
+
+                    <View style={styles.row}>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>Country</Text>
+                        <TouchableOpacity
+                          style={styles.dropdownButton}
+                          onPress={() => setShowCountryPicker(true)}
+                        >
+                          <Text style={countryCode ? styles.dropdownText : styles.dropdownPlaceholder}>
+                            {countryCode ? `${COUNTRIES.find(c => c.code === countryCode)?.flag} ${COUNTRIES.find(c => c.code === countryCode)?.name}` : 'Select country'}
+                          </Text>
+                          <Ionicons name="chevron-down" size={20} color="#6B7280" />
+                        </TouchableOpacity>
+                      </View>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>City</Text>
+                        <View style={styles.cityAutocomplete}>
+                          <View style={styles.cityInputContainer}>
+                            <Ionicons name="location-outline" size={18} color="#6B7280" style={{ marginRight: 8 }} />
+                            <TextInput
+                              style={styles.cityInput}
+                              value={cityAutocomplete.query || cityAutocomplete.selectedCity}
+                              onChangeText={cityAutocomplete.setQuery}
+                              placeholder="Search city..."
+                              placeholderTextColor="#9CA3AF"
+                              onFocus={() => setShowCityDropdown(true)}
+                              onBlur={() => setTimeout(() => setShowCityDropdown(false), 200)}
+                            />
+                            {cityAutocomplete.loading && (
+                              <ActivityIndicator size="small" color="#6366F1" />
+                            )}
+                            {cityAutocomplete.selectedCity && !cityAutocomplete.loading && (
+                              <TouchableOpacity onPress={cityAutocomplete.clearCity}>
+                                <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+                              </TouchableOpacity>
+                            )}
+                          </View>
+                          {showCityDropdown && cityAutocomplete.predictions.length > 0 && (
+                            <View style={styles.cityDropdown}>
+                              {cityAutocomplete.predictions.map((prediction) => (
+                                <TouchableOpacity
+                                  key={prediction.place_id}
+                                  style={styles.cityDropdownItem}
+                                  onPress={() => {
+                                    cityAutocomplete.selectCity(prediction);
+                                    setShowCityDropdown(false);
+                                  }}
+                                >
+                                  <Ionicons name="location" size={16} color="#6366F1" />
+                                  <View style={{ flex: 1, marginLeft: 8 }}>
+                                    <Text style={styles.cityMainText}>{prediction.main_text}</Text>
+                                    <Text style={styles.citySecondaryText}>{prediction.secondary_text}</Text>
+                                  </View>
+                                </TouchableOpacity>
+                              ))}
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.row}>
+                      <View style={[styles.inputGroup, styles.flex1]}>
+                        <Text style={styles.label}>Language</Text>
+                        <View style={styles.languageRow}>
+                          {['en', 'es', 'fr'].map((lang) => (
+                            <TouchableOpacity
+                              key={lang}
+                              style={[
+                                styles.langChip,
+                                languageCode === lang && styles.langChipActive
+                              ]}
+                              onPress={() => setLanguageCode(lang)}
+                            >
+                              <Text style={[
+                                styles.langText,
+                                languageCode === lang && styles.langTextActive
+                              ]}>
+                                {lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Français'}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Bio</Text>
+                      <TextInput
+                        style={[styles.input, styles.textArea]}
+                        value={bio}
+                        onChangeText={setBio}
+                        placeholder="Tell us about yourself..."
+                        multiline
+                        numberOfLines={4}
+                        textAlignVertical="top"
+                      />
+                    </View>
+
+                    <TouchableOpacity
+                      style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+                      onPress={handleSaveProfile}
+                      disabled={saving}
+                    >
+                      {saving ? (
+                        <ActivityIndicator color="#fff" size="small" />
+                      ) : (
+                        <Text style={styles.saveButtonText}>Save Changes</Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.profileView}>
+                    <View style={styles.infoSection}>
+                      <Text style={styles.infoLabel}>Full Name</Text>
+                      <Text style={styles.infoValue}>{firstName} {lastName}</Text>
+                    </View>
+
+                    {dateOfBirth && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Date of Birth</Text>
+                        <Text style={styles.infoValue}>{dateOfBirth}</Text>
+                      </View>
+                    )}
+
+                    {gender && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Gender</Text>
+                        <Text style={styles.infoValue}>{gender}</Text>
+                      </View>
+                    )}
+
+                    {phone && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Phone</Text>
+                        <Text style={styles.infoValue}>{phone}</Text>
+                      </View>
+                    )}
+
+                    {website && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Website</Text>
+                        <Text style={[styles.infoValue, styles.link]}>{website}</Text>
+                      </View>
+                    )}
+
+                    {address && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Address</Text>
+                        <Text style={styles.infoValue}>{address}</Text>
+                      </View>
+                    )}
+
+                    {country && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Country</Text>
+                        <Text style={styles.infoValue}>{country}</Text>
+                      </View>
+                    )}
+
+                    {languageCode && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Language</Text>
+                        <Text style={styles.infoValue}>
+                          {languageCode === 'en' ? 'English' :
+                            languageCode === 'es' ? 'Español' :
+                              languageCode === 'fr' ? 'Français' : languageCode}
+                        </Text>
+                      </View>
+                    )}
+
+                    {bio && (
+                      <View style={styles.infoSection}>
+                        <Text style={styles.infoLabel}>Bio</Text>
+                        <Text style={styles.infoValue}>{bio}</Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                <Text style={styles.sectionTitle}>Security</Text>
+                <View style={styles.section}>
+                  <TouchableOpacity style={styles.changePasswordButton}>
+                    <Ionicons name="key-outline" size={20} color="#6366F1" />
+                    <Text style={styles.changePasswordText}>Change Password</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.sectionTitle}>Quick Links</Text>
+                <View style={styles.section}>
+                  <TouchableOpacity
+                    style={styles.changePasswordButton}
+                    onPress={() => router.push('/(tabs)/profile/co-owners' as any)}
+                  >
+                    <Ionicons name="people-outline" size={20} color="#6366F1" />
+                    <Text style={styles.changePasswordText}>Manage Co-Owners</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {isMobile && (
+                  <View style={{ marginTop: 24 }}>
+                    <TouchableOpacity style={[styles.dangerButton, { justifyContent: 'center', backgroundColor: '#FEF2F2', borderRadius: 12 }]} onPress={handleSignOut}>
+                      <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+                      <Text style={styles.dangerButtonText}>Sign Out</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {activeTab === 'notifications' && (
+              <View style={styles.tabContent}>
+                <Text style={styles.sectionTitle}>Notification Preferences</Text>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>General Notifications</Text>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Email Notifications</Text>
+                      <Text style={styles.settingDescription}>
+                        Receive important updates via email
+                      </Text>
+                    </View>
+                    <Switch
+                      value={emailNotifications}
+                      onValueChange={setEmailNotifications}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={emailNotifications ? '#6366F1' : '#fff'}
+                    />
+                  </View>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Push Notifications</Text>
+                      <Text style={styles.settingDescription}>
+                        Get push notifications on your device
+                      </Text>
+                    </View>
+                    <Switch
+                      value={pushNotifications}
+                      onValueChange={setPushNotifications}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={pushNotifications ? '#6366F1' : '#fff'}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>Pet Care Reminders</Text>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Health Reminders</Text>
+                      <Text style={styles.settingDescription}>
+                        Reminders for vaccinations and medications
+                      </Text>
+                    </View>
+                    <Switch
+                      value={healthReminders}
+                      onValueChange={setHealthReminders}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={healthReminders ? '#6366F1' : '#fff'}
+                    />
+                  </View>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Event Reminders</Text>
+                      <Text style={styles.settingDescription}>
+                        Reminders for upcoming appointments and events
+                      </Text>
+                    </View>
+                    <Switch
+                      value={eventReminders}
+                      onValueChange={setEventReminders}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={eventReminders ? '#6366F1' : '#fff'}
+                    />
+                  </View>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Weight Tracking</Text>
+                      <Text style={styles.settingDescription}>
+                        Reminders to log your pet's weight
+                      </Text>
+                    </View>
+                    <Switch
+                      value={true}
+                      onValueChange={(value) => console.log('Weight tracking:', value)}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={'#6366F1'}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>Communication Preferences</Text>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Newsletter</Text>
+                      <Text style={styles.settingDescription}>
+                        Receive tips and updates about pet care
+                      </Text>
+                    </View>
+                    <Switch
+                      value={true}
+                      onValueChange={(value) => console.log('Newsletter:', value)}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={'#6366F1'}
+                    />
+                  </View>
+
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingInfo}>
+                      <Text style={styles.settingLabel}>Product Updates</Text>
+                      <Text style={styles.settingDescription}>
+                        Get notified about new features and improvements
+                      </Text>
+                    </View>
+                    <Switch
+                      value={true}
+                      onValueChange={(value) => console.log('Product updates:', value)}
+                      trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
+                      thumbColor={'#6366F1'}
+                    />
+                  </View>
+                </View>
+              </View>
+            )}
+
+            {activeTab === 'privacy' && (
+              <View style={styles.tabContent}>
+                <Text style={styles.sectionTitle}>Privacy & Security</Text>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>Data Protection</Text>
+
+                  <View style={styles.privacyItem}>
+                    <Ionicons name="shield-checkmark-outline" size={24} color="#10B981" />
+                    <View style={styles.privacyInfo}>
+                      <Text style={styles.privacyLabel}>Data Encryption</Text>
+                      <Text style={styles.privacyDescription}>
+                        All your data is encrypted end-to-end using industry-standard encryption
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.privacyItem}>
+                    <Ionicons name="eye-off-outline" size={24} color="#6366F1" />
+                    <View style={styles.privacyInfo}>
+                      <Text style={styles.privacyLabel}>Private by Default</Text>
+                      <Text style={styles.privacyDescription}>
+                        Your pet information is only visible to you and authorized co-owners
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.privacyItem}>
+                    <Ionicons name="cloud-upload-outline" size={24} color="#F59E0B" />
+                    <View style={styles.privacyInfo}>
+                      <Text style={styles.privacyLabel}>Secure Backups</Text>
+                      <Text style={styles.privacyDescription}>
+                        Your data is securely backed up and can be restored if needed
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>Account Activity</Text>
+
+                  <View style={styles.activityItem}>
+                    <View style={styles.activityInfo}>
+                      <Text style={styles.activityLabel}>Last Login</Text>
+                      <Text style={styles.activityValue}>Today at 2:34 PM</Text>
+                    </View>
+                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                  </View>
+
+                  <View style={styles.activityItem}>
+                    <View style={styles.activityInfo}>
+                      <Text style={styles.activityLabel}>Account Created</Text>
+                      <Text style={styles.activityValue}>
+                        {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Unknown'}
+                      </Text>
+                    </View>
+                    <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                  </View>
+
+                  <View style={styles.activityItem}>
+                    <View style={styles.activityInfo}>
+                      <Text style={styles.activityLabel}>Data Download</Text>
+                      <Text style={styles.activityDescription}>
+                        Download all your account data
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={styles.actionButton} onPress={handleDownloadData}>
+                      <Text style={styles.actionButtonText}>Download</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.subsectionTitle}>Danger Zone</Text>
+
+                  <TouchableOpacity style={styles.warningButton} onPress={handleSignOutAllDevices}>
+                    <Ionicons name="log-out-outline" size={20} color="#F59E0B" />
+                    <Text style={styles.warningButtonText}>Sign Out of All Devices</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.dangerButton} onPress={handleDeleteAccount}>
+                    <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                    <Text style={styles.dangerButtonText}>Delete Account</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             )}
           </ScrollView>
         </View>
+        {isMobile && <View style={{ height: 80 }} />}
 
-        {/* Main Content */}
-        <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
-          {activeTab === 'account' && (
-            <View style={styles.tabContent}>
-              <View style={styles.profileHeader}>
-                <View style={styles.avatarSection}>
-                  <View style={styles.avatarContainer}>
-                    {photoUrl ? (
-                      <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
-                    ) : (
-                      <View style={styles.avatarPlaceholder}>
-                        <Text style={styles.avatarText}>
-                          {(firstName?.charAt(0) || '') + (lastName?.charAt(0) || '')}
-                        </Text>
-                      </View>
-                    )}
-                    {isEditing && (
-                      <TouchableOpacity style={styles.avatarEditButton} onPress={handlePhotoUpload}>
-                        <Ionicons name="camera" size={16} color="#fff" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                  <View style={styles.userInfo}>
-                    <Text style={styles.userName}>
-                      {firstName} {lastName}
-                    </Text>
-                    <Text style={styles.userEmail}>{user?.email}</Text>
-                    {address && <Text style={styles.userLocation}>{address}</Text>}
-                  </View>
-                </View>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => setIsEditing(!isEditing)}
-                >
-                  <Ionicons name={isEditing ? "close" : "pencil"} size={20} color="#6366F1" />
-                  <Text style={styles.editButtonText}>{isEditing ? 'Cancel' : 'Edit Profile'}</Text>
+        {/* Country Picker Modal */}
+        <Modal
+          visible={showCountryPicker}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowCountryPicker(false)}
+        >
+          <View style={modalStyles.overlay}>
+            <View style={modalStyles.content}>
+              <View style={modalStyles.header}>
+                <Text style={modalStyles.title}>Select Country</Text>
+                <TouchableOpacity onPress={() => { setShowCountryPicker(false); setCountrySearch(''); }}>
+                  <Ionicons name="close" size={24} color="#111827" />
                 </TouchableOpacity>
               </View>
-
-              {isEditing ? (
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Personal Information</Text>
-
-                  <View style={[styles.row, isMobile && styles.rowMobile]}>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>First Name</Text>
-                      <TextInput
-                        style={styles.input}
-                        value={firstName}
-                        onChangeText={setFirstName}
-                        placeholder="John"
-                      />
-                    </View>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Last Name</Text>
-                      <TextInput
-                        style={styles.input}
-                        value={lastName}
-                        onChangeText={setLastName}
-                        placeholder="Doe"
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Email</Text>
-                    <View style={styles.emailContainer}>
-                      <Ionicons name="mail-outline" size={20} color="#6B7280" style={{ marginRight: 10 }} />
-                      <Text style={styles.emailText}>{user?.email || 'No email set'}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.row}>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Date of Birth</Text>
-                      {Platform.OS === 'web' ? (
-                        <input
-                          type="date"
-                          value={dateOfBirth}
-                          onChange={(e) => setDateOfBirth(e.target.value)}
-                          style={{
-                            height: 48,
-                            borderWidth: 1,
-                            borderColor: '#E5E7EB',
-                            borderRadius: 12,
-                            backgroundColor: '#fff',
-                            paddingLeft: 16,
-                            paddingRight: 16,
-                            fontSize: 16,
-                            color: '#111827',
-                            outline: 'none',
-                            border: '1px solid #E5E7EB',
-                          }}
-                        />
-                      ) : (
-                        <TextInput
-                          style={styles.input}
-                          value={dateOfBirth}
-                          onChangeText={setDateOfBirth}
-                          placeholder="dd/mm/yyyy"
-                        />
-                      )}
-                    </View>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Gender</Text>
-                      <View style={styles.genderRow}>
-                        {['male', 'female', 'other'].map((g) => (
-                          <TouchableOpacity
-                            key={g}
-                            style={[
-                              styles.genderChip,
-                              gender === g && styles.genderChipActive
-                            ]}
-                            onPress={() => setGender(g)}
-                          >
-                            <Text style={[
-                              styles.genderText,
-                              gender === g && styles.genderTextActive
-                            ]}>
-                              {g.charAt(0).toUpperCase() + g.slice(1)}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Phone</Text>
-                    <View style={styles.phoneRow}>
-                      <TouchableOpacity
-                        style={styles.phoneCountryButton}
-                        onPress={() => setShowPhoneCountryPicker(true)}
-                      >
-                        <Text style={styles.phoneFlag}>
-                          {COUNTRIES.find(c => c.code === phoneCountryCode)?.flag || '🇺🇸'}
-                        </Text>
-                        <Text style={styles.phoneDialCode}>
-                          {COUNTRIES.find(c => c.code === phoneCountryCode)?.dialCode || '+1'}
-                        </Text>
-                        <Ionicons name="chevron-down" size={16} color="#6B7280" />
-                      </TouchableOpacity>
-                      <TextInput
-                        style={[styles.input, styles.phoneInput]}
-                        value={phone}
-                        onChangeText={setPhone}
-                        placeholder="(555) 123-4567"
-                        keyboardType="phone-pad"
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Website</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={website}
-                      onChangeText={setWebsite}
-                      placeholder="https://example.com"
-                      keyboardType="url"
-                      autoCapitalize="none"
-                    />
-                  </View>
-
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Address</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={address}
-                      onChangeText={setAddress}
-                      placeholder="123 Main St, City, State"
-                    />
-                  </View>
-
-                  <View style={styles.row}>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Country</Text>
-                      <TouchableOpacity
-                        style={styles.dropdownButton}
-                        onPress={() => setShowCountryPicker(true)}
-                      >
-                        <Text style={countryCode ? styles.dropdownText : styles.dropdownPlaceholder}>
-                          {countryCode ? `${COUNTRIES.find(c => c.code === countryCode)?.flag} ${COUNTRIES.find(c => c.code === countryCode)?.name}` : 'Select country'}
-                        </Text>
-                        <Ionicons name="chevron-down" size={20} color="#6B7280" />
-                      </TouchableOpacity>
-                    </View>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>City</Text>
-                      <View style={styles.cityAutocomplete}>
-                        <View style={styles.cityInputContainer}>
-                          <Ionicons name="location-outline" size={18} color="#6B7280" style={{ marginRight: 8 }} />
-                          <TextInput
-                            style={styles.cityInput}
-                            value={cityAutocomplete.query || cityAutocomplete.selectedCity}
-                            onChangeText={cityAutocomplete.setQuery}
-                            placeholder="Search city..."
-                            placeholderTextColor="#9CA3AF"
-                            onFocus={() => setShowCityDropdown(true)}
-                            onBlur={() => setTimeout(() => setShowCityDropdown(false), 200)}
-                          />
-                          {cityAutocomplete.loading && (
-                            <ActivityIndicator size="small" color="#6366F1" />
-                          )}
-                          {cityAutocomplete.selectedCity && !cityAutocomplete.loading && (
-                            <TouchableOpacity onPress={cityAutocomplete.clearCity}>
-                              <Ionicons name="close-circle" size={18} color="#9CA3AF" />
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                        {showCityDropdown && cityAutocomplete.predictions.length > 0 && (
-                          <View style={styles.cityDropdown}>
-                            {cityAutocomplete.predictions.map((prediction) => (
-                              <TouchableOpacity
-                                key={prediction.place_id}
-                                style={styles.cityDropdownItem}
-                                onPress={() => {
-                                  cityAutocomplete.selectCity(prediction);
-                                  setShowCityDropdown(false);
-                                }}
-                              >
-                                <Ionicons name="location" size={16} color="#6366F1" />
-                                <View style={{ flex: 1, marginLeft: 8 }}>
-                                  <Text style={styles.cityMainText}>{prediction.main_text}</Text>
-                                  <Text style={styles.citySecondaryText}>{prediction.secondary_text}</Text>
-                                </View>
-                              </TouchableOpacity>
-                            ))}
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.row}>
-                    <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Language</Text>
-                      <View style={styles.languageRow}>
-                        {['en', 'es', 'fr'].map((lang) => (
-                          <TouchableOpacity
-                            key={lang}
-                            style={[
-                              styles.langChip,
-                              languageCode === lang && styles.langChipActive
-                            ]}
-                            onPress={() => setLanguageCode(lang)}
-                          >
-                            <Text style={[
-                              styles.langText,
-                              languageCode === lang && styles.langTextActive
-                            ]}>
-                              {lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Français'}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Bio</Text>
-                    <TextInput
-                      style={[styles.input, styles.textArea]}
-                      value={bio}
-                      onChangeText={setBio}
-                      placeholder="Tell us about yourself..."
-                      multiline
-                      numberOfLines={4}
-                      textAlignVertical="top"
-                    />
-                  </View>
-
+              <View style={modalStyles.searchContainer}>
+                <Ionicons name="search" size={18} color="#6B7280" />
+                <TextInput
+                  style={modalStyles.searchInput}
+                  placeholder="Search country..."
+                  value={countrySearch}
+                  onChangeText={setCountrySearch}
+                />
+              </View>
+              <FlatList
+                data={COUNTRIES.filter(c =>
+                  c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                  c.code.toLowerCase().includes(countrySearch.toLowerCase())
+                )}
+                keyExtractor={(item) => item.code}
+                style={{ maxHeight: 400 }}
+                renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={[styles.saveButton, saving && styles.saveButtonDisabled]}
-                    onPress={handleSaveProfile}
-                    disabled={saving}
+                    style={[modalStyles.item, countryCode === item.code && modalStyles.itemSelected]}
+                    onPress={() => {
+                      setCountryCode(item.code);
+                      setShowCountryPicker(false);
+                      setCountrySearch('');
+                    }}
                   >
-                    {saving ? (
-                      <ActivityIndicator color="#fff" size="small" />
-                    ) : (
-                      <Text style={styles.saveButtonText}>Save Changes</Text>
+                    <Text style={modalStyles.flag}>{item.flag}</Text>
+                    <Text style={modalStyles.countryName}>{item.name}</Text>
+                    {countryCode === item.code && (
+                      <Ionicons name="checkmark" size={20} color="#6366F1" />
                     )}
                   </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={styles.profileView}>
-                  <View style={styles.infoSection}>
-                    <Text style={styles.infoLabel}>Full Name</Text>
-                    <Text style={styles.infoValue}>{firstName} {lastName}</Text>
-                  </View>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
 
-                  {dateOfBirth && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Date of Birth</Text>
-                      <Text style={styles.infoValue}>{dateOfBirth}</Text>
-                    </View>
-                  )}
-
-                  {gender && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Gender</Text>
-                      <Text style={styles.infoValue}>{gender}</Text>
-                    </View>
-                  )}
-
-                  {phone && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Phone</Text>
-                      <Text style={styles.infoValue}>{phone}</Text>
-                    </View>
-                  )}
-
-                  {website && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Website</Text>
-                      <Text style={[styles.infoValue, styles.link]}>{website}</Text>
-                    </View>
-                  )}
-
-                  {address && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Address</Text>
-                      <Text style={styles.infoValue}>{address}</Text>
-                    </View>
-                  )}
-
-                  {country && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Country</Text>
-                      <Text style={styles.infoValue}>{country}</Text>
-                    </View>
-                  )}
-
-                  {languageCode && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Language</Text>
-                      <Text style={styles.infoValue}>
-                        {languageCode === 'en' ? 'English' :
-                          languageCode === 'es' ? 'Español' :
-                            languageCode === 'fr' ? 'Français' : languageCode}
-                      </Text>
-                    </View>
-                  )}
-
-                  {bio && (
-                    <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Bio</Text>
-                      <Text style={styles.infoValue}>{bio}</Text>
-                    </View>
-                  )}
-                </View>
-              )}
-
-              <Text style={styles.sectionTitle}>Security</Text>
-              <View style={styles.section}>
-                <TouchableOpacity style={styles.changePasswordButton}>
-                  <Ionicons name="key-outline" size={20} color="#6366F1" />
-                  <Text style={styles.changePasswordText}>Change Password</Text>
+        {/* Phone Country Picker Modal */}
+        <Modal
+          visible={showPhoneCountryPicker}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowPhoneCountryPicker(false)}
+        >
+          <View style={modalStyles.overlay}>
+            <View style={modalStyles.content}>
+              <View style={modalStyles.header}>
+                <Text style={modalStyles.title}>Select Country Code</Text>
+                <TouchableOpacity onPress={() => { setShowPhoneCountryPicker(false); setCountrySearch(''); }}>
+                  <Ionicons name="close" size={24} color="#111827" />
                 </TouchableOpacity>
               </View>
-
-              <Text style={styles.sectionTitle}>Quick Links</Text>
-              <View style={styles.section}>
-                <TouchableOpacity
-                  style={styles.changePasswordButton}
-                  onPress={() => router.push('/(tabs)/profile/co-owners' as any)}
-                >
-                  <Ionicons name="people-outline" size={20} color="#6366F1" />
-                  <Text style={styles.changePasswordText}>Manage Co-Owners</Text>
-                </TouchableOpacity>
+              <View style={modalStyles.searchContainer}>
+                <Ionicons name="search" size={18} color="#6B7280" />
+                <TextInput
+                  style={modalStyles.searchInput}
+                  placeholder="Search country..."
+                  value={countrySearch}
+                  onChangeText={setCountrySearch}
+                />
               </View>
-
-              {isMobile && (
-                <View style={{ marginTop: 24 }}>
-                  <TouchableOpacity style={[styles.dangerButton, { justifyContent: 'center', backgroundColor: '#FEF2F2', borderRadius: 12 }]} onPress={handleSignOut}>
-                    <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                    <Text style={styles.dangerButtonText}>Sign Out</Text>
+              <FlatList
+                data={COUNTRIES.filter(c =>
+                  c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                  c.dialCode.includes(countrySearch)
+                )}
+                keyExtractor={(item) => item.code}
+                style={{ maxHeight: 400 }}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[modalStyles.item, phoneCountryCode === item.code && modalStyles.itemSelected]}
+                    onPress={() => {
+                      setPhoneCountryCode(item.code);
+                      setShowPhoneCountryPicker(false);
+                      setCountrySearch('');
+                    }}
+                  >
+                    <Text style={modalStyles.flag}>{item.flag}</Text>
+                    <Text style={modalStyles.countryName}>{item.name}</Text>
+                    <Text style={modalStyles.dialCode}>{item.dialCode}</Text>
+                    {phoneCountryCode === item.code && (
+                      <Ionicons name="checkmark" size={20} color="#6366F1" />
+                    )}
                   </TouchableOpacity>
-                </View>
-              )}
+                )}
+              />
             </View>
-          )}
-
-          {activeTab === 'notifications' && (
-            <View style={styles.tabContent}>
-              <Text style={styles.sectionTitle}>Notification Preferences</Text>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>General Notifications</Text>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Email Notifications</Text>
-                    <Text style={styles.settingDescription}>
-                      Receive important updates via email
-                    </Text>
-                  </View>
-                  <Switch
-                    value={emailNotifications}
-                    onValueChange={setEmailNotifications}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={emailNotifications ? '#6366F1' : '#fff'}
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Push Notifications</Text>
-                    <Text style={styles.settingDescription}>
-                      Get push notifications on your device
-                    </Text>
-                  </View>
-                  <Switch
-                    value={pushNotifications}
-                    onValueChange={setPushNotifications}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={pushNotifications ? '#6366F1' : '#fff'}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Pet Care Reminders</Text>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Health Reminders</Text>
-                    <Text style={styles.settingDescription}>
-                      Reminders for vaccinations and medications
-                    </Text>
-                  </View>
-                  <Switch
-                    value={healthReminders}
-                    onValueChange={setHealthReminders}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={healthReminders ? '#6366F1' : '#fff'}
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Event Reminders</Text>
-                    <Text style={styles.settingDescription}>
-                      Reminders for upcoming appointments and events
-                    </Text>
-                  </View>
-                  <Switch
-                    value={eventReminders}
-                    onValueChange={setEventReminders}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={eventReminders ? '#6366F1' : '#fff'}
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Weight Tracking</Text>
-                    <Text style={styles.settingDescription}>
-                      Reminders to log your pet's weight
-                    </Text>
-                  </View>
-                  <Switch
-                    value={true}
-                    onValueChange={(value) => console.log('Weight tracking:', value)}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={'#6366F1'}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Communication Preferences</Text>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Newsletter</Text>
-                    <Text style={styles.settingDescription}>
-                      Receive tips and updates about pet care
-                    </Text>
-                  </View>
-                  <Switch
-                    value={true}
-                    onValueChange={(value) => console.log('Newsletter:', value)}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={'#6366F1'}
-                  />
-                </View>
-
-                <View style={styles.settingRow}>
-                  <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Product Updates</Text>
-                    <Text style={styles.settingDescription}>
-                      Get notified about new features and improvements
-                    </Text>
-                  </View>
-                  <Switch
-                    value={true}
-                    onValueChange={(value) => console.log('Product updates:', value)}
-                    trackColor={{ false: '#E5E7EB', true: '#A5B4FC' }}
-                    thumbColor={'#6366F1'}
-                  />
-                </View>
-              </View>
-            </View>
-          )}
-
-          {activeTab === 'privacy' && (
-            <View style={styles.tabContent}>
-              <Text style={styles.sectionTitle}>Privacy & Security</Text>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Data Protection</Text>
-
-                <View style={styles.privacyItem}>
-                  <Ionicons name="shield-checkmark-outline" size={24} color="#10B981" />
-                  <View style={styles.privacyInfo}>
-                    <Text style={styles.privacyLabel}>Data Encryption</Text>
-                    <Text style={styles.privacyDescription}>
-                      All your data is encrypted end-to-end using industry-standard encryption
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.privacyItem}>
-                  <Ionicons name="eye-off-outline" size={24} color="#6366F1" />
-                  <View style={styles.privacyInfo}>
-                    <Text style={styles.privacyLabel}>Private by Default</Text>
-                    <Text style={styles.privacyDescription}>
-                      Your pet information is only visible to you and authorized co-owners
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.privacyItem}>
-                  <Ionicons name="cloud-upload-outline" size={24} color="#F59E0B" />
-                  <View style={styles.privacyInfo}>
-                    <Text style={styles.privacyLabel}>Secure Backups</Text>
-                    <Text style={styles.privacyDescription}>
-                      Your data is securely backed up and can be restored if needed
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Account Activity</Text>
-
-                <View style={styles.activityItem}>
-                  <View style={styles.activityInfo}>
-                    <Text style={styles.activityLabel}>Last Login</Text>
-                    <Text style={styles.activityValue}>Today at 2:34 PM</Text>
-                  </View>
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                </View>
-
-                <View style={styles.activityItem}>
-                  <View style={styles.activityInfo}>
-                    <Text style={styles.activityLabel}>Account Created</Text>
-                    <Text style={styles.activityValue}>
-                      {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Unknown'}
-                    </Text>
-                  </View>
-                  <Ionicons name="calendar-outline" size={20} color="#6B7280" />
-                </View>
-
-                <View style={styles.activityItem}>
-                  <View style={styles.activityInfo}>
-                    <Text style={styles.activityLabel}>Data Download</Text>
-                    <Text style={styles.activityDescription}>
-                      Download all your account data
-                    </Text>
-                  </View>
-                  <TouchableOpacity style={styles.actionButton} onPress={handleDownloadData}>
-                    <Text style={styles.actionButtonText}>Download</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Danger Zone</Text>
-
-                <TouchableOpacity style={styles.warningButton} onPress={handleSignOutAllDevices}>
-                  <Ionicons name="log-out-outline" size={20} color="#F59E0B" />
-                  <Text style={styles.warningButtonText}>Sign Out of All Devices</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.dangerButton} onPress={handleDeleteAccount}>
-                  <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                  <Text style={styles.dangerButtonText}>Delete Account</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        </ScrollView>
+          </View>
+        </Modal>
       </View>
-      {isMobile && <View style={{ height: 80 }} />}
-
-      {/* Country Picker Modal */}
-      <Modal
-        visible={showCountryPicker}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowCountryPicker(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.content}>
-            <View style={modalStyles.header}>
-              <Text style={modalStyles.title}>Select Country</Text>
-              <TouchableOpacity onPress={() => { setShowCountryPicker(false); setCountrySearch(''); }}>
-                <Ionicons name="close" size={24} color="#111827" />
-              </TouchableOpacity>
-            </View>
-            <View style={modalStyles.searchContainer}>
-              <Ionicons name="search" size={18} color="#6B7280" />
-              <TextInput
-                style={modalStyles.searchInput}
-                placeholder="Search country..."
-                value={countrySearch}
-                onChangeText={setCountrySearch}
-              />
-            </View>
-            <FlatList
-              data={COUNTRIES.filter(c =>
-                c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-                c.code.toLowerCase().includes(countrySearch.toLowerCase())
-              )}
-              keyExtractor={(item) => item.code}
-              style={{ maxHeight: 400 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[modalStyles.item, countryCode === item.code && modalStyles.itemSelected]}
-                  onPress={() => {
-                    setCountryCode(item.code);
-                    setShowCountryPicker(false);
-                    setCountrySearch('');
-                  }}
-                >
-                  <Text style={modalStyles.flag}>{item.flag}</Text>
-                  <Text style={modalStyles.countryName}>{item.name}</Text>
-                  {countryCode === item.code && (
-                    <Ionicons name="checkmark" size={20} color="#6366F1" />
-                  )}
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        </View>
-      </Modal>
-
-      {/* Phone Country Picker Modal */}
-      <Modal
-        visible={showPhoneCountryPicker}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowPhoneCountryPicker(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.content}>
-            <View style={modalStyles.header}>
-              <Text style={modalStyles.title}>Select Country Code</Text>
-              <TouchableOpacity onPress={() => { setShowPhoneCountryPicker(false); setCountrySearch(''); }}>
-                <Ionicons name="close" size={24} color="#111827" />
-              </TouchableOpacity>
-            </View>
-            <View style={modalStyles.searchContainer}>
-              <Ionicons name="search" size={18} color="#6B7280" />
-              <TextInput
-                style={modalStyles.searchInput}
-                placeholder="Search country..."
-                value={countrySearch}
-                onChangeText={setCountrySearch}
-              />
-            </View>
-            <FlatList
-              data={COUNTRIES.filter(c =>
-                c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-                c.dialCode.includes(countrySearch)
-              )}
-              keyExtractor={(item) => item.code}
-              style={{ maxHeight: 400 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[modalStyles.item, phoneCountryCode === item.code && modalStyles.itemSelected]}
-                  onPress={() => {
-                    setPhoneCountryCode(item.code);
-                    setShowPhoneCountryPicker(false);
-                    setCountrySearch('');
-                  }}
-                >
-                  <Text style={modalStyles.flag}>{item.flag}</Text>
-                  <Text style={modalStyles.countryName}>{item.name}</Text>
-                  <Text style={modalStyles.dialCode}>{item.dialCode}</Text>
-                  {phoneCountryCode === item.code && (
-                    <Ionicons name="checkmark" size={20} color="#6366F1" />
-                  )}
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        </View>
-      </Modal>
-    </View>
+    </ResponsivePageWrapper>
   );
 }
 
