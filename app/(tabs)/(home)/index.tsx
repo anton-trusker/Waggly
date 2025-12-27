@@ -134,211 +134,212 @@ export default function DashboardPage() {
     );
 }
 
-backgroundColor: '#f8fafc',
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8fafc',
     },
-content: {
-    flexDirection: 'row',
+    content: {
+        flexDirection: 'row',
         gap: 32,
-            padding: 32,
-                maxWidth: 1440,
-                    alignSelf: 'center',
-                        width: '100%',
+        padding: 32,
+        maxWidth: 1440,
+        alignSelf: 'center',
+        width: '100%',
     },
-contentMobile: {
-    flexDirection: 'column',
+    contentMobile: {
+        flexDirection: 'column',
         padding: 16,
-            gap: 24,
+        gap: 24,
     },
-mainColumn: {
-    flex: 2,
+    mainColumn: {
+        flex: 2,
+        gap: 24,
     },
-sidebarColumn: {
-    flex: 1,
+    sidebarColumn: {
+        flex: 1,
         minWidth: 320,
     },
-sidebarColumnMobile: {
-    minWidth: '100%',
+    section: {
+        marginBottom: 32,
     },
-section: {
-    marginBottom: 32,
-    },
-sectionHeader: {
-    flexDirection: 'row',
+    sectionHeader: {
+        flexDirection: 'row',
         justifyContent: 'space-between',
-            alignItems: 'center',
-                marginBottom: 20,
-    },
-titleRow: {
-    flexDirection: 'row',
         alignItems: 'center',
-            gap: 12,
+        marginBottom: 20,
     },
-sectionTitle: {
-    fontSize: 24,
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    sectionTitle: {
+        fontSize: 24,
         fontWeight: '700',
-            color: '#111827',
-                fontFamily: 'Plus Jakarta Sans',
+        color: '#111827',
+        fontFamily: 'Plus Jakarta Sans',
     },
-badge: {
-    backgroundColor: '#EEF2FF',
+    badge: {
+        backgroundColor: '#EEF2FF',
         paddingHorizontal: 10,
-            paddingVertical: 4,
-                borderRadius: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
     },
-badgeText: {
-    fontSize: 14,
+    badgeText: {
+        fontSize: 14,
         fontWeight: '600',
-            color: '#6366F1',
-                fontFamily: 'Plus Jakarta Sans',
+        color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
-viewAllLink: {
-    fontSize: 14,
+    viewAllLink: {
+        fontSize: 14,
         fontWeight: '600',
-            color: '#6366F1',
-                fontFamily: 'Plus Jakarta Sans',
+        color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
-loadingText: {
-    fontSize: 14,
+    loadingText: {
+        fontSize: 14,
         color: '#6B7280',
-            textAlign: 'center',
-                paddingVertical: 40,
-                    fontFamily: 'Plus Jakarta Sans',
+        textAlign: 'center',
+        paddingVertical: 40,
+        fontFamily: 'Plus Jakarta Sans',
     },
-emptyState: {
-    alignItems: 'center',
+    emptyState: {
+        alignItems: 'center',
         paddingVertical: 60,
     },
-emptyIcon: {
-    fontSize: 64,
+    emptyIcon: {
+        fontSize: 64,
         marginBottom: 16,
     },
-emptyTitle: {
-    fontSize: 20,
+    emptyTitle: {
+        fontSize: 20,
         fontWeight: '700',
-            color: '#111827',
-                marginBottom: 8,
-                    fontFamily: 'Plus Jakarta Sans',
+        color: '#111827',
+        marginBottom: 8,
+        fontFamily: 'Plus Jakarta Sans',
     },
-emptyText: {
-    fontSize: 16,
+    emptyText: {
+        fontSize: 16,
         color: '#6B7280',
-            textAlign: 'center',
-                maxWidth: 400,
-                    marginBottom: 24,
-                        fontFamily: 'Plus Jakarta Sans',
+        textAlign: 'center',
+        maxWidth: 400,
+        marginBottom: 24,
+        fontFamily: 'Plus Jakarta Sans',
     },
-addButton: {
-    flexDirection: 'row',
+    addButton: {
+        flexDirection: 'row',
         alignItems: 'center',
-            gap: 8,
-                backgroundColor: '#6366F1',
-                    paddingHorizontal: 24,
-                        paddingVertical: 12,
-                            borderRadius: 12,
+        gap: 8,
+        backgroundColor: '#6366F1',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 12,
     },
-addButtonText: {
-    fontSize: 16,
+    addButtonText: {
+        fontSize: 16,
         fontWeight: '600',
-            color: '#fff',
-                fontFamily: 'Plus Jakarta Sans',
+        color: '#fff',
+        fontFamily: 'Plus Jakarta Sans',
     },
-petGrid: {
-    flexDirection: 'row',
+    petGrid: {
+        flexDirection: 'row',
         flexWrap: 'wrap',
-            gap: 20,
+        gap: 20,
     },
-petGridMobile: {
-    flexDirection: 'column',
+    petGridMobile: {
+        flexDirection: 'column',
     },
-petCardWrapper: {
-    width: '31%', // calc replacement
+    petCardWrapper: {
+        width: '31%', // calc replacement
         minWidth: 250,
     },
-petCardWrapperMobile: {
-    width: '100%',
+    petCardWrapperMobile: {
+        width: '100%',
     },
-addPetCard: {
-    width: '31%',
+    addPetCard: {
+        width: '31%',
         minWidth: 250,
-            backgroundColor: '#fff',
-                borderRadius: 16,
-                    padding: 40,
-                        borderWidth: 2,
-                            borderColor: '#E5E7EB',
-                                borderStyle: 'dashed',
-                                    alignItems: 'center',
-                                        justifyContent: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 40,
+        borderWidth: 2,
+        borderColor: '#E5E7EB',
+        borderStyle: 'dashed',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-addPetCardMobile: {
-    width: '100%',
+    addPetCardMobile: {
+        width: '100%',
         paddingVertical: 32,
     },
-addPetIconContainer: {
-    width: 80,
+    addPetIconContainer: {
+        width: 80,
         height: 80,
-            borderRadius: 40,
-                backgroundColor: '#EEF2FF',
-                    alignItems: 'center',
-                        justifyContent: 'center',
-                            marginBottom: 16,
+        borderRadius: 40,
+        backgroundColor: '#EEF2FF',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
     },
-addPetText: {
-    fontSize: 16,
+    addPetText: {
+        fontSize: 16,
         fontWeight: '600',
-            color: '#6366F1',
-                fontFamily: 'Plus Jakarta Sans',
+        color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
     },
-actionsContainer: {
-    marginBottom: 32,
+    actionsContainer: {
+        marginBottom: 32,
     },
-heading: {
-    fontSize: 20,
+    heading: {
+        fontSize: 20,
         fontWeight: '700',
-            color: '#111827',
-                marginBottom: 16,
-                    fontFamily: 'Plus Jakarta Sans',
+        color: '#111827',
+        marginBottom: 16,
+        fontFamily: 'Plus Jakarta Sans',
     },
-grid: {
-    flexDirection: 'row',
+    grid: {
+        flexDirection: 'row',
         gap: 16,
-            flexWrap: 'wrap',
+        flexWrap: 'wrap',
     },
-actionCard: {
-    alignItems: 'center',
+    actionCard: {
+        alignItems: 'center',
         minWidth: 100,
-            paddingVertical: 6,
-                paddingHorizontal: 4,
-                    borderRadius: 12,
+        paddingVertical: 6,
+        paddingHorizontal: 4,
+        borderRadius: 12,
     },
-actionCardHover: {
-    shadowColor: '#000',
+    actionCardHover: {
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
+        shadowOpacity: 0.15,
         shadowRadius: 12,
-            elevation: 6,
+        elevation: 6,
     },
-actionCardFocus: {
-    borderWidth: 2,
+    actionCardFocus: {
+        borderWidth: 2,
         borderColor: '#6366F1',
     },
-iconContainer: {
-    width: 64,
+    iconContainer: {
+        width: 64,
         height: 64,
-            borderRadius: 16,
-                alignItems: 'center',
-                    justifyContent: 'center',
-                        marginBottom: 8,
-                            shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
         shadowRadius: 4,
-            elevation: 3,
+        elevation: 3,
     },
-label: {
-    fontSize: 14,
+    label: {
+        fontSize: 14,
         fontWeight: '600',
-            color: '#374151',
-                textAlign: 'center',
-                    fontFamily: 'Plus Jakarta Sans',
+        color: '#374151',
+        textAlign: 'center',
+        fontFamily: 'Plus Jakarta Sans',
     },
 });
