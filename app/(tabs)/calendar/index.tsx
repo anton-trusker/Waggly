@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, useWindowDimensions } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 import { getSpacing, getColor, getBorderRadius } from '@/utils/designSystem';
 
@@ -14,32 +14,39 @@ import EnhancedDropdown from '@/components/ui/EnhancedDropdown';
 import { usePersistentState, persistentConfigs } from '@/utils/persistentState';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import AppHeader from '@/components/layout/AppHeader';
- 
+import MobileHeader from '@/components/layout/MobileHeader';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import DesktopCalendarHeader from '@/components/desktop/calendar/DesktopCalendarHeader';
+import MobileCalendarView from '@/components/mobile/calendar/MobileCalendarView';
+
 
 export default function CalendarScreen() {
   const { pets } = usePets();
   const { locale, t } = useLocale();
-  
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 1024;
+  const isMobile = width < 768;
+
   // Persistent state management
   const { state: persistentFilters, setState: setPersistentFilters } = usePersistentState(
     persistentConfigs.calendarFilters.key,
     persistentConfigs.calendarFilters.defaultValue,
     { expiration: persistentConfigs.calendarFilters.expiration }
   );
-  
+
   const [selectedPetIds, setSelectedPetIds] = useState<string[]>(persistentFilters.selectedPetIds);
-  const [selectedTypes, setSelectedTypes] = useState<EventType[] | undefined>(persistentFilters.selectedTypes);
-  
+  const [selectedTypes, setSelectedTypes] = useState<EventType[]>(persistentFilters.selectedTypes || []);
+
   // State for calendar navigation
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+
   // Selected date state - default to today
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
   // Calculate start and end of the currently viewed month
   const viewStart = useMemo(() => {
     const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    d.setDate(d.getDate() - 7); 
+    d.setDate(d.getDate() - 7);
     return d.toISOString().split('T')[0];
   }, [currentDate]);
 
@@ -82,7 +89,7 @@ export default function CalendarScreen() {
 
   // Filter events for the SELECTED DATE
   const selectedDayEvents = useMemo(() => {
-      return monthEvents.filter(e => e.dueDate.startsWith(selectedDate));
+    return monthEvents.filter(e => e.dueDate.startsWith(selectedDate));
   }, [monthEvents, selectedDate]);
 
   useFocusEffect(
@@ -91,122 +98,152 @@ export default function CalendarScreen() {
     }, [refreshEvents])
   );
 
+  // Use mobile view component for mobile devices
+  if (isMobile) {
+    return (
+      <>
+        <MobileHeader showLogo={true} showNotifications={true} />
+        <MobileCalendarView events={monthEvents} pets={pets} />
+      </>
+    );
+  }
+
+  // Desktop view  
   return (
-    <View style={styles.container}>
-      <AppHeader title={t('navigation.calendar', { defaultValue: 'Calendar' })} />
-      <View style={styles.headerContainer}>
-        <View style={styles.monthHeader}>
-          <EnhancedButton
-            title=""
-            icon="chevron.left"
-            variant="ghost"
-            size="sm"
-            onPress={goToPrevMonth}
-            style={styles.monthNavButton}
-          />
-          <Text style={styles.monthLabel}>{localizedMonthLabel}</Text>
-          <EnhancedButton
-            title=""
-            icon="chevron.right"
-            variant="ghost"
-            size="sm"
-            onPress={goToNextMonth}
-            style={styles.monthNavButton}
-          />
-        </View>
-      </View>
-
-      <ScrollView 
-        style={styles.scroll} 
-        contentContainerStyle={styles.content} 
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={loadingMonth}
-            onRefresh={refreshEvents}
-            tintColor={getColor('primary.500')}
-            colors={[getColor('primary.500')]}
-          />
-        }
-      >
-        <CalendarMonthView
-          year={currentDate.getFullYear()}
-          month={currentDate.getMonth()}
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          markers={markers}
-          locale={locale}
+    <DesktopShell>
+      {isDesktop && (
+        <DesktopCalendarHeader
+          currentMonth={currentDate}
+          onMonthChange={setCurrentDate}
+          pets={pets}
+          selectedPets={selectedPetIds}
+          onPetsChange={(ids) => {
+            setSelectedPetIds(ids);
+            setPersistentFilters({ ...persistentFilters, selectedPetIds: ids });
+          }}
+          selectedTypes={selectedTypes}
+          onTypesChange={(types) => {
+            setSelectedTypes(types);
+            setPersistentFilters({ ...persistentFilters, selectedTypes: types });
+          }}
         />
-
-        <View style={styles.filters}>
-          <EnhancedDropdown
-            label={t('calendar.filter_by_pet', { defaultValue: 'Filter by pet' })}
-            options={petOptions}
-            selectedValues={selectedPetIds}
-            onSelect={(values) => {
-              setSelectedPetIds(values);
-              setPersistentFilters({ ...persistentFilters, selectedPetIds: values });
-            }}
-            multiSelect
-            placeholder={t('calendar.all_pets', { defaultValue: 'All Pets' })}
-            style={styles.filterDropdown}
-          />
+      )}
+      <View style={styles.container}>
+        {!isDesktop && <AppHeader title={t('navigation.calendar', { defaultValue: 'Calendar' })} />}
+        <View style={styles.headerContainer}>
+          <View style={styles.monthHeader}>
+            <EnhancedButton
+              title=""
+              icon="chevron.left"
+              variant="ghost"
+              size="sm"
+              onPress={goToPrevMonth}
+              style={styles.monthNavButton}
+            />
+            <Text style={styles.monthLabel}>{localizedMonthLabel}</Text>
+            <EnhancedButton
+              title=""
+              icon="chevron.right"
+              variant="ghost"
+              size="sm"
+              onPress={goToNextMonth}
+              style={styles.monthNavButton}
+            />
+          </View>
         </View>
 
-        <View style={styles.eventsSection}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={loadingMonth}
+              onRefresh={refreshEvents}
+              tintColor={getColor('primary.500')}
+              colors={[getColor('primary.500')]}
+            />
+          }
+        >
+          <CalendarMonthView
+            year={currentDate.getFullYear()}
+            month={currentDate.getMonth()}
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            markers={markers}
+            locale={locale}
+          />
+
+          <View style={styles.filters}>
+            <EnhancedDropdown
+              label={t('calendar.filter_by_pet', { defaultValue: 'Filter by pet' })}
+              options={petOptions}
+              selectedValues={selectedPetIds}
+              onSelect={(values) => {
+                setSelectedPetIds(values);
+                setPersistentFilters({ ...persistentFilters, selectedPetIds: values });
+              }}
+              multiSelect
+              placeholder={t('calendar.all_pets', { defaultValue: 'All Pets' })}
+              style={styles.filterDropdown}
+            />
+          </View>
+
+          <View style={styles.eventsSection}>
             <View style={styles.sectionHeader}>
-                <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={18} color={getColor('primary.500')} />
-                <Text style={styles.sectionTitle}>
-                    {new Date(selectedDate).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })}
-                </Text>
+              <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={18} color={getColor('primary.500')} />
+              <Text style={styles.sectionTitle}>
+                {new Date(selectedDate).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })}
+              </Text>
             </View>
 
             {loadingMonth ? (
-                <ActivityIndicator style={{ padding: 20 }} />
+              <ActivityIndicator style={{ padding: 20 }} />
             ) : selectedDayEvents.length === 0 ? (
-                <View style={styles.emptyState}>
-                    <Text style={styles.emptyText}>{t('calendar.no_events_for_day', { defaultValue: 'No events for this day' })}</Text>
-                    <TouchableOpacity style={styles.addEventButton} onPress={() => router.push('/(tabs)/calendar/add-event')}>
-                        <Text style={styles.addEventText}>{t('calendar.add_event', { defaultValue: 'Add Event' })}</Text>
-                    </TouchableOpacity>
-                </View>
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>{t('calendar.no_events_for_day', { defaultValue: 'No events for this day' })}</Text>
+                <TouchableOpacity style={styles.addEventButton} onPress={() => router.push('/(tabs)/calendar/add-event')}>
+                  <Text style={styles.addEventText}>{t('calendar.add_event', { defaultValue: 'Add Event' })}</Text>
+                </TouchableOpacity>
+              </View>
             ) : (
-                <View style={styles.eventList}>
-                    {selectedDayEvents.map((event) => (
-                         <TouchableOpacity 
-                            key={event.id} 
-                            style={styles.eventCard}
-                            onPress={() => {
-                                if (event.relatedId) {
-                                    if (event.type === 'vaccination') router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${event.relatedId}`);
-                                    else if (event.type === 'treatment') router.push(`/(tabs)/pets/record-detail?type=treatment&id=${event.relatedId}`);
-                                    else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}`);
-                                }
-                            }}
-                         >
-                             <View style={[styles.eventTimeBox, { backgroundColor: event.color + '20' }]}>
-                                 <Text style={[styles.eventTime, { color: event.color }]}>
-                                     {new Date(event.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                 </Text>
-                             </View>
-                             <View style={styles.eventDetails}>
-                                 <Text style={styles.eventTitle}>{event.title}</Text>
-                                 <View style={styles.eventMeta}>
-                                     {event.petName && <Text style={styles.eventPet}>{event.petName}</Text>}
-                                     <View style={[styles.eventTypeTag, { backgroundColor: event.color + '20' }]}>
-                                         <Text style={[styles.eventTypeText, { color: event.color }]}>{event.type}</Text>
-                                     </View>
-                                 </View>
-                             </View>
-                             <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={16} color={getColor('text.tertiary')} />
-                         </TouchableOpacity>
-                    ))}
-                </View>
+              <View style={styles.eventList}>
+                {selectedDayEvents.map((event) => (
+                  <TouchableOpacity
+                    key={event.id}
+                    style={styles.eventCard}
+                    onPress={() => {
+                      if (event.relatedId) {
+                        if (event.type === 'vaccination') router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${event.relatedId}`);
+                        else if (event.type === 'treatment') router.push(`/(tabs)/pets/record-detail?type=treatment&id=${event.relatedId}`);
+                        else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}`);
+                      }
+                    }}
+                  >
+                    <View style={[styles.eventTimeBox, { backgroundColor: event.color + '20' }]}>
+                      <Text style={[styles.eventTime, { color: event.color }]}>
+                        {new Date(event.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </Text>
+                    </View>
+                    <View style={styles.eventDetails}>
+                      <Text style={styles.eventTitle}>{event.title}</Text>
+                      <View style={styles.eventMeta}>
+                        {event.petName && <Text style={styles.eventPet}>{event.petName}</Text>}
+                        <View style={[styles.eventTypeTag, { backgroundColor: event.color + '20' }]}>
+                          <Text style={[styles.eventTypeText, { color: event.color }]}>{event.type}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={16} color={getColor('text.tertiary')} />
+                  </TouchableOpacity>
+                ))}
+              </View>
             )}
-        </View>
+          </View>
 
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </DesktopShell>
   );
 }
 
