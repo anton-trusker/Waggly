@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useBreeds } from '@/hooks/useBreeds';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import { designSystem } from '@/constants/designSystem'; // Still used for token names if not in theme
 import * as ImagePicker from 'expo-image-picker';
 import EnhancedSelection from '@/components/ui/EnhancedSelection';
 import { calculateAgeFromDDMMYYYY, formatAge, parseDDMMYYYY } from '@/utils/dateUtils';
-import { designSystem } from '@/constants/designSystem';
+import UniversalDatePicker from '@/components/desktop/modals/shared/UniversalDatePicker';
 
 interface WizardStepBasicInfoProps {
     formData: any;
@@ -33,26 +35,19 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
     onNext,
 }) => {
     const { breeds } = useBreeds();
+    const { theme } = useAppTheme();
     const [localData, setLocalData] = useState(formData);
     const [ageDisplay, setAgeDisplay] = useState('');
 
     useEffect(() => {
         if (localData.date_of_birth) {
-            // Check format. If YYYY-MM-DD (standard HTML date), convert to DD-MM-YYYY for utils
-            // If the input is text "DD-MM-YYYY", use as is.
-            // Let's assume we store as YYYY-MM-DD (ISO) for consistency if possible, or whatever the app expects.
-            // The previous code had "YYYY-MM-DD" placeholder.
-            // But `utils/dateUtils` prefers DD-MM-YYYY.
-            // Let's stick to YYYY-MM-DD for storage/input value on web (standard), but convert for display/utils.
-            
-            // Actually, let's try to parse whatever we have.
             const parts = localData.date_of_birth.split('-');
             let dateObj: Date | null = null;
-            
+
             if (parts.length === 3) {
                 if (parts[0].length === 4) {
-                     // YYYY-MM-DD
-                     dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    // YYYY-MM-DD
+                    dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
                 } else {
                     // DD-MM-YYYY
                     dateObj = parseDDMMYYYY(localData.date_of_birth);
@@ -93,34 +88,41 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
     const isValid = localData.name && localData.species;
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Text style={styles.heading}>Basic Information</Text>
-            <Text style={styles.subheading}>Tell us about your pet</Text>
+        <ScrollView style={[styles.container, { padding: 32 }]} showsVerticalScrollIndicator={false}>
+            <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Basic Information</Text>
+            <Text style={[styles.subheading, { color: theme.colors.text.secondary }]}>Tell us about your pet</Text>
 
             {/* Photo Upload */}
             <View style={styles.photoSection}>
-                <TouchableOpacity onPress={handlePhotoPick} style={styles.photoContainer}>
+                <TouchableOpacity
+                    onPress={handlePhotoPick}
+                    style={[styles.photoContainer, { backgroundColor: theme.colors.background.secondary }]}
+                >
                     {localData.photoUri ? (
                         <Image source={{ uri: localData.photoUri }} style={styles.photo} />
                     ) : (
-                        <View style={styles.photoPlaceholder}>
-                            <Ionicons name="camera" size={32} color="#9CA3AF" />
+                        <View style={[styles.photoPlaceholder, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}>
+                            <Ionicons name="camera" size={32} color={theme.colors.text.tertiary} />
                         </View>
                     )}
-                    <View style={styles.addPhotoButton}>
+                    <View style={[styles.addPhotoButton, { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.background.primary }]}>
                         <Ionicons name="add" size={20} color="#fff" />
                     </View>
                 </TouchableOpacity>
-                <Text style={styles.addPhotoLabel}>Add Photo</Text>
+                <Text style={[styles.addPhotoLabel, { color: theme.colors.primary[500] }]}>Add Photo</Text>
             </View>
 
             {/* Pet Name */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Pet Name *</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Pet Name *</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, {
+                        backgroundColor: theme.colors.background.secondary,
+                        borderColor: theme.colors.border.primary,
+                        color: theme.colors.text.primary
+                    }]}
                     placeholder="e.g., Max, Luna, Bella"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={theme.colors.text.tertiary}
                     value={localData.name}
                     onChangeText={(text) => updateField('name', text)}
                 />
@@ -128,14 +130,21 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
 
             {/* Species Selection */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Species *</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Species *</Text>
                 <View style={styles.speciesGrid}>
                     {SPECIES_OPTIONS.map((option) => (
                         <TouchableOpacity
                             key={option.id}
                             style={[
                                 styles.speciesCard,
-                                localData.species === option.id && styles.speciesCardSelected,
+                                {
+                                    backgroundColor: theme.colors.background.primary,
+                                    borderColor: theme.colors.border.primary
+                                },
+                                localData.species === option.id && {
+                                    borderColor: theme.colors.primary[500],
+                                    backgroundColor: theme.colors.primary[50] // Use a lighter primary shade if available, or just rely on border
+                                }
                             ]}
                             onPress={() => {
                                 updateField('species', option.id);
@@ -145,11 +154,12 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
                             <Text style={styles.speciesIcon}>{option.icon}</Text>
                             <Text style={[
                                 styles.speciesLabel,
-                                localData.species === option.id && styles.speciesLabelSelected
+                                { color: theme.colors.text.primary },
+                                localData.species === option.id && { color: theme.colors.primary[500] }
                             ]}>{option.label}</Text>
                             {localData.species === option.id && (
                                 <View style={styles.checkIcon}>
-                                    <Ionicons name="checkmark-circle" size={20} color="#6366F1" />
+                                    <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary[500]} />
                                 </View>
                             )}
                         </TouchableOpacity>
@@ -168,13 +178,17 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
                     searchable
                 />
             )}
-             {localData.species && localData.species !== 'dog' && localData.species !== 'cat' && (
+            {localData.species && localData.species !== 'dog' && localData.species !== 'cat' && (
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Breed / Type</Text>
+                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Breed / Type</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {
+                            backgroundColor: theme.colors.background.secondary,
+                            borderColor: theme.colors.border.primary,
+                            color: theme.colors.text.primary
+                        }]}
                         placeholder="e.g. Hamster, Parrot"
-                        placeholderTextColor="#9CA3AF"
+                        placeholderTextColor={theme.colors.text.tertiary}
                         value={localData.breed}
                         onChangeText={(text) => updateField('breed', text)}
                     />
@@ -185,11 +199,15 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
             <View style={styles.row}>
                 <View style={styles.col}>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Color</Text>
+                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Color</Text>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, {
+                                backgroundColor: theme.colors.background.secondary,
+                                borderColor: theme.colors.border.primary,
+                                color: theme.colors.text.primary
+                            }]}
                             placeholder="e.g., Brown"
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={theme.colors.text.tertiary}
                             value={localData.color}
                             onChangeText={(text) => updateField('color', text)}
                         />
@@ -209,70 +227,57 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
 
             {/* Date of Birth */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Date of Birth</Text>
-                {Platform.OS === 'web' ? (
-                    React.createElement('input', {
-                        type: 'date',
-                        style: {
-                            borderWidth: 1,
-                            borderColor: '#E5E7EB',
-                            borderRadius: 12,
-                            padding: '12px 16px',
-                            fontSize: '14px',
-                            color: '#111827',
-                            backgroundColor: '#F9FAFB',
-                            width: '100%',
-                            outline: 'none',
-                            boxSizing: 'border-box',
-                            fontFamily: 'inherit'
-                        },
-                        value: localData.date_of_birth || '',
-                        onChange: (e: any) => updateField('date_of_birth', e.target.value),
-                        placeholder: "Select date"
-                    })
-                ) : (
-                    <TextInput
-                        style={styles.input}
-                        placeholder="YYYY-MM-DD"
-                        placeholderTextColor="#9CA3AF"
-                        value={localData.date_of_birth}
-                        onChangeText={(text) => updateField('date_of_birth', text)}
-                    />
-                )}
+                <UniversalDatePicker
+                    label="Date of Birth"
+                    value={localData.date_of_birth || ''}
+                    onChange={(text) => updateField('date_of_birth', text)}
+                    placeholder="YYYY-MM-DD"
+                />
                 {ageDisplay ? (
-                    <Text style={styles.ageText}>Age: {ageDisplay}</Text>
+                    <Text style={[styles.ageText, { color: theme.colors.primary[500] }]}>Age: {ageDisplay}</Text>
                 ) : null}
             </View>
 
             {/* Weight */}
             <View style={styles.row}>
                 <View style={[styles.inputGroup, styles.flex2]}>
-                    <Text style={styles.label}>Weight</Text>
+                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Weight</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, {
+                            backgroundColor: theme.colors.background.secondary,
+                            borderColor: theme.colors.border.primary,
+                            color: theme.colors.text.primary
+                        }]}
                         placeholder="0.0"
-                        placeholderTextColor="#9CA3AF"
+                        placeholderTextColor={theme.colors.text.tertiary}
                         keyboardType="decimal-pad"
                         value={localData.weight?.toString()}
                         onChangeText={(text) => updateField('weight', parseFloat(text) || 0)}
                     />
                 </View>
                 <View style={[styles.inputGroup, styles.flex1]}>
-                    <Text style={styles.label}>Unit</Text>
-                    <View style={styles.segmentedControl}>
+                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Unit</Text>
+                    <View style={[styles.segmentedControl, { backgroundColor: theme.colors.background.secondary }]}>
                         {['kg', 'lbs'].map((unit) => (
                             <TouchableOpacity
                                 key={unit}
                                 style={[
                                     styles.segment,
-                                    localData.weight_unit === unit && styles.segmentSelected,
+                                    localData.weight_unit === unit && {
+                                        backgroundColor: theme.colors.background.primary,
+                                        shadowColor: '#000',
+                                        shadowOffset: { width: 0, height: 1 },
+                                        shadowOpacity: 0.1,
+                                        elevation: 1,
+                                    },
                                 ]}
                                 onPress={() => updateField('weight_unit', unit)}
                             >
                                 <Text
                                     style={[
                                         styles.segmentText,
-                                        localData.weight_unit === unit && styles.segmentTextSelected,
+                                        { color: theme.colors.text.secondary },
+                                        localData.weight_unit === unit && { color: theme.colors.text.primary, fontWeight: '600' }
                                     ]}
                                 >
                                     {unit}
@@ -285,7 +290,11 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
 
             {/* Next Button */}
             <TouchableOpacity
-                style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
+                style={[
+                    styles.nextButton,
+                    { backgroundColor: theme.colors.primary[500] },
+                    !isValid && styles.nextButtonDisabled
+                ]}
                 onPress={onNext}
                 disabled={!isValid}
             >
@@ -299,17 +308,14 @@ const WizardStepBasicInfo: React.FC<WizardStepBasicInfoProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 32,
     },
     heading: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
         marginBottom: 8,
     },
     subheading: {
         fontSize: 16,
-        color: '#6B7280',
         marginBottom: 32,
     },
     photoSection: {
@@ -337,9 +343,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         borderRadius: 60,
-        backgroundColor: '#F3F4F6',
         borderWidth: 2,
-        borderColor: '#E5E7EB',
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',
@@ -348,19 +352,16 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        backgroundColor: '#6366F1',
         width: 36,
         height: 36,
         borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#fff',
     },
     addPhotoLabel: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#6366F1',
     },
     inputGroup: {
         marginBottom: 24,
@@ -368,18 +369,14 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
         marginBottom: 8,
     },
     input: {
         borderWidth: 1,
-        borderColor: '#E5E7EB',
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
         fontSize: 14,
-        color: '#111827',
-        backgroundColor: '#F9FAFB',
     },
     speciesGrid: {
         flexDirection: 'row',
@@ -389,17 +386,11 @@ const styles = StyleSheet.create({
     speciesCard: {
         width: '31%', // Approx 1/3
         aspectRatio: 1,
-        backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: '#E5E7EB',
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
-    },
-    speciesCardSelected: {
-        borderColor: '#6366F1',
-        backgroundColor: '#F0F6FF',
     },
     speciesIcon: {
         fontSize: 32,
@@ -408,10 +399,6 @@ const styles = StyleSheet.create({
     speciesLabel: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#111827',
-    },
-    speciesLabelSelected: {
-        color: '#6366F1',
     },
     checkIcon: {
         position: 'absolute',
@@ -433,7 +420,6 @@ const styles = StyleSheet.create({
     },
     segmentedControl: {
         flexDirection: 'row',
-        backgroundColor: '#F3F4F6',
         borderRadius: 10,
         padding: 4,
     },
@@ -443,26 +429,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 8,
     },
-    segmentSelected: {
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 1,
-    },
     segmentText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6B7280',
-    },
-    segmentTextSelected: {
-        color: '#111827',
     },
     ageText: {
         marginTop: 8,
         fontSize: 14,
-        color: '#6366F1',
         fontWeight: '500',
     },
     nextButton: {
@@ -470,7 +443,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        backgroundColor: '#6366F1',
         paddingVertical: 16,
         borderRadius: 12,
         marginTop: 24,

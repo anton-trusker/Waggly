@@ -1,13 +1,66 @@
 import React from 'react';
-import { Tabs, useLocalSearchParams } from 'expo-router';
+import { Tabs, useLocalSearchParams, useRouter } from 'expo-router';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { designSystem } from '@/constants/designSystem';
+import DesktopPetDetail from '@/components/desktop/pets/DesktopPetDetail';
+import { usePets } from '@/hooks/usePets';
+import { useVeterinarians } from '@/hooks/useVeterinarians';
+import { useConditions } from '@/hooks/useConditions';
+import { Pet } from '@/types';
 
 export default function PetDetailLayout() {
     const { id } = useLocalSearchParams<{ id: string }>();
+    const router = useRouter();
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
+    const isDesktop = width >= 1024;
+
+    // Fetch data for Desktop View
+    const { pets, loading: petsLoading } = usePets();
+    const pet = pets.find(p => p.id === id) as Pet | undefined;
+    const { veterinarians, loading: vetsLoading } = useVeterinarians(id || null);
+    const { conditions, loading: conditionsLoading } = useConditions(id || null);
+
+    const handleEdit = () => {
+        // Navigate to edit page (responsive modal or page)
+        // If we have a desktop modal, we could open it here, but router is safer
+        router.push(`/pets/pet-edit?id=${id}`);
+    };
+
+    const handleShare = () => {
+        // Implement share logic or open share modal
+        console.log('Share pet', id);
+    };
+
+    if (isDesktop) {
+        if (petsLoading || vetsLoading || conditionsLoading) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
+                </View>
+            );
+        }
+
+        if (!pet) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>Pet not found</Text>
+                </View>
+            );
+        }
+
+        return (
+            <DesktopPetDetail
+                pet={pet}
+                vets={veterinarians}
+                conditions={conditions}
+                onEdit={handleEdit}
+                onShare={handleShare}
+            />
+        );
+    }
 
     return (
         <Tabs
@@ -16,7 +69,7 @@ export default function PetDetailLayout() {
                 tabBarActiveTintColor: designSystem.colors.primary[500],
                 tabBarInactiveTintColor: designSystem.colors.text.secondary,
                 tabBarStyle: {
-                    display: width >= 1024 ? 'none' : 'flex', // Hide on desktop
+                    display: width >= 1024 ? 'none' : 'flex', // Hide on desktop logic redundant but safe
                     backgroundColor: '#fff',
                     borderTopWidth: 1,
                     borderTopColor: designSystem.colors.border.primary,

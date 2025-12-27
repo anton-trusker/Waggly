@@ -17,11 +17,10 @@ import { usePets } from '@/hooks/usePets';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import { usePersistentState, persistentConfigs } from '@/utils/persistentState';
 import { Pet } from '@/types';
-import AppHeader from '@/components/layout/AppHeader';
-import ResponsivePageWrapper from '@/components/layout/ResponsivePageWrapper';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import MobileHeader from '@/components/layout/MobileHeader';
 import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
-import MobileHeader from '@/components/layout/MobileHeader';
 
 export default function PetsScreen() {
   const { pets, loading, refreshPets } = usePets();
@@ -53,19 +52,24 @@ export default function PetsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ResponsivePageWrapper showSidebar={isDesktop}>
+      <DesktopShell>
+        <MobileHeader showLogo={true} showNotifications={true} />
         <View style={[styles.container, styles.center]}>
           <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
         </View>
-      </ResponsivePageWrapper>
+      </DesktopShell>
     );
   }
 
   return (
-    <ResponsivePageWrapper showSidebar={isDesktop} scrollable={false}>
+    <DesktopShell>
       <MobileHeader showLogo={true} showNotifications={true} />
       <View style={styles.container}>
-        <AppHeader title="My Pets" />
+        {!isDesktop && (
+          <View style={styles.mobileHeader}>
+            <Text style={styles.title}>My Pets</Text>
+          </View>
+        )}
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={[styles.content, isDesktop && styles.contentDesktop]}
@@ -94,7 +98,7 @@ export default function PetsScreen() {
               icon="add"
               variant="primary"
               size={isMobile ? "sm" : "md"}
-              onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
+              onPress={() => router.push('/(tabs)/pets/new')}
             />
           </View>
 
@@ -110,7 +114,7 @@ export default function PetsScreen() {
                 title="Add Your First Pet"
                 icon="pets"
                 variant="primary"
-                onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
+                onPress={() => router.push('/(tabs)/pets/new')}
                 style={styles.addFirstPetButton}
               />
             </View>
@@ -209,7 +213,7 @@ export default function PetsScreen() {
           onClose={() => setVisitPetId(null)}
         />
       </View>
-    </ResponsivePageWrapper>
+    </DesktopShell>
   );
 }
 
@@ -233,6 +237,10 @@ const styles = StyleSheet.create({
   contentDesktop: {
     paddingHorizontal: getSpacing(8),
     paddingTop: getSpacing(8),
+  },
+  mobileHeader: {
+    paddingHorizontal: getSpacing(4),
+    paddingTop: getSpacing(4),
   },
 
   // Header
@@ -371,7 +379,7 @@ const styles = StyleSheet.create({
 
   // Desktop Card
   desktopCardWrapper: {
-    width: 'calc(33.333% - 16px)' as any,
+    width: '31%', // Fallback for calc issue
     minWidth: 280,
   },
   cardActions: {

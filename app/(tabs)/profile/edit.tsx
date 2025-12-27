@@ -16,6 +16,8 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import MobileHeader from '@/components/layout/MobileHeader';
 
 export default function EditProfileScreen() {
   const { profile, upsertProfile, loading: profileLoading } = useProfile();
@@ -116,168 +118,177 @@ export default function EditProfileScreen() {
   if (profileLoading && !profile) {
     return (
       <View style={[styles.container, styles.loading]}>
-        <ActivityIndicator size="large" color="#0A84FF" />
+        <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('profile.edit_profile')}</Text>
-        <TouchableOpacity onPress={onSave} disabled={saving || !canSave} style={styles.headerButton}>
-          {saving ? (
-            <ActivityIndicator size="small" color="#0A84FF" />
-          ) : (
-            <Text style={[styles.saveText, !canSave && styles.saveTextDisabled]}>Save</Text>
-          )}
-        </TouchableOpacity>
+    <DesktopShell>
+      <MobileHeader
+        title={t('profile.edit_profile')}
+        showBack={true}
+        rightAction={{
+          icon: 'save',
+          onPress: onSave,
+          disabled: saving || !canSave,
+          loading: saving
+        }}
+      />
+      <View style={styles.container}>
+        {/* Desktop Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{t('profile.edit_profile')}</Text>
+          <TouchableOpacity onPress={onSave} disabled={saving || !canSave} style={styles.saveButton}>
+            {saving ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={[styles.saveText, !canSave && styles.saveTextDisabled]}>Save Changes</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+
+            {/* Avatar */}
+            <View style={styles.avatarSection}>
+              <AvatarUpload uri={photo} onChange={setPhoto} />
+              <Text style={styles.avatarHint}>Tap to change photo</Text>
+            </View>
+
+            {/* Basic Info */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="person" size={20} color={designSystem.colors.primary[500]} />
+                <Text style={styles.sectionTitle}>Basic Information</Text>
+              </View>
+
+              <View style={styles.card}>
+                <View style={styles.row}>
+                  <View style={styles.flex1}>
+                    <Input
+                      label={t('profile.first_name')}
+                      placeholder="John"
+                      value={firstName}
+                      onChangeText={setFirstName}
+                    />
+                  </View>
+                  <View style={styles.flex1}>
+                    <Input
+                      label={t('profile.last_name')}
+                      placeholder="Doe"
+                      value={lastName}
+                      onChangeText={setLastName}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.row}>
+                  <View style={styles.flex1}>
+                    <DateInput
+                      value={dob}
+                      onChange={setDob}
+                      label="Date of Birth"
+                    />
+                  </View>
+                  <View style={styles.flex1}>
+                    <GenderSelect
+                      value={gender}
+                      onChange={setGender}
+                      label={t('profile.gender')}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Contact Info */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="call" size={20} color={designSystem.colors.success[500]} />
+                <Text style={styles.sectionTitle}>Contact Information</Text>
+              </View>
+
+              <View style={styles.card}>
+                <Text style={styles.fieldLabel}>Phone Number</Text>
+                <PhoneInput
+                  value={phone}
+                  onChangeText={handlePhoneChange}
+                  defaultCountryCode={phoneCountryCode}
+                />
+                <Input
+                  label={t('profile.website')}
+                  placeholder="https://yourwebsite.com"
+                  value={website || ''}
+                  onChangeText={setWebsite}
+                  keyboardType="url"
+                  autoCapitalize="none"
+                />
+              </View>
+            </View>
+
+            {/* Location */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="location" size={20} color={designSystem.colors.warning[500]} />
+                <Text style={styles.sectionTitle}>Location</Text>
+              </View>
+
+              <View style={styles.card}>
+                <CountrySelect value={country} onChange={setCountry} label="Country" />
+
+                <Input
+                  label="City"
+                  placeholder="New York"
+                  value={city || ''}
+                  onChangeText={setCity}
+                />
+
+                <LocationAutocomplete
+                  label={t('profile.address')}
+                  value={address}
+                  onChangeText={(text) => setAddress(text)}
+                  onPlaceSelected={(details) => {
+                    setAddress(details.address);
+                    setLocationDetails({
+                      lat: details.lat,
+                      lng: details.lng,
+                      placeId: details.placeId,
+                      name: details.name,
+                    });
+                  }}
+                />
+
+                <LanguageSelect value={language} onChange={setLanguage} label={t('common.language')} />
+              </View>
+            </View>
+
+            {/* About */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="document-text" size={20} color={designSystem.colors.info[500]} />
+                <Text style={styles.sectionTitle}>About You</Text>
+              </View>
+
+              <View style={styles.card}>
+                <Input
+                  label={t('profile.bio')}
+                  placeholder="Tell us about yourself and your pets..."
+                  value={bio || ''}
+                  onChangeText={setBio}
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </View>
+
+            <View style={{ height: 40 }} />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
-
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-
-          {/* Avatar */}
-          <View style={styles.avatarSection}>
-            <AvatarUpload uri={photo} onChange={setPhoto} />
-            <Text style={styles.avatarHint}>Tap to change photo</Text>
-          </View>
-
-          {/* Basic Info */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="person" size={20} color="#0A84FF" />
-              <Text style={styles.sectionTitle}>Basic Information</Text>
-            </View>
-
-            <View style={styles.card}>
-              <View style={styles.row}>
-                <View style={styles.flex1}>
-                  <Input
-                    label={t('profile.first_name')}
-                    placeholder="John"
-                    value={firstName}
-                    onChangeText={setFirstName}
-                  />
-                </View>
-                <View style={styles.flex1}>
-                  <Input
-                    label={t('profile.last_name')}
-                    placeholder="Doe"
-                    value={lastName}
-                    onChangeText={setLastName}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.row}>
-                <View style={styles.flex1}>
-                  <DateInput
-                    value={dob}
-                    onChange={setDob}
-                    label="Date of Birth"
-                  />
-                </View>
-                <View style={styles.flex1}>
-                  <GenderSelect
-                    value={gender}
-                    onChange={setGender}
-                    label={t('profile.gender')}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Contact Info */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="call" size={20} color="#10B981" />
-              <Text style={styles.sectionTitle}>Contact Information</Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.fieldLabel}>Phone Number</Text>
-              <PhoneInput
-                value={phone}
-                onChangeText={handlePhoneChange}
-                defaultCountryCode={phoneCountryCode}
-              />
-              <Input
-                label={t('profile.website')}
-                placeholder="https://yourwebsite.com"
-                value={website || ''}
-                onChangeText={setWebsite}
-                keyboardType="url"
-                autoCapitalize="none"
-              />
-            </View>
-          </View>
-
-          {/* Location */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="location" size={20} color="#F59E0B" />
-              <Text style={styles.sectionTitle}>Location</Text>
-            </View>
-
-            <View style={styles.card}>
-              <CountrySelect value={country} onChange={setCountry} label="Country" />
-
-              <Input
-                label="City"
-                placeholder="New York"
-                value={city || ''}
-                onChangeText={setCity}
-              />
-
-              <LocationAutocomplete
-                label={t('profile.address')}
-                value={address}
-                onChangeText={(text) => setAddress(text)}
-                onPlaceSelected={(details) => {
-                  setAddress(details.address);
-                  setLocationDetails({
-                    lat: details.lat,
-                    lng: details.lng,
-                    placeId: details.placeId,
-                    name: details.name,
-                  });
-                }}
-              />
-
-              <LanguageSelect value={language} onChange={setLanguage} label={t('common.language')} />
-            </View>
-          </View>
-
-          {/* About */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="document-text" size={20} color="#8B5CF6" />
-              <Text style={styles.sectionTitle}>About You</Text>
-            </View>
-
-            <View style={styles.card}>
-              <Input
-                label={t('profile.bio')}
-                placeholder="Tell us about yourself and your pets..."
-                value={bio || ''}
-                onChangeText={setBio}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </View>
-          </View>
-
-          <View style={{ height: 40 }} />
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
+    </DesktopShell>
   );
 }
 
@@ -294,67 +305,70 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    padding: getSpacing(6),
     backgroundColor: designSystem.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: getColor('background.secondary'),
-  },
-  headerButton: {
-    minWidth: 60,
+    // On mobile, header is hidden/different
+    display: Platform.OS === 'web' && window.innerWidth > 768 ? 'flex' : 'none',
+    // ^ simplified check, in reality DesktopShell handles layout
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    ...designSystem.typography.heading.h2,
+    color: designSystem.colors.text.primary,
+  },
+  saveButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: designSystem.colors.primary[500],
+    borderRadius: designSystem.borderRadius.md,
   },
   saveText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#0A84FF',
-    textAlign: 'right',
+    fontWeight: '600',
+    color: '#fff',
   },
   saveTextDisabled: {
-    color: '#4B5563',
+    opacity: 0.7,
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
+    padding: getSpacing(5),
     paddingBottom: 60,
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
   },
   avatarSection: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: getSpacing(6),
   },
   avatarHint: {
     fontSize: 13,
-    color: '#6B7280',
+    color: designSystem.colors.text.tertiary,
     marginTop: 8,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: getSpacing(6),
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: getSpacing(3),
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    ...designSystem.typography.title.medium,
+    color: designSystem.colors.text.primary,
   },
   card: {
     backgroundColor: getColor('background.secondary'),
-    borderRadius: 16,
-    padding: 20,
-    gap: 16,
+    borderRadius: designSystem.borderRadius.lg,
+    padding: getSpacing(5),
+    gap: getSpacing(4),
+    borderWidth: 1,
+    borderColor: designSystem.colors.border.primary,
   },
   row: {
     flexDirection: 'row',
-    gap: 16,
+    gap: getSpacing(4),
   },
   flex1: {
     flex: 1,

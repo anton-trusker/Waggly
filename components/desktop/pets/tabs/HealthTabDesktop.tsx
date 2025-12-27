@@ -90,8 +90,8 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
                         <View style={styles.tagContainer}>
                             {allergies.map((allergy) => (
                                 <View key={allergy.id} style={styles.allergyTag}>
-                                    <Text style={styles.allergyText}>{allergy.name}</Text>
-                                    {allergy.severity === 'severe' && (
+                                    <Text style={styles.allergyText}>{allergy.allergen}</Text>
+                                    {allergy.severity_level === 'severe' && (
                                         <Ionicons name="warning" size={12} color="#EF4444" />
                                     )}
                                 </View>
@@ -110,7 +110,7 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
                 <View style={[styles.card, { flex: 1 }]}>
                     <View style={styles.cardHeader}>
                         <View style={[styles.cardIcon, { backgroundColor: '#EDE9FE' }]}>
-                            <Ionicons name="syringe" size={20} color="#8B5CF6" />
+                            <Ionicons name="medkit" size={20} color="#8B5CF6" />
                         </View>
                         <Text style={styles.cardTitle}>Vaccinations</Text>
                     </View>
@@ -156,9 +156,9 @@ export default function HealthTabDesktop({ petId }: HealthTabProps) {
                             {treatments.slice(0, 5).map((t) => (
                                 <View key={t.id} style={styles.listItem}>
                                     <View>
-                                        <Text style={styles.itemTitle}>{t.name}</Text>
+                                        <Text style={styles.itemTitle}>{t.category}</Text>
                                         <Text style={styles.itemSubtitle}>
-                                            {t.type} • {t.status}
+                                            {t.is_active ? 'Active' : 'Completed'}
                                         </Text>
                                     </View>
                                 </View>

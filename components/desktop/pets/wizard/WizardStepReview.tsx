@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface WizardStepReviewProps {
     formData: any;
@@ -15,28 +16,30 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
     onSubmit,
     loading,
 }) => {
+    const { theme } = useAppTheme();
+
     const renderRow = (label: string, value: any, icon?: string) => {
         if (!value) return null;
 
         return (
-            <View style={styles.row}>
+            <View style={[styles.row, { borderBottomColor: theme.colors.border.primary }]}>
                 <View style={styles.rowLabel}>
-                    {icon && <Ionicons name={icon as any} size={16} color="#6B7280" />}
-                    <Text style={styles.labelText}>{label}</Text>
+                    {icon && <Ionicons name={icon as any} size={16} color={theme.colors.text.tertiary} />}
+                    <Text style={[styles.labelText, { color: theme.colors.text.secondary }]}>{label}</Text>
                 </View>
-                <Text style={styles.valueText}>{value}</Text>
+                <Text style={[styles.valueText, { color: theme.colors.text.primary }]}>{value}</Text>
             </View>
         );
     };
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Text style={styles.heading}>Review & Confirm</Text>
-            <Text style={styles.subheading}>Check all information before adding your pet</Text>
+        <ScrollView style={[styles.container, { padding: 32 }]} showsVerticalScrollIndicator={false}>
+            <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Review & Confirm</Text>
+            <Text style={[styles.subheading, { color: theme.colors.text.secondary }]}>Check all information before adding your pet</Text>
 
             {/* Basic Info Section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Basic Information</Text>
+            <View style={[styles.section, { backgroundColor: theme.colors.background.secondary }]}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Basic Information</Text>
                 {renderRow('Name', formData.name, 'paw')}
                 {renderRow('Species', formData.species, 'albums')}
                 {renderRow('Breed', formData.breed, 'search')}
@@ -47,8 +50,8 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
             </View>
 
             {/* Contact Info Section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Contact Information</Text>
+            <View style={[styles.section, { backgroundColor: theme.colors.background.secondary }]}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Contact Information</Text>
                 {renderRow('Microchip', formData.microchip_number, 'qr-code')}
                 {renderRow('Clinic Name', formData.vet_clinic_name, 'business')}
                 {renderRow('Veterinarian', formData.vet_name, 'medical')}
@@ -60,8 +63,8 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
             </View>
 
             {/* Details Section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Additional Details</Text>
+            <View style={[styles.section, { backgroundColor: theme.colors.background.secondary }]}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Additional Details</Text>
                 {renderRow('Spayed/Neutered', formData.is_spayed_neutered ? 'Yes' : 'No', 'checkmark-circle')}
                 {formData.allergies?.length > 0 && renderRow('Allergies', formData.allergies.join(', '), 'alert-circle')}
                 {renderRow('Special Needs', formData.special_needs, 'heart')}
@@ -70,9 +73,13 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
 
             {/* Buttons */}
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.backButton} onPress={onBack} disabled={loading}>
-                    <Ionicons name="arrow-back" size={20} color="#6366F1" />
-                    <Text style={styles.backButtonText}>Back</Text>
+                <TouchableOpacity
+                    style={[styles.backButton, { borderColor: theme.colors.border.primary }]}
+                    onPress={onBack}
+                    disabled={loading}
+                >
+                    <Ionicons name="arrow-back" size={20} color={theme.colors.primary[500]} />
+                    <Text style={[styles.backButtonText, { color: theme.colors.primary[500] }]}>Back</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.submitButton, loading && styles.submitButtonDisabled]}
@@ -96,29 +103,24 @@ const WizardStepReview: React.FC<WizardStepReviewProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 32,
     },
     heading: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
         marginBottom: 8,
     },
     subheading: {
         fontSize: 16,
-        color: '#6B7280',
         marginBottom: 32,
     },
     section: {
         marginBottom: 32,
         padding: 20,
-        backgroundColor: '#F9FAFB',
         borderRadius: 16,
     },
     sectionTitle: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#111827',
         marginBottom: 16,
     },
     row: {
@@ -127,7 +129,6 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
     },
     rowLabel: {
         flexDirection: 'row',
@@ -137,12 +138,10 @@ const styles = StyleSheet.create({
     },
     labelText: {
         fontSize: 14,
-        color: '#6B7280',
     },
     valueText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#111827',
         flex: 1,
         textAlign: 'right',
     },
@@ -150,6 +149,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 16,
         marginTop: 24,
+        marginBottom: 40,
     },
     backButton: {
         flex: 1,
@@ -160,12 +160,10 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
     },
     backButtonText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#6366F1',
     },
     submitButton: {
         flex: 2,

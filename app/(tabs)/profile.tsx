@@ -11,6 +11,8 @@ import { COUNTRIES } from '@/constants/countries';
 import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
 import MobileHeader from '@/components/layout/MobileHeader';
+import { designSystem, getSpacing } from '@/constants/designSystem';
+import { getColor } from '@/utils/designSystem';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();

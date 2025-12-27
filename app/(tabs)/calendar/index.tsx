@@ -18,6 +18,7 @@ import MobileHeader from '@/components/layout/MobileHeader';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
 import DesktopCalendarHeader from '@/components/desktop/calendar/DesktopCalendarHeader';
 import MobileCalendarView from '@/components/mobile/calendar/MobileCalendarView';
+import DesktopTimelineView from '@/components/desktop/calendar/DesktopTimelineView';
 
 
 export default function CalendarScreen() {
@@ -129,123 +130,36 @@ export default function CalendarScreen() {
           }}
         />
       )}
-      <View style={styles.container as ViewStyle}>
-        {!isDesktop && <AppHeader title={t('navigation.calendar', { defaultValue: 'Calendar' })} />}
-        <View style={styles.headerContainer as ViewStyle}>
-          <View style={styles.monthHeader as ViewStyle}>
-            <EnhancedButton
-              title=""
-              icon="chevron.left"
-              variant="ghost"
-              size="sm"
-              onPress={goToPrevMonth}
-              style={styles.monthNavButton}
-            />
-            <Text style={styles.monthLabel}>{localizedMonthLabel}</Text>
-            <EnhancedButton
-              title=""
-              icon="chevron.right"
-              variant="ghost"
-              size="sm"
-              onPress={goToNextMonth}
-              style={styles.monthNavButton}
-            />
-          </View>
-        </View>
 
-        <ScrollView
-          style={styles.scroll as ViewStyle}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={loadingMonth}
-              onRefresh={refreshEvents}
-              tintColor={getColor('primary.500')}
-              colors={[getColor('primary.500')]}
-            />
-          }
-        >
-          <CalendarMonthView
-            year={currentDate.getFullYear()}
-            month={currentDate.getMonth()}
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            markers={markers}
-            locale={locale}
+      {isDesktop ? (
+        <View style={styles.container as ViewStyle}>
+          <DesktopTimelineView
+            events={monthEvents}
+            currentMonth={currentDate}
+            onEventClick={(event) => {
+              if (event.relatedId) {
+                if (event.type === 'vaccination') router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${event.relatedId}` as any);
+                else if (event.type === 'treatment') router.push(`/(tabs)/pets/record-detail?type=treatment&id=${event.relatedId}` as any);
+                else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}` as any);
+              }
+            }}
           />
-
-          <View style={styles.filters}>
-            <EnhancedDropdown
-              label={t('calendar.filter_by_pet', { defaultValue: 'Filter by pet' })}
-              options={petOptions}
-              selectedValues={selectedPetIds}
-              onSelect={(values) => {
-                setSelectedPetIds(values);
-                setPersistentFilters({ ...persistentFilters, selectedPetIds: values });
-              }}
-              multiSelect
-              placeholder={t('calendar.all_pets', { defaultValue: 'All Pets' })}
-              style={styles.filterDropdown}
-            />
-          </View>
-
-          <View style={styles.eventsSection}>
-            <View style={styles.sectionHeader}>
-              <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={18} color={getColor('primary.500')} />
-              <Text style={styles.sectionTitle}>
-                {new Date(selectedDate).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })}
-              </Text>
-            </View>
-
-            {loadingMonth ? (
-              <ActivityIndicator style={{ padding: 20 }} />
-            ) : selectedDayEvents.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>{t('calendar.no_events_for_day', { defaultValue: 'No events for this day' })}</Text>
-                <TouchableOpacity style={styles.addEventButton} onPress={() => router.push('/(tabs)/calendar/add-event')}>
-                  <Text style={styles.addEventText}>{t('calendar.add_event', { defaultValue: 'Add Event' })}</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.eventList}>
-                {selectedDayEvents.map((event) => (
-                  <TouchableOpacity
-                    key={event.id}
-                    style={styles.eventCard}
-                    onPress={() => {
-                      if (event.relatedId) {
-                        if (event.type === 'vaccination') router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${event.relatedId}`);
-                        else if (event.type === 'treatment') router.push(`/(tabs)/pets/record-detail?type=treatment&id=${event.relatedId}`);
-                        else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}`);
-                      }
-                    }}
-                  >
-                    <View style={[styles.eventTimeBox, { backgroundColor: event.color + '20' }]}>
-                      <Text style={[styles.eventTime, { color: event.color }]}>
-                        {new Date(event.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </Text>
-                    </View>
-                    <View style={styles.eventDetails}>
-                      <Text style={styles.eventTitle}>{event.title}</Text>
-                      <View style={styles.eventMeta}>
-                        {event.petName && <Text style={styles.eventPet}>{event.petName}</Text>}
-                        <View style={[styles.eventTypeTag, { backgroundColor: event.color + '20' }]}>
-                          <Text style={[styles.eventTypeText, { color: event.color }]}>{event.type}</Text>
-                        </View>
-                      </View>
-                    </View>
-                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={16} color={getColor('text.tertiary')} />
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-
-        </ScrollView>
-      </View>
+        </View>
+      ) : (
+        <View style={styles.container as ViewStyle}>
+          <AppHeader title={t('navigation.calendar', { defaultValue: 'Calendar' })} />
+          {/* Fallback for tablet/non-desktop width that isn't caught by isMobile (768-1024) - reusing old view or MobileCalendarView? 
+                The explicit isMobile check above returns early for < 768. 
+                So this else block is for 768 <= width < 1024. 
+                Let's use MobileCalendarView here too as it's adaptive enough, or stick to a simplified list?
+                Actually, let's use MobileCalendarView for this range too for consistency. 
+            */}
+          <MobileCalendarView events={monthEvents} pets={pets} />
+        </View>
+      )}
     </DesktopShell>
   );
+
 }
 
 const styles = StyleSheet.create({

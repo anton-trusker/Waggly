@@ -75,9 +75,9 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect 
                         key={index}
                         style={[
                             styles.dayCell,
-                            !day && styles.dayCellEmpty,
-                            day && isToday(day) && styles.dayCellToday,
-                            day && isSelected(day) && styles.dayCellSelected,
+                            !day ? styles.dayCellEmpty : undefined,
+                            (day && isToday(day)) ? styles.dayCellToday : undefined,
+                            (day && isSelected(day)) ? styles.dayCellSelected : undefined,
                         ]}
                         onPress={() => {
                             if (day) {
@@ -91,8 +91,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect 
                         {day && (
                             <Text style={[
                                 styles.dayText,
-                                isToday(day) && styles.dayTextToday,
-                                isSelected(day) && styles.dayTextSelected,
+                                isToday(day) ? styles.dayTextToday : undefined,
+                                isSelected(day) ? styles.dayTextSelected : undefined,
                             ]}>
                                 {day}
                             </Text>

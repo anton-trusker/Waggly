@@ -5,16 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { CalendarEvent } from '@/types'; // Assuming this exists or using Event type
 
 interface DesktopTimelineViewProps {
-    events: any[]; // Using any to avoid complex type matching for now, ideally strictly typed
+    events: CalendarEvent[];
     currentMonth: Date;
-    onEventClick: (event: any) => void;
+    onEventClick: (event: CalendarEvent) => void;
 }
 
 export default function DesktopTimelineView({ events, currentMonth, onEventClick }: DesktopTimelineViewProps) {
     // Filter events for the current month
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
-    
+
     // Sort events by date
     const sortedEvents = [...events].sort((a, b) => new Date(a.dueDate || a.date).getTime() - new Date(b.dueDate || b.date).getTime());
 
@@ -28,17 +28,17 @@ export default function DesktopTimelineView({ events, currentMonth, onEventClick
             acc[dateStr].push(event);
         }
         return acc;
-    }, {} as Record<string, any[]>);
+    }, {} as Record<string, CalendarEvent[]>);
 
     const dates = Object.keys(groupedEvents).sort();
 
     const getEventIcon = (type: string) => {
         switch (type) {
             case 'food': return 'nutrition';
-            case 'medical': 
+            case 'medical':
             case 'treatment': return 'medkit';
-            case 'checkup': 
-            case 'vet': return 'medical'; 
+            case 'checkup':
+            case 'vet': return 'medical';
             case 'grooming': return 'cut';
             case 'vaccination': return 'bandage';
             case 'walking': return 'walk';
@@ -49,9 +49,9 @@ export default function DesktopTimelineView({ events, currentMonth, onEventClick
     const getEventColor = (type: string) => {
         switch (type) {
             case 'food': return '#4ADE80';
-            case 'medical': 
+            case 'medical':
             case 'treatment': return '#EF4444';
-            case 'checkup': 
+            case 'checkup':
             case 'vet': return '#3B82F6';
             case 'grooming': return '#A855F7';
             case 'vaccination': return '#F97316';
@@ -90,19 +90,19 @@ export default function DesktopTimelineView({ events, currentMonth, onEventClick
                             {/* Events List */}
                             <View style={styles.eventsList}>
                                 {dayEvents.map((event, index) => (
-                                    <TouchableOpacity 
-                                        key={event.id || index} 
+                                    <TouchableOpacity
+                                        key={event.id || index}
                                         style={styles.eventCard}
                                         onPress={() => onEventClick(event)}
                                     >
                                         <View style={[styles.colorStrip, { backgroundColor: getEventColor(event.type) }]} />
-                                        
+
                                         <View style={styles.cardContent}>
                                             <View style={styles.headerRow}>
                                                 <Text style={styles.eventTitle}>{event.title}</Text>
                                                 <Text style={styles.eventTime}>{format(new Date(event.dueDate || event.date), 'h:mm a')}</Text>
                                             </View>
-                                            
+
                                             <View style={styles.detailsRow}>
                                                 <View style={styles.badge}>
                                                     <Ionicons name={getEventIcon(event.type) as any} size={12} color={getEventColor(event.type)} />

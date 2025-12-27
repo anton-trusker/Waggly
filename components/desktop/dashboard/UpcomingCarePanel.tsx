@@ -6,9 +6,13 @@ import { useEvents } from '@/hooks/useEvents';
 
 type FilterType = 'all' | 'medical' | 'hygiene' | 'training';
 
-const UpcomingCarePanel: React.FC = () => {
+interface UpcomingCarePanelProps {
+    petId?: string;
+}
+
+const UpcomingCarePanel: React.FC<UpcomingCarePanelProps> = ({ petId }) => {
     const router = useRouter();
-    const { events, loading } = useEvents();
+    const { events, loading } = useEvents({ petIds: petId ? [petId] : undefined });
     const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
     const upcomingEvents = events

@@ -59,10 +59,9 @@ export default function PetHealthScreen() {
         router.push(`/web/pets/photos/add?petId=${id}`);
         break;
       case 'allergy':
-        // Add allergy route? Or modal? Assuming a new route for now
-        // router.push(`/web/pets/allergy/new?petId=${id}`);
-        // If no specific route, maybe open modal (not implemented here)
-        console.log("Add allergy");
+      // Add allergy route? Or modal? Assuming a new route for now
+      case 'allergy':
+        router.push(`/web/pets/allergy/new?petId=${id}`);
         break;
       default:
         console.log("Unknown record type", type);

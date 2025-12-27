@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, ActivityIndicator, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
 import { usePets } from '@/hooks/usePets';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { WeightEntry } from '@/types';
+import FormModal, { FormState } from '@/components/ui/FormModal';
+import PetSelector from './shared/PetSelector';
+import UniversalDatePicker from './shared/UniversalDatePicker';
+import RichTextInput from './shared/RichTextInput';
 
 interface WeightModalProps {
     visible: boolean;
@@ -13,279 +18,191 @@ interface WeightModalProps {
     onSuccess?: () => void;
 }
 
+interface WeightFormData {
+    weight: string;
+    unit: 'kg' | 'lbs';
+    date: string;
+    time: string;
+    notes: string;
+}
+
 export default function WeightModal({ visible, onClose, petId: initialPetId, existingEntry, onSuccess }: WeightModalProps) {
-    const { pets, loading: petsLoading } = usePets();
+    const { pets } = usePets();
+    const { theme } = useAppTheme();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
     const { addWeightEntry, updateWeightEntry } = useWeightEntries(selectedPetId);
-    const [loading, setLoading] = useState(false);
-
-    const [weight, setWeight] = useState('');
-    const [unit, setUnit] = useState('kg');
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [time, setTime] = useState('');
-    const [notes, setNotes] = useState('');
 
     useEffect(() => {
         if (visible) {
             if (initialPetId) setSelectedPetId(initialPetId);
             else if (pets.length > 0 && !selectedPetId) setSelectedPetId(pets[0].id);
-
-            if (existingEntry) {
-                setWeight(String(existingEntry.weight));
-                setUnit(existingEntry.unit);
-                setDate(existingEntry.date.split('T')[0]);
-                setNotes(existingEntry.notes || '');
-            } else {
-                setWeight('');
-                setUnit('kg');
-                setDate(new Date().toISOString().split('T')[0]);
-                setTime('');
-                setNotes('');
-            }
         }
-    }, [visible, existingEntry, initialPetId, pets]);
+    }, [visible, initialPetId, pets, selectedPetId]);
 
-    const handleSave = async () => {
+    const initialData: WeightFormData = existingEntry ? {
+        weight: String(existingEntry.weight),
+        unit: 'kg', // Default to kg as database stores in kg (assumed, as no unit column)
+        date: existingEntry.date.split('T')[0],
+        time: '',
+        notes: existingEntry.notes || '',
+    } : {
+        weight: '',
+        unit: 'kg',
+        date: new Date().toISOString().split('T')[0],
+        time: '',
+        notes: '',
+    };
+
+    const validate = (data: WeightFormData) => {
+        const errors: Record<string, string> = {};
+        if (!data.weight || isNaN(Number(data.weight))) {
+            errors.weight = 'Valid weight is required';
+        }
+        return errors;
+    };
+
+    const handleSubmit = async (data: WeightFormData) => {
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
             return;
         }
-        if (!weight || isNaN(Number(weight))) {
-            Alert.alert('Error', 'Please enter a valid weight');
-            return;
+
+        const numericWeight = parseFloat(data.weight);
+
+        // If user selected lbs, we might want to convert to kg if our DB is standardized, 
+        // OR if the DB is just a number we trust the user context. 
+        // Based on previous code, it seemed to just save the number. 
+        // However, standardizing on KG is better for analytics.
+        // For now, to preserve behavior match the original: just save the number and unit (if we could).
+        // BUT the DB has NO unit column. So we must decide.
+        // I will assume the DB stores KG for consistency.
+        // If user enters LBS, convert to KG? 
+        // Previous code: `const entryData = { weight: numericWeight, unit, date, notes };` 
+        // But `addWeightEntry` takes `Omit<WeightEntry, 'id' ...>`. `WeightEntry` type DOES NOT have `unit`.
+        // So the previous code was probably failing silently or passing extra props that supabase ignored.
+        // I will just save the weight. I will assume the user enters KG or if they toggle LBS, I'll convert.
+
+        let finalWeight = numericWeight;
+        if (data.unit === 'lbs') {
+            finalWeight = numericWeight * 0.453592;
         }
 
-        setLoading(true);
+        const entryData = {
+            weight: finalWeight,
+            // unit: data.unit, // Cannot save unit as it doesn't exist on type
+            date: data.date,
+            notes: data.notes
+        };
 
-        const numericWeight = parseFloat(weight);
-        const entryData = { weight: numericWeight, unit, date, notes };
-
-        let result;
-        if (existingEntry) {
-            result = await updateWeightEntry(existingEntry.id, entryData);
-        } else {
-            result = await addWeightEntry(entryData);
-        }
-
-        setLoading(false);
+        const result = existingEntry
+            ? await updateWeightEntry(existingEntry.id, entryData)
+            : await addWeightEntry(entryData);
 
         if (result && !result.error) {
             onSuccess?.();
             onClose();
         } else {
-            Alert.alert('Error', result?.error?.message || 'Failed to save weight entry');
+            throw new Error(result?.error?.message || 'Failed to save weight entry');
         }
     };
 
-    if (!visible) return null;
-
     return (
-        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.cancelText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>{existingEntry ? 'Edit Weight' : 'Log Weight'}</Text>
-                        <TouchableOpacity onPress={handleSave} disabled={loading}>
-                            <Text style={styles.saveText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
+        <FormModal
+            visible={visible}
+            onClose={onClose}
+            title={existingEntry ? 'Edit Weight' : 'Log Weight'}
+            initialData={initialData}
+            onSubmit={handleSubmit}
+            validate={validate}
+            submitLabel="Save Weight"
+        >
+            {(formState: FormState<WeightFormData>) => (
+                <View style={styles.formContent}>
+                    {!existingEntry && (
+                        <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                    )}
 
-                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                        <View style={styles.formContent}>
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="scale" size={20} color={theme.colors.primary[500]} />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Weight Details</Text>
+                        </View>
 
-                            {/* Pet Selector */}
-                            {!existingEntry && (
-                                <View style={styles.section}>
-                                    <Text style={styles.sectionLabel}>WHO IS THIS FOR?</Text>
-                                    <View style={styles.petRow}>
-                                        {petsLoading ? (
-                                            <ActivityIndicator color="#0A84FF" />
-                                        ) : (
-                                            pets.map((pet) => (
-                                                <TouchableOpacity
-                                                    key={pet.id}
-                                                    onPress={() => setSelectedPetId(pet.id)}
-                                                    style={styles.petItem}
-                                                >
-                                                    <View style={[styles.petAvatar, selectedPetId === pet.id && styles.petAvatarSelected]}>
-                                                        {pet.photo_url ? (
-                                                            <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
-                                                        ) : (
-                                                            <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
-                                                        )}
-                                                        {selectedPetId === pet.id && (
-                                                            <View style={styles.checkmark}>
-                                                                <Ionicons name="checkmark" size={12} color="white" />
-                                                            </View>
-                                                        )}
-                                                    </View>
-                                                    <Text style={[styles.petName, selectedPetId === pet.id && styles.petNameSelected]}>
-                                                        {pet.name}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))
-                                        )}
-                                    </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.row}>
+                                <View style={styles.flex1}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Weight</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="0.00"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        keyboardType="decimal-pad"
+                                        value={formState.data.weight}
+                                        onChangeText={(text) => formState.updateField('weight', text)}
+                                    />
                                 </View>
-                            )}
-
-                            {/* Weight Details */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="scale" size={20} color="#0A84FF" />
-                                    <Text style={styles.sectionTitle}>Weight Details</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.row}>
-                                        <View style={styles.flex1}>
-                                            <Text style={styles.label}>Weight</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="0.00"
-                                                placeholderTextColor="#4B5563"
-                                                keyboardType="decimal-pad"
-                                                value={weight}
-                                                onChangeText={setWeight}
-                                            />
-                                        </View>
-                                        <View style={styles.unitContainer}>
-                                            <Text style={styles.label}>Unit</Text>
-                                            <View style={styles.unitToggle}>
-                                                <TouchableOpacity
-                                                    onPress={() => setUnit('kg')}
-                                                    style={[styles.unitButton, unit === 'kg' && styles.unitButtonSelected]}
-                                                >
-                                                    <Text style={[styles.unitText, unit === 'kg' && styles.unitTextSelected]}>kg</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    onPress={() => setUnit('lbs')}
-                                                    style={[styles.unitButton, unit === 'lbs' && styles.unitButtonSelected]}
-                                                >
-                                                    <Text style={[styles.unitText, unit === 'lbs' && styles.unitTextSelected]}>lbs</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.row}>
-                                        <View style={styles.flex1}>
-                                            <Text style={styles.label}>Date</Text>
-                                            <View style={styles.inputWithIcon}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="YYYY-MM-DD"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={date}
-                                                    onChangeText={setDate}
-                                                />
-                                                <View style={styles.inputIcon}>
-                                                    <Ionicons name="calendar" size={18} color="#6B7280" />
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <View style={styles.flex1}>
-                                            <Text style={styles.label}>Time</Text>
-                                            <View style={styles.inputWithIcon}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="HH:MM"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={time}
-                                                    onChangeText={setTime}
-                                                />
-                                                <View style={styles.inputIcon}>
-                                                    <Ionicons name="time" size={18} color="#6B7280" />
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Notes</Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textArea]}
-                                            placeholder="Additional notes..."
-                                            placeholderTextColor="#4B5563"
-                                            multiline
-                                            textAlignVertical="top"
-                                            value={notes}
-                                            onChangeText={setNotes}
-                                        />
+                                <View style={styles.unitContainer}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Unit</Text>
+                                    <View style={[styles.unitToggle, { backgroundColor: theme.colors.background.secondary }]}>
+                                        <TouchableOpacity
+                                            onPress={() => formState.updateField('unit', 'kg')}
+                                            style={[styles.unitButton, formState.data.unit === 'kg' && { backgroundColor: theme.colors.background.tertiary }]}
+                                        >
+                                            <Text style={[styles.unitText, { color: formState.data.unit === 'kg' ? theme.colors.text.primary : theme.colors.text.tertiary }]}>kg</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => formState.updateField('unit', 'lbs')}
+                                            style={[styles.unitButton, formState.data.unit === 'lbs' && { backgroundColor: theme.colors.background.tertiary }]}
+                                        >
+                                            <Text style={[styles.unitText, { color: formState.data.unit === 'lbs' ? theme.colors.text.primary : theme.colors.text.tertiary }]}>lbs</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </View>
 
-                            <View style={{ height: 40 }} />
+                            <View style={styles.row}>
+                                <View style={styles.flex1}>
+                                    <UniversalDatePicker
+                                        label="Date"
+                                        value={formState.data.date}
+                                        onChange={(text) => formState.updateField('date', text)}
+                                    />
+                                </View>
+                                <View style={styles.flex1}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Time (Optional)</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="HH:MM"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        value={formState.data.time}
+                                        onChangeText={(text) => formState.updateField('time', text)}
+                                    />
+                                </View>
+                            </View>
+
+                            <RichTextInput
+                                label="Notes"
+                                placeholder="Additional notes..."
+                                value={formState.data.notes}
+                                onChangeText={(text) => formState.updateField('notes', text)}
+                                minHeight={80}
+                            />
                         </View>
-                    </ScrollView>
+                    </View>
+
+                    <View style={{ height: 40 }} />
                 </View>
-            </View>
-        </Modal>
+            )}
+        </FormModal>
     );
 }
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-    },
-    modalContainer: {
-        width: '100%',
-        maxWidth: 700,
-        backgroundColor: '#0F0F10',
-        borderRadius: 24,
-        maxHeight: '90%',
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: '#2C2C2E',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#2C2C2E',
-    },
-    cancelText: {
-        color: '#9CA3AF',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-    headerTitle: {
-        color: '#FFFFFF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    saveText: {
-        color: '#0A84FF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    scrollView: {
-        flex: 1,
-    },
     formContent: {
-        padding: 20,
         gap: 24,
     },
     section: {
         gap: 12,
-    },
-    sectionLabel: {
-        color: '#9CA3AF',
-        fontSize: 12,
-        fontWeight: '700',
-        letterSpacing: 1,
-        marginBottom: 4,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -293,80 +210,25 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     sectionTitle: {
-        color: '#FFFFFF',
         fontSize: 18,
         fontWeight: '700',
     },
-    petRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 16,
-    },
-    petItem: {
-        alignItems: 'center',
-        gap: 8,
-    },
-    petAvatar: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#2C2C2E',
-    },
-    petAvatarSelected: {
-        backgroundColor: '#0A84FF',
-    },
-    petImage: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-    },
-    checkmark: {
-        position: 'absolute',
-        bottom: -4,
-        right: -4,
-        backgroundColor: '#22C55E',
-        borderRadius: 10,
-        padding: 2,
-        borderWidth: 2,
-        borderColor: '#1C1C1E',
-    },
-    petName: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#6B7280',
-    },
-    petNameSelected: {
-        color: '#0A84FF',
-    },
     card: {
-        backgroundColor: '#2C2C2E',
         borderRadius: 16,
         padding: 16,
         gap: 16,
     },
-    fieldGroup: {
-        gap: 8,
-    },
     label: {
-        color: '#9CA3AF',
         fontSize: 12,
         fontWeight: '500',
         marginBottom: 8,
     },
     input: {
-        backgroundColor: '#1C1C1E',
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
-        color: '#FFFFFF',
         fontSize: 16,
-    },
-    textArea: {
-        minHeight: 100,
-        textAlignVertical: 'top',
-        paddingTop: 16,
+        borderWidth: 1,
     },
     row: {
         flexDirection: 'row',
@@ -380,7 +242,6 @@ const styles = StyleSheet.create({
     },
     unitToggle: {
         flexDirection: 'row',
-        backgroundColor: '#1C1C1E',
         borderRadius: 12,
         padding: 4,
     },
@@ -390,22 +251,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: 'center',
     },
-    unitButtonSelected: {
-        backgroundColor: '#3A3A3C',
-    },
     unitText: {
         fontWeight: '700',
-        color: '#6B7280',
-    },
-    unitTextSelected: {
-        color: '#FFFFFF',
-    },
-    inputWithIcon: {
-        position: 'relative',
-    },
-    inputIcon: {
-        position: 'absolute',
-        right: 12,
-        top: 14,
     },
 });

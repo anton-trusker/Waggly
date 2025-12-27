@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 
 import { Ionicons } from '@expo/vector-icons';
 import EnhancedSelection from '@/components/ui/EnhancedSelection';
 import { COUNTRIES } from '@/constants/countries';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface WizardStepContactInfoProps {
     formData: any;
@@ -11,25 +12,8 @@ interface WizardStepContactInfoProps {
     onBack: () => void;
 }
 
+// Map countries to EnhancedSelection options, including flag in label since icon prop is for IconSymbol
 const COUNTRY_OPTIONS = COUNTRIES.map(c => ({
-    id: c.code,
-    label: c.name,
-    icon: c.flag // EnhancedSelection might expect icon name, but let's see if it handles emoji or custom
-    // EnhancedSelection expects icon name from IconSymbol (SF Symbols/Material). 
-    // It doesn't seem to support raw text/emoji as icon prop directly unless modified.
-    // However, EnhancedSelection renders icon using IconSymbol. 
-    // Let's check EnhancedSelection again.
-    // It renders: <IconSymbol ... />
-    // So passing emoji to icon prop won't work if it expects symbol name.
-    // But EnhancedSelection options have { icon?: string }. 
-    // Wait, looking at EnhancedSelection code:
-    // {item.icon && <IconSymbol ... />} ? No, looking at optionItem render:
-    // It doesn't render icon in the list item! It only renders label and subLabel.
-    // So the flag won't show in the list unless I modify EnhancedSelection or just put it in the label.
-}));
-
-// Let's put flag in label for now
-const COUNTRY_OPTIONS_WITH_FLAG = COUNTRIES.map(c => ({
     id: c.code,
     label: `${c.flag} ${c.name}`
 }));
@@ -40,6 +24,7 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
     onNext,
     onBack,
 }) => {
+    const { theme } = useAppTheme();
     const [localData, setLocalData] = useState(formData);
 
     const updateField = (field: string, value: any) => {
@@ -49,19 +34,19 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
     };
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <Text style={styles.heading}>Contact Information</Text>
-            <Text style={styles.subheading}>Emergency contacts and vet details</Text>
+        <ScrollView style={[styles.container, { padding: 32 }]} showsVerticalScrollIndicator={false}>
+            <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Contact Information</Text>
+            <Text style={[styles.subheading, { color: theme.colors.text.secondary }]}>Emergency contacts and vet details</Text>
 
             {/* Microchip Number */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Microchip Number</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="qr-code-outline" size={20} color="#6B7280" style={styles.inputIcon} />
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Microchip Number</Text>
+                <View style={[styles.inputWrapper, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}>
+                    <Ionicons name="qr-code-outline" size={20} color={theme.colors.text.tertiary} style={styles.inputIcon} />
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { color: theme.colors.text.primary }]}
                         placeholder="e.g., 123456789012345"
-                        placeholderTextColor="#9CA3AF"
+                        placeholderTextColor={theme.colors.text.tertiary}
                         value={localData.microchip_number}
                         onChangeText={(text) => updateField('microchip_number', text)}
                     />
@@ -70,11 +55,15 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Veterinarian Name */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Veterinarian Name</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Veterinarian Name</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.standaloneInput, {
+                        backgroundColor: theme.colors.background.secondary,
+                        borderColor: theme.colors.border.primary,
+                        color: theme.colors.text.primary
+                    }]}
                     placeholder="Dr. Smith"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={theme.colors.text.tertiary}
                     value={localData.vet_name}
                     onChangeText={(text) => updateField('vet_name', text)}
                 />
@@ -82,11 +71,15 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Clinic Name */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Veterinary Clinic Name</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Veterinary Clinic Name</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.standaloneInput, {
+                        backgroundColor: theme.colors.background.secondary,
+                        borderColor: theme.colors.border.primary,
+                        color: theme.colors.text.primary
+                    }]}
                     placeholder="e.g. City Vet Clinic"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={theme.colors.text.tertiary}
                     value={localData.vet_clinic_name}
                     onChangeText={(text) => updateField('vet_clinic_name', text)}
                 />
@@ -94,11 +87,15 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Vet Address/Clinic */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Veterinary Clinic Address</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Veterinary Clinic Address</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.standaloneInput, {
+                        backgroundColor: theme.colors.background.secondary,
+                        borderColor: theme.colors.border.primary,
+                        color: theme.colors.text.primary
+                    }]}
                     placeholder="123 Main St, City, State"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={theme.colors.text.tertiary}
                     value={localData.vet_address}
                     onChangeText={(text) => updateField('vet_address', text)}
                 />
@@ -108,7 +105,7 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
             <EnhancedSelection
                 label="Country"
                 value={localData.vet_country}
-                options={COUNTRY_OPTIONS_WITH_FLAG}
+                options={COUNTRY_OPTIONS}
                 onSelect={(opt) => updateField('vet_country', opt.id)}
                 placeholder="Select Country"
                 searchable
@@ -117,13 +114,13 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Vet Phone */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Veterinarian Phone</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="call-outline" size={20} color="#6B7280" style={styles.inputIcon} />
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Veterinarian Phone</Text>
+                <View style={[styles.inputWrapper, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}>
+                    <Ionicons name="call-outline" size={20} color={theme.colors.text.tertiary} style={styles.inputIcon} />
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { color: theme.colors.text.primary }]}
                         placeholder="+1 (555) 123-4567"
-                        placeholderTextColor="#9CA3AF"
+                        placeholderTextColor={theme.colors.text.tertiary}
                         keyboardType="phone-pad"
                         value={localData.vet_phone}
                         onChangeText={(text) => updateField('vet_phone', text)}
@@ -133,11 +130,15 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Emergency Contact */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Emergency Contact Name</Text>
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Emergency Contact Name</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.standaloneInput, {
+                        backgroundColor: theme.colors.background.secondary,
+                        borderColor: theme.colors.border.primary,
+                        color: theme.colors.text.primary
+                    }]}
                     placeholder="John Doe"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={theme.colors.text.tertiary}
                     value={localData.emergency_contact_name}
                     onChangeText={(text) => updateField('emergency_contact_name', text)}
                 />
@@ -145,13 +146,13 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Emergency Contact Phone */}
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Emergency Contact Phone</Text>
-                <View style={styles.inputWrapper}>
-                    <Ionicons name="call-outline" size={20} color="#6B7280" style={styles.inputIcon} />
+                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Emergency Contact Phone</Text>
+                <View style={[styles.inputWrapper, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}>
+                    <Ionicons name="call-outline" size={20} color={theme.colors.text.tertiary} style={styles.inputIcon} />
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { color: theme.colors.text.primary }]}
                         placeholder="+1 (555) 123-4567"
-                        placeholderTextColor="#9CA3AF"
+                        placeholderTextColor={theme.colors.text.tertiary}
                         keyboardType="phone-pad"
                         value={localData.emergency_contact_phone}
                         onChangeText={(text) => updateField('emergency_contact_phone', text)}
@@ -161,11 +162,17 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 
             {/* Buttons */}
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.backButton} onPress={onBack}>
-                    <Ionicons name="arrow-back" size={20} color="#6366F1" />
-                    <Text style={styles.backButtonText}>Back</Text>
+                <TouchableOpacity
+                    style={[styles.backButton, { borderColor: theme.colors.border.primary }]}
+                    onPress={onBack}
+                >
+                    <Ionicons name="arrow-back" size={20} color={theme.colors.primary[500]} />
+                    <Text style={[styles.backButtonText, { color: theme.colors.primary[500] }]}>Back</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.nextButton} onPress={onNext}>
+                <TouchableOpacity
+                    style={[styles.nextButton, { backgroundColor: theme.colors.primary[500] }]}
+                    onPress={onNext}
+                >
                     <Text style={styles.nextButtonText}>Next: Details</Text>
                     <Ionicons name="arrow-forward" size={20} color="#fff" />
                 </TouchableOpacity>
@@ -177,17 +184,14 @@ const WizardStepContactInfo: React.FC<WizardStepContactInfoProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 32,
     },
     heading: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
         marginBottom: 8,
     },
     subheading: {
         fontSize: 16,
-        color: '#6B7280',
         marginBottom: 32,
     },
     inputGroup: {
@@ -196,27 +200,26 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
         marginBottom: 8,
     },
-    input: {
+    standaloneInput: {
         borderWidth: 1,
-        borderColor: '#E5E7EB',
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
         fontSize: 14,
-        color: '#111827',
-        backgroundColor: '#F9FAFB',
+    },
+    input: {
+        flex: 1,
+        fontSize: 14,
+        paddingVertical: 12,
     },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#E5E7EB',
         borderRadius: 12,
         paddingHorizontal: 16,
-        backgroundColor: '#F9FAFB',
     },
     inputIcon: {
         marginRight: 12,
@@ -225,6 +228,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 16,
         marginTop: 24,
+        marginBottom: 40,
     },
     backButton: {
         flex: 1,
@@ -235,12 +239,10 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
     },
     backButtonText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#6366F1',
     },
     nextButton: {
         flex: 2,
@@ -248,7 +250,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        backgroundColor: '#6366F1',
         paddingVertical: 16,
         borderRadius: 12,
     },

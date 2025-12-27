@@ -339,4 +339,32 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Plus Jakarta Sans',
     },
+    // Missing styles added below
+    addFirstPetButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#6366F1',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 12,
+        marginTop: 24,
+    },
+    addFirstPetText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    petsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 20,
+    },
+    sidebarColumnMobile: {
+        display: 'none', // Hide sidebar on mobile/tablet or stack it differently?
+        // If the design intends to stack it, we just remove the width constraint or similar
+        width: '100%',
+        minWidth: 0,
+    },
 });

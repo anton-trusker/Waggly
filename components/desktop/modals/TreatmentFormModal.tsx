@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import PetSelector from './shared/PetSelector';
 import SmartAddressInput from './shared/SmartAddressInput';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
+import FormModal, { FormState } from '@/components/ui/FormModal';
 
 interface TreatmentFormModalProps {
     visible: boolean;
@@ -19,12 +21,43 @@ const TREATMENT_TYPES = ['Medication', 'Supplement', 'Therapy', 'Topical', 'Inje
 const DOSAGE_UNITS = ['mg', 'ml', 'tablet', 'capsule', 'drop', 'g', 'IU'];
 const FREQUENCIES = ['Once daily', 'Twice daily', 'Three times daily', 'Every 12 hours', 'As needed'];
 
+interface TreatmentFormData {
+    treatment_type: string;
+    name: string;
+    dosage_value: string;
+    dosage_unit: string;
+    frequency: string;
+    start_date: string;
+    end_date: string;
+    is_active: boolean;
+    provider: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+    cost: string;
+    currency: string;
+    notes: string;
+    reminders_enabled: boolean;
+}
+
 export default function TreatmentFormModal({ visible, onClose, petId: initialPetId, onSuccess }: TreatmentFormModalProps) {
     const { pets } = usePets();
+    const { theme } = useAppTheme();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
-    const [loading, setLoading] = useState(false);
 
-    const [formData, setFormData] = useState({
+    useEffect(() => {
+        if (visible) {
+            if (initialPetId) {
+                setSelectedPetId(initialPetId);
+            } else if (pets.length > 0 && !selectedPetId) {
+                setSelectedPetId(pets[0].id);
+            }
+        }
+    }, [visible, initialPetId, pets]);
+
+    const initialData: TreatmentFormData = {
         treatment_type: 'Medication',
         name: '',
         dosage_value: '',
@@ -43,48 +76,14 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
         currency: 'EUR',
         notes: '',
         reminders_enabled: true,
-    });
-
-    useEffect(() => {
-        if (initialPetId) {
-            setSelectedPetId(initialPetId);
-        } else if (pets.length > 0 && !selectedPetId) {
-            setSelectedPetId(pets[0].id);
-        }
-    }, [initialPetId, pets, selectedPetId]);
-
-    const resetForm = () => {
-        setFormData({
-            treatment_type: 'Medication',
-            name: '',
-            dosage_value: '',
-            dosage_unit: 'mg',
-            frequency: 'Once daily',
-            start_date: new Date().toISOString().split('T')[0],
-            end_date: '',
-            is_active: true,
-            provider: '',
-            address: '',
-            city: '',
-            state: '',
-            zip: '',
-            country: '',
-            cost: '',
-            currency: 'EUR',
-            notes: '',
-            reminders_enabled: true,
-        });
-        if (!initialPetId && pets.length > 0) {
-            setSelectedPetId(pets[0].id);
-        }
     };
 
-    const handleRepeatLast = async () => {
+    const handleRepeatLast = async (formState: FormState<TreatmentFormData>) => {
         if (!selectedPetId) return;
-        setLoading(true);
+
         try {
             const { data } = await supabase
-                .from('medications')
+                .from('treatments')
                 .select('*')
                 .eq('pet_id', selectedPetId)
                 .order('created_at', { ascending: false })
@@ -92,297 +91,295 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                 .single();
 
             if (data) {
-                setFormData(prev => ({
-                    ...prev,
-                    name: data.name || prev.name,
-                    dosage_value: data.dosage_value?.toString() || prev.dosage_value,
-                    dosage_unit: data.dosage_unit || prev.dosage_unit,
-                    frequency: data.frequency || prev.frequency,
-                    currency: data.currency || prev.currency,
-                }));
-                Alert.alert('Auto-Filled', 'Details from the last medication have been applied.');
+                formState.updateField('name', data.treatment_name || '');
+                formState.updateField('dosage_value', data.dosage_value?.toString() || '');
+                formState.updateField('dosage_unit', data.dosage_unit || 'mg');
+                formState.updateField('frequency', data.frequency || 'Once daily');
+                formState.updateField('currency', data.currency || 'EUR');
+                formState.updateField('treatment_type', data.category || 'Medication');
+
+                Alert.alert('Auto-Filled', 'Details from the last treatment have been applied.');
             } else {
-                Alert.alert('Info', 'No previous medications found.');
+                Alert.alert('Info', 'No previous treatments found.');
             }
         } catch (err) {
             console.log(err);
-        } finally {
-            setLoading(false);
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (data: TreatmentFormData) => {
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
             return;
         }
-        if (!formData.name) {
-            Alert.alert('Error', 'Please enter medication name');
+        if (!data.name.trim()) {
+            Alert.alert('Error', 'Please enter treatment name');
             return;
         }
 
-        setLoading(true);
-        try {
-            const { error } = await (supabase
-                .from('medications') as any)
-                .insert({
-                    pet_id: selectedPetId,
-                    name: formData.name,
-                    dosage_value: formData.dosage_value ? parseFloat(formData.dosage_value) : null,
-                    dosage_unit: formData.dosage_unit,
-                    frequency: formData.frequency,
-                    start_date: formData.start_date,
-                    end_date: formData.end_date || null,
-                    reminders_enabled: formData.reminders_enabled,
-                    cost: formData.cost ? parseFloat(formData.cost) : null,
-                    currency: formData.currency,
-                    notes: formData.notes || null,
-                });
+        const treatmentData = {
+            pet_id: selectedPetId,
+            treatment_name: data.name,
+            category: data.treatment_type,
+            start_date: data.start_date,
+            end_date: data.end_date || null,
+            frequency: data.frequency,
+            dosage: data.dosage_value ? `${data.dosage_value} ${data.dosage_unit}` : null,
+            dosage_value: data.dosage_value ? parseFloat(data.dosage_value) : null,
+            dosage_unit: data.dosage_unit,
+            provider: data.provider || null,
+            notes: data.notes || null,
+            is_active: data.is_active,
+            cost: data.cost ? parseFloat(data.cost) : null,
+            currency: data.currency,
+            created_at: new Date().toISOString()
+        };
 
-            if (error) throw error;
+        const { error } = await supabase
+            .from('treatments')
+            .insert(treatmentData as any);
 
-            Alert.alert('Success', 'Medication added successfully');
-            resetForm();
-            onSuccess?.();
-            onClose();
-        } catch (error: any) {
-            Alert.alert('Error', error.message);
-        } finally {
-            setLoading(false);
-        }
+        if (error) throw error;
+        onSuccess?.();
     };
 
-    if (!visible) return null;
+    const validate = (data: TreatmentFormData) => {
+        const errors: Record<string, string> = {};
+        if (!data.name.trim()) errors.name = 'Name is required';
+        return errors;
+    };
 
     return (
-        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.cancelText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Add Treatment</Text>
-                        <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text style={styles.saveText}>Save</Text>
-                        </TouchableOpacity>
+        <FormModal
+            visible={visible}
+            onClose={onClose}
+            title="Add Treatment"
+            initialData={initialData}
+            onSubmit={handleSubmit}
+            successMessage="Treatment added successfully"
+            submitLabel="Save Treatment"
+            validate={validate}
+        >
+            {(formState: FormState<TreatmentFormData>) => (
+                <View style={styles.formContent}>
+                    <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+
+                    <TouchableOpacity
+                        onPress={() => handleRepeatLast(formState)}
+                        style={[styles.repeatButton, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}
+                    >
+                        <Ionicons name="reload" size={16} color={theme.colors.primary[500]} />
+                        <Text style={[styles.repeatButtonText, { color: theme.colors.primary[500] }]}>Repeat Last Treatment</Text>
+                    </TouchableOpacity>
+
+                    {/* Treatment Type */}
+                    <View style={styles.section}>
+                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Type</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <View style={styles.chipRow}>
+                                {TREATMENT_TYPES.map(type => (
+                                    <TouchableOpacity
+                                        key={type}
+                                        onPress={() => formState.updateField('treatment_type', type)}
+                                        style={[
+                                            styles.chip,
+                                            { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
+                                            formState.data.treatment_type === type && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                        ]}
+                                    >
+                                        <Text style={[
+                                            styles.chipText,
+                                            { color: theme.colors.text.secondary },
+                                            formState.data.treatment_type === type && { color: '#FFFFFF' }
+                                        ]}>{type}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
                     </View>
 
-                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                        <View style={styles.formContent}>
-
-                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
-
-                            <TouchableOpacity onPress={handleRepeatLast} style={styles.repeatButton}>
-                                <Ionicons name="reload" size={16} color="#0A84FF" />
-                                <Text style={styles.repeatButtonText}>Repeat Last Medication</Text>
-                            </TouchableOpacity>
-
-                            {/* Medication Details */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="medkit" size={20} color="#0A84FF" />
-                                    <Text style={styles.sectionTitle}>Medication Details</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Medication Name</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="e.g. Amoxicillin"
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.name}
-                                            onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Dosage</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="e.g. 50"
-                                                keyboardType="numeric"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.dosage_value}
-                                                onChangeText={(text) => setFormData({ ...formData, dosage_value: text })}
-                                            />
-                                        </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Unit</Text>
-                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                <View style={styles.chipRow}>
-                                                    {DOSAGE_UNITS.map(unit => (
-                                                        <TouchableOpacity
-                                                            key={unit}
-                                                            onPress={() => setFormData({ ...formData, dosage_unit: unit })}
-                                                            style={[styles.chip, formData.dosage_unit === unit && styles.chipSelected]}
-                                                        >
-                                                            <Text style={[styles.chipText, formData.dosage_unit === unit && styles.chipTextSelected]}>{unit}</Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </ScrollView>
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Frequency</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            <View style={styles.chipRow}>
-                                                {FREQUENCIES.map(freq => (
-                                                    <TouchableOpacity
-                                                        key={freq}
-                                                        onPress={() => setFormData({ ...formData, frequency: freq })}
-                                                        style={[styles.chip, formData.frequency === freq && styles.chipSelected]}
-                                                    >
-                                                        <Text style={[styles.chipText, formData.frequency === freq && styles.chipTextSelected]}>{freq}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        </ScrollView>
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* Schedule */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="calendar" size={20} color="#F59E0B" />
-                                    <Text style={styles.sectionTitle}>Schedule</Text>
-                                </View>
-                                <View style={styles.card}>
-                                    <UniversalDatePicker
-                                        label="Start Date"
-                                        value={formData.start_date}
-                                        onChange={(text) => setFormData({ ...formData, start_date: text })}
-                                    />
-                                    <UniversalDatePicker
-                                        label="End Date (Optional)"
-                                        value={formData.end_date}
-                                        onChange={(text) => setFormData({ ...formData, end_date: text })}
-                                        placeholder="Ongoing if empty"
-                                    />
-                                    <View style={styles.switchRow}>
-                                        <Text style={styles.switchLabel}>Enable Reminders</Text>
-                                        <Switch
-                                            value={formData.reminders_enabled}
-                                            onValueChange={(val) => setFormData({ ...formData, reminders_enabled: val })}
-                                            trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* Provider */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="location" size={20} color="#EC4899" />
-                                    <Text style={styles.sectionTitle}>Pharmacy / Provider</Text>
-                                </View>
-                                <View style={styles.card}>
-                                    <SmartAddressInput
-                                        providerName={formData.provider}
-                                        setProviderName={(text) => setFormData({ ...formData, provider: text })}
-                                        address={formData.address}
-                                        setAddress={(text) => setFormData({ ...formData, address: text })}
-                                        city={formData.city}
-                                        setCity={(text) => setFormData({ ...formData, city: text })}
-                                        state={formData.state}
-                                        setState={(text) => setFormData({ ...formData, state: text })}
-                                        zip={formData.zip}
-                                        setZip={(text) => setFormData({ ...formData, zip: text })}
-                                        country={formData.country}
-                                        setCountry={(text) => setFormData({ ...formData, country: text })}
-                                    />
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Cost</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="0.00"
-                                                keyboardType="numeric"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.cost}
-                                                onChangeText={(text) => setFormData({ ...formData, cost: text })}
-                                            />
-                                        </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Currency</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={formData.currency}
-                                                onChangeText={(text) => setFormData({ ...formData, currency: text })}
-                                            />
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
-
-                            <RichTextInput
-                                label="Instructions / Notes"
-                                placeholder="e.g. Give with food..."
-                                value={formData.notes}
-                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                            />
-
-                            <View style={{ height: 40 }} />
+                    {/* Details */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="medkit" size={20} color={theme.colors.primary[500]} />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Details</Text>
                         </View>
-                    </ScrollView>
+
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Name</Text>
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        {
+                                            backgroundColor: theme.colors.background.secondary,
+                                            color: theme.colors.text.primary,
+                                            borderColor: formState.errors.name ? theme.colors.status.error[500] : theme.colors.border.primary
+                                        }
+                                    ]}
+                                    placeholder="e.g. Amoxicillin, Physical Therapy"
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.name}
+                                    onChangeText={(text) => formState.updateField('name', text)}
+                                />
+                            </View>
+
+                            <View style={styles.row}>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Dosage</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="e.g. 50"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        value={formState.data.dosage_value}
+                                        onChangeText={(text) => formState.updateField('dosage_value', text)}
+                                    />
+                                </View>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Unit</Text>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                        <View style={styles.chipRow}>
+                                            {DOSAGE_UNITS.map(unit => (
+                                                <TouchableOpacity
+                                                    key={unit}
+                                                    onPress={() => formState.updateField('dosage_unit', unit)}
+                                                    style={[
+                                                        styles.chip,
+                                                        { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
+                                                        formState.data.dosage_unit === unit && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                    ]}
+                                                >
+                                                    <Text style={[
+                                                        styles.chipText,
+                                                        { color: theme.colors.text.secondary },
+                                                        formState.data.dosage_unit === unit && { color: '#FFFFFF' }
+                                                    ]}>{unit}</Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+                                    </ScrollView>
+                                </View>
+                            </View>
+
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Frequency</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.chipRow}>
+                                        {FREQUENCIES.map(freq => (
+                                            <TouchableOpacity
+                                                key={freq}
+                                                onPress={() => formState.updateField('frequency', freq)}
+                                                style={[
+                                                    styles.chip,
+                                                    { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
+                                                    formState.data.frequency === freq && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    styles.chipText,
+                                                    { color: theme.colors.text.secondary },
+                                                    formState.data.frequency === freq && { color: '#FFFFFF' }
+                                                ]}>{freq}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Schedule */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="calendar" size={20} color={theme.colors.status.warning} />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Schedule</Text>
+                        </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <UniversalDatePicker
+                                label="Start Date"
+                                value={formState.data.start_date}
+                                onChange={(text) => formState.updateField('start_date', text)}
+                            />
+                            <UniversalDatePicker
+                                label="End Date (Optional)"
+                                value={formState.data.end_date}
+                                onChange={(text) => formState.updateField('end_date', text)}
+                                placeholder="Ongoing if empty"
+                            />
+                            <View style={styles.switchRow}>
+                                <Text style={[styles.switchLabel, { color: theme.colors.text.primary }]}>Active Treatment</Text>
+                                <Switch
+                                    value={formState.data.is_active}
+                                    onValueChange={(val) => formState.updateField('is_active', val)}
+                                    trackColor={{ false: theme.colors.background.secondary, true: theme.colors.primary[500] }}
+                                    thumbColor="#FFFFFF"
+                                />
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Provider & Cost */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="location" size={20} color={theme.colors.status.error[500]} />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Provider & Cost</Text>
+                        </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <SmartAddressInput
+                                providerName={formState.data.provider}
+                                setProviderName={(text) => formState.updateField('provider', text)}
+                                address={formState.data.address}
+                                setAddress={(text) => formState.updateField('address', text)}
+                                city={formState.data.city}
+                                setCity={(text) => formState.updateField('city', text)}
+                                state={formState.data.state}
+                                setState={(text) => formState.updateField('state', text)}
+                                zip={formState.data.zip}
+                                setZip={(text) => formState.updateField('zip', text)}
+                                country={formState.data.country}
+                                setCountry={(text) => formState.updateField('country', text)}
+                            />
+                            <View style={styles.row}>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Cost</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="0.00"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        value={formState.data.cost}
+                                        onChangeText={(text) => formState.updateField('cost', text)}
+                                    />
+                                </View>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Currency</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        value={formState.data.currency}
+                                        onChangeText={(text) => formState.updateField('currency', text)}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    <RichTextInput
+                        label="Instructions / Notes"
+                        placeholder="e.g. Give with food..."
+                        value={formState.data.notes}
+                        onChangeText={(text) => formState.updateField('notes', text)}
+                    />
+
+                    <View style={{ height: 40 }} />
                 </View>
-            </View>
-        </Modal>
+            )}
+        </FormModal>
     );
 }
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-    },
-    modalContainer: {
-        width: '100%',
-        maxWidth: 700,
-        backgroundColor: '#0F0F10',
-        borderRadius: 24,
-        maxHeight: '90%',
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: '#2C2C2E',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#2C2C2E',
-    },
-    cancelText: {
-        color: '#9CA3AF',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-    headerTitle: {
-        color: '#FFFFFF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    saveText: {
-        color: '#0A84FF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    scrollView: {
-        flex: 1,
-    },
     formContent: {
-        padding: 20,
         gap: 24,
     },
     repeatButton: {
@@ -390,14 +387,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        backgroundColor: '#2C2C2E',
         paddingVertical: 12,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#374151',
     },
     repeatButtonText: {
-        color: '#0A84FF',
         fontWeight: '500',
     },
     section: {
@@ -409,12 +403,10 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     sectionTitle: {
-        color: '#FFFFFF',
         fontSize: 18,
         fontWeight: '700',
     },
     card: {
-        backgroundColor: '#2C2C2E',
         borderRadius: 16,
         padding: 16,
         gap: 16,
@@ -423,17 +415,15 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     label: {
-        color: '#9CA3AF',
         fontSize: 12,
         fontWeight: '500',
     },
     input: {
-        backgroundColor: '#1C1C1E',
         borderRadius: 12,
         paddingHorizontal: 16,
         paddingVertical: 12,
-        color: '#FFFFFF',
         fontSize: 16,
+        borderWidth: 1,
     },
     row: {
         flexDirection: 'row',
@@ -451,19 +441,9 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#374151',
-        backgroundColor: '#1C1C1E',
-    },
-    chipSelected: {
-        backgroundColor: '#0A84FF',
-        borderColor: '#0A84FF',
     },
     chipText: {
-        color: '#9CA3AF',
         fontSize: 12,
-    },
-    chipTextSelected: {
-        color: '#FFFFFF',
     },
     switchRow: {
         flexDirection: 'row',
@@ -472,7 +452,6 @@ const styles = StyleSheet.create({
         paddingTop: 8,
     },
     switchLabel: {
-        color: '#FFFFFF',
         fontWeight: '500',
     },
 });

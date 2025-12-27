@@ -14,8 +14,8 @@ export default function PetProfileHeader({ pet }: PetProfileHeaderProps) {
     const pathname = usePathname();
 
     const getAge = () => {
-        if (!pet.birth_date) return 'Unknown';
-        const birth = new Date(pet.birth_date);
+        if (!pet.date_of_birth) return 'Unknown';
+        const birth = new Date(pet.date_of_birth);
         const now = new Date();
         const years = now.getFullYear() - birth.getFullYear();
         if (years > 0) return `${years} Yrs`;
@@ -88,7 +88,7 @@ export default function PetProfileHeader({ pet }: PetProfileHeaderProps) {
                             </View>
                             <View style={[styles.statBadge, styles.weightBadge]}>
                                 <Ionicons name="barbell" size={12} color="#2563EB" />
-                                <Text style={[styles.statBadgeText, { color: '#2563EB' }]}>{pet.weight ? `${pet.weight} ${pet.weight_unit}` : 'N/A'}</Text>
+                                <Text style={[styles.statBadgeText, { color: '#2563EB' }]}>{pet.weight ? `${pet.weight} kg` : 'N/A'}</Text>
                             </View>
                         </View>
                         {getLocation() && (

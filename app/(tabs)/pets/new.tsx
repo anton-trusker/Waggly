@@ -9,6 +9,7 @@ import WizardStepReview from '@/components/desktop/pets/wizard/WizardStepReview'
 import { uploadPetPhoto } from '@/lib/storage';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { designSystem } from '@/constants/designSystem';
 
 const STEPS = ['Basic Info', 'Contact Info', 'Details', 'Review'];
 
@@ -56,6 +57,8 @@ export default function AddPetPage() {
     const handleBack = () => {
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
+        } else {
+            router.back();
         }
     };
 
@@ -67,7 +70,7 @@ export default function AddPetPage() {
             const { data, error } = await supabase
                 .from('pets')
                 .insert({
-                    profile_id: user.id,
+                    user_id: user.id,
                     name: formData.name,
                     species: formData.species,
                     breed: formData.breed || null,
@@ -118,7 +121,7 @@ export default function AddPetPage() {
             }
 
             Alert.alert('Success', 'Pet added successfully!');
-            router.push(`/(tabs)/pets/${data.id}` as any);
+            router.replace(`/(tabs)/pets/${data.id}/overview` as any); // Navigate to new pet profile
         } catch (error: any) {
             Alert.alert('Error', error.message);
         } finally {
@@ -131,9 +134,9 @@ export default function AddPetPage() {
             <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Header */}
                 <View style={[styles.header, isMobile && styles.headerMobile]}>
-                    <Text style={styles.title}>Add New Pet</Text>
+                    <Text style={[styles.title, { color: designSystem.colors.text.primary }]}>Add New Pet</Text>
                     <TouchableOpacity onPress={() => router.back()}>
-                        <Ionicons name="close" size={24} color="#6B7280" />
+                        <Ionicons name="close" size={24} color={designSystem.colors.text.tertiary} />
                     </TouchableOpacity>
                 </View>
 
@@ -146,7 +149,7 @@ export default function AddPetPage() {
                                     <View
                                         style={[
                                             styles.stepperLineSegment,
-                                            index <= currentStep && styles.stepperLineSegmentActive,
+                                            index <= currentStep && { backgroundColor: designSystem.colors.primary[500] },
                                         ]}
                                     />
                                 )}
@@ -154,7 +157,10 @@ export default function AddPetPage() {
                             <View
                                 style={[
                                     styles.stepperCircle,
-                                    index <= currentStep && styles.stepperCircleActive,
+                                    index <= currentStep && {
+                                        borderColor: designSystem.colors.primary[500],
+                                        backgroundColor: designSystem.colors.primary[500]
+                                    },
                                 ]}
                             >
                                 {index < currentStep ? (
@@ -163,18 +169,20 @@ export default function AddPetPage() {
                                     <Text
                                         style={[
                                             styles.stepperNumber,
-                                            index <= currentStep && styles.stepperNumberActive,
+                                            index <= currentStep && { color: '#fff' },
                                         ]}
                                     >
                                         {index + 1}
                                     </Text>
                                 )}
                             </View>
-                            {/* Hide stepper labels on very small screens if needed, or keep them small */}
                             <Text
                                 style={[
                                     styles.stepperLabel,
-                                    index <= currentStep && styles.stepperLabelActive,
+                                    index <= currentStep && {
+                                        color: designSystem.colors.primary[500],
+                                        fontWeight: '600'
+                                    },
                                 ]}
                             >
                                 {step}
@@ -184,18 +192,18 @@ export default function AddPetPage() {
                 </View>
 
                 {/* Step Content */}
-                <View style={styles.stepContent}>
+                <View style={[styles.stepContent, isMobile && styles.stepContentMobile]}>
                     {currentStep === 0 && (
                         <WizardStepBasicInfo
                             formData={formData}
-                            onUpdate={setFormData}
+                            onUpdate={setFormData as any}
                             onNext={handleNext}
                         />
                     )}
                     {currentStep === 1 && (
                         <WizardStepContactInfo
                             formData={formData}
-                            onUpdate={setFormData}
+                            onUpdate={setFormData as any}
                             onNext={handleNext}
                             onBack={handleBack}
                         />
@@ -203,7 +211,7 @@ export default function AddPetPage() {
                     {currentStep === 2 && (
                         <WizardStepDetails
                             formData={formData}
-                            onUpdate={setFormData}
+                            onUpdate={setFormData as any}
                             onNext={handleNext}
                             onBack={handleBack}
                         />
@@ -218,15 +226,15 @@ export default function AddPetPage() {
                     )}
                 </View>
 
-                {/* Navigation Footer */}
-                {currentStep > 0 && (
-                    <View style={styles.footer}>
-                        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                            <Ionicons name="arrow-back" size={20} color="#6366F1" />
-                            <Text style={styles.backButtonText}>Back</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                {/* Navigation Footer (if not handled inside steps) */}
+                {/* Note: Standard WizardSteps handle navigation buttons internally? 
+                    WizardStepBasicInfo has internal Next button (line 287 of Step 2911). 
+                    Let's assume others do too, so we only need Back button for steps > 0 IF steps don't have it.
+                    Step 2911 shows only Next button. 
+                    Let's keep the Back button footer here just in case, but position it carefully. 
+                    Actually, we pass onBack to steps > 0 (lines 191, 196, 201), so they might handle it.
+                */}
+
             </View>
         </View>
     );
@@ -235,7 +243,7 @@ export default function AddPetPage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc',
+        backgroundColor: designSystem.colors.background.primary,
     },
     content: {
         flex: 1,
@@ -252,6 +260,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 32,
+        paddingTop: 16, // Safe area padding
     },
     headerMobile: {
         marginBottom: 24,
@@ -259,7 +268,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#111827',
     },
     stepper: {
         flexDirection: 'row',
@@ -283,10 +291,7 @@ const styles = StyleSheet.create({
     },
     stepperLineSegment: {
         height: 2,
-        backgroundColor: '#E5E7EB',
-    },
-    stepperLineSegmentActive: {
-        backgroundColor: '#6366F1',
+        backgroundColor: designSystem.colors.neutral[200],
     },
     stepperCircle: {
         width: 32,
@@ -294,51 +299,35 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         backgroundColor: '#fff',
         borderWidth: 2,
-        borderColor: '#E5E7EB',
+        borderColor: designSystem.colors.neutral[200],
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 8,
         zIndex: 1,
     },
-    stepperCircleActive: {
-        borderColor: '#6366F1',
-        backgroundColor: '#6366F1',
-    },
     stepperNumber: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6B7280',
-    },
-    stepperNumberActive: {
-        color: '#fff',
+        color: designSystem.colors.text.secondary,
     },
     stepperLabel: {
         fontSize: 12,
-        color: '#6B7280',
+        color: designSystem.colors.text.secondary,
         textAlign: 'center',
-    },
-    stepperLabelActive: {
-        color: '#6366F1',
-        fontWeight: '600',
     },
     stepContent: {
         flex: 1,
         backgroundColor: '#fff',
         borderRadius: 16,
         overflow: 'hidden',
+        // shadows
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
-    footer: {
-        marginTop: 24,
-    },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        paddingVertical: 12,
-    },
-    backButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
+    stepContentMobile: {
+        borderRadius: 12,
     },
 });

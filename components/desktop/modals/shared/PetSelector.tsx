@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface PetSelectorProps {
   selectedPetId: string;
@@ -10,39 +11,104 @@ interface PetSelectorProps {
 
 export default function PetSelector({ selectedPetId, onSelectPet }: PetSelectorProps) {
   const { pets, loading } = usePets();
+  const { theme } = useAppTheme();
 
   return (
-    <View>
-      <Text className="text-[#9CA3AF] text-xs font-bold uppercase tracking-wider mb-4">WHO IS THIS FOR?</Text>
-      <View className="flex-row flex-wrap gap-4">
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: theme.colors.text.secondary }]}>WHO IS THIS FOR?</Text>
+      <View style={styles.list}>
         {loading ? (
-          <ActivityIndicator color="#0A84FF" />
+          <ActivityIndicator color={theme.colors.primary[500]} />
+        ) : pets.length === 0 ? (
+          <Text style={[styles.emptyText, { color: theme.colors.text.secondary }]}>No pets found.</Text>
         ) : (
-          pets.map((pet) => (
-            <TouchableOpacity
-              key={pet.id}
-              onPress={() => onSelectPet(pet.id)}
-              className="items-center gap-2"
-            >
-              <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
-                {pet.photo_url ? (
-                  <Image source={{ uri: pet.photo_url }} className="w-14 h-14 rounded-full" />
-                ) : (
-                  <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
-                )}
-                {selectedPetId === pet.id && (
-                  <View className="absolute -bottom-1 -right-1 bg-[#22C55E] rounded-full p-0.5 border-2 border-[#1C1C1E]">
-                    <Ionicons name="checkmark" size={12} color="white" />
-                  </View>
-                )}
-              </View>
-              <Text className={`text-sm font-medium ${selectedPetId === pet.id ? 'text-[#0A84FF]' : 'text-[#6B7280]'}`}>
-                {pet.name}
-              </Text>
-            </TouchableOpacity>
-          ))
+          pets.map((pet) => {
+            const isSelected = selectedPetId === pet.id;
+            return (
+              <TouchableOpacity
+                key={pet.id}
+                onPress={() => onSelectPet(pet.id)}
+                style={styles.item}
+              >
+                <View style={[
+                  styles.avatarContainer,
+                  { backgroundColor: isSelected ? theme.colors.primary[500] : theme.colors.neutral[800] }
+                  // Note: neutral[800] for unselected dark circle, or adjust based on theme mode?
+                  // Using card background or specific color from original design? Original was #2C2C2E.
+                ]}>
+                  {pet.photo_url ? (
+                    <Image source={{ uri: pet.photo_url }} style={styles.avatar} />
+                  ) : (
+                    <Ionicons name="paw" size={32} color={isSelected ? '#FFFFFF' : theme.colors.text.tertiary} />
+                  )}
+                  {isSelected && (
+                    <View style={[styles.checkmark, { backgroundColor: theme.colors.status.success, borderColor: theme.colors.background.card }]}>
+                      <Ionicons name="checkmark" size={12} color="white" />
+                    </View>
+                  )}
+                </View>
+                <Text style={[
+                  styles.petName,
+                  { color: isSelected ? theme.colors.primary[500] : theme.colors.text.secondary }
+                ]}>
+                  {pet.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })
         )}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 0,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 16,
+  },
+  list: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+  item: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  avatarContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  checkmark: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    borderRadius: 12,
+    padding: 2,
+    borderWidth: 2,
+  },
+  petName: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+});
