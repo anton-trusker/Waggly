@@ -64,7 +64,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={index}
                 style={styles.petCard}
-                onPress={() => router.push(`/(tabs)/pets/[id]/overview?id=${pet.id}`)}
+                onPress={() => router.push(`/(tabs)/pets/${pet.id}/overview`)}
               >
                 <View style={styles.petIcon}>
                   {pet.photo_url ? (

@@ -76,7 +76,7 @@ export default function TabLayout() {
 
   const handleTabPressOverride = (route: string) => {
     if (route === '/(tabs)/pets' && pets && pets.length === 1) {
-      router.push(`/(tabs)/pets/[id]/overview?id=${pets[0].id}`);
+      router.push(`/(tabs)/pets/${pets[0].id}/overview` as any);
       return true; // Handled
     }
     return false; // Not handled, proceed with default
