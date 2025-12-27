@@ -19,14 +19,14 @@ export default function PetSelector({ selectedPetId, onSelectPet }: PetSelectorP
           <ActivityIndicator color="#0A84FF" />
         ) : (
           pets.map((pet) => (
-            <TouchableOpacity 
-              key={pet.id} 
+            <TouchableOpacity
+              key={pet.id}
               onPress={() => onSelectPet(pet.id)}
               className="items-center gap-2"
             >
               <View className={`w-16 h-16 rounded-full items-center justify-center ${selectedPetId === pet.id ? 'bg-[#0A84FF]' : 'bg-[#2C2C2E]'}`}>
-                {pet.image_url ? (
-                  <Image source={{ uri: pet.image_url }} className="w-14 h-14 rounded-full" />
+                {pet.photo_url ? (
+                  <Image source={{ uri: pet.photo_url }} className="w-14 h-14 rounded-full" />
                 ) : (
                   <Ionicons name="paw" size={32} color={selectedPetId === pet.id ? '#FFFFFF' : '#6B7280'} />
                 )}

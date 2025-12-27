@@ -13,10 +13,7 @@ interface AppointmentCalendarProps {
 }
 
 export default function AppointmentCalendar({ petId, onDayPress }: AppointmentCalendarProps) {
-    const { theme } = useAppTheme();
-    const { events } = useEvents();
-    const { selectedPet } = usePets();
-    const isDark = theme === 'dark';
+    const { theme, isDark } = useAppTheme();
 
     // Filter events by pet if petId provided
     const filteredEvents = useMemo(() => {
@@ -91,7 +88,7 @@ export default function AppointmentCalendar({ petId, onDayPress }: AppointmentCa
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container as any}>
             <Calendar
                 theme={calendarTheme}
                 markedDates={markedDates}
@@ -103,22 +100,22 @@ export default function AppointmentCalendar({ petId, onDayPress }: AppointmentCa
             />
 
             {/* Legend */}
-            <View style={styles.legend}>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.primary[500] }]} />
-                    <Text style={styles.legendText}>Vet</Text>
+            <View style={styles.legend as any}>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.primary[500] }] as any} />
+                    <Text style={styles.legendText as any}>Vet</Text>
                 </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
-                    <Text style={styles.legendText}>Grooming</Text>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: '#10B981' }] as any} />
+                    <Text style={styles.legendText as any}>Grooming</Text>
                 </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: '#F59E0B' }]} />
-                    <Text style={styles.legendText}>Training</Text>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: '#F59E0B' }] as any} />
+                    <Text style={styles.legendText as any}>Training</Text>
                 </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
-                    <Text style={styles.legendText}>Medication</Text>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: '#EF4444' }] as any} />
+                    <Text style={styles.legendText as any}>Medication</Text>
                 </View>
             </View>
         </View>

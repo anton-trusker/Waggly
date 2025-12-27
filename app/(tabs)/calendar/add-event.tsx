@@ -25,14 +25,17 @@ export default function AddEventScreen() {
   const { petId: initialPetId } = useLocalSearchParams();
   const { user } = useAuth();
   const { pets } = usePets();
-  
+
   const [title, setTitle] = useState('');
   const [type, setType] = useState('other');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
+
   const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState('');
+  const [locationDetails, setLocationDetails] = useState<any>(null);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -77,78 +80,87 @@ export default function AddEventScreen() {
   return (
     <View style={styles.container}>
       <AppHeader title="Add Event" showBack />
-      
+
       <ScrollView contentContainerStyle={styles.content}>
-        
+
         {/* Pet Selector */}
         <View style={styles.section}>
-            <Text style={styles.label}>For Pet</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
-                {pets.map(pet => (
-                    <TouchableOpacity 
-                        key={pet.id} 
-                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
-                        onPress={() => setSelectedPetId(pet.id)}
-                    >
-                        <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
+          <Text style={styles.label}>For Pet</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
+            {pets.map(pet => (
+              <TouchableOpacity
+                key={pet.id}
+                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                onPress={() => setSelectedPetId(pet.id)}
+              >
+                <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Event Type */}
         <View style={styles.section}>
-            <Text style={styles.label}>Event Type</Text>
-            <View style={styles.typeGrid}>
-                {EVENT_TYPES.map(t => (
-                    <TouchableOpacity 
-                        key={t.id} 
-                        style={[styles.typeCard, type === t.id && styles.typeCardSelected]}
-                        onPress={() => setType(t.id)}
-                    >
-                        <IconSymbol 
-                            android_material_icon_name={t.icon as any} 
-                            ios_icon_name={t.id === 'vet' ? 'cross.case.fill' : t.id === 'walking' ? 'figure.walk' : 'star.circle.fill'} 
-                            size={24} 
-                            color={type === t.id ? '#fff' : colors.primary} 
-                        />
-                        <Text style={[styles.typeLabel, type === t.id && styles.typeLabelSelected]}>{t.label}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
+          <Text style={styles.label}>Event Type</Text>
+          <View style={styles.typeGrid}>
+            {EVENT_TYPES.map(t => (
+              <TouchableOpacity
+                key={t.id}
+                style={[styles.typeCard, type === t.id && styles.typeCardSelected]}
+                onPress={() => setType(t.id)}
+              >
+                <IconSymbol
+                  android_material_icon_name={t.icon as any}
+                  ios_icon_name={t.id === 'vet' ? 'cross.case.fill' : t.id === 'walking' ? 'figure.walk' : 'star.circle.fill'}
+                  size={24}
+                  color={type === t.id ? '#fff' : colors.primary}
+                />
+                <Text style={[styles.typeLabel, type === t.id && styles.typeLabelSelected]}>{t.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {/* Details */}
         <View style={styles.section}>
-            <Text style={styles.label}>Event Details</Text>
-            
-            <TextInput 
-                style={styles.input} 
-                placeholder="Event Title (e.g., Annual Checkup)" 
-                placeholderTextColor={colors.textSecondary}
-                value={title}
-                onChangeText={setTitle}
-            />
+          <Text style={styles.label}>Event Details</Text>
 
-            <DateInput value={date} onChange={setDate} label="Date" />
+          <TextInput
+            style={styles.input}
+            placeholder="Event Title (e.g., Annual Checkup)"
+            placeholderTextColor={colors.textSecondary}
+            value={title}
+            onChangeText={setTitle}
+          />
 
-            <TextInput 
-                style={[styles.input, styles.textArea]} 
-                placeholder="Notes / Description" 
-                placeholderTextColor={colors.textSecondary}
-                value={description}
-                onChangeText={setDescription}
-                multiline
-                numberOfLines={3}
-            />
+          <DateInput value={date} onChange={setDate} label="Date" />
+
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Notes / Description"
+            placeholderTextColor={colors.textSecondary}
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={3}
+          />
+
+          <LocationAutocomplete
+            onLocationSelect={(details) => {
+              setLocation(details.address);
+              setLocationDetails(details);
+            }}
+            initialValue={location}
+            placeholder="Location (Optional)"
+          />
         </View>
 
-        <TouchableOpacity 
-            style={[styles.saveButton, loading && styles.disabledButton]} 
-            onPress={handleSave}
-            disabled={loading}
+        <TouchableOpacity
+          style={[styles.saveButton, loading && styles.disabledButton]}
+          onPress={handleSave}
+          disabled={loading}
         >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Create Event</Text>}
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.saveButtonText}>Create Event</Text>}
         </TouchableOpacity>
 
       </ScrollView>

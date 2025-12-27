@@ -18,7 +18,12 @@ const UpcomingCarePanel: React.FC = () => {
 
     const filteredEvents = activeFilter === 'all'
         ? upcomingEvents
-        : upcomingEvents.filter(event => event.type === activeFilter);
+        : upcomingEvents.filter(event => {
+            if (activeFilter === 'medical') return ['vet', 'vaccination', 'medication'].includes(event.type);
+            if (activeFilter === 'hygiene') return ['grooming'].includes(event.type);
+            if (activeFilter === 'training') return ['training', 'walking'].includes(event.type);
+            return false;
+        });
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -36,21 +41,17 @@ const UpcomingCarePanel: React.FC = () => {
     };
 
     const getEventIcon = (type?: string) => {
-        switch (type) {
-            case 'medical': return 'medical';
-            case 'hygiene': return 'water';
-            case 'training': return 'school';
-            default: return 'calendar';
-        }
+        if (['vet', 'vaccination', 'medication'].includes(type || '')) return 'medical';
+        if (['grooming'].includes(type || '')) return 'water';
+        if (['training', 'walking'].includes(type || '')) return 'school';
+        return 'calendar';
     };
 
     const getEventColor = (type?: string) => {
-        switch (type) {
-            case 'medical': return '#6366F1';
-            case 'hygiene': return '#10B981';
-            case 'training': return '#F59E0B';
-            default: return '#8B5CF6';
-        }
+        if (['vet', 'vaccination', 'medication'].includes(type || '')) return '#6366F1';
+        if (['grooming'].includes(type || '')) return '#10B981';
+        if (['training', 'walking'].includes(type || '')) return '#F59E0B';
+        return '#8B5CF6';
     };
 
     return (

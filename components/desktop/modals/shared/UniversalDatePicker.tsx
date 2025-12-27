@@ -148,7 +148,7 @@ export default function UniversalDatePicker({
       {error && <Text style={styles.errorText}>{error}</Text>}
 
       {/* Native Modal Picker for iOS/Android */}
-      {showPicker && Platform.OS !== 'web' && (
+      {showPicker && (Platform.OS as string) !== 'web' && (
         <RNModal
           transparent
           visible={showPicker}

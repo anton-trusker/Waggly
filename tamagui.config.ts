@@ -3,24 +3,34 @@ import { shorthands } from '@tamagui/shorthands';
 import { themes as defaultThemes, tokens as defaultTokens } from '@tamagui/themes';
 import { createInterFont } from '@tamagui/font-inter';
 import { createAnimations } from '@tamagui/animations-react-native';
-import { colors } from './tokens/colors';
-import { spacing } from './tokens/spacing';
-import { typography } from './tokens/typography';
-import { radii } from './tokens/radii';
+import { colors } from './design-system/tokens/colors';
+import { spacing } from './design-system/tokens/spacing';
+import { typography } from './design-system/tokens/typography';
+import { radii } from './design-system/tokens/radii';
 
-// Create fonts
+// Create fonts using our typography tokens
 const interFont = createInterFont({
     size: {
-        1: 11,
-        2: 12,
-        3: 13,
-        4: 14,
-        5: 16,
-        6: 18,
-        7: 20,
-        8: 24,
-        9: 28,
-        10: 32,
+        // Map numeric steps to our values, plus add semantic aliases
+        1: typography.fontSize.xs,
+        2: typography.fontSize.sm,
+        3: typography.fontSize.base,
+        4: typography.fontSize.lg,
+        5: typography.fontSize.xl,
+        6: typography.fontSize['2xl'],
+        7: typography.fontSize['3xl'],
+        8: typography.fontSize['4xl'],
+        9: typography.fontSize['5xl'],
+        10: typography.fontSize['6xl'],
+        // Semantic aliases for usage like fontSize="$xl"
+        xs: typography.fontSize.xs,
+        sm: typography.fontSize.sm,
+        base: typography.fontSize.base,
+        lg: typography.fontSize.lg,
+        xl: typography.fontSize.xl,
+        '2xl': typography.fontSize['2xl'],
+        '3xl': typography.fontSize['3xl'],
+        true: typography.fontSize.base, // Default
     },
     weight: {
         4: '400',

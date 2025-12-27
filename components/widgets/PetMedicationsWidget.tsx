@@ -48,7 +48,7 @@ export default function PetMedicationsWidget({ medications, onManage }: PetMedic
                                 </XStack>
                                 <YStack flex={1}>
                                     <Text fontSize="$base" fontWeight="600" color="$textPrimary">
-                                        {med.medication_name}
+                                        {med.name}
                                     </Text>
                                     <Text fontSize="$sm" color="$textSecondary" marginTop={2}>
                                         {med.dosage_value}{med.dosage_unit} • {med.frequency}

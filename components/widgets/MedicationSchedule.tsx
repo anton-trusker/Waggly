@@ -25,8 +25,7 @@ export default function MedicationSchedule({
     currentMonth,
     onDayPress
 }: MedicationScheduleProps) {
-    const { theme } = useAppTheme();
-    const isDark = theme === 'dark';
+    const { theme, isDark } = useAppTheme();
 
     // Convert medications to marked dates
     const markedDates: MarkedDates = useMemo(() => {
@@ -84,10 +83,10 @@ export default function MedicationSchedule({
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Medication Schedule</Text>
-                <Text style={styles.subtitle}>Track daily medication doses</Text>
+        <View style={styles.container as any}>
+            <View style={styles.header as any}>
+                <Text style={styles.title as any}>Medication Schedule</Text>
+                <Text style={styles.subtitle as any}>Track daily medication doses</Text>
             </View>
 
             <Calendar
@@ -102,40 +101,40 @@ export default function MedicationSchedule({
             />
 
             {/* Legend */}
-            <View style={styles.legend}>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.status.success[500] }]} />
-                    <Text style={styles.legendText}>Given</Text>
+            <View style={styles.legend as any}>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.status.success[500] }] as any} />
+                    <Text style={styles.legendText as any}>Given</Text>
                 </View>
-                <View style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.status.error[500] }]} />
-                    <Text style={styles.legendText}>Missed</Text>
+                <View style={styles.legendItem as any}>
+                    <View style={[styles.legendDot, { backgroundColor: designSystem.colors.status.error[500] }] as any} />
+                    <Text style={styles.legendText as any}>Missed</Text>
                 </View>
             </View>
 
             {/* Stats */}
-            <View style={styles.stats}>
-                <View style={styles.stat}>
-                    <Text style={styles.statValue}>
+            <View style={styles.stats as any}>
+                <View style={styles.stat as any}>
+                    <Text style={styles.statValue as any}>
                         {medications.reduce((acc, med) => acc + med.schedule.filter(d => d.given).length, 0)}
                     </Text>
-                    <Text style={styles.statLabel}>Doses Given</Text>
+                    <Text style={styles.statLabel as any}>Doses Given</Text>
                 </View>
-                <View style={[styles.stat, styles.statBorder]}>
-                    <Text style={[styles.statValue, { color: designSystem.colors.status.error[500] }]}>
+                <View style={[styles.stat, styles.statBorder] as any}>
+                    <Text style={[styles.statValue, { color: designSystem.colors.status.error[500] }] as any}>
                         {medications.reduce((acc, med) => acc + med.schedule.filter(d => !d.given).length, 0)}
                     </Text>
-                    <Text style={styles.statLabel}>Doses Missed</Text>
+                    <Text style={styles.statLabel as any}>Doses Missed</Text>
                 </View>
-                <View style={styles.stat}>
-                    <Text style={styles.statValue}>
+                <View style={styles.stat as any}>
+                    <Text style={styles.statValue as any}>
                         {medications.reduce((acc, med) => {
                             const given = med.schedule.filter(d => d.given).length;
                             const total = med.schedule.length;
                             return total > 0 ? acc + Math.round((given / total) * 100) : acc;
                         }, 0) / (medications.length || 1)}%
                     </Text>
-                    <Text style={styles.statLabel}>Adherence</Text>
+                    <Text style={styles.statLabel as any}>Adherence</Text>
                 </View>
             </View>
         </View>

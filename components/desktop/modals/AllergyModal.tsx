@@ -36,8 +36,8 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
             else if (pets.length > 0 && !selectedPetId) setSelectedPetId(pets[0].id);
 
             if (existingAllergy) {
-                setName(existingAllergy.name);
-                setSeverity(existingAllergy.severity || 'moderate');
+                setName(existingAllergy.allergen);
+                setSeverity(existingAllergy.severity_level || 'moderate');
                 setNotes(existingAllergy.notes || '');
             } else {
                 setName('');
@@ -61,8 +61,8 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
         setLoading(true);
 
         const allergyData = {
-            name,
-            severity,
+            allergen: name,
+            severity_level: severity,
             notes: reaction ? `Reaction: ${reaction}\n${notes}` : notes
         };
 

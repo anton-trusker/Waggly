@@ -149,7 +149,8 @@ export default function VaccineSelector({
                                     <View style={styles.itemContent}>
                                         <View style={styles.itemHeader}>
                                             <Text style={styles.itemName}>{item.vaccine_name}</Text>
-                                            {item.abbreviation && (\n                                                <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
+                                            {item.abbreviation && (
+                                                <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
                                             )}
                                         </View>
                                         <View style={styles.itemMeta}>

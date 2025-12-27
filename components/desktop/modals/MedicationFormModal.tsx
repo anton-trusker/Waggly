@@ -96,14 +96,14 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
 
             const { data: allergies } = await supabase
                 .from('allergies')
-                .select('allergen_name, allergy_type, severity_level')
+                .select('allergen, allergy_type, severity_level')
                 .eq('pet_id', selectedPetId)
                 .eq('allergy_type', 'medication');
 
             if (allergies && allergies.length > 0) {
                 allergies.forEach(allergy => {
-                    if (formData.medication_name.toLowerCase().includes(allergy.allergen_name.toLowerCase())) {
-                        warnings.push(`⚠️ ALLERGY WARNING: Pet has documented ${allergy.severity_level} allergy to ${allergy.allergen_name}`);
+                    if (formData.medication_name.toLowerCase().includes(allergy.allergen.toLowerCase())) {
+                        warnings.push(`⚠️ ALLERGY WARNING: Pet has documented ${allergy.severity_level} allergy to ${allergy.allergen}`);
                     }
                 });
             }

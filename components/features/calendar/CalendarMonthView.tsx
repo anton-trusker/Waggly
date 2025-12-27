@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ViewStyle, TextStyle } from 'react-native';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
 
@@ -53,16 +53,16 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
+    <View style={styles.container as ViewStyle}>
+      <View style={styles.headerRow as ViewStyle}>
         {header.map((h) => (
-          <Text key={h} style={styles.headerCell}>{h}</Text>
+          <Text key={h} style={styles.headerCell as TextStyle}>{h}</Text>
         ))}
       </View>
       {weeks.map((week, wi) => (
-        <View key={wi} style={styles.weekRow}>
+        <View key={wi} style={styles.weekRow as ViewStyle}>
           {week.map((date, di) => {
-            if (!date) return <View key={di} style={styles.cell} />;
+            if (!date) return <View key={di} style={styles.cell as ViewStyle} />;
             const iso = date.toISOString().slice(0, 10);
             const isToday = iso === todayISO;
             const isSelected = selected === iso;
@@ -72,7 +72,7 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
             return (
               <TouchableOpacity
                 key={di}
-                style={[styles.cell, isSelected && styles.cellSelected, isToday && styles.cellToday]}
+                style={[styles.cell, isSelected && styles.cellSelected, isToday && styles.cellToday] as ViewStyle}
                 onPress={() => {
                   onSelect(iso);
                   onDayPress?.(iso);
@@ -81,12 +81,12 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
                 accessibilityLabel={`Select ${iso}. ${dots.length > 0 ? 'Has events' : 'No events'}`}
                 {...(Platform.OS === 'web'
                   ? {
-                      onMouseEnter: () => safeSetHover(iso),
-                      onMouseLeave: () => safeSetHover(null),
-                    }
+                    onMouseEnter: () => safeSetHover(iso),
+                    onMouseLeave: () => safeSetHover(null),
+                  }
                   : {})}
               >
-                <Text style={[styles.cellText, isSelected && styles.cellTextSelected]}>{date.getDate()}</Text>
+                <Text style={[styles.cellText, isSelected && styles.cellTextSelected] as TextStyle}>{date.getDate()}</Text>
                 {dotsToShow.length > 0 && (
                   <View style={styles.dotsRow}>
                     {dotsToShow.map((c, idx) => (

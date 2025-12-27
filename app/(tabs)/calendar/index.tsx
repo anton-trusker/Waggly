@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, useWindowDimensions, ViewStyle } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 import { getSpacing, getColor, getBorderRadius } from '@/utils/designSystem';
 
@@ -34,8 +34,9 @@ export default function CalendarScreen() {
     { expiration: persistentConfigs.calendarFilters.expiration }
   );
 
-  const [selectedPetIds, setSelectedPetIds] = useState<string[]>(persistentFilters.selectedPetIds);
-  const [selectedTypes, setSelectedTypes] = useState<EventType[]>(persistentFilters.selectedTypes || []);
+
+  const [selectedPetIds, setSelectedPetIds] = useState<string[]>(persistentFilters.selectedPetIds || []);
+  const [selectedTypes, setSelectedTypes] = useState<EventType[]>((persistentFilters.selectedTypes as EventType[]) || []);
 
   // State for calendar navigation
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -128,10 +129,10 @@ export default function CalendarScreen() {
           }}
         />
       )}
-      <View style={styles.container}>
+      <View style={styles.container as ViewStyle}>
         {!isDesktop && <AppHeader title={t('navigation.calendar', { defaultValue: 'Calendar' })} />}
-        <View style={styles.headerContainer}>
-          <View style={styles.monthHeader}>
+        <View style={styles.headerContainer as ViewStyle}>
+          <View style={styles.monthHeader as ViewStyle}>
             <EnhancedButton
               title=""
               icon="chevron.left"
@@ -153,7 +154,7 @@ export default function CalendarScreen() {
         </View>
 
         <ScrollView
-          style={styles.scroll}
+          style={styles.scroll as ViewStyle}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           refreshControl={

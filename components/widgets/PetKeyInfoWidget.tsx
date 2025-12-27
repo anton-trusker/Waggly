@@ -135,8 +135,8 @@ export default function PetKeyInfoWidget({ pet, onEdit }: PetKeyInfoWidgetProps)
                             DATE OF BIRTH
                         </Text>
                         <Text fontSize="$base" fontWeight="600" color="$textPrimary">
-                            {pet.birth_date
-                                ? new Date(pet.birth_date).toLocaleDateString('en-US', {
+                            {pet.date_of_birth
+                                ? new Date(pet.date_of_birth).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric',
                                     year: 'numeric'
