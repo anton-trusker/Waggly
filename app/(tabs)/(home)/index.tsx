@@ -9,6 +9,7 @@ import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPa
 import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
 import { usePets } from '@/hooks/usePets';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import MobileHeader from '@/components/layout/MobileHeader';
 
 // New Modal Imports
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
@@ -52,6 +53,7 @@ export default function DashboardPage() {
 
     return (
         <DesktopShell>
+            <MobileHeader showLogo={true} showNotifications={true} />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 {/* Header removed (use global Topbar) */}
                 <View style={[styles.content, isMobile && styles.contentMobile]}>
