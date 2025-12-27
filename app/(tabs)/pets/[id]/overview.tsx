@@ -28,10 +28,7 @@ export default function OverviewTab() {
   const { pets } = usePets();
   const pet = pets.find(p => p.id === petId) as Pet | undefined;
 
-  const [visitOpen, setVisitOpen] = useState(false);
-  const [vaccinationOpen, setVaccinationOpen] = useState(false);
-  const [treatmentOpen, setTreatmentOpen] = useState(false);
-  const [medicationOpen, setMedicationOpen] = useState(false);
+  // Modal states removed - use global plus button instead
 
   const { events } = useEvents({ petIds: pet ? [pet.id] : [], startDate: new Date().toISOString().slice(0, 10) });
   const { vaccinations } = useVaccinations(petId);
@@ -62,35 +59,7 @@ export default function OverviewTab() {
     );
   }
 
-  const renderQuickAction = (label: string, icon: string, color: string, bgColor: string, onPress: () => void) => {
-    if (isMobile) {
-      return (
-        <TouchableOpacity key={label} style={styles.mobileQuickAction} onPress={onPress}>
-          <View style={[styles.mobileQuickActionIcon, { backgroundColor: bgColor }]}>
-            <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
-          </View>
-          <Text style={styles.mobileQuickActionLabel}>{label}</Text>
-        </TouchableOpacity>
-      )
-    }
-    return (
-      <QuickActionCard
-        key={label}
-        label={label}
-        icon={icon}
-        color={color}
-        bgColor={bgColor}
-        onPress={onPress}
-      />
-    );
-  };
-
-  const quickActions = [
-    { label: "Visit", icon: "calendar-today", color: "#2563EB", bgColor: "#DBEAFE", onPress: () => setVisitOpen(true) },
-    { label: "Vaccine", icon: "vaccines", color: "#DB2777", bgColor: "#FCE7F3", onPress: () => setVaccinationOpen(true) },
-    { label: "Meds", icon: "medication", color: "#9333EA", bgColor: "#F3E8FF", onPress: () => setTreatmentOpen(true) },
-    { label: "Doc", icon: "note-add", color: "#EA580C", bgColor: "#FFEDD5", onPress: () => router.push(`/web/pets/documents/add?petId=${pet.id}` as any) },
-  ];
+  // Quick actions removed - use global plus button for actions
 
   return (
     <>
@@ -98,21 +67,7 @@ export default function OverviewTab() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={[styles.content, isMobile && styles.contentMobile]}>
 
-          {/* Quick Actions */}
-          {isMobile ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.mobileQuickActionsContainer}
-              style={styles.mobileQuickActionsScroll}
-            >
-              {quickActions.map(action => renderQuickAction(action.label, action.icon, action.color, action.bgColor, action.onPress))}
-            </ScrollView>
-          ) : (
-            <View style={styles.quickActionsRow}>
-              {quickActions.map(action => renderQuickAction(action.label, action.icon, action.color, action.bgColor, action.onPress))}
-            </View>
-          )}
+          {/* Quick actions removed - use global plus button */}
 
           {/* Main Grid Content */}
           <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
