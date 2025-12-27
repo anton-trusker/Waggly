@@ -29,12 +29,13 @@ const DesktopShell: React.FC<DesktopShellProps> = ({ children }) => {
         [KEYBOARD_SHORTCUTS.HELP]: () => setShowShortcuts(prev => !prev),
     });
 
-    // Don't show shell on auth/onboarding pages
-    const isAuthPage = pathname?.startsWith('/web/auth') || pathname?.startsWith('/web/onboarding');
+    // Don't show shell on auth/onboarding pages or on mobile/tablet
+    const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/web/auth') || pathname?.startsWith('/web/onboarding');
     const showShell = session && !isAuthPage && width >= 1024;
 
+    // Always render children, but only add shell UI on desktop
     if (!showShell) {
-        return <View style={styles.container}>{children}</View>;
+        return <>{children}</>;
     }
 
     return (
