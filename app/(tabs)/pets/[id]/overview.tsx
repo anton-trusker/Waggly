@@ -127,7 +127,7 @@ export default function OverviewTab() {
                         setAllergyModalOpen(true);
                       }}
                     >
-                      <Text style={styles.allergyTagText}>{a.name.toUpperCase()}</Text>
+                      <Text style={styles.allergyTagText}>{a.name?.toUpperCase() || ''}</Text>
                       <IconSymbol android_material_icon_name="edit" size={12} color="#EF4444" />
                     </TouchableOpacity>
                   ))

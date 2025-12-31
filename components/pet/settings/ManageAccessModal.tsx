@@ -67,7 +67,7 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
             <View style={styles.userInfo}>
                 <View style={[styles.avatarPlaceholder, { backgroundColor: theme.colors.primary[100] }]}>
                     <Text style={[styles.avatarText, { color: theme.colors.primary[700] }]}>
-                        {item.co_owner_email.charAt(0).toUpperCase()}
+                        {item.co_owner_email?.charAt(0).toUpperCase() || '?'}
                     </Text>
                 </View>
                 <View>

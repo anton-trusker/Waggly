@@ -36,7 +36,7 @@ export default function PetProfileCardWidget({ pet }: PetProfileCardWidgetProps)
             <View style={styles.identityHeader}>
                 <View style={styles.identityHeaderLeft}>
                     <Ionicons name="paw" size={20} color="#4F46E5" />
-                    <Text style={styles.identityTitle}>{pet.name.toUpperCase()}</Text>
+                    <Text style={styles.identityTitle}>{pet.name?.toUpperCase() || ''}</Text>
                 </View>
                 {pet.microchip_number && (
                     <View style={styles.idBadge}>
