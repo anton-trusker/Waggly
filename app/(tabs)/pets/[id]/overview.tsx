@@ -30,7 +30,7 @@ export default function OverviewTab() {
   const isLargeScreen = width >= 1024;
   const isMobile = width < 768; // Mobile breakpoint
 
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { theme } = useAppTheme();
   const { pets } = usePets();
   const pet = pets.find(p => p.id === petId) as Pet | undefined;

@@ -806,6 +806,15 @@
       "diet_plan": "Diet Plan"
     }
   },
+  "widgets": {
+    "quick_actions": {
+      "visit": "Visit",
+      "vaccine": "Vaccine",
+      "meds": "Meds",
+      "weight": "Weight",
+      "doc": "Document"
+    }
+  },
   "quick_actions_menu": {
     "title": "Quick Actions",
     "subtitle": "Choose an action to add for your pet",
