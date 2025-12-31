@@ -22,12 +22,12 @@ type ActionItem = {
 };
 
 const actions: ActionItem[] = [
-  { id: 'photos', title: 'Add Photos', icon: 'camera', route: '/(tabs)/pets/add-photos', color: '#4F46E5' },
-  { id: 'weight', title: 'Log Weight', icon: 'scale-bathroom', route: '/(tabs)/pets/log-weight', color: '#10B981' },
-  { id: 'event', title: 'Add Event', icon: 'calendar-plus', route: '/(tabs)/calendar/add-event', color: '#F59E0B' },
   { id: 'visit', title: 'Add Visit', icon: 'hospital-box', route: '/(tabs)/pets/add-visit', color: '#EF4444' },
-  { id: 'treatment', title: 'Add Meds', icon: 'pill', route: '/(tabs)/pets/add-treatment', color: '#8B5CF6' },
   { id: 'vaccine', title: 'Vaccine', icon: 'needle', route: '/(tabs)/pets/add-vaccination', color: '#EC4899' },
+  { id: 'weight', title: 'Log Weight', icon: 'scale-bathroom', route: '/(tabs)/pets/log-weight', color: '#10B981' },
+  { id: 'treatment', title: 'Add Meds', icon: 'pill', route: '/(tabs)/pets/add-treatment', color: '#8B5CF6' },
+  { id: 'document', title: 'Documents', icon: 'file-document-outline', route: '/(tabs)/pets/add-documents', color: '#4F46E5' },
+  { id: 'event', title: 'Add Event', icon: 'calendar-plus', route: '/(tabs)/calendar/add-event', color: '#F59E0B' },
 ];
 
 const { width, height } = Dimensions.get('window');
@@ -109,8 +109,8 @@ export default function AddActionsModal({ visible, onClose }: Props) {
             )}
           </View>
 
-          {/* Pet Selector - Clean dropdown style */}
-          {pets.length > 0 && (
+          {/* Pet Selector - Only show if more than 1 pet */}
+          {pets.length > 1 && (
             <View style={styles.petSelectorContainer}>
               <Text style={styles.sectionLabel}>Select Pet</Text>
               <ScrollView

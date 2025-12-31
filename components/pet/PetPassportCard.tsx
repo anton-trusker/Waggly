@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocale } from '@/hooks/useLocale';
@@ -12,6 +12,8 @@ interface PetPassportCardProps {
 
 export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
     const { t } = useLocale();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768; // Mobile breakpoint
     // Generate a consistent color theme based on pet id or index? 
     // For now, let's use a nice default passport blue/purple gradient.
     const gradientColors = ['#4F46E5', '#818CF8'] as const;
@@ -67,51 +69,53 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
 
                 {/* Main Content - New Layout */}
                 <View style={styles.contentContainer}>
-                    {/* Top Row: Photo + Name/Breed */}
-                    <View style={styles.topRow}>
-                        {/* Photo */}
-                        <View style={styles.photoContainer}>
-                            {pet.photo_url ? (
-                                <Image source={{ uri: pet.photo_url }} style={styles.photo} />
-                            ) : (
-                                <View style={styles.photoPlaceholder}>
+                    {/* Top Row: Photo + Name/Breed - Hidden on Mobile */}
+                    {!isMobile && (
+                        <View style={styles.topRow}>
+                            {/* Photo */}
+                            <View style={styles.photoContainer}>
+                                {pet.photo_url ? (
+                                    <Image source={{ uri: pet.photo_url }} style={styles.photo} />
+                                ) : (
+                                    <View style={styles.photoPlaceholder}>
+                                        <IconSymbol
+                                            ios_icon_name="pawprint.fill"
+                                            android_material_icon_name="pets"
+                                            size={32}
+                                            color="#C7D2FE"
+                                        />
+                                    </View>
+                                )}
+                                <View style={styles.verifiedBadge}>
                                     <IconSymbol
-                                        ios_icon_name="pawprint.fill"
-                                        android_material_icon_name="pets"
-                                        size={32}
-                                        color="#C7D2FE"
+                                        ios_icon_name="checkmark.circle.fill"
+                                        android_material_icon_name="verified"
+                                        size={16}
+                                        color="#10B981"
                                     />
                                 </View>
-                            )}
-                            <View style={styles.verifiedBadge}>
-                                <IconSymbol
-                                    ios_icon_name="checkmark.circle.fill"
-                                    android_material_icon_name="verified"
-                                    size={16}
-                                    color="#10B981"
-                                />
                             </View>
-                        </View>
 
-                        {/* Name & Breed */}
-                        <View style={styles.nameSection}>
-                            <View style={styles.nameRow}>
-                                <Text style={styles.nameText}>{pet.name}</Text>
-                                <View style={styles.genderBadge}>
-                                    <IconSymbol
-                                        ios_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                        android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                        size={14}
-                                        color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
-                                    />
+                            {/* Name & Breed */}
+                            <View style={styles.nameSection}>
+                                <View style={styles.nameRow}>
+                                    <Text style={styles.nameText}>{pet.name}</Text>
+                                    <View style={styles.genderBadge}>
+                                        <IconSymbol
+                                            ios_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                            android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                            size={14}
+                                            color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
+                                        />
+                                    </View>
                                 </View>
+                                <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
+                                {pet.registration_id && (
+                                    <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
+                                )}
                             </View>
-                            <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
-                            {pet.registration_id && (
-                                <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
-                            )}
                         </View>
-                    </View>
+                    )}
 
                     {/* Details Table */}
                     <View style={styles.detailsTable}>
