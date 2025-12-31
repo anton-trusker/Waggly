@@ -15,8 +15,8 @@ export default function ShareTab() {
     const onShare = async () => {
         try {
             const result = await Share.share({
-                message: t('pet_profile.share.message', { url: `https://pawzly.app/pets/${id}` }),
-                url: `https://pawzly.app/pets/${id}`,
+                message: t('pet_profile.share.message', { url: `https://app.mypawzly.com/pets/${id}` }),
+                url: `https://app.mypawzly.com/pets/${id}`,
                 title: t('pet_profile.share.message_title'),
             });
         } catch (error) {

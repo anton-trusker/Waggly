@@ -33,7 +33,7 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
   }, [petId, refreshTrigger]);
 
   const handleCopy = async (token: string) => {
-    await Clipboard.setStringAsync(`https://mypawzly.app/share/${token}`);
+    await Clipboard.setStringAsync(`https://app.mypawzly.com/share/${token}`);
     Alert.alert('Success', 'Link copied to clipboard!');
   };
 

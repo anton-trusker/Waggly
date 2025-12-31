@@ -38,7 +38,7 @@ export default function ShareModal({ visible, onClose, petId, onLinkGenerated }:
 
   const handleCopyLink = async () => {
     if (!generatedShare) return;
-    const url = `https://mypawzly.app/share/${generatedShare.token}`;
+    const url = `https://app.mypawzly.com/share/${generatedShare.token}`;
     await Clipboard.setStringAsync(url);
     Alert.alert('Success', 'Link copied to clipboard!');
   };
