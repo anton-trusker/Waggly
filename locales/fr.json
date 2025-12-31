@@ -321,294 +321,292 @@
     "help_center": "Centre d'aide",
     "terms_of_service": "Conditions d'utilisation",
     "privacy_policy": "Politique de confidentialité"
-  }
-},
-"widgets": {
-  "quick_actions": {
-    "add_visit": "Visite",
-    "add_vaccine": "Vaccin",
-    "add_medication": "Médic.",
-    "log_weight": "Poids",
-    "add_document": "Document"
-  }
-},
-"passport": {
-  "label": "Passeport",
-  "unknown_breed": "Race inconnue",
-  "dob": "Né(e)",
-  "weight": "Poids",
-  "color": "Couleur",
-  "blood_type": "Groupe sanguin",
-  "reg": "Immat."
-},
-"pet_profile": {
-  "table_headers": {
-    "vaccine": "VACCIN",
-    "date_given": "DATE",
-    "expires": "EXPIRE"
   },
-  "history_timeline": "Historique",
-  "view_full_timeline": "Voir tout l'historique",
-  "loading": "Chargement...",
-  "overview": {
-    "about": "À propos",
-    "no_notes": "Aucune note disponible.",
-    "health_status": "État de santé",
-    "up_to_date": "À jour",
-    "attention_needed": "Attention requise",
-    "critical_alert": "Alerte critique",
-    "unknown_status": "Statut inconnu"
-  },
-  "edit": {
-    "title": "Modifier l'animal",
-    "success": "Succès",
-    "success_message": "Animal mis à jour avec succès !",
-    "error": "Erreur",
-    "name_required": "Le nom de l'animal est requis",
-    "sections": {
-      "basic_info": "Informations de base",
-      "medical_info": "Informations médicales",
-      "notes": "Notes"
-    },
-    "labels": {
-      "name": "Nom *",
-      "species": "Espèce",
-      "breed": "Race",
-      "color": "Couleur",
-      "gender": "Sexe",
-      "dob": "Date de naissance",
-      "weight": "Poids",
-      "unit": "Unité",
-      "spayed_neutered": "Stérilisé/Castré",
-      "microchip": "Numéro de puce"
-    },
-    "placeholders": {
-      "name": "ex: Max, Luna",
-      "breed": "ex: Golden Retriever",
-      "color": "ex: Brun, Noir",
-      "dob": "AAAA-MM-JJ",
-      "weight": "0.0",
-      "microchip": "ex: 123456789012345",
-      "notes": "Notes supplémentaires..."
-    },
-    "save_changes": "Enregistrer"
-  },
-  "documents": {
-    "title": "Tous les documents",
-    "search_placeholder": "Rechercher...",
-    "no_documents": "Aucun document trouvé",
-    "upload_cta": "Télécharger un document",
-    "actions": {
-      "scan": "Scanner",
-      "upload": "Télécharger",
-      "autofill": "Remplissage auto"
-    },
-    "filters": {
-      "all_types": "Tous les types",
-      "last_6_months": "6 derniers mois"
-    },
-    "types": {
-      "vaccination": "Vaccination",
-      "lab_result": "Résultat Labo",
-      "invoice": "Facture",
-      "prescription": "Ordonnance",
-      "insurance": "Assurance",
-      "medical": "Médical",
-      "other": "Autre"
+  "widgets": {
+    "quick_actions": {
+      "add_visit": "Visite",
+      "add_vaccine": "Vaccin",
+      "add_medication": "Médic.",
+      "log_weight": "Poids",
+      "add_document": "Document"
     }
   },
-  "health": {
-    "titles": {
-      "visits": "Visites",
-      "vaccinations": "Vaccinations",
-      "treatments": "Traitements",
-      "allergies": "Allergies",
-      "health_log": "Journal de santé"
-    },
-    "actions": {
-      "add_visit": "Ajouter Visite",
-      "add_vaccine": "Ajouter Vaccin",
-      "add_tx": "Ajouter T3",
-      "add_image": "Ajouter Image",
-      "add_doc": "Ajouter Doc",
-      "add_record": "Ajouter Enreg.",
-      "new_visit": "Nouvelle Visite",
-      "add_new": "+ Nouveau",
-      "add_allergy": "+ Allergie",
-      "view_history": "Voir l'historique",
-      "filter": "Filtrer"
-    },
-    "sections": {
-      "upcoming": "À VENIR",
-      "recent_history": "HISTORIQUE RÉCENT"
-    },
-    "badges": {
-      "today": "AUJOURD'HUI",
-      "tomorrow": "DEMAIN",
-      "days": "JOURS",
-      "due_soon": "BIENTÔT",
-      "active": "ACTIF",
-      "expired": "EXPIRÉ"
-    },
-    "empty": {
-      "upcoming": "Aucune visite à venir",
-      "recent": "Aucune visite récente",
-      "vaccinations": "Aucune vaccination enregistrée",
-      "treatments": "Aucun traitement en cours",
-      "allergies": "Aucune allergie enregistrée"
-    }
+  "passport": {
+    "label": "Passeport",
+    "unknown_breed": "Race inconnue",
+    "dob": "Né(e)",
+    "weight": "Poids",
+    "color": "Couleur",
+    "blood_type": "Groupe sanguin",
+    "reg": "Immat."
   },
-  "history": {
-    "filters": {
-      "all": "Tout",
-      "vaccinations": "Vaccinations",
-      "visits": "Visites",
-      "medications": "Médicaments",
-      "weight": "Poids"
+  "pet_profile": {
+    "table_headers": {
+      "vaccine": "VACCIN",
+      "date_given": "DATE",
+      "expires": "EXPIRE"
     },
-    "empty": {
-      "title": "Aucun historique",
-      "desc": "Les événements apparaîtront ici",
-      "pet_not_found": "Animal non trouvé",
-      "load_error": "Erreur de chargement"
-    }
-  },
-  "album": {
-    "title": "Galerie Photo",
-    "subtitle": "Gérez les photos et albums de {{name}}.",
-    "actions": {
-      "new_album": "Nouvel album",
-      "add_media": "Ajouter média",
-      "load_more": "Charger plus",
-      "create_album": "Créer un album",
-      "view_all": "Voir tout"
+    "history_timeline": "Historique",
+    "view_full_timeline": "Voir tout l'historique",
+    "loading": "Chargement...",
+    "overview": {
+      "about": "À propos",
+      "no_notes": "Aucune note disponible.",
+      "health_status": "État de santé",
+      "up_to_date": "À jour",
+      "attention_needed": "Attention requise",
+      "critical_alert": "Alerte critique",
+      "unknown_status": "Statut inconnu"
     },
-    "headers": {
-      "albums": "Albums"
-    },
-    "filters": {
-      "all": "Tout",
-      "photos": "Photos",
-      "videos": "Vidéos",
-      "favorites": "Favoris"
-    },
-    "sort": {
-      "label": "Trier par:",
-      "newest": "Plus récents"
-    }
-  },
-  "events": {
-    "title": "Événements & Agenda",
-    "subtitle": "Gérez les rendez-vous de {{name}}.",
-    "actions": {
-      "add_event": "Ajouter événement",
-      "add_first": "Ajouter premier événement"
-    },
-    "sections": {
-      "upcoming": "Événements à venir",
-      "past": "Événements passés"
-    },
-    "empty": {
-      "title": "Aucun événement",
-      "desc": "Ajoutez des événements pour suivre les soins"
-    },
-    "time": {
-      "all_day": "Toute la journée",
-      "today": "Aujourd'hui",
-      "tomorrow": "Demain",
-      "in_days": "Dans {{days}} jours"
-    },
-    "types": {
-      "vaccination": "Vaccination",
-      "treatment": "Traitement",
-      "vet": "Vétérinaire",
-      "grooming": "Toilettage",
-      "walking": "Promenade",
-      "feeding": "Repas"
-    }
-  },
-  "settings": {
-    "sections": {
-      "management": "Gestion",
-      "privacy": "Confidentialité",
-      "notifications": "Notifications"
-    },
-    "items": {
-      "transfer": {
-        "title": "Transférer la propriété",
-        "desc": "Transférer cet animal à un autre utilisateur"
+    "edit": {
+      "title": "Modifier l'animal",
+      "success": "Succès",
+      "success_message": "Animal mis à jour avec succès !",
+      "error": "Erreur",
+      "name_required": "Le nom de l'animal est requis",
+      "sections": {
+        "basic_info": "Informations de base",
+        "medical_info": "Informations médicales",
+        "notes": "Notes"
       },
-      "delete": {
-        "title": "Supprimer l'animal",
-        "deleting": "Suppression...",
-        "desc": "Supprimer définitivement cet animal"
+      "labels": {
+        "name": "Nom *",
+        "species": "Espèce",
+        "breed": "Race",
+        "color": "Couleur",
+        "gender": "Sexe",
+        "dob": "Date de naissance",
+        "weight": "Poids",
+        "unit": "Unité",
+        "spayed_neutered": "Stérilisé/Castré",
+        "microchip": "Numéro de puce"
       },
-      "privacy_settings": {
-        "title": "Paramètres de confidentialité",
-        "desc": "Qui peut voir ce profil"
+      "placeholders": {
+        "name": "ex: Max, Luna",
+        "breed": "ex: Golden Retriever",
+        "color": "ex: Brun, Noir",
+        "dob": "AAAA-MM-JJ",
+        "weight": "0.0",
+        "microchip": "ex: 123456789012345",
+        "notes": "Notes supplémentaires..."
       },
-      "notifications": {
-        "title": "Préférences de notification",
-        "desc": "Gérer les rappels et alertes"
+      "save_changes": "Enregistrer"
+    },
+    "documents": {
+      "title": "Tous les documents",
+      "search_placeholder": "Rechercher...",
+      "no_documents": "Aucun document trouvé",
+      "upload_cta": "Télécharger un document",
+      "actions": {
+        "scan": "Scanner",
+        "upload": "Télécharger",
+        "autofill": "Remplissage auto"
+      },
+      "filters": {
+        "all_types": "Tous les types",
+        "last_6_months": "6 derniers mois"
+      },
+      "types": {
+        "vaccination": "Vaccination",
+        "lab_result": "Résultat Labo",
+        "invoice": "Facture",
+        "prescription": "Ordonnance",
+        "insurance": "Assurance",
+        "medical": "Médical",
+        "other": "Autre"
       }
     },
-    "alerts": {
-      "delete": {
-        "title": "Supprimer l'animal",
-        "message": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
-        "cancel": "Annuler",
-        "confirm": "Supprimer"
+    "health": {
+      "titles": {
+        "visits": "Visites",
+        "vaccinations": "Vaccinations",
+        "treatments": "Traitements",
+        "allergies": "Allergies",
+        "health_log": "Journal de santé"
       },
-      "coming_soon": {
-        "title": "Bientôt disponible",
-        "transfer": "Le transfert sera bientôt disponible.",
-        "privacy": "Les paramètres de confidentialité seront bientôt disponibles.",
-        "notifications": "Les préférences de notification seront bientôt disponibles."
+      "actions": {
+        "add_visit": "Ajouter Visite",
+        "add_vaccine": "Ajouter Vaccin",
+        "add_tx": "Ajouter T3",
+        "add_image": "Ajouter Image",
+        "add_doc": "Ajouter Doc",
+        "add_record": "Ajouter Enreg.",
+        "new_visit": "Nouvelle Visite",
+        "add_new": "+ Nouveau",
+        "add_allergy": "+ Allergie",
+        "view_history": "Voir l'historique",
+        "filter": "Filtrer"
       },
-      "error": {
-        "title": "Erreur",
-        "delete_failed": "Échec de la suppression. Veuillez réessayer."
+      "sections": {
+        "upcoming": "À VENIR",
+        "recent_history": "HISTORIQUE RÉCENT"
+      },
+      "badges": {
+        "today": "AUJOURD'HUI",
+        "tomorrow": "DEMAIN",
+        "days": "JOURS",
+        "due_soon": "BIENTÔT",
+        "active": "ACTIF",
+        "expired": "EXPIRÉ"
+      },
+      "empty": {
+        "upcoming": "Aucune visite à venir",
+        "recent": "Aucune visite récente",
+        "vaccinations": "Aucune vaccination enregistrée",
+        "treatments": "Aucun traitement en cours",
+        "allergies": "Aucune allergie enregistrée"
       }
     },
-    "info": {
-      "id": "ID Animal:",
-      "created": "Créé le:"
+    "history": {
+      "filters": {
+        "all": "Tout",
+        "vaccinations": "Vaccinations",
+        "visits": "Visites",
+        "medications": "Médicaments",
+        "weight": "Poids"
+      },
+      "empty": {
+        "title": "Aucun historique",
+        "desc": "Les événements apparaîtront ici",
+        "pet_not_found": "Animal non trouvé",
+        "load_error": "Erreur de chargement"
+      }
+    },
+    "album": {
+      "title": "Galerie Photo",
+      "subtitle": "Gérez les photos et albums de {{name}}.",
+      "actions": {
+        "new_album": "Nouvel album",
+        "add_media": "Ajouter média",
+        "load_more": "Charger plus",
+        "create_album": "Créer un album",
+        "view_all": "Voir tout"
+      },
+      "headers": {
+        "albums": "Albums"
+      },
+      "filters": {
+        "all": "Tout",
+        "photos": "Photos",
+        "videos": "Vidéos",
+        "favorites": "Favoris"
+      },
+      "sort": {
+        "label": "Trier par:",
+        "newest": "Plus récents"
+      }
+    },
+    "events": {
+      "title": "Événements & Agenda",
+      "subtitle": "Gérez les rendez-vous de {{name}}.",
+      "actions": {
+        "add_event": "Ajouter événement",
+        "add_first": "Ajouter premier événement"
+      },
+      "sections": {
+        "upcoming": "Événements à venir",
+        "past": "Événements passés"
+      },
+      "empty": {
+        "title": "Aucun événement",
+        "desc": "Ajoutez des événements pour suivre les soins"
+      },
+      "time": {
+        "all_day": "Toute la journée",
+        "today": "Aujourd'hui",
+        "tomorrow": "Demain",
+        "in_days": "Dans {{days}} jours"
+      },
+      "types": {
+        "vaccination": "Vaccination",
+        "treatment": "Traitement",
+        "vet": "Vétérinaire",
+        "grooming": "Toilettage",
+        "walking": "Promenade",
+        "feeding": "Repas"
+      }
+    },
+    "settings": {
+      "sections": {
+        "management": "Gestion",
+        "privacy": "Confidentialité",
+        "notifications": "Notifications"
+      },
+      "items": {
+        "transfer": {
+          "title": "Transférer la propriété",
+          "desc": "Transférer cet animal à un autre utilisateur"
+        },
+        "delete": {
+          "title": "Supprimer l'animal",
+          "deleting": "Suppression...",
+          "desc": "Supprimer définitivement cet animal"
+        },
+        "privacy_settings": {
+          "title": "Paramètres de confidentialité",
+          "desc": "Qui peut voir ce profil"
+        },
+        "notifications": {
+          "title": "Préférences de notification",
+          "desc": "Gérer les rappels et alertes"
+        }
+      },
+      "alerts": {
+        "delete": {
+          "title": "Supprimer l'animal",
+          "message": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer"
+        },
+        "coming_soon": {
+          "title": "Bientôt disponible",
+          "transfer": "Le transfert sera bientôt disponible.",
+          "privacy": "Les paramètres de confidentialité seront bientôt disponibles.",
+          "notifications": "Les préférences de notification seront bientôt disponibles."
+        },
+        "error": {
+          "title": "Erreur",
+          "delete_failed": "Échec de la suppression. Veuillez réessayer."
+        }
+      },
+      "info": {
+        "id": "ID Animal:",
+        "created": "Créé le:"
+      }
+    },
+    "share": {
+      "title": "Partager le profil",
+      "desc": "Partagez ce profil avec votre famille ou vétérinaire.",
+      "action": "Partager",
+      "message": "Découvrez ce profil d'animal sur Pawzly ! {{url}}",
+      "message_title": "Profil Animal"
     }
-  },
-  "share": {
-    "title": "Partager le profil",
-    "desc": "Partagez ce profil avec votre famille ou vétérinaire.",
-    "action": "Partager",
-    "message": "Découvrez ce profil d'animal sur Pawzly ! {{url}}",
-    "message_title": "Profil Animal"
   }
-}
 },
 "quick_actions_menu": {
-"title": "Actions Rapides",
-"subtitle": "Choisir une action pour votre animal",
-"select_pet": "Sélectionner un animal",
-"actions": {
-  "visit": {
-    "title": "Visite",
-    "desc": "Enregistrer une visite"
-  },
-  "photos": {
-    "title": "Photos",
-    "desc": "Ajouter des photos"
-  },
-  "vaccine": {
-    "title": "Vaccin",
-    "desc": "Enregistrer un vaccin"
-  },
-  "documents": {
-    "title": "Documents",
-    "desc": "Télécharger des documents"
-  },
-  "medication": {
-    "title": "Médicaments",
-    "desc": "Ajouter un médicament"
+  "title": "Actions Rapides",
+  "subtitle": "Choisir une action pour votre animal",
+  "select_pet": "Sélectionner un animal",
+  "actions": {
+    "visit": {
+      "title": "Visite",
+      "desc": "Enregistrer une visite"
+    },
+    "photos": {
+      "title": "Photos",
+      "desc": "Ajouter des photos"
+    },
+    "vaccine": {
+      "title": "Vaccin",
+      "desc": "Enregistrer un vaccin"
+    },
+    "documents": {
+      "title": "Documents",
+      "desc": "Télécharger des documents"
+    },
+    "medication": {
+      "title": "Médicaments",
+      "desc": "Ajouter un médicament"
+    }
   }
-}
-}
 }

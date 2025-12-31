@@ -321,294 +321,292 @@
     "help_center": "Hilfe-Center",
     "terms_of_service": "Nutzungsbedingungen",
     "privacy_policy": "Datenschutzrichtlinie"
-  }
-},
-"widgets": {
-  "quick_actions": {
-    "add_visit": "Besuch",
-    "add_vaccine": "Impfung",
-    "add_medication": "Medik.",
-    "log_weight": "Gewicht",
-    "add_document": "Dokument"
-  }
-},
-"passport": {
-  "label": "Heimtierausweis",
-  "unknown_breed": "Unbekannte Rasse",
-  "dob": "Geb",
-  "weight": "Gewicht",
-  "color": "Farbe",
-  "blood_type": "Blutgruppe",
-  "reg": "Reg"
-},
-"pet_profile": {
-  "table_headers": {
-    "vaccine": "IMPFSTOFF",
-    "date_given": "DATUM",
-    "expires": "LÄUFT AB"
   },
-  "history_timeline": "Verlauf & Zeitachse",
-  "view_full_timeline": "Vollständigen Verlauf anzeigen",
-  "loading": "Lade Haustierübersicht...",
-  "overview": {
-    "about": "Über",
-    "no_notes": "Keine Notizen verfügbar.",
-    "health_status": "Gesundheitsstatus",
-    "up_to_date": "Alles aktuell",
-    "attention_needed": "Aufmerksamkeit erforderlich",
-    "critical_alert": "Kritischer Alarm",
-    "unknown_status": "Status unbekannt"
-  },
-  "edit": {
-    "title": "Haustier bearbeiten",
-    "success": "Erfolg",
-    "success_message": "Haustier erfolgreich aktualisiert!",
-    "error": "Fehler",
-    "name_required": "Name des Haustiers ist erforderlich",
-    "sections": {
-      "basic_info": "Grundinformationen",
-      "medical_info": "Medizinische Informationen",
-      "notes": "Notizen"
-    },
-    "labels": {
-      "name": "Name *",
-      "species": "Art",
-      "breed": "Rasse",
-      "color": "Farbe",
-      "gender": "Geschlecht",
-      "dob": "Geburtsdatum",
-      "weight": "Gewicht",
-      "unit": "Einheit",
-      "spayed_neutered": "Kastriert/Sterilisiert",
-      "microchip": "Mikrochip-Nummer"
-    },
-    "placeholders": {
-      "name": "z.B. Max, Luna",
-      "breed": "z.B. Golden Retriever",
-      "color": "z.B. Braun, Schwarz",
-      "dob": "JJJJ-MM-TT",
-      "weight": "0.0",
-      "microchip": "z.B. 123456789012345",
-      "notes": "Zusätzliche Notizen..."
-    },
-    "save_changes": "Änderungen speichern"
-  },
-  "documents": {
-    "title": "Alle Dokumente",
-    "search_placeholder": "Suche nach Titel...",
-    "no_documents": "Keine Dokumente gefunden",
-    "upload_cta": "Dokument hochladen",
-    "actions": {
-      "scan": "Scannen",
-      "upload": "Hochladen",
-      "autofill": "Auto-Fill"
-    },
-    "filters": {
-      "all_types": "Alle Typen",
-      "last_6_months": "Letzte 6 Monate"
-    },
-    "types": {
-      "vaccination": "Impfung",
-      "lab_result": "Laborergebnis",
-      "invoice": "Rechnung",
-      "prescription": "Rezept",
-      "insurance": "Versicherung",
-      "medical": "Medizinisch",
-      "other": "Sonstiges"
+  "widgets": {
+    "quick_actions": {
+      "add_visit": "Besuch",
+      "add_vaccine": "Impfung",
+      "add_medication": "Medik.",
+      "log_weight": "Gewicht",
+      "add_document": "Dokument"
     }
   },
-  "health": {
-    "titles": {
-      "visits": "Besuche",
-      "vaccinations": "Impfungen",
-      "treatments": "Behandlungen & Medis",
-      "allergies": "Allergien",
-      "health_log": "Gesundheitstagebuch"
-    },
-    "actions": {
-      "add_visit": "Besuch+",
-      "add_vaccine": "Impfung+",
-      "add_tx": "Behandl.+",
-      "add_image": "Bild+",
-      "add_doc": "Dok+",
-      "add_record": "Eintrag+",
-      "new_visit": "Neuer Besuch",
-      "add_new": "+ Hinzufügen",
-      "add_allergy": "+ Allergie",
-      "view_history": "Verlauf ansehen",
-      "filter": "Filter"
-    },
-    "sections": {
-      "upcoming": "KOMMEND",
-      "recent_history": "JÜNGSTER VERLAUF"
-    },
-    "badges": {
-      "today": "HEUTE",
-      "tomorrow": "MORGEN",
-      "days": "TAGE",
-      "due_soon": "BALD FÄLLIG",
-      "active": "AKTIV",
-      "expired": "ABGELAUFEN"
-    },
-    "empty": {
-      "upcoming": "Keine kommenden Besuche",
-      "recent": "Keine jüngsten Besuche",
-      "vaccinations": "Keine Impfungen aufgezeichnet",
-      "treatments": "Keine aktuellen Behandlungen",
-      "allergies": "Keine Allergien aufgezeichnet"
-    }
+  "passport": {
+    "label": "Heimtierausweis",
+    "unknown_breed": "Unbekannte Rasse",
+    "dob": "Geb",
+    "weight": "Gewicht",
+    "color": "Farbe",
+    "blood_type": "Blutgruppe",
+    "reg": "Reg"
   },
-  "history": {
-    "filters": {
-      "all": "Alle",
-      "vaccinations": "Impfungen",
-      "visits": "Besuche",
-      "medications": "Medikamente",
-      "weight": "Gewicht"
+  "pet_profile": {
+    "table_headers": {
+      "vaccine": "IMPFSTOFF",
+      "date_given": "DATUM",
+      "expires": "LÄUFT AB"
     },
-    "empty": {
-      "title": "Noch kein Verlauf",
-      "desc": "Ereignisse wie Impfungen, Besuche und Gewichtsprotokolle erscheinen hier",
-      "pet_not_found": "Haustier nicht gefunden",
-      "load_error": "Verlauf konnte nicht geladen werden"
-    }
-  },
-  "album": {
-    "title": "Fotogalerie",
-    "subtitle": "Verwalten Sie Fotos, Videos und Alben von {{name}}.",
-    "actions": {
-      "new_album": "Neues Album",
-      "add_media": "Medien hinzu",
-      "load_more": "Mehr laden",
-      "create_album": "Album erstellen",
-      "view_all": "Alle ansehen"
+    "history_timeline": "Verlauf & Zeitachse",
+    "view_full_timeline": "Vollständigen Verlauf anzeigen",
+    "loading": "Lade Haustierübersicht...",
+    "overview": {
+      "about": "Über",
+      "no_notes": "Keine Notizen verfügbar.",
+      "health_status": "Gesundheitsstatus",
+      "up_to_date": "Alles aktuell",
+      "attention_needed": "Aufmerksamkeit erforderlich",
+      "critical_alert": "Kritischer Alarm",
+      "unknown_status": "Status unbekannt"
     },
-    "headers": {
-      "albums": "Alben"
-    },
-    "filters": {
-      "all": "Alle",
-      "photos": "Fotos",
-      "videos": "Videos",
-      "favorites": "Favoriten"
-    },
-    "sort": {
-      "label": "Sortieren nach:",
-      "newest": "Neueste zuerst"
-    }
-  },
-  "events": {
-    "title": "Termine & Zeitplan",
-    "subtitle": "Verwalten Sie Termine und Aktivitäten von {{name}}.",
-    "actions": {
-      "add_event": "Termin hinzu",
-      "add_first": "Ersten Termin hinzufügen"
-    },
-    "sections": {
-      "upcoming": "Kommende Termine",
-      "past": "Vergangene Termine"
-    },
-    "empty": {
-      "title": "Noch keine Termine",
-      "desc": "Fügen Sie Termine hinzu, um den Pflegeplan zu verfolgen"
-    },
-    "time": {
-      "all_day": "Ganztägig",
-      "today": "Heute",
-      "tomorrow": "Morgen",
-      "in_days": "In {{days}} Tagen"
-    },
-    "types": {
-      "vaccination": "Impfung",
-      "treatment": "Behandlung",
-      "vet": "Tierarztbesuch",
-      "grooming": "Fellpflege",
-      "walking": "Gassi gehen",
-      "feeding": "Fütterung"
-    }
-  },
-  "settings": {
-    "sections": {
-      "management": "Verwaltung",
-      "privacy": "Privatsphäre",
-      "notifications": "Benachrichtigungen"
-    },
-    "items": {
-      "transfer": {
-        "title": "Besitz übertragen",
-        "desc": "Haustier an einen anderen Nutzer übertragen"
+    "edit": {
+      "title": "Haustier bearbeiten",
+      "success": "Erfolg",
+      "success_message": "Haustier erfolgreich aktualisiert!",
+      "error": "Fehler",
+      "name_required": "Name des Haustiers ist erforderlich",
+      "sections": {
+        "basic_info": "Grundinformationen",
+        "medical_info": "Medizinische Informationen",
+        "notes": "Notizen"
       },
-      "delete": {
-        "title": "Haustier löschen",
-        "deleting": "Löscht...",
-        "desc": "Dieses Haustier dauerhaft entfernen"
+      "labels": {
+        "name": "Name *",
+        "species": "Art",
+        "breed": "Rasse",
+        "color": "Farbe",
+        "gender": "Geschlecht",
+        "dob": "Geburtsdatum",
+        "weight": "Gewicht",
+        "unit": "Einheit",
+        "spayed_neutered": "Kastriert/Sterilisiert",
+        "microchip": "Mikrochip-Nummer"
       },
-      "privacy_settings": {
-        "title": "Privatsphäre-Einstellungen",
-        "desc": "Wer kann dieses Profil sehen"
+      "placeholders": {
+        "name": "z.B. Max, Luna",
+        "breed": "z.B. Golden Retriever",
+        "color": "z.B. Braun, Schwarz",
+        "dob": "JJJJ-MM-TT",
+        "weight": "0.0",
+        "microchip": "z.B. 123456789012345",
+        "notes": "Zusätzliche Notizen..."
       },
-      "notifications": {
-        "title": "Benachrichtigungen",
-        "desc": "Erinnerungen und Alarme verwalten"
+      "save_changes": "Änderungen speichern"
+    },
+    "documents": {
+      "title": "Alle Dokumente",
+      "search_placeholder": "Suche nach Titel...",
+      "no_documents": "Keine Dokumente gefunden",
+      "upload_cta": "Dokument hochladen",
+      "actions": {
+        "scan": "Scannen",
+        "upload": "Hochladen",
+        "autofill": "Auto-Fill"
+      },
+      "filters": {
+        "all_types": "Alle Typen",
+        "last_6_months": "Letzte 6 Monate"
+      },
+      "types": {
+        "vaccination": "Impfung",
+        "lab_result": "Laborergebnis",
+        "invoice": "Rechnung",
+        "prescription": "Rezept",
+        "insurance": "Versicherung",
+        "medical": "Medizinisch",
+        "other": "Sonstiges"
       }
     },
-    "alerts": {
-      "delete": {
-        "title": "Haustier löschen",
-        "message": "Sind Sie sicher, dass Sie {{name}} löschen möchten? Dies kann nicht rückgängig gemacht werden.",
-        "cancel": "Abbrechen",
-        "confirm": "Löschen"
+    "health": {
+      "titles": {
+        "visits": "Besuche",
+        "vaccinations": "Impfungen",
+        "treatments": "Behandlungen & Medis",
+        "allergies": "Allergien",
+        "health_log": "Gesundheitstagebuch"
       },
-      "coming_soon": {
-        "title": "Kommt bald",
-        "transfer": "Besitzübertragung ist bald verfügbar.",
-        "privacy": "Privatsphäre-Einstellungen sind bald verfügbar.",
-        "notifications": "Benachrichtigungseinstellungen sind bald verfügbar."
+      "actions": {
+        "add_visit": "Besuch+",
+        "add_vaccine": "Impfung+",
+        "add_tx": "Behandl.+",
+        "add_image": "Bild+",
+        "add_doc": "Dok+",
+        "add_record": "Eintrag+",
+        "new_visit": "Neuer Besuch",
+        "add_new": "+ Hinzufügen",
+        "add_allergy": "+ Allergie",
+        "view_history": "Verlauf ansehen",
+        "filter": "Filter"
       },
-      "error": {
-        "title": "Fehler",
-        "delete_failed": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut."
+      "sections": {
+        "upcoming": "KOMMEND",
+        "recent_history": "JÜNGSTER VERLAUF"
+      },
+      "badges": {
+        "today": "HEUTE",
+        "tomorrow": "MORGEN",
+        "days": "TAGE",
+        "due_soon": "BALD FÄLLIG",
+        "active": "AKTIV",
+        "expired": "ABGELAUFEN"
+      },
+      "empty": {
+        "upcoming": "Keine kommenden Besuche",
+        "recent": "Keine jüngsten Besuche",
+        "vaccinations": "Keine Impfungen aufgezeichnet",
+        "treatments": "Keine aktuellen Behandlungen",
+        "allergies": "Keine Allergien aufgezeichnet"
       }
     },
-    "info": {
-      "id": "Tier-ID:",
-      "created": "Erstellt:"
+    "history": {
+      "filters": {
+        "all": "Alle",
+        "vaccinations": "Impfungen",
+        "visits": "Besuche",
+        "medications": "Medikamente",
+        "weight": "Gewicht"
+      },
+      "empty": {
+        "title": "Noch kein Verlauf",
+        "desc": "Ereignisse wie Impfungen, Besuche und Gewichtsprotokolle erscheinen hier",
+        "pet_not_found": "Haustier nicht gefunden",
+        "load_error": "Verlauf konnte nicht geladen werden"
+      }
+    },
+    "album": {
+      "title": "Fotogalerie",
+      "subtitle": "Verwalten Sie Fotos, Videos und Alben von {{name}}.",
+      "actions": {
+        "new_album": "Neues Album",
+        "add_media": "Medien hinzu",
+        "load_more": "Mehr laden",
+        "create_album": "Album erstellen",
+        "view_all": "Alle ansehen"
+      },
+      "headers": {
+        "albums": "Alben"
+      },
+      "filters": {
+        "all": "Alle",
+        "photos": "Fotos",
+        "videos": "Videos",
+        "favorites": "Favoriten"
+      },
+      "sort": {
+        "label": "Sortieren nach:",
+        "newest": "Neueste zuerst"
+      }
+    },
+    "events": {
+      "title": "Termine & Zeitplan",
+      "subtitle": "Verwalten Sie Termine und Aktivitäten von {{name}}.",
+      "actions": {
+        "add_event": "Termin hinzu",
+        "add_first": "Ersten Termin hinzufügen"
+      },
+      "sections": {
+        "upcoming": "Kommende Termine",
+        "past": "Vergangene Termine"
+      },
+      "empty": {
+        "title": "Noch keine Termine",
+        "desc": "Fügen Sie Termine hinzu, um den Pflegeplan zu verfolgen"
+      },
+      "time": {
+        "all_day": "Ganztägig",
+        "today": "Heute",
+        "tomorrow": "Morgen",
+        "in_days": "In {{days}} Tagen"
+      },
+      "types": {
+        "vaccination": "Impfung",
+        "treatment": "Behandlung",
+        "vet": "Tierarztbesuch",
+        "grooming": "Fellpflege",
+        "walking": "Gassi gehen",
+        "feeding": "Fütterung"
+      }
+    },
+    "settings": {
+      "sections": {
+        "management": "Verwaltung",
+        "privacy": "Privatsphäre",
+        "notifications": "Benachrichtigungen"
+      },
+      "items": {
+        "transfer": {
+          "title": "Besitz übertragen",
+          "desc": "Haustier an einen anderen Nutzer übertragen"
+        },
+        "delete": {
+          "title": "Haustier löschen",
+          "deleting": "Löscht...",
+          "desc": "Dieses Haustier dauerhaft entfernen"
+        },
+        "privacy_settings": {
+          "title": "Privatsphäre-Einstellungen",
+          "desc": "Wer kann dieses Profil sehen"
+        },
+        "notifications": {
+          "title": "Benachrichtigungen",
+          "desc": "Erinnerungen und Alarme verwalten"
+        }
+      },
+      "alerts": {
+        "delete": {
+          "title": "Haustier löschen",
+          "message": "Sind Sie sicher, dass Sie {{name}} löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+          "cancel": "Abbrechen",
+          "confirm": "Löschen"
+        },
+        "coming_soon": {
+          "title": "Kommt bald",
+          "transfer": "Besitzübertragung ist bald verfügbar.",
+          "privacy": "Privatsphäre-Einstellungen sind bald verfügbar.",
+          "notifications": "Benachrichtigungseinstellungen sind bald verfügbar."
+        },
+        "error": {
+          "title": "Fehler",
+          "delete_failed": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut."
+        }
+      },
+      "info": {
+        "id": "Tier-ID:",
+        "created": "Erstellt:"
+      }
+    },
+    "share": {
+      "title": "Profil teilen",
+      "desc": "Teilen Sie dieses Profil mit Familie, Freunden oder Ihrem Tierarzt.",
+      "action": "Jetzt teilen",
+      "message": "Schau dir dieses Haustierprofil auf Pawzly an! {{url}}",
+      "message_title": "Haustierprofil"
     }
-  },
-  "share": {
-    "title": "Profil teilen",
-    "desc": "Teilen Sie dieses Profil mit Familie, Freunden oder Ihrem Tierarzt.",
-    "action": "Jetzt teilen",
-    "message": "Schau dir dieses Haustierprofil auf Pawzly an! {{url}}",
-    "message_title": "Haustierprofil"
   }
-}
 },
 "quick_actions_menu": {
-"title": "Schnellaktionen",
-"subtitle": "Wählen Sie eine Aktion für Ihr Haustier",
-"select_pet": "Haustier auswählen",
-"actions": {
-  "visit": {
-    "title": "Besuch",
-    "desc": "Tierarztbesuch erfassen"
-  },
-  "photos": {
-    "title": "Fotos",
-    "desc": "Fotos hinzufügen"
-  },
-  "vaccine": {
-    "title": "Impfung",
-    "desc": "Impfung erfassen"
-  },
-  "documents": {
-    "title": "Dokumente",
-    "desc": "Dokumente hochladen"
-  },
-  "medication": {
-    "title": "Medikamente",
-    "desc": "Medikament hinzufügen"
+  "title": "Schnellaktionen",
+  "subtitle": "Wählen Sie eine Aktion für Ihr Haustier",
+  "select_pet": "Haustier auswählen",
+  "actions": {
+    "visit": {
+      "title": "Besuch",
+      "desc": "Tierarztbesuch erfassen"
+    },
+    "photos": {
+      "title": "Fotos",
+      "desc": "Fotos hinzufügen"
+    },
+    "vaccine": {
+      "title": "Impfung",
+      "desc": "Impfung erfassen"
+    },
+    "documents": {
+      "title": "Dokumente",
+      "desc": "Dokumente hochladen"
+    },
+    "medication": {
+      "title": "Medikamente",
+      "desc": "Medikament hinzufügen"
+    }
   }
-}
-}
 }

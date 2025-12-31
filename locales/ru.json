@@ -321,294 +321,292 @@
     "help_center": "Центр помощи",
     "terms_of_service": "Условия использования",
     "privacy_policy": "Политика конфиденциальности"
-  }
-},
-"widgets": {
-  "quick_actions": {
-    "add_visit": "Визит",
-    "add_vaccine": "Вакцина",
-    "add_medication": "Лекарство",
-    "log_weight": "Вес",
-    "add_document": "Документ"
-  }
-},
-"passport": {
-  "label": "Паспорт",
-  "unknown_breed": "Неизвестная порода",
-  "dob": "ДР",
-  "weight": "Вес",
-  "color": "Цвет",
-  "blood_type": "Группа крови",
-  "reg": "Рег."
-},
-"pet_profile": {
-  "table_headers": {
-    "vaccine": "ВАКЦИНА",
-    "date_given": "ДАТА",
-    "expires": "ИСТЕКАЕТ"
   },
-  "history_timeline": "История & Лента",
-  "view_full_timeline": "Посмотреть всю историю",
-  "loading": "Загрузка...",
-  "overview": {
-    "about": "О питомце",
-    "no_notes": "Заметки отсутствуют.",
-    "health_status": "Состояние здоровья",
-    "up_to_date": "В норме",
-    "attention_needed": "Требует внимания",
-    "critical_alert": "Критическое",
-    "unknown_status": "Статус неизвестен"
-  },
-  "edit": {
-    "title": "Редактировать",
-    "success": "Успешно",
-    "success_message": "Питомец обновлен!",
-    "error": "Ошибка",
-    "name_required": "Имя обязательно",
-    "sections": {
-      "basic_info": "Основная информация",
-      "medical_info": "Медицинская информация",
-      "notes": "Заметки"
-    },
-    "labels": {
-      "name": "Имя *",
-      "species": "Вид",
-      "breed": "Порода",
-      "color": "Цвет",
-      "gender": "Пол",
-      "dob": "Дата рождения",
-      "weight": "Вес",
-      "unit": "Ед. изм.",
-      "spayed_neutered": "Стерилизован/Кастрирован",
-      "microchip": "Чип"
-    },
-    "placeholders": {
-      "name": "напр. Макс, Луна",
-      "breed": "напр. Золотистый ретривер",
-      "color": "напр. Коричневый",
-      "dob": "ГГГГ-ММ-ДД",
-      "weight": "0.0",
-      "microchip": "напр. 123456789012345",
-      "notes": "Дополнительные заметки..."
-    },
-    "save_changes": "Сохранить"
-  },
-  "documents": {
-    "title": "Все документы",
-    "search_placeholder": "Поиск...",
-    "no_documents": "Документы не найдены",
-    "upload_cta": "Загрузить документ",
-    "actions": {
-      "scan": "Скан",
-      "upload": "Загрузить",
-      "autofill": "Автозап."
-    },
-    "filters": {
-      "all_types": "Все типы",
-      "last_6_months": "6 месяцев"
-    },
-    "types": {
-      "vaccination": "Вакцинация",
-      "lab_result": "Анализы",
-      "invoice": "Счет",
-      "prescription": "Рецепт",
-      "insurance": "Страховка",
-      "medical": "Медицинское",
-      "other": "Другое"
-    }
-  },
-  "health": {
-    "titles": {
-      "visits": "Визиты",
-      "vaccinations": "Вакцинации",
-      "treatments": "Лечение",
-      "allergies": "Аллергии",
-      "health_log": "Журнал здоровья"
-    },
-    "actions": {
+  "widgets": {
+    "quick_actions": {
       "add_visit": "Визит",
       "add_vaccine": "Вакцина",
-      "add_tx": "Лечение",
-      "add_image": "Фото",
-      "add_doc": "Док.",
-      "add_record": "Запись",
-      "new_visit": "Новый визит",
-      "add_new": "+ Добавить",
-      "add_allergy": "+ Аллергия",
-      "view_history": "История",
-      "filter": "Фильтр"
-    },
-    "sections": {
-      "upcoming": "ПРЕДСТОЯЩИЕ",
-      "recent_history": "НЕДАВНИЕ"
-    },
-    "badges": {
-      "today": "СЕГОДНЯ",
-      "tomorrow": "ЗАВТРА",
-      "days": "ДН.",
-      "due_soon": "СКОРО",
-      "active": "АКТИВНО",
-      "expired": "ИСТЕКЛО"
-    },
-    "empty": {
-      "upcoming": "Нет предстоящих визитов",
-      "recent": "Нет недавних визитов",
-      "vaccinations": "Нет записей о вакцинации",
-      "treatments": "Нет текущего лечения",
-      "allergies": "Нет записей об аллергии"
+      "add_medication": "Лекарство",
+      "log_weight": "Вес",
+      "add_document": "Документ"
     }
   },
-  "history": {
-    "filters": {
-      "all": "Все",
-      "vaccinations": "Вакцины",
-      "visits": "Визиты",
-      "medications": "Лекарства",
-      "weight": "Вес"
-    },
-    "empty": {
-      "title": "История пуста",
-      "desc": "Здесь появятся события",
-      "pet_not_found": "Питомец не найден",
-      "load_error": "Ошибка загрузки истории"
-    }
+  "passport": {
+    "label": "Паспорт",
+    "unknown_breed": "Неизвестная порода",
+    "dob": "ДР",
+    "weight": "Вес",
+    "color": "Цвет",
+    "blood_type": "Группа крови",
+    "reg": "Рег."
   },
-  "album": {
-    "title": "Галерея",
-    "subtitle": "Фото и видео {{name}}.",
-    "actions": {
-      "new_album": "Новый альбом",
-      "add_media": "Добавить",
-      "load_more": "Загрузить еще",
-      "create_album": "Создать альбом",
-      "view_all": "Все"
+  "pet_profile": {
+    "table_headers": {
+      "vaccine": "ВАКЦИНА",
+      "date_given": "ДАТА",
+      "expires": "ИСТЕКАЕТ"
     },
-    "headers": {
-      "albums": "Альбомы"
+    "history_timeline": "История & Лента",
+    "view_full_timeline": "Посмотреть всю историю",
+    "loading": "Загрузка...",
+    "overview": {
+      "about": "О питомце",
+      "no_notes": "Заметки отсутствуют.",
+      "health_status": "Состояние здоровья",
+      "up_to_date": "В норме",
+      "attention_needed": "Требует внимания",
+      "critical_alert": "Критическое",
+      "unknown_status": "Статус неизвестен"
     },
-    "filters": {
-      "all": "Все",
-      "photos": "Фото",
-      "videos": "Видео",
-      "favorites": "Избранное"
-    },
-    "sort": {
-      "label": "Сортировка:",
-      "newest": "Сначала новые"
-    }
-  },
-  "events": {
-    "title": "События",
-    "subtitle": "Управление встречами {{name}}.",
-    "actions": {
-      "add_event": "Добавить событие",
-      "add_first": "Добавить первое событие"
-    },
-    "sections": {
-      "upcoming": "Предстоящие",
-      "past": "Прошедшие"
-    },
-    "empty": {
-      "title": "Нет событий",
-      "desc": "Добавьте события в календарь"
-    },
-    "time": {
-      "all_day": "Весь день",
-      "today": "Сегодня",
-      "tomorrow": "Завтра",
-      "in_days": "Через {{days}} дн."
-    },
-    "types": {
-      "vaccination": "Вакцинация",
-      "treatment": "Лечение",
-      "vet": "Ветклиника",
-      "grooming": "Груминг",
-      "walking": "Прогулка",
-      "feeding": "Кормление"
-    }
-  },
-  "settings": {
-    "sections": {
-      "management": "Управление",
-      "privacy": "Приватность",
-      "notifications": "Уведомления"
-    },
-    "items": {
-      "transfer": {
-        "title": "Передать права",
-        "desc": "Передать питомца другому пользователю"
+    "edit": {
+      "title": "Редактировать",
+      "success": "Успешно",
+      "success_message": "Питомец обновлен!",
+      "error": "Ошибка",
+      "name_required": "Имя обязательно",
+      "sections": {
+        "basic_info": "Основная информация",
+        "medical_info": "Медицинская информация",
+        "notes": "Заметки"
       },
-      "delete": {
-        "title": "Удалить питомца",
-        "deleting": "Удаление...",
-        "desc": "Навсегда удалить этого питомца"
+      "labels": {
+        "name": "Имя *",
+        "species": "Вид",
+        "breed": "Порода",
+        "color": "Цвет",
+        "gender": "Пол",
+        "dob": "Дата рождения",
+        "weight": "Вес",
+        "unit": "Ед. изм.",
+        "spayed_neutered": "Стерилизован/Кастрирован",
+        "microchip": "Чип"
       },
-      "privacy_settings": {
-        "title": "Настройки приватности",
-        "desc": "Кто видит этот профиль"
+      "placeholders": {
+        "name": "напр. Макс, Луна",
+        "breed": "напр. Золотистый ретривер",
+        "color": "напр. Коричневый",
+        "dob": "ГГГГ-ММ-ДД",
+        "weight": "0.0",
+        "microchip": "напр. 123456789012345",
+        "notes": "Дополнительные заметки..."
       },
-      "notifications": {
-        "title": "Настройки уведомлений",
-        "desc": "Напоминания и оповещения"
+      "save_changes": "Сохранить"
+    },
+    "documents": {
+      "title": "Все документы",
+      "search_placeholder": "Поиск...",
+      "no_documents": "Документы не найдены",
+      "upload_cta": "Загрузить документ",
+      "actions": {
+        "scan": "Скан",
+        "upload": "Загрузить",
+        "autofill": "Автозап."
+      },
+      "filters": {
+        "all_types": "Все типы",
+        "last_6_months": "6 месяцев"
+      },
+      "types": {
+        "vaccination": "Вакцинация",
+        "lab_result": "Анализы",
+        "invoice": "Счет",
+        "prescription": "Рецепт",
+        "insurance": "Страховка",
+        "medical": "Медицинское",
+        "other": "Другое"
       }
     },
-    "alerts": {
-      "delete": {
-        "title": "Удалить питомца",
-        "message": "Вы уверены, что хотите удалить {{name}}? Это действие необратимо.",
-        "cancel": "Отмена",
-        "confirm": "Удалить"
+    "health": {
+      "titles": {
+        "visits": "Визиты",
+        "vaccinations": "Вакцинации",
+        "treatments": "Лечение",
+        "allergies": "Аллергии",
+        "health_log": "Журнал здоровья"
       },
-      "coming_soon": {
-        "title": "Скоро",
-        "transfer": "Функция будет доступна скоро.",
-        "privacy": "Настройки приватности скоро.",
-        "notifications": "Настройки уведомлений скоро."
+      "actions": {
+        "add_visit": "Визит",
+        "add_vaccine": "Вакцина",
+        "add_tx": "Лечение",
+        "add_image": "Фото",
+        "add_doc": "Док.",
+        "add_record": "Запись",
+        "new_visit": "Новый визит",
+        "add_new": "+ Добавить",
+        "add_allergy": "+ Аллергия",
+        "view_history": "История",
+        "filter": "Фильтр"
       },
-      "error": {
-        "title": "Ошибка",
-        "delete_failed": "Не удалось удалить. Попробуйте снова."
+      "sections": {
+        "upcoming": "ПРЕДСТОЯЩИЕ",
+        "recent_history": "НЕДАВНИЕ"
+      },
+      "badges": {
+        "today": "СЕГОДНЯ",
+        "tomorrow": "ЗАВТРА",
+        "days": "ДН.",
+        "due_soon": "СКОРО",
+        "active": "АКТИВНО",
+        "expired": "ИСТЕКЛО"
+      },
+      "empty": {
+        "upcoming": "Нет предстоящих визитов",
+        "recent": "Нет недавних визитов",
+        "vaccinations": "Нет записей о вакцинации",
+        "treatments": "Нет текущего лечения",
+        "allergies": "Нет записей об аллергии"
       }
     },
-    "info": {
-      "id": "ID:",
-      "created": "Создан:"
+    "history": {
+      "filters": {
+        "all": "Все",
+        "vaccinations": "Вакцины",
+        "visits": "Визиты",
+        "medications": "Лекарства",
+        "weight": "Вес"
+      },
+      "empty": {
+        "title": "История пуста",
+        "desc": "Здесь появятся события",
+        "pet_not_found": "Питомец не найден",
+        "load_error": "Ошибка загрузки истории"
+      }
+    },
+    "album": {
+      "title": "Галерея",
+      "subtitle": "Фото и видео {{name}}.",
+      "actions": {
+        "new_album": "Новый альбом",
+        "add_media": "Добавить",
+        "load_more": "Загрузить еще",
+        "create_album": "Создать альбом",
+        "view_all": "Все"
+      },
+      "headers": {
+        "albums": "Альбомы"
+      },
+      "filters": {
+        "all": "Все",
+        "photos": "Фото",
+        "videos": "Видео",
+        "favorites": "Избранное"
+      },
+      "sort": {
+        "label": "Сортировка:",
+        "newest": "Сначала новые"
+      }
+    },
+    "events": {
+      "title": "События",
+      "subtitle": "Управление встречами {{name}}.",
+      "actions": {
+        "add_event": "Добавить событие",
+        "add_first": "Добавить первое событие"
+      },
+      "sections": {
+        "upcoming": "Предстоящие",
+        "past": "Прошедшие"
+      },
+      "empty": {
+        "title": "Нет событий",
+        "desc": "Добавьте события в календарь"
+      },
+      "time": {
+        "all_day": "Весь день",
+        "today": "Сегодня",
+        "tomorrow": "Завтра",
+        "in_days": "Через {{days}} дн."
+      },
+      "types": {
+        "vaccination": "Вакцинация",
+        "treatment": "Лечение",
+        "vet": "Ветклиника",
+        "grooming": "Груминг",
+        "walking": "Прогулка",
+        "feeding": "Кормление"
+      }
+    },
+    "settings": {
+      "sections": {
+        "management": "Управление",
+        "privacy": "Приватность",
+        "notifications": "Уведомления"
+      },
+      "items": {
+        "transfer": {
+          "title": "Передать права",
+          "desc": "Передать питомца другому пользователю"
+        },
+        "delete": {
+          "title": "Удалить питомца",
+          "deleting": "Удаление...",
+          "desc": "Навсегда удалить этого питомца"
+        },
+        "privacy_settings": {
+          "title": "Настройки приватности",
+          "desc": "Кто видит этот профиль"
+        },
+        "notifications": {
+          "title": "Настройки уведомлений",
+          "desc": "Напоминания и оповещения"
+        }
+      },
+      "alerts": {
+        "delete": {
+          "title": "Удалить питомца",
+          "message": "Вы уверены, что хотите удалить {{name}}? Это действие необратимо.",
+          "cancel": "Отмена",
+          "confirm": "Удалить"
+        },
+        "coming_soon": {
+          "title": "Скоро",
+          "transfer": "Функция будет доступна скоро.",
+          "privacy": "Настройки приватности скоро.",
+          "notifications": "Настройки уведомлений скоро."
+        },
+        "error": {
+          "title": "Ошибка",
+          "delete_failed": "Не удалось удалить. Попробуйте снова."
+        }
+      },
+      "info": {
+        "id": "ID:",
+        "created": "Создан:"
+      }
+    },
+    "share": {
+      "title": "Поделиться",
+      "desc": "Поделитесь профилем с семьей или врачом.",
+      "action": "Поделиться",
+      "message": "Посмотрите профиль питомца в Pawzly! {{url}}",
+      "message_title": "Профиль питомца"
     }
-  },
-  "share": {
-    "title": "Поделиться",
-    "desc": "Поделитесь профилем с семьей или врачом.",
-    "action": "Поделиться",
-    "message": "Посмотрите профиль питомца в Pawzly! {{url}}",
-    "message_title": "Профиль питомца"
   }
-}
 },
 "quick_actions_menu": {
-"title": "Быстрые действия",
-"subtitle": "Выберите действие для питомца",
-"select_pet": "Выберите питомца",
-"actions": {
-  "visit": {
-    "title": "Визит",
-    "desc": "Запись к ветеринару"
-  },
-  "photos": {
-    "title": "Фото",
-    "desc": "Добавить фото"
-  },
-  "vaccine": {
-    "title": "Вакцина",
-    "desc": "Запись о вакцинации"
-  },
-  "documents": {
-    "title": "Документы",
-    "desc": "Загрузить документы"
-  },
-  "medication": {
-    "title": "Лекарство",
-    "desc": "Добавить лекарство"
+  "title": "Быстрые действия",
+  "subtitle": "Выберите действие для питомца",
+  "select_pet": "Выберите питомца",
+  "actions": {
+    "visit": {
+      "title": "Визит",
+      "desc": "Запись к ветеринару"
+    },
+    "photos": {
+      "title": "Фото",
+      "desc": "Добавить фото"
+    },
+    "vaccine": {
+      "title": "Вакцина",
+      "desc": "Запись о вакцинации"
+    },
+    "documents": {
+      "title": "Документы",
+      "desc": "Загрузить документы"
+    },
+    "medication": {
+      "title": "Лекарство",
+      "desc": "Добавить лекарство"
+    }
   }
-}
-}
 }
