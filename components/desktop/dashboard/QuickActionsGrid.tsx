@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface QuickAction {
@@ -11,48 +9,52 @@ interface QuickAction {
     label: string;
     icon: string;
     iosIcon: string;
-    colors: string[];
+    color: string;
+    bgColor: string;
     route?: string;
 }
 
-// Using designSystem constants directly for the static definition, 
-// but we could also memoize this inside the component if we needed dynamic theme switching for these colors 
-// (though gradients are usually distinct).
-const getQuickActions = (theme: typeof designSystem): QuickAction[] => [
+const getQuickActions = (): QuickAction[] => [
     {
         id: 'visit',
-        label: 'Book Visit',
-        icon: 'event',
+        label: 'Visit',
+        icon: 'calendar-today',
         iosIcon: 'calendar',
-        colors: [theme.colors.primary[500], theme.colors.primary[400]],
+        color: '#2563EB',
+        bgColor: '#DBEAFE',
     },
     {
         id: 'vaccine',
-        label: 'Add Vaccine',
+        label: 'Vaccine',
         icon: 'vaccines',
-        iosIcon: 'syringe', // or cross.vial
-        colors: [theme.colors.secondary.leaf, theme.colors.secondary.leafLight], // Cyan/Teal-ish
+        iosIcon: 'syringe',
+        color: '#DB2777',
+        bgColor: '#FCE7F3',
     },
     {
         id: 'meds',
-        label: 'Add Meds',
+        label: 'Meds',
         icon: 'medication',
         iosIcon: 'pills',
-        colors: [theme.colors.status.success[500], theme.colors.status.success[400]],
+        color: '#9333EA',
+        bgColor: '#F3E8FF',
     },
     {
         id: 'weight',
-        label: 'Add Weight',
-        icon: 'fitness_center',
+        label: 'Weight',
+        icon: 'monitor-weight',
         iosIcon: 'scalemass',
-        colors: [theme.colors.status.warning[500], theme.colors.status.warning[400]],
+        color: '#059669',
+        bgColor: '#D1FAE5',
     },
     {
-        id: 'photo',
-        label: 'Add Photo',
-        icon: 'add_photo_alternate',
-        iosIcon: 'camera',
-        colors: [theme.colors.secondary.paw, theme.colors.secondary.pawLight], // Pink/Red-ish
+        id: 'doc',
+        label: 'Doc',
+        icon: 'note-add',
+        iosIcon: 'doc.text',
+        color: '#EA580C',
+        bgColor: '#FFEDD5',
+        route: '/(tabs)/pets/documents/add',
     },
 ];
 
@@ -64,9 +66,9 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) =>
     const router = useRouter();
     const { width } = useWindowDimensions();
     const { theme } = useAppTheme();
-    const isMobile = width < 768; // Tablet breakdown
+    const isMobile = width < 768;
 
-    const actions = getQuickActions(theme);
+    const actions = getQuickActions();
 
     const handleAction = (action: QuickAction) => {
         if (onActionPress) {
@@ -89,20 +91,17 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) =>
                 focused && styles.actionCardFocus
             ]}
         >
-            <LinearGradient
-                colors={action.colors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={[styles.iconContainer, isMobile && styles.iconContainerMobile]}
+            <View
+                style={[styles.iconContainer, { backgroundColor: action.bgColor }]}
             >
                 <IconSymbol
                     android_material_icon_name={action.icon as any}
                     ios_icon_name={action.iosIcon as any}
-                    size={isMobile ? 22 : 28}
-                    color="#fff"
+                    size={24}
+                    color={action.color}
                 />
-            </LinearGradient>
-            <Text style={[styles.label, { color: theme.colors.text.primary }, isMobile && styles.labelMobile]}>
+            </View>
+            <Text style={[styles.label, { color: theme.colors.text.primary }]}>
                 {action.label}
             </Text>
         </Pressable>
@@ -110,7 +109,14 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) =>
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Quick Actions</Text>
+            {/* Heading removed to be more compact or integrated if needed? 
+                User didn't strictly say remove heading, but on Profile it just shows the buttons.
+                Dashboard has "Quick Actions" heading usually.
+                I will keep heading for Dashboard but maybe make it optional? 
+                Actually, I'll keep it for now as it structures the section.
+            */}
+            {/* <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Quick Actions</Text> */}
+
             {isMobile ? (
                 <ScrollView
                     horizontal
@@ -134,17 +140,18 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) =>
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 32,
+        marginBottom: 24,
+        marginTop: 10, // User request: add +10px padding top
     },
     heading: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '700',
-        marginBottom: 16,
+        marginBottom: 12,
         fontFamily: 'Plus Jakarta Sans',
     },
     grid: {
         flexDirection: 'row',
-        gap: 24, // Increased gap for desktop
+        gap: 16,
         flexWrap: 'wrap',
     },
     scrollContent: {
@@ -153,53 +160,33 @@ const styles = StyleSheet.create({
     },
     actionCard: {
         alignItems: 'center',
-        minWidth: 100,
+        minWidth: 80,
+        gap: 8,
+        borderRadius: 12,
         paddingVertical: 8,
         paddingHorizontal: 4,
-        borderRadius: 16,
     },
     actionCardMobile: {
-        minWidth: 80,
-        paddingVertical: 0,
+        minWidth: 70,
     },
     actionCardHover: {
-        transform: [{ scale: 1.05 }],
-        shadowColor: '#6366F1',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
-        shadowRadius: 16,
-        elevation: 8,
+        opacity: 0.8,
+        transform: [{ scale: 1.02 }],
     },
     actionCardFocus: {
-        // focus styles
     },
     iconContainer: {
-        width: 96,
-        height: 96,
+        width: 48, // Compact size
+        height: 48,
         borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 16,
-        shadowColor: '#6366F1', // Indigo shadow
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    iconContainerMobile: {
-        width: 64,
-        height: 64,
-        borderRadius: 20,
-        marginBottom: 8,
     },
     label: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '600',
         textAlign: 'center',
         fontFamily: 'Plus Jakarta Sans',
-    },
-    labelMobile: {
-        fontSize: 12,
     },
 });
 

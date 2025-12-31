@@ -13,6 +13,8 @@ import { Pet } from '@/types';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal'; // Added
+import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
 
 import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
@@ -32,6 +34,7 @@ export default function OverviewTab() {
   const [visitOpen, setVisitOpen] = useState(false);
   const [vaccinationOpen, setVaccinationOpen] = useState(false);
   const [treatmentOpen, setTreatmentOpen] = useState(false);
+  const [healthMetricsOpen, setHealthMetricsOpen] = useState(false); // Added
   const [medicationOpen, setMedicationOpen] = useState(false);
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
@@ -64,55 +67,32 @@ export default function OverviewTab() {
     );
   }
 
-  const renderQuickAction = (label: string, icon: string, color: string, bgColor: string, onPress: () => void) => {
-    if (isMobile) {
-      return (
-        <TouchableOpacity key={label} style={styles.mobileQuickAction} onPress={onPress}>
-          <View style={[styles.mobileQuickActionIcon, { backgroundColor: bgColor }]}>
-            <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
-          </View>
-          <Text style={styles.mobileQuickActionLabel}>{label}</Text>
-        </TouchableOpacity>
-      )
+  const handleQuickAction = (id: string) => {
+    switch (id) {
+      case 'visit':
+        setVisitOpen(true);
+        break;
+      case 'vaccine':
+        setVaccinationOpen(true);
+        break;
+      case 'meds':
+        setTreatmentOpen(true);
+        break;
+      case 'weight':
+        setHealthMetricsOpen(true);
+        break;
+      case 'doc':
+        router.push(`/(tabs)/pets/documents/add?petId=${pet.id}` as any);
+        break;
     }
-    return (
-      <QuickActionCard
-        key={label}
-        label={label}
-        icon={icon}
-        color={color}
-        bgColor={bgColor}
-        onPress={onPress}
-      />
-    );
   };
-
-  const quickActions = [
-    { label: "Visit", icon: "calendar-today", color: "#2563EB", bgColor: "#DBEAFE", onPress: () => setVisitOpen(true) },
-    { label: "Vaccine", icon: "vaccines", color: "#DB2777", bgColor: "#FCE7F3", onPress: () => setVaccinationOpen(true) },
-    { label: "Meds", icon: "medication", color: "#9333EA", bgColor: "#F3E8FF", onPress: () => setTreatmentOpen(true) },
-    { label: "Doc", icon: "note-add", color: "#EA580C", bgColor: "#FFEDD5", onPress: () => router.push(`/(tabs)/pets/documents/add?petId=${pet.id}` as any) },
-  ];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
 
-        {/* Quick Actions */}
-        {isMobile ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.mobileQuickActionsContainer}
-            style={styles.mobileQuickActionsScroll}
-          >
-            {quickActions.map(action => renderQuickAction(action.label, action.icon, action.color, action.bgColor, action.onPress))}
-          </ScrollView>
-        ) : (
-          <View style={styles.quickActionsRow}>
-            {quickActions.map(action => renderQuickAction(action.label, action.icon, action.color, action.bgColor, action.onPress))}
-          </View>
-        )}
+        {/* Quick Actions (Replaced with Shared Component) */}
+        <QuickActionsGrid onActionPress={handleQuickAction} />
 
         {/* Main Grid Content */}
         <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
@@ -576,14 +556,14 @@ export default function OverviewTab() {
       <VisitFormModal visible={visitOpen} petId={pet.id} onClose={() => setVisitOpen(false)} />
       <VaccinationFormModal visible={vaccinationOpen} petId={pet.id} onClose={() => setVaccinationOpen(false)} />
       <TreatmentFormModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
-      {/* MedicationFormModal logic can be similar to TreatmentFormModal or separated if needed. 
-          Assuming TreatmentFormModal handles 'Medication' type or we reuse AddMedicationModal if it wasn't refactored yet.
-          The user asked for 'Add Treatment' which includes medication type pills. 
-          If MedicationFormModal is distinct, we should check if we refactored it. 
-          I refactored TreatmentFormModal which has 'Medication' as a type. 
-          I will use TreatmentFormModal for the 'Meds' quick action for now as it aligns with the 'Treatment' modal design request 
-          that included 'Medication' as a type. 
-      */}
+
+      <HealthMetricsModal
+        visible={healthMetricsOpen}
+        petId={pet.id}
+        onClose={() => setHealthMetricsOpen(false)}
+        initialTab="weight"
+      />
+
       {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
       <EditKeyInfoModal
         visible={editKeyInfoModalVisible}
@@ -594,16 +574,7 @@ export default function OverviewTab() {
   );
 }
 
-function QuickActionCard({ label, icon, color, bgColor, onPress }: { label: string, icon: string, color: string, bgColor: string, onPress: () => void }) {
-  return (
-    <TouchableOpacity style={styles.quickActionCard} onPress={onPress}>
-      <View style={[styles.quickActionIcon, { backgroundColor: bgColor }]}>
-        <IconSymbol android_material_icon_name={icon as any} size={24} color={color} />
-      </View>
-      <Text style={styles.quickActionLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
+
 
 const styles = StyleSheet.create({
   container: {

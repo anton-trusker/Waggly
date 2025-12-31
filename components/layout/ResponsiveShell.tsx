@@ -3,7 +3,7 @@ import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'expo-router';
 import SidebarNav from '@/components/desktop/layout/SidebarNav';
-import Topbar from '@/components/desktop/layout/Topbar';
+
 import FloatingTabBarWithPlus, { TabBarItem } from '@/components/layout/FloatingTabBarWithPlus';
 import KeyboardShortcutsModal from '@/components/desktop/KeyboardShortcutsModal';
 import { useKeyboardShortcuts, KEYBOARD_SHORTCUTS } from '@/hooks/useKeyboardShortcuts';
@@ -78,7 +78,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
             {isDesktop && <SidebarNav />}
 
             <View style={styles.mainContent}>
-                {isDesktop && <Topbar />}
+                {/* Topbar Removed */}
 
                 <View style={[styles.content, !isDesktop && styles.contentMobile]}>
                     {children}

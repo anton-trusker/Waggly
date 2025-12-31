@@ -4,9 +4,10 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 interface MiniCalendarProps {
     selectedDate: Date;
     onDateSelect: (date: Date) => void;
+    events?: Array<{ date: Date; type: string }>;
 }
 
-const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect }) => {
+const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect, events = [] }) => {
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
@@ -52,6 +53,17 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect 
         );
     };
 
+    const hasEvent = (day: number) => {
+        return events.some(event => {
+            const eventDate = new Date(event.date);
+            return (
+                eventDate.getDate() === day &&
+                eventDate.getMonth() === selectedDate.getMonth() &&
+                eventDate.getFullYear() === selectedDate.getFullYear()
+            );
+        });
+    };
+
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -89,13 +101,21 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect 
                         disabled={!day}
                     >
                         {day && (
-                            <Text style={[
-                                styles.dayText,
-                                isToday(day) ? styles.dayTextToday : undefined,
-                                isSelected(day) ? styles.dayTextSelected : undefined,
-                            ]}>
-                                {day}
-                            </Text>
+                            <>
+                                <Text style={[
+                                    styles.dayText,
+                                    isToday(day) ? styles.dayTextToday : undefined,
+                                    isSelected(day) ? styles.dayTextSelected : undefined,
+                                ]}>
+                                    {day}
+                                </Text>
+                                {hasEvent(day) && (
+                                    <View style={[
+                                        styles.eventDot,
+                                        isSelected(day) && styles.eventDotSelected
+                                    ]} />
+                                )}
+                            </>
                         )}
                     </TouchableOpacity>
                 ))}
@@ -163,6 +183,17 @@ const styles = StyleSheet.create({
     dayTextSelected: {
         color: '#fff',
         fontWeight: '600',
+    },
+    eventDot: {
+        position: 'absolute',
+        bottom: 4,
+        width: 4,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: '#6366F1',
+    },
+    eventDotSelected: {
+        backgroundColor: '#fff',
     },
 });
 

@@ -108,8 +108,17 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                                 style={styles.dateInput}
                                 placeholder="MM/DD/YYYY"
                                 placeholderTextColor={designSystem.colors.text.tertiary}
-                                value={dateOfBirth ? dateOfBirth.toLocaleDateString() : ''}
-                                editable={false}
+                                value={dateOfBirth ? dateOfBirth.toLocaleDateString('en-US') : ''}
+                                onChangeText={(text) => {
+                                    if (text === '') {
+                                        setDateOfBirth(undefined);
+                                        return;
+                                    }
+                                    const parsed = new Date(text);
+                                    if (!isNaN(parsed.getTime())) {
+                                        setDateOfBirth(parsed);
+                                    }
+                                }}
                             />
                             <TouchableOpacity
                                 style={styles.calendarButton}

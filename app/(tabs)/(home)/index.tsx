@@ -41,8 +41,8 @@ export default function DashboardPage() {
             case 'weight':
                 setHealthMetricsOpen(true);
                 break;
-            case 'photo':
-                router.push('/(tabs)/pets/photos/add' as any);
+            case 'doc':
+                router.push('/(tabs)/pets/documents/add' as any);
                 break;
             default:
                 break;

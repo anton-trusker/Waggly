@@ -99,15 +99,35 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
 
                             <View style={styles.col}>
                                 <Text style={styles.label}>IMPLANTATION DATE</Text>
-                                <TouchableOpacity
-                                    style={styles.dateTrigger}
-                                    onPress={() => setShowDateModal(true)}
-                                >
-                                    <Text style={implantationDate ? styles.inputText : styles.placeholderText}>
-                                        {implantationDate ? implantationDate.toLocaleDateString() : 'Select date'}
-                                    </Text>
-                                    <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.primary[500]} />
-                                </TouchableOpacity>
+                                <View style={styles.dateInputContainer}>
+                                    <TextInput
+                                        style={styles.dateInput}
+                                        placeholder="MM/DD/YYYY"
+                                        placeholderTextColor={designSystem.colors.text.tertiary}
+                                        value={implantationDate ? implantationDate.toLocaleDateString('en-US') : ''}
+                                        onChangeText={(text) => {
+                                            if (text === '') {
+                                                setImplantationDate(undefined);
+                                                return;
+                                            }
+                                            const parsed = new Date(text);
+                                            if (!isNaN(parsed.getTime())) {
+                                                setImplantationDate(parsed);
+                                            }
+                                        }}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.calendarButton}
+                                        onPress={() => setShowDateModal(true)}
+                                    >
+                                        <IconSymbol
+                                            ios_icon_name="calendar"
+                                            android_material_icon_name="event"
+                                            size={20}
+                                            color={designSystem.colors.primary[500]}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -237,6 +257,26 @@ const styles = StyleSheet.create({
     },
     inputText: { fontSize: 16, color: designSystem.colors.text.primary },
     placeholderText: { fontSize: 16, color: designSystem.colors.text.tertiary },
+    dateInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        ...designSystem.shadows.sm,
+    },
+    dateInput: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        fontSize: 16,
+        color: designSystem.colors.text.primary,
+    },
+    calendarButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+    },
     row: { flexDirection: 'row', gap: 12 },
     toggle: {
         flexDirection: 'row',

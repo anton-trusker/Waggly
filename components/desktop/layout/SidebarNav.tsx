@@ -50,8 +50,21 @@ const SidebarNav: React.FC = () => {
                 ))}
             </ScrollView>
 
-            {/* User Profile Card (Bottom) */}
-            <View style={styles.userCardContainer}>
+            {/* Bottom Actions & User Profile */}
+            <View style={styles.bottomSection}>
+                {/* Utilities Row */}
+                <View style={styles.utilityRow}>
+                    <TouchableOpacity style={styles.iconButton}>
+                        <Ionicons name="moon-outline" size={20} color="#6B7280" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.iconButton}>
+                        <Ionicons name="notifications-outline" size={20} color="#6B7280" />
+                        <View style={styles.notificationBadge} />
+                    </TouchableOpacity>
+                </View>
+
+                {/* User Card */}
                 <TouchableOpacity style={styles.userCard} onPress={() => router.push('/(tabs)/profile')}>
                     {profile?.photo_url ? (
                         <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
@@ -64,9 +77,9 @@ const SidebarNav: React.FC = () => {
                     )}
                     <View style={styles.userInfo}>
                         <Text style={styles.userName} numberOfLines={1}>{userName}</Text>
-                        <Text style={styles.userRole}>Pro Member</Text>
+                        {/* Role removed */}
                     </View>
-                    <Ionicons name="settings-outline" size={16} color="#9CA3AF" />
+                    <Ionicons name="settings-outline" size={20} color="#9CA3AF" />
                 </TouchableOpacity>
             </View>
         </View>
@@ -138,10 +151,37 @@ const styles = StyleSheet.create({
         color: '#4F46E5', // Primary-600
         fontWeight: '600',
     },
-    userCardContainer: {
+    bottomSection: {
         padding: 24,
         borderTopWidth: 1,
         borderTopColor: '#F3F4F6',
+        gap: 16,
+    },
+    utilityRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        gap: 12,
+    },
+    iconButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F3F4F6',
+        position: 'relative',
+    },
+    notificationBadge: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#EF4444',
+        borderWidth: 1,
+        borderColor: '#fff',
     },
     userCard: {
         flexDirection: 'row',
@@ -184,10 +224,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
     },
-    userRole: {
-        fontSize: 12,
-        color: '#6B7280',
-    },
+    // Removed userRole style
 });
 
 export default SidebarNav;

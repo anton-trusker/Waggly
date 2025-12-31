@@ -100,45 +100,18 @@ export default function PetDetailsPage() {
                         {/* Profile Summary */}
                         <View style={styles.mobileProfileSection}>
                             <View style={styles.mobilePhotoContainer}>
-                                <LinearGradient
-                                    colors={['#3B82F6', '#22D3EE', '#34D399']} // Blue -> Cyan -> Emerald
-                                    start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
-                                    style={styles.mobileGradientRing}
-                                >
+                                <View style={styles.mobileGradientRing}>
                                     {pet.photo_url ? (
                                         <Image source={{ uri: pet.photo_url }} style={styles.mobilePhoto} />
                                     ) : (
                                         <View style={[styles.mobilePhoto, { backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }]}>
-                                            <Ionicons name="paw" size={40} color="#94A3B8" />
+                                            <Ionicons name="paw" size={32} color="#94A3B8" />
                                         </View>
                                     )}
-                                </LinearGradient>
-                                <View style={styles.mobileVerifiedBadge}>
-                                    <Ionicons name="checkmark" size={14} color="#fff" />
                                 </View>
                             </View>
 
                             <Text style={styles.mobilePetName}>{pet.name}</Text>
-                            <Text style={styles.mobilePetBreed}>{pet.breed || pet.species}</Text>
-
-                            <View style={styles.mobileStatsRow}>
-                                <View style={styles.mobileStatPill}>
-                                    <Text style={styles.mobileStatText}>{getAge()}</Text>
-                                </View>
-                                <View style={styles.mobileStatPill}>
-                                    <Ionicons name={pet.gender === 'female' ? 'female' : 'male'} size={14} color={pet.gender === 'female' ? '#F472B6' : '#60A5FA'} />
-                                    <Text style={styles.mobileStatText}>{pet.gender === 'female' ? 'Female' : 'Male'}</Text>
-                                </View>
-                                <View style={styles.mobileStatPill}>
-                                    <Ionicons name="fitness-outline" size={14} color="#60A5FA" />
-                                    <Text style={styles.mobileStatText}>{pet.weight ? `${pet.weight} kg` : 'N/A'}</Text>
-                                </View>
-                            </View>
-
-                            <View style={styles.mobileLocationRow}>
-                                <Ionicons name="location-sharp" size={14} color="#94A3B8" />
-                                <Text style={styles.mobileLocationText}>{getLocation()}</Text>
-                            </View>
                         </View>
 
                         {/* Tab Content */}
@@ -156,42 +129,17 @@ export default function PetDetailsPage() {
                     {/* Desktop Header */}
                     <View style={styles.petHeader}>
                         <View style={styles.petInfo}>
-                            <View style={styles.relative}>
-                                <View style={styles.petPhotoGradient}>
-                                    {pet.photo_url ? (
-                                        <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
-                                    ) : (
-                                        <View style={styles.petPhotoPlaceholder}>
-                                            <Ionicons name="paw" size={48} color="#6366F1" />
-                                        </View>
-                                    )}
-                                </View>
-                                <View style={styles.verifiedBadge}>
-                                    <Ionicons name="checkmark" size={16} color="#fff" />
-                                </View>
+                            <View style={styles.petPhotoGradient}>
+                                {pet.photo_url ? (
+                                    <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
+                                ) : (
+                                    <View style={styles.petPhotoPlaceholder}>
+                                        <Ionicons name="paw" size={32} color="#6366F1" />
+                                    </View>
+                                )}
                             </View>
                             <View style={styles.petMeta}>
                                 <Text style={styles.petName}>{pet.name}</Text>
-                                <Text style={styles.petBreed}>{pet.breed || pet.species}</Text>
-                                <View style={styles.petStats}>
-                                    <View style={[styles.statBadge, styles.ageBadge]}>
-                                        <Text style={styles.statBadgeText}>{getAge()}</Text>
-                                    </View>
-                                    <View style={[styles.statBadge, styles.genderBadge]}>
-                                        <Ionicons name={pet.gender === 'female' ? 'female' : 'male'} size={12} color={pet.gender === 'female' ? '#DB2777' : '#2563EB'} />
-                                        <Text style={[styles.statBadgeText, { color: pet.gender === 'female' ? '#DB2777' : '#2563EB' }]}>{pet.gender || 'N/A'}</Text>
-                                    </View>
-                                    <View style={[styles.statBadge, styles.weightBadge]}>
-                                        <Ionicons name="barbell" size={12} color="#2563EB" />
-                                        <Text style={[styles.statBadgeText, { color: '#2563EB' }]}>{pet.weight ? `${pet.weight} ${pet.weight_unit}` : 'N/A'}</Text>
-                                    </View>
-                                </View>
-                                {getLocation() && (
-                                    <View style={styles.locationRow}>
-                                        <Ionicons name="location" size={14} color="#6B7280" />
-                                        <Text style={styles.locationText}>{getLocation()}</Text>
-                                    </View>
-                                )}
                             </View>
                         </View>
                         <View style={styles.headerActions}>
@@ -319,109 +267,56 @@ const styles = StyleSheet.create({
         color: '#6B7280',
     },
     petHeader: {
-        padding: 32,
+        paddingVertical: 16,
+        paddingHorizontal: 32,
         backgroundColor: '#fff',
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
         flexDirection: 'row',
-        alignItems: 'flex-end',
+        alignItems: 'center',
         justifyContent: 'space-between',
     },
     petInfo: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 24,
+        alignItems: 'center',
+        gap: 16,
     },
     relative: {
         position: 'relative',
     },
     petPhotoGradient: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        padding: 4,
-        backgroundColor: 'linear-gradient(135deg, #2C097F, #3B82F6)',
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        padding: 2,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     petPhoto: {
-        width: 112,
-        height: 112,
-        borderRadius: 56,
-        borderWidth: 4,
-        borderColor: '#fff',
+        width: 58,
+        height: 58,
+        borderRadius: 29,
     },
     petPhotoPlaceholder: {
-        width: 112,
-        height: 112,
-        borderRadius: 56,
+        width: 58,
+        height: 58,
+        borderRadius: 29,
         backgroundColor: '#EEF2FF',
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 4,
-        borderColor: '#fff',
-    },
-    verifiedBadge: {
-        position: 'absolute',
-        bottom: 8,
-        right: 8,
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: '#2C097F',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: '#fff',
     },
     petMeta: {
-        flex: 1,
+        justifyContent: 'center',
     },
     petName: {
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: '700',
         color: '#1F2937',
-        marginBottom: 4,
     },
-    petBreed: {
-        fontSize: 18,
-        color: '#6B7280',
-        marginBottom: 16,
-    },
-    petStats: {
-        flexDirection: 'row',
-        gap: 12,
-        marginBottom: 12,
-    },
-    statBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 16,
-    },
-    ageBadge: {
-        backgroundColor: '#F3F4F6',
-    },
-    genderBadge: {
-        backgroundColor: '#FCE7F3',
-    },
-    weightBadge: {
-        backgroundColor: '#DBEAFE',
-    },
-    statBadgeText: {
-        fontSize: 12,
-        fontWeight: '500',
-        color: '#374151',
-    },
-    locationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    locationText: {
-        fontSize: 12,
-        color: '#6B7280',
-    },
+
     headerActions: {
         flexDirection: 'row',
         gap: 12,
@@ -430,13 +325,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 6,
         backgroundColor: '#F3F4F6',
     },
     shareButtonText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
         color: '#374151',
     },
@@ -444,14 +339,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 6,
         borderWidth: 1,
         borderColor: '#E5E7EB',
     },
     editButtonText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
         color: '#374151',
     },
@@ -463,8 +358,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
     },
     tab: {
-        paddingVertical: 16,
-        paddingHorizontal: 24,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         borderBottomWidth: 2,
         borderBottomColor: 'transparent',
     },
@@ -472,7 +367,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#2C097F',
     },
     tabText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '600',
         color: '#6B7280',
     },
@@ -491,13 +386,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         paddingTop: 48, // Safe area
-        paddingBottom: 12,
+        paddingBottom: 8,
         backgroundColor: '#F8FAFC',
     },
     mobileHeaderTitle: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '700',
         letterSpacing: 1,
         color: '#94A3B8',
@@ -508,9 +403,9 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     iconBtn: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
@@ -525,12 +420,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#E2E8F0',
         backgroundColor: '#F8FAFC',
-        paddingHorizontal: 24,
-        paddingTop: 8,
+        paddingHorizontal: 16,
+        paddingTop: 0,
     },
     mobileTabItem: {
         flex: 1,
-        paddingVertical: 12,
+        paddingVertical: 10,
         alignItems: 'center',
         borderBottomWidth: 2,
         borderBottomColor: 'transparent',
@@ -539,7 +434,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#3B82F6',
     },
     mobileTabText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
         color: '#94A3B8',
     },
@@ -552,84 +447,31 @@ const styles = StyleSheet.create({
     },
     mobileProfileSection: {
         alignItems: 'center',
-        marginTop: 24,
-        paddingHorizontal: 24,
-        marginBottom: 24,
+        marginTop: 12,
+        paddingHorizontal: 16,
+        marginBottom: 12,
     },
     mobilePhotoContainer: {
         position: 'relative',
-        marginBottom: 12,
+        marginBottom: 8,
     },
     mobileGradientRing: {
-        padding: 4,
-        borderRadius: 100,
+        padding: 2,
+        borderRadius: 32,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
     },
     mobilePhoto: {
-        width: 110, // ~32 in tw (128px) -> designs shows ~w-32 which is 128px
-        height: 110,
-        borderRadius: 55,
-        borderWidth: 4,
-        borderColor: '#F8FAFC',
+        width: 64,
+        height: 64,
+        borderRadius: 32,
         backgroundColor: '#fff',
-    },
-    mobileVerifiedBadge: {
-        position: 'absolute',
-        bottom: 4,
-        right: 4,
-        width: 26,
-        height: 26,
-        borderRadius: 13,
-        backgroundColor: '#3B82F6',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 3,
-        borderColor: '#F8FAFC',
     },
     mobilePetName: {
-        fontSize: 28, // 3xl
+        fontSize: 20,
         fontWeight: '700',
         color: '#0F172A',
-        marginBottom: 4,
-    },
-    mobilePetBreed: {
-        fontSize: 14,
-        color: '#64748B',
-        fontWeight: '500',
-        marginBottom: 16,
-    },
-    mobileStatsRow: {
-        flexDirection: 'row',
-        gap: 12,
-        marginBottom: 16,
-    },
-    mobileStatPill: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#F1F5F9',
-        shadowColor: '#000',
-        shadowOpacity: 0.02,
-        shadowRadius: 2,
-        elevation: 1,
-    },
-    mobileStatText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#475569',
-    },
-    mobileLocationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    mobileLocationText: {
-        fontSize: 12,
-        color: '#94A3B8',
-        fontWeight: '500',
+        marginTop: 4,
     },
 });

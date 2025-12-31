@@ -43,15 +43,15 @@ module.exports = function (api) {
       ],
       ...EDITABLE_COMPONENTS,
       "@babel/plugin-proposal-export-namespace-from",
-      [
-        "@tamagui/babel-plugin",
-        {
-          components: ["tamagui"],
-          config: "./tamagui.config.ts",
-          logTimings: true,
-          disableExtraction: true,
-        },
-      ],
+      // [
+      //   "@tamagui/babel-plugin",
+      //   {
+      //     components: ["tamagui"],
+      //     config: "./tamagui.config.ts",
+      //     logTimings: true,
+      //     disableExtraction: true,
+      //   },
+      // ],
       "react-native-reanimated/plugin", // Must be last
     ],
   };

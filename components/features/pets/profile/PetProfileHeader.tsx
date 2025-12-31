@@ -58,7 +58,7 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
                             <IconSymbol ios_icon_name="square.and.arrow.up" android_material_icon_name="share" size={20} color={colors.primary} />
                         </TouchableOpacity>
                     )}
-                    
+
                     <TouchableOpacity
                         style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
                         onPress={onEdit}
@@ -81,35 +81,11 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
                             </View>
                         )}
                     </View>
-
-                    {/* Verified Badge */}
-                    <View style={styles.verifiedBadge}>
-                        <IconSymbol ios_icon_name="checkmark.seal.fill" android_material_icon_name="verified" size={20} color={colors.primary} />
-                    </View>
                 </View>
 
-                {/* Name and Info */}
+                {/* Name Only */}
                 <View style={styles.infoContainer}>
-                    <View style={styles.nameRow}>
-                        <Text style={[styles.petName, { color: theme.colors.text.primary }]}>{pet.name}</Text>
-                        <IconSymbol ios_icon_name="checkmark.seal.fill" android_material_icon_name="verified" size={24} color={colors.primary} />
-                    </View>
-
-                    <View style={[styles.subtitleBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.6)' }]}>
-                        <Text style={[styles.subtitleText, { color: theme.colors.text.secondary }]}>
-                            {pet.breed || 'Mixed Breed'} • {pet.date_of_birth ? formatAge(new Date(pet.date_of_birth)) : 'Age Unknown'}
-                        </Text>
-                    </View>
-
-                    {/* Location (New) */}
-                    {(pet.address_json as any)?.city && (
-                        <View style={styles.locationContainer}>
-                            <IconSymbol ios_icon_name="location.fill" android_material_icon_name="location-on" size={14} color={theme.colors.text.secondary} />
-                            <Text style={[styles.locationText, { color: theme.colors.text.secondary }]}>
-                                {(pet.address_json as any).city}, {(pet.address_json as any).country}
-                            </Text>
-                        </View>
-                    )}
+                    <Text style={[styles.petName, { color: theme.colors.text.primary }]}>{pet.name}</Text>
                 </View>
             </View>
         </View>
@@ -184,51 +160,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    verifiedBadge: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        backgroundColor: '#fff',
-        borderRadius: 50,
-        padding: 2,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        elevation: 2,
-    },
     infoContainer: {
         alignItems: 'center',
         paddingHorizontal: 24,
-    },
-    nameRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 8,
     },
     petName: {
         fontSize: 28,
         fontWeight: '800',
         letterSpacing: -0.5,
-    },
-    subtitleBadge: {
-        paddingHorizontal: 16,
-        paddingVertical: 6,
-        borderRadius: 20,
-        marginBottom: 8,
-    },
-    subtitleText: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    locationContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        marginTop: 4,
-    },
-    locationText: {
-        fontSize: 12,
-        fontWeight: '500',
     },
 });

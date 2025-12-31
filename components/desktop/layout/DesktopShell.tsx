@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import SidebarNav from './SidebarNav';
-import Topbar from './Topbar';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'expo-router';
 import { useKeyboardShortcuts, KEYBOARD_SHORTCUTS } from '@/hooks/useKeyboardShortcuts';
@@ -42,7 +42,7 @@ const DesktopShell: React.FC<DesktopShellProps> = ({ children }) => {
         <View style={styles.container}>
             <SidebarNav />
             <View style={styles.mainContent}>
-                <Topbar />
+                {/* Topbar Removed */}
                 <View style={styles.content}>
                     {children}
                 </View>

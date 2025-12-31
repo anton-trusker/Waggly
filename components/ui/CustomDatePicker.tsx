@@ -56,16 +56,28 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm, ti
                 visible={visible}
                 transparent
                 animationType="fade"
+                onRequestClose={onClose}
             >
-                <View style={styles.overlay}>
-                    <View style={[styles.container, { maxWidth: 400, alignSelf: 'center', marginTop: '20%' }]}>
+                <TouchableOpacity
+                    style={styles.overlay}
+                    activeOpacity={1}
+                    onPress={onClose}
+                >
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={(e) => e.stopPropagation()}
+                        style={[styles.container, { maxWidth: 400, alignSelf: 'center', marginTop: '20%' }]}
+                    >
                         <View style={styles.header}>
                             <TouchableOpacity onPress={onClose}>
                                 <Text style={styles.cancelText}>Cancel</Text>
                             </TouchableOpacity>
                             <Text style={styles.title}>{title}</Text>
-                            <TouchableOpacity onPress={() => onConfirm(tempDate)}>
-                                <Text style={styles.confirmText}>Confirm</Text>
+                            <TouchableOpacity onPress={() => {
+                                onConfirm(tempDate);
+                                onClose();
+                            }}>
+                                <Text style={styles.confirmText}>Done</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.pickerContainer, { padding: 24 }]}>
@@ -76,7 +88,6 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm, ti
                                     const newDate = new Date(e.target.value);
                                     if (!isNaN(newDate.getTime())) {
                                         setTempDate(newDate);
-                                        onConfirm(newDate); // Auto-confirm on selection
                                     }
                                 }}
                                 max={formatDateForInput(new Date())}
@@ -92,8 +103,8 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm, ti
                                 }}
                             />
                         </View>
-                    </View>
-                </View>
+                    </TouchableOpacity>
+                </TouchableOpacity>
             </Modal>
         );
     }

@@ -13,6 +13,9 @@ export default function Breadcrumbs() {
     // Don't show on dashboard root
     if (pathname === '/(tabs)/(home)' || segments.length <= 2) return null;
 
+    // Don't show on Pet Profile (User Request: Remove breadcrumbs from header)
+    if (pathname.match(/\/pets\/[^/]+$/)) return null;
+
     const getBreadcrumbs = () => {
         // Filter out 'web', '(auth)', etc.
         const relevantSegments = segments.filter(

@@ -12,19 +12,8 @@ const Topbar: React.FC = () => {
                     <Breadcrumbs />
                 </View>
 
-                {/* Right: Actions */}
-                <View style={styles.actions}>
-                    {/* Theme Toggle (Mock) */}
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="moon-outline" size={20} color="#6B7280" />
-                    </TouchableOpacity>
-
-                    {/* Notifications */}
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="notifications-outline" size={20} color="#6B7280" />
-                        <View style={styles.notificationBadge} />
-                    </TouchableOpacity>
-                </View>
+                {/* Right: Actions Removed (Moved to Sidebar) */}
+                <View style={styles.actions} />
             </View>
         </View>
     );
