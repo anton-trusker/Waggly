@@ -6,6 +6,7 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
 import { useAuth } from '@/context/AuthContext';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useLocale } from '@/hooks/useLocale';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
@@ -23,6 +24,7 @@ export default function DashboardPage() {
     const isLargeScreen = width >= 1024;
     const { theme } = useAppTheme();
     const { refreshPets } = usePets();
+    const { t } = useLocale();
 
     const [refreshing, setRefreshing] = useState(false);
     const [visitOpen, setVisitOpen] = useState(false);
