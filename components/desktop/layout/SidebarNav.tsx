@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { LanguageSelector } from './LanguageSelector';
 
 const SidebarNav: React.FC = () => {
     const router = useRouter();
@@ -54,6 +55,8 @@ const SidebarNav: React.FC = () => {
             <View style={styles.bottomSection}>
                 {/* Utilities Row */}
                 <View style={styles.utilityRow}>
+                    <LanguageSelector />
+
                     <TouchableOpacity style={styles.iconButton}>
                         <Ionicons name="moon-outline" size={20} color="#6B7280" />
                     </TouchableOpacity>

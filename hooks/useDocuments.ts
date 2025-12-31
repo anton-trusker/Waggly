@@ -25,7 +25,7 @@ export function useDocuments(petId?: string) {
     try {
       let query = supabase
         .from('documents')
-        .select('*, pets:pet_id(name)') // Fetch pet name via foreign key
+        .select('*') // Simplified: fetch raw data only to avoid FK join errors
         .order('created_at', { ascending: false });
 
       if (petId) {
@@ -39,16 +39,15 @@ export function useDocuments(petId?: string) {
         throw error;
       }
 
-      console.log('Fetched documents:', data);
+      console.log('Fetched documents:', data?.length);
 
-      // Transform data to include petName flatly if needed, or just keep as is
-      // TypeScript might need assertion or manual type fix since 'pets' is a joined property
+      // Map to Document type
       const formattedData = (data || []).map((doc: any) => ({
         ...doc,
-        name: doc.file_name, // Map file_name to name for compatibility
-        url: doc.file_url, // Map file_url to url for compatibility
-        petName: doc.pets?.name || 'Unknown Pet',
-        uploadedAt: new Date(doc.created_at).toLocaleDateString() // Simple formatting
+        name: doc.file_name,
+        url: doc.file_url,
+        // petName will be mapped in the UI using the pets context
+        uploadedAt: new Date(doc.created_at).toLocaleDateString()
       }));
 
       if (isMountedRef.current) setDocuments(formattedData);
@@ -72,19 +71,19 @@ export function useDocuments(petId?: string) {
       const timestamp = new Date().getTime();
       const cleanFileName = fileName.replace(/[^a-zA-Z0-9.]/g, '_');
       const filePath = `${user.id}/${finalPetId}/${timestamp}-${cleanFileName}`;
-      
+
       let uploadBody;
-      
+
       if (Platform.OS === 'web') {
-          // On web, fetch the blob from the URI (which is usually a blob: URL)
-          const response = await fetch(uri);
-          uploadBody = await response.blob();
+        // On web, fetch the blob from the URI (which is usually a blob: URL)
+        const response = await fetch(uri);
+        uploadBody = await response.blob();
       } else {
-          // On mobile, read as base64
-          const base64 = await FileSystem.readAsStringAsync(uri, {
-            encoding: 'base64',
-          });
-          uploadBody = decode(base64);
+        // On mobile, read as base64
+        const base64 = await FileSystem.readAsStringAsync(uri, {
+          encoding: 'base64',
+        });
+        uploadBody = decode(base64);
       }
 
       // 2. Upload to Storage

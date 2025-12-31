@@ -91,7 +91,7 @@ export function useEvents(initialFilters?: EventFilters) {
 
   const fetchEvents = useCallback(async () => {
     console.log('🚀 Fetching events...', { user: !!user, petsLoading, filters, effectivePetIds });
-    
+
     if (!user) {
       console.log('❌ No user, clearing events');
       if (isMountedRef.current) {
@@ -133,20 +133,20 @@ export function useEvents(initialFilters?: EventFilters) {
         if (!vErr && vax) {
           (vax as Vaccination[]).forEach((v) => {
             const petInfo = petMap[v.pet_id];
-            if (!petInfo) return;
+            // if (!petInfo) return; // Don't skip if pet missing
             const date = v.next_due_date || v.date_given;
             if (!withinRange(date)) return;
 
             results.push({
               id: `vaccination:${v.id}`,
               petId: v.pet_id,
-              petName: petInfo.name,
+              petName: petInfo?.name || 'Unknown Pet',
               type: 'vaccination',
               title: v.vaccine_name,
               dueDate: date,
               priority: computePriority(v.next_due_date || undefined),
               notes: v.notes || undefined,
-              color: petInfo.color,
+              color: petInfo?.color || colors.text.secondary,
               relatedId: v.id,
             });
           });
@@ -164,20 +164,20 @@ export function useEvents(initialFilters?: EventFilters) {
         if (!tErr && tr) {
           (tr as Treatment[]).forEach((t) => {
             const petInfo = petMap[t.pet_id];
-            if (!petInfo) return;
+            // if (!petInfo) return;
 
             // Start Date
             if (t.start_date && withinRange(t.start_date)) {
               results.push({
                 id: `treatment-start:${t.id}`,
                 petId: t.pet_id,
-                petName: petInfo.name,
+                petName: petInfo?.name || 'Unknown Pet',
                 type: 'treatment',
                 title: `${t.treatment_name} (Start)`,
                 dueDate: t.start_date,
                 priority: computePriority(t.start_date),
                 notes: t.notes || undefined,
-                color: petInfo.color,
+                color: petInfo?.color || colors.text.secondary,
                 relatedId: t.id,
               });
             }
@@ -187,13 +187,13 @@ export function useEvents(initialFilters?: EventFilters) {
               results.push({
                 id: `treatment-end:${t.id}`,
                 petId: t.pet_id,
-                petName: petInfo.name,
+                petName: petInfo?.name || 'Unknown Pet',
                 type: 'treatment',
                 title: `${t.treatment_name} (End)`,
                 dueDate: t.end_date,
                 priority: computePriority(t.end_date),
                 notes: t.notes || undefined,
-                color: petInfo.color,
+                color: petInfo?.color || colors.text.secondary,
                 relatedId: t.id,
               });
             }
@@ -211,19 +211,19 @@ export function useEvents(initialFilters?: EventFilters) {
         if (!vErr && visits) {
           (visits as MedicalVisit[]).forEach((v) => {
             const petInfo = petMap[v.pet_id];
-            if (!petInfo) return;
+            // if (!petInfo) return;
             if (!withinRange(v.date)) return;
 
             results.push({
               id: `visit:${v.id}`,
               petId: v.pet_id,
-              petName: petInfo.name,
+              petName: petInfo?.name || 'Unknown Pet',
               type: 'vet',
               title: v.reason || 'Vet Visit',
               dueDate: v.date || '',
               priority: computePriority(v.date),
               notes: v.notes || undefined,
-              color: petInfo.color,
+              color: petInfo?.color || colors.text.secondary,
               relatedId: v.id,
               location: v.clinic_name || undefined,
             });
@@ -243,11 +243,12 @@ export function useEvents(initialFilters?: EventFilters) {
       if (!eErr && dbEvents) {
         (dbEvents as DbEvent[]).forEach((e) => {
           // If event has a pet_id, check if it's in our filtered list
-          if (e.pet_id && !petIds.includes(e.pet_id)) return;
+          // But now we want to be permissive. Wait, filters.petIds *should* filter if set.
+          // logic: IF filters.petIds is set, and event.petId is NOT in it, skip.
+          if (filters.petIds && filters.petIds.length > 0 && e.pet_id && !filters.petIds.includes(e.pet_id)) return;
+          // But if filters not set (or all effective), we accept all properly fetched by user_id
 
           // Check type filter
-          // DB types: 'vet', 'grooming', 'walking', 'other'
-          // Filter types: 'vet', 'grooming', 'walking', 'other', 'vaccination', 'treatment'
           if (types && !types.includes(e.type as EventType)) return;
 
           const date = e.start_time; // ISO timestamp

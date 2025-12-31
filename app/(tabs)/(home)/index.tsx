@@ -1,136 +1,109 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import PetCardCompact from '@/components/dashboard/PetCardCompact';
-import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
-import UpcomingCarePanel from '@/components/desktop/dashboard/UpcomingCarePanel';
-import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPanel';
-import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
-import { usePets } from '@/hooks/usePets';
 
-// New Modal Imports
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity, RefreshControl } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import { usePets } from '@/hooks/usePets';
+import { useAuth } from '@/context/AuthContext';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
 
+// Widgets
+import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
+import MyPetsWidget from '@/components/desktop/dashboard/MyPetsWidget';
+import DashboardHealthStatus from '@/components/desktop/dashboard/DashboardHealthStatus';
+import DashboardUpcoming from '@/components/desktop/dashboard/DashboardUpcoming';
+import DashboardTimeline from '@/components/desktop/dashboard/DashboardTimeline';
+
 export default function DashboardPage() {
     const router = useRouter();
-    const { pets, loading } = usePets();
     const { width } = useWindowDimensions();
-    const isMobile = width < 1024; // Treat tablet as mobile/stacked layout for now or define stricter breakpoint
+    const isLargeScreen = width >= 1024;
+    const isMobile = width < 768;
+    const { theme } = useAppTheme();
+    const { refreshPets } = usePets();
 
-    // Modal States
+    const [refreshing, setRefreshing] = useState(false);
     const [visitOpen, setVisitOpen] = useState(false);
     const [vaccinationOpen, setVaccinationOpen] = useState(false);
     const [treatmentOpen, setTreatmentOpen] = useState(false);
     const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
 
-    const handleQuickAction = (actionId: string) => {
-        switch (actionId) {
-            case 'visit':
-                setVisitOpen(true);
-                break;
-            case 'vaccine':
-                setVaccinationOpen(true);
-                break;
-            case 'meds':
-                setTreatmentOpen(true);
-                break;
-            case 'weight':
-                setHealthMetricsOpen(true);
-                break;
-            case 'doc':
-                router.push('/(tabs)/pets/documents/add' as any);
-                break;
-            default:
-                break;
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await refreshPets();
+        // Add other refresh calls here if needed (useEvents, useActivityFeed, etc.)
+        setRefreshing(false);
+    };
+
+    const handleQuickAction = (id: string) => {
+        switch (id) {
+            case 'visit': setVisitOpen(true); break;
+            case 'vaccine': setVaccinationOpen(true); break;
+            case 'meds': setTreatmentOpen(true); break;
+            case 'weight': setHealthMetricsOpen(true); break;
+            case 'doc': router.push('/(tabs)/pets/documents/add' as any); break;
         }
     };
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header removed (use global Topbar) */}
+        <ScrollView
+            style={[styles.container, { backgroundColor: theme.colors.background.primary }]}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary[500]]} />
+            }
+        >
             <View style={[styles.content, isMobile && styles.contentMobile]}>
-                {/* Main Column */}
-                <View style={styles.mainColumn}>
-                    {/* Your Pets Section */}
-                    <View style={styles.section}>
-                        <View style={styles.sectionHeader}>
-                            <View style={styles.titleRow}>
-                                <Text style={styles.sectionTitle}>Your Pets</Text>
-                                <View style={styles.badge}>
-                                    <Text style={styles.badgeText}>{pets.length}</Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity onPress={() => router.push('/(tabs)/pets' as any)}>
-                                <Text style={styles.viewAllLink}>View All Pets</Text>
-                            </TouchableOpacity>
+
+                {/* Header (Greeting) */}
+                <View style={styles.header}>
+                    <View>
+                        <Text style={[styles.welcomeText, { color: theme.colors.text.primary }]}>Welcome back,</Text>
+                        <Text style={[styles.subtitleText, { color: theme.colors.text.secondary }]}>Here's what's happening today.</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
+                        <View style={styles.avatarPlaceholder}>
+                            <IconSymbol android_material_icon_name="person" size={24} color="#9CA3AF" />
                         </View>
-
-                        {loading ? (
-                            <Text style={styles.loadingText}>Loading pets...</Text>
-                        ) : pets.length === 0 ? (
-                            <View style={styles.emptyState}>
-                                <Text style={styles.emptyIcon}>🐾</Text>
-                                <Text style={styles.emptyTitle}>No Pets Yet</Text>
-                                <Text style={styles.emptyText}>
-                                    Add your first pet to start managing their health and care
-                                </Text>
-                                <TouchableOpacity
-                                    style={styles.addFirstPetButton}
-                                    onPress={() => router.push('/(tabs)/pets/add' as any)}
-                                >
-                                    <Ionicons name="add" size={20} color="#fff" />
-                                    <Text style={styles.addFirstPetText}>Add Your First Pet</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <View style={styles.petsGrid}>
-                                {pets.map((pet) => (
-                                    <PetCardCompact key={pet.id} pet={pet} />
-                                ))}
-                            </View>
-                        )}
-                    </View>
-
-                    {/* Quick Actions - Desktop only, mobile uses plus button */}
-                    {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
+                    </TouchableOpacity>
                 </View>
 
-                {/* Sidebar Column - Desktop only */}
-                {!isMobile && (
-                    <View style={styles.sidebarColumn}>
-                        {/* Upcoming Care */}
-                        <UpcomingCarePanel />
+                {/* Health Status Hero */}
+                <DashboardHealthStatus />
 
-                        {/* Priority Alerts */}
-                        <PriorityAlertsPanel />
+                {/* Quick Actions */}
+                <QuickActionsGrid onActionPress={handleQuickAction} />
 
-                        {/* Activity Feed */}
-                        <ActivityFeedTimeline />
+                {/* Layout Grid */}
+                <View style={[styles.grid, isLargeScreen && styles.gridLarge]}>
+
+                    {/* Left Column (Main) */}
+                    <View style={styles.colMain}>
+                        <MyPetsWidget />
                     </View>
-                )}
+
+                    {/* Right Column (Sidebar/Widgets) */}
+                    <View style={styles.colSide}>
+                        {/* Split widgets or stack them depending on preference */}
+                        <View style={{ gap: 24 }}>
+                            <DashboardUpcoming />
+                            <DashboardTimeline />
+                        </View>
+                    </View>
+                </View>
+
             </View>
-
-            {/* Mobile: Show sidebar panels below main content */}
-            {isMobile && (
-                <View style={styles.mobileSidebar}>
-                    <UpcomingCarePanel />
-                    <PriorityAlertsPanel />
-                    <ActivityFeedTimeline />
-                </View>
-            )}
 
             {/* Modals */}
             <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
             <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
             <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
-            <HealthMetricsModal
-                visible={healthMetricsOpen}
-                onClose={() => setHealthMetricsOpen(false)}
-            />
+            <HealthMetricsModal visible={healthMetricsOpen} onClose={() => setHealthMetricsOpen(false)} initialTab="weight" />
+
         </ScrollView>
     );
 }
@@ -138,236 +111,59 @@ export default function DashboardPage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc',
     },
     content: {
-        flexDirection: 'row',
-        gap: 40, // Increased gap
-        padding: 40, // Increased padding as per audit
-        maxWidth: 1400, // Audit spec
-        alignSelf: 'center',
+        padding: 24,
+        maxWidth: 1200,
         width: '100%',
+        alignSelf: 'center',
     },
     contentMobile: {
-        flexDirection: 'column',
         padding: 16,
-        gap: 24,
     },
-    mainColumn: {
-        flex: 1, // Fluid width
-        gap: 32, // Consistent vertical rhythm
-    },
-    sidebarColumn: {
-        width: 360, // Fixed width, slightly wider for better card fit
-        minWidth: 360,
-    },
-    section: {
-        marginBottom: 32,
-    },
-    sectionHeader: {
+    header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 24,
     },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    sectionTitle: {
+    welcomeText: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
         fontFamily: 'Plus Jakarta Sans',
     },
-    badge: {
-        backgroundColor: '#EEF2FF',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 12,
-    },
-    badgeText: {
+    subtitleText: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
         fontFamily: 'Plus Jakarta Sans',
+        marginTop: 4,
     },
-    viewAllLink: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6366F1',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    loadingText: {
-        fontSize: 14,
-        color: '#6B7280',
-        textAlign: 'center',
-        paddingVertical: 40,
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    emptyState: {
-        alignItems: 'center',
-        paddingVertical: 60,
-    },
-    emptyIcon: {
-        fontSize: 64,
-        marginBottom: 16,
-    },
-    emptyTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 8,
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    emptyText: {
-        fontSize: 16,
-        color: '#6B7280',
-        textAlign: 'center',
-        maxWidth: 400,
-        marginBottom: 24,
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    addButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: '#6366F1',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 12,
-    },
-    addButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    petGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 20,
-    },
-    petGridMobile: {
-        flexDirection: 'column',
-    },
-    petCardWrapper: {
-        width: '31%', // calc replacement
-        minWidth: 250,
-    },
-    petCardWrapperMobile: {
-        width: '100%',
-    },
-    addPetCard: {
-        width: '31%',
-        minWidth: 250,
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 40,
-        borderWidth: 2,
-        borderColor: '#E5E7EB',
-        borderStyle: 'dashed',
+    avatarPlaceholder: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#F3F4F6',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    addPetCardMobile: {
-        width: '100%',
-        paddingVertical: 32,
-    },
-    addPetIconContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: '#EEF2FF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 16,
-    },
-    addPetText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#6366F1',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    actionsContainer: {
-        marginBottom: 32,
-    },
-    heading: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 16,
-        fontFamily: 'Plus Jakarta Sans',
     },
     grid: {
-        flexDirection: 'row',
-        gap: 16,
-        flexWrap: 'wrap',
-    },
-    actionCard: {
-        alignItems: 'center',
-        minWidth: 100,
-        paddingVertical: 6,
-        paddingHorizontal: 4,
-        borderRadius: 12,
-    },
-    actionCardHover: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 6,
-    },
-    actionCardFocus: {
-        borderWidth: 2,
-        borderColor: '#6366F1',
-    },
-    iconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
-        textAlign: 'center',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    // Missing styles added below
-    addFirstPetButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: '#6366F1',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 12,
-        marginTop: 24,
-    },
-    addFirstPetText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#fff',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    petsGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 20,
-    },
-    mobileSidebar: {
-        width: '100%',
+        flexDirection: 'column',
         gap: 24,
-        marginTop: 24,
+    },
+    gridLarge: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
+    colMain: {
+        flex: 1, // On large screens, this could be 1 part
+        // Actually, user wants MyPets on Desktop to be bigger.
+        // It might be better if MyPets is in a sidebar or 50/50?
+        // Let's stick to standard layout logic
+        // 1.5 flex for main content?
+        flexGrow: 1.5,
+        minWidth: 300,
+    },
+    colSide: {
+        flex: 1,
+        minWidth: 300,
     },
 });

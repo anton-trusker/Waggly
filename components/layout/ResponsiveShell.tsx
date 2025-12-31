@@ -6,6 +6,7 @@ import SidebarNav from '@/components/desktop/layout/SidebarNav';
 
 import FloatingTabBarWithPlus, { TabBarItem } from '@/components/layout/FloatingTabBarWithPlus';
 import KeyboardShortcutsModal from '@/components/desktop/KeyboardShortcutsModal';
+import AddActionsModal from '@/components/features/actions/AddActionsModal';
 import { useKeyboardShortcuts, KEYBOARD_SHORTCUTS } from '@/hooks/useKeyboardShortcuts';
 import { useRouter } from 'expo-router';
 
@@ -20,6 +21,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     const pathname = usePathname();
     const router = useRouter();
     const [showShortcuts, setShowShortcuts] = useState(false);
+    const [quickActionVisible, setQuickActionVisible] = useState(false);
 
     // Global keyboard shortcuts (Desktop only mainly, but safe to have)
     useKeyboardShortcuts({
@@ -87,7 +89,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
                 {!isDesktop && (
                     <FloatingTabBarWithPlus
                         tabs={mobileTabs}
-                        onPlusPress={() => router.push('/(tabs)/pets/new' as any)}
+                        onPlusPress={() => setQuickActionVisible(true)}
                     />
                 )}
             </View>
@@ -98,6 +100,11 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
                     onClose={() => setShowShortcuts(false)}
                 />
             )}
+
+            <AddActionsModal
+                visible={quickActionVisible}
+                onClose={() => setQuickActionVisible(false)}
+            />
         </View>
     );
 }

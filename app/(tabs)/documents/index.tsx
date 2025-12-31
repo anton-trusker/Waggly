@@ -143,8 +143,8 @@ export default function DocumentsPage() {
     };
 
     const renderFilters = () => (
-        <ScrollView 
-            horizontal={isMobile} 
+        <ScrollView
+            horizontal={isMobile}
             showsHorizontalScrollIndicator={false}
             style={isMobile ? styles.filtersMobile : styles.sidebar}
             contentContainerStyle={isMobile ? styles.filtersContentMobile : undefined}
@@ -297,6 +297,8 @@ export default function DocumentsPage() {
                                     const { icon, color } = getDocumentIcon(doc.type);
                                     const isSelected = selectedIds.has(doc.id);
                                     const sizeString = formatSize(doc.size_bytes);
+                                    const pet = pets.find(p => p.id === doc.pet_id);
+                                    const petName = pet?.name || 'Unknown Pet';
 
                                     return (
                                         <Pressable
@@ -325,7 +327,7 @@ export default function DocumentsPage() {
                                                 </Text>
                                                 <View style={styles.documentMeta}>
                                                     <Ionicons name="paw" size={12} color="#9CA3AF" />
-                                                    <Text style={styles.documentMetaText}>{doc.petName}</Text>
+                                                    <Text style={styles.documentMetaText}>{petName}</Text>
                                                     <Text style={styles.documentMetaText}>•</Text>
                                                     <Text style={styles.documentMetaText}>{sizeString}</Text>
                                                 </View>

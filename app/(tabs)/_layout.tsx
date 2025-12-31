@@ -5,12 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import ResponsiveShell from '@/components/layout/ResponsiveShell';
-import AddActionsModal from '@/components/features/actions/AddActionsModal';
+
 
 export default function TabLayout() {
   const { user, loading } = useAuth();
   const pathname = usePathname();
-  const [quickActionVisible, setQuickActionVisible] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -44,7 +43,7 @@ export default function TabLayout() {
         <Stack.Screen name="notifications" />
         <Stack.Screen name="profile" />
       </Stack>
-      <AddActionsModal visible={quickActionVisible} onClose={() => setQuickActionVisible(false)} />
-    </ResponsiveShell>
+    </Stack>
+    </ResponsiveShell >
   );
 }

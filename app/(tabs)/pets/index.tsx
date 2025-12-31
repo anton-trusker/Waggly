@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensio
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
-import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
+import { PetPassportCard } from '@/components/pet/PetPassportCard';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 
 export default function PetsListPage() {
@@ -44,12 +44,11 @@ export default function PetsListPage() {
         <View style={[styles.grid, isMobile && styles.gridMobile]}>
           {pets.map((pet) => (
             <View key={pet.id} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
-              <PetCardDesktop pet={pet} />
+              <PetPassportCard
+                pet={pet}
+                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+              />
               <View style={styles.cardActions}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}>
-                  <Ionicons name="eye-outline" size={18} color="#374151" />
-                  <Text style={styles.secondaryButtonText}>View</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={styles.secondaryButton} onPress={() => setVisitPetId(pet.id)}>
                   <Ionicons name="calendar-outline" size={18} color="#374151" />
                   <Text style={styles.secondaryButtonText}>Book Visit</Text>
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 16, color: '#6B7280', textAlign: 'center', maxWidth: 400, marginBottom: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 20, padding: 32 },
   gridMobile: { flexDirection: 'column', padding: 16 },
-  cardWrapper: { width: 'calc(33.333% - 14px)' as any, minWidth: 280 },
+  cardWrapper: { width: 'calc(33.333% - 14px)' as any, minWidth: 320 },
   cardWrapperMobile: { width: '100%', minWidth: '100%' },
   cardActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
   secondaryButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#fff' },

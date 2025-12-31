@@ -11,6 +11,7 @@ import { COUNTRIES } from '@/constants/countries';
 import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
+import { ProfileHeader } from '@/components/profile/ProfileHeader';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -66,6 +67,19 @@ export default function ProfilePage() {
       setAddress(profile.address || '');
       setCountryCode(profile.country_code || '');
       setLanguageCode(profile.language_code || '');
+
+      // Parse phone number
+      if (profile.phone) {
+        // Sort countries by dial code length descending to match longest prefix first
+        const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
+        const match = sortedCountries.find(c => profile.phone?.startsWith(c.dialCode));
+        if (match) {
+          setPhoneCountryCode(match.code);
+          setPhone(profile.phone.slice(match.dialCode.length));
+        } else {
+          setPhone(profile.phone);
+        }
+      }
 
       // If we had notification prefs in profile, we'd load them here
       // const prefs = profile.notification_prefs as any;
@@ -134,7 +148,7 @@ export default function ProfilePage() {
       first_name: firstName,
       last_name: lastName,
       photo_url: photoUrl,
-      phone: phone || null,
+      phone: phone ? `${COUNTRIES.find(c => c.code === phoneCountryCode)?.dialCode || '+1'}${phone}` : null,
       bio: bio || null,
       gender: gender || null,
       website: website || null,
@@ -165,7 +179,7 @@ export default function ProfilePage() {
           onPress: async () => {
             try {
               await signOut();
-              router.replace('/(auth)/login');
+              // Router redirection is handled by _layout.tsx based on session state
             } catch (error) {
               console.error('Sign out error:', error);
               Alert.alert(
@@ -302,40 +316,16 @@ export default function ProfilePage() {
         <ScrollView style={[styles.main, isMobile && styles.mainMobile]} showsVerticalScrollIndicator={false}>
           {activeTab === 'account' && (
             <View style={styles.tabContent}>
-              <View style={styles.profileHeader}>
-                <View style={styles.avatarSection}>
-                  <View style={styles.avatarContainer}>
-                    {photoUrl ? (
-                      <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
-                    ) : (
-                      <View style={styles.avatarPlaceholder}>
-                        <Text style={styles.avatarText}>
-                          {(firstName?.charAt(0) || '') + (lastName?.charAt(0) || '')}
-                        </Text>
-                      </View>
-                    )}
-                    {isEditing && (
-                      <TouchableOpacity style={styles.avatarEditButton} onPress={handlePhotoUpload}>
-                        <Ionicons name="camera" size={16} color="#fff" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                  <View style={styles.userInfo}>
-                    <Text style={styles.userName}>
-                      {firstName} {lastName}
-                    </Text>
-                    <Text style={styles.userEmail}>{user?.email}</Text>
-                    {address && <Text style={styles.userLocation}>{address}</Text>}
-                  </View>
-                </View>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() => setIsEditing(!isEditing)}
-                >
-                  <Ionicons name={isEditing ? "close" : "pencil"} size={20} color="#6366F1" />
-                  <Text style={styles.editButtonText}>{isEditing ? 'Cancel' : 'Edit Profile'}</Text>
-                </TouchableOpacity>
-              </View>
+              <ProfileHeader
+                firstName={firstName}
+                lastName={lastName}
+                email={user?.email}
+                photoUrl={photoUrl}
+                address={address} // Keep address separate from country/city concat for now
+                isEditing={isEditing}
+                onEdit={() => setIsEditing(!isEditing)}
+                onPhotoUpload={handlePhotoUpload}
+              />
 
               {isEditing ? (
                 <View style={styles.section}>
@@ -624,10 +614,17 @@ export default function ProfilePage() {
                     </View>
                   )}
 
-                  {country && (
+                  {countryCode && (
                     <View style={styles.infoSection}>
                       <Text style={styles.infoLabel}>Country</Text>
-                      <Text style={styles.infoValue}>{country}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <Text style={{ fontSize: 20 }}>
+                          {COUNTRIES.find(c => c.code === countryCode)?.flag}
+                        </Text>
+                        <Text style={styles.infoValue}>
+                          {COUNTRIES.find(c => c.code === countryCode)?.name || countryCode}
+                        </Text>
+                      </View>
                     </View>
                   )}
 
