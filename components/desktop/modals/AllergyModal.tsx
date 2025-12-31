@@ -24,8 +24,15 @@ const SEVERITY_LEVELS = [
     { id: 'severe', label: 'Severe', color: '#EF4444' },
 ];
 
+const ALLERGY_TYPES = [
+    { id: 'food', label: 'Food', icon: 'fast-food' },
+    { id: 'environment', label: 'Environment', icon: 'leaf' },
+    { id: 'medication', label: 'Medication', icon: 'medkit' },
+];
+
 interface AllergyFormData {
     name: string;
+    type: 'food' | 'environment' | 'medication';
     severity: string;
     reaction: string;
     notes: string;
@@ -63,7 +70,8 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                 notes = parts.slice(1).join('\n');
             }
             return {
-                name: existingAllergy.allergen,
+                name: existingAllergy.allergen || existingAllergy.allergen_name, // Handle both column names if migrated
+                type: (existingAllergy.type as any) || 'environment',
                 severity: existingAllergy.severity_level || 'moderate',
                 reaction,
                 notes,
@@ -71,6 +79,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
         }
         return {
             name: '',
+            type: 'food',
             severity: 'moderate',
             reaction: '',
             notes: '',
@@ -87,7 +96,8 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
             allergen: data.name,
             severity_level: data.severity,
             notes: data.reaction ? `Reaction: ${data.reaction}\n${data.notes}` : data.notes,
-            type: 'Allergy',
+            type: data.type,
+            allergy_type: data.type, // Sync both columns
             pet_id: selectedPetId
         };
 
@@ -152,6 +162,33 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                     {formState.errors.name}
                                 </Text>
                             )}
+                        </View>
+
+                        <View style={styles.fieldGroup}>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('allergy_form.type') || 'Type'}</Text>
+                            <View style={styles.severityRow}>
+                                {ALLERGY_TYPES.map((type) => (
+                                    <TouchableOpacity
+                                        key={type.id}
+                                        onPress={() => formState.updateField('type', type.id as any)}
+                                        style={[
+                                            styles.severityButton,
+                                            { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary },
+                                            formState.data.type === type.id && { borderColor: theme.colors.primary[500], backgroundColor: 'rgba(37, 99, 235, 0.1)' }
+                                        ]}
+                                    >
+                                        <Ionicons
+                                            name={type.icon as any}
+                                            size={16}
+                                            color={formState.data.type === type.id ? theme.colors.primary[500] : theme.colors.text.secondary}
+                                            style={{ marginBottom: 4 }}
+                                        />
+                                        <Text style={[styles.severityText, { color: formState.data.type === type.id ? theme.colors.primary[500] : theme.colors.text.secondary, fontSize: 12 }]}>
+                                            {type.label}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
                         </View>
 
                         <View style={styles.fieldGroup}>

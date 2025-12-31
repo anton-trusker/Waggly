@@ -335,7 +335,11 @@
     "notes": "Notes",
     "mild": "Mild",
     "moderate": "Moderate",
-    "severe": "Severe"
+    "severe": "Severe",
+    "type": "Type",
+    "food": "Food",
+    "environment": "Environment",
+    "medication": "Medication"
   },
   "treatment_form": {
     "add_title": "Add Treatment",
