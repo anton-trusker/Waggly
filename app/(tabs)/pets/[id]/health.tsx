@@ -8,6 +8,7 @@ import { useTreatments } from '@/hooks/useTreatments';
 import { useAllergies } from '@/hooks/useAllergies';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function HealthTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -15,6 +16,7 @@ export default function HealthTab() {
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= 1024;
   const isMobile = width < 768;
+  const { t, locale } = useLocale();
 
   const { pets } = usePets();
   const { events } = useEvents({ petIds: [id] });
@@ -32,12 +34,12 @@ export default function HealthTab() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
   };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   };
 
   const getDaysUntil = (dateString: string) => {
@@ -59,116 +61,116 @@ export default function HealthTab() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
-        
+
         {/* Quick Actions */}
         {isMobile ? (
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.mobileQuickActionsContainer}
             style={styles.mobileQuickActionsScroll}
           >
-            <QuickActionButton 
-              label="Add Visit" 
-              icon="calendar-today" 
-              color="#2563EB" 
-              bgColor="#DBEAFE" 
-              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_visit')}
+              icon="calendar-today"
+              color="#2563EB"
+              bgColor="#DBEAFE"
+              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Vaccine" 
-              icon="vaccines" 
-              color="#DB2777" 
-              bgColor="#FCE7F3" 
-              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_vaccine')}
+              icon="vaccines"
+              color="#DB2777"
+              bgColor="#FCE7F3"
+              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Tx" 
-              icon="medication" 
-              color="#9333EA" 
-              bgColor="#F3E8FF" 
-              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_tx')}
+              icon="medication"
+              color="#9333EA"
+              bgColor="#F3E8FF"
+              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Image" 
-              icon="add-photo-alternate" 
-              color="#D97706" 
-              bgColor="#FEF3C7" 
-              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_image')}
+              icon="add-photo-alternate"
+              color="#D97706"
+              bgColor="#FEF3C7"
+              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Doc" 
-              icon="note_add" 
-              color="#EA580C" 
-              bgColor="#FFEDD5" 
-              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_doc')}
+              icon="note_add"
+              color="#EA580C"
+              bgColor="#FFEDD5"
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)}
               isMobile={true}
             />
-            <QuickActionButton 
-              label="Add Record" 
-              icon="history_edu" 
-              color="#059669" 
-              bgColor="#D1FAE5" 
-              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_record')}
+              icon="history_edu"
+              color="#059669"
+              bgColor="#D1FAE5"
+              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)}
               isMobile={true}
             />
           </ScrollView>
         ) : (
           <View style={styles.quickActionsGrid}>
-            <QuickActionButton 
-              label="Add Visit" 
-              icon="calendar-today" 
-              color="#2563EB" 
-              bgColor="#DBEAFE" 
-              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_visit')}
+              icon="calendar-today"
+              color="#2563EB"
+              bgColor="#DBEAFE"
+              onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Vaccine" 
-              icon="vaccines" 
-              color="#DB2777" 
-              bgColor="#FCE7F3" 
-              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_vaccine')}
+              icon="vaccines"
+              color="#DB2777"
+              bgColor="#FCE7F3"
+              onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Tx" 
-              icon="medication" 
-              color="#9333EA" 
-              bgColor="#F3E8FF" 
-              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_tx')}
+              icon="medication"
+              color="#9333EA"
+              bgColor="#F3E8FF"
+              onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Image" 
-              icon="add-photo-alternate" 
-              color="#D97706" 
-              bgColor="#FEF3C7" 
-              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_image')}
+              icon="add-photo-alternate"
+              color="#D97706"
+              bgColor="#FEF3C7"
+              onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Doc" 
-              icon="note_add" 
-              color="#EA580C" 
-              bgColor="#FFEDD5" 
-              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_doc')}
+              icon="note_add"
+              color="#EA580C"
+              bgColor="#FFEDD5"
+              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}`)}
             />
-            <QuickActionButton 
-              label="Add Record" 
-              icon="history_edu" 
-              color="#059669" 
-              bgColor="#D1FAE5" 
-              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)} 
+            <QuickActionButton
+              label={t('pet_profile.health.actions.add_record')}
+              icon="history_edu"
+              color="#059669"
+              bgColor="#D1FAE5"
+              onPress={() => router.push(`/(tabs)/pets/record/new?petId=${id}`)}
             />
           </View>
         )}
 
         <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
-          
+
           {/* Main Column */}
           <View style={styles.mainColumn}>
-            
+
             {/* Visits Section */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
@@ -176,19 +178,19 @@ export default function HealthTab() {
                   <View style={[styles.iconBox, { backgroundColor: '#DBEAFE' }]}>
                     <IconSymbol android_material_icon_name="calendar-today" size={24} color="#2563EB" />
                   </View>
-                  <Text style={styles.cardTitle}>Visits</Text>
+                  <Text style={styles.cardTitle}>{t('pet_profile.health.titles.visits')}</Text>
                 </View>
                 <View style={styles.headerActions}>
                   <Pressable style={styles.filterBtn}>
                     <IconSymbol android_material_icon_name="filter-list" size={16} color="#6B7280" />
-                    <Text style={styles.filterBtnText}>Filter</Text>
+                    <Text style={styles.filterBtnText}>{t('pet_profile.health.actions.filter')}</Text>
                   </Pressable>
-                  <Pressable 
+                  <Pressable
                     style={styles.primaryBtn}
                     onPress={() => router.push(`/(tabs)/pets/visit/new?petId=${id}`)}
                   >
                     <IconSymbol android_material_icon_name="add" size={16} color="#fff" />
-                    <Text style={styles.primaryBtnText}>New Visit</Text>
+                    <Text style={styles.primaryBtnText}>{t('pet_profile.health.actions.new_visit')}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -196,7 +198,7 @@ export default function HealthTab() {
               <View style={[styles.visitsGrid, !isMobile && styles.visitsGridDesktop]}>
                 {/* Upcoming Visits */}
                 <View style={styles.visitsColumn}>
-                  <Text style={styles.sectionLabel}>UPCOMING</Text>
+                  <Text style={styles.sectionLabel}>{t('pet_profile.health.sections.upcoming')}</Text>
                   {upcomingEvents.length > 0 ? (
                     upcomingEvents.map((event) => {
                       const daysUntil = getDaysUntil(event.dueDate);
@@ -212,7 +214,11 @@ export default function HealthTab() {
                             </View>
                             <View style={styles.daysBadge}>
                               <Text style={styles.daysBadgeText}>
-                                {daysUntil === 0 ? 'TODAY' : daysUntil === 1 ? 'TOMORROW' : `${daysUntil} DAYS`}
+                                {daysUntil === 0
+                                  ? t('pet_profile.health.badges.today')
+                                  : daysUntil === 1
+                                    ? t('pet_profile.health.badges.tomorrow')
+                                    : `${daysUntil} ${t('pet_profile.health.badges.days')}`}
                               </Text>
                             </View>
                           </View>
@@ -231,14 +237,14 @@ export default function HealthTab() {
                     })
                   ) : (
                     <View style={styles.emptyState}>
-                      <Text style={styles.emptyStateText}>No upcoming visits</Text>
+                      <Text style={styles.emptyStateText}>{t('pet_profile.health.empty.upcoming')}</Text>
                     </View>
                   )}
                 </View>
 
                 {/* Recent History */}
                 <View style={styles.visitsColumn}>
-                  <Text style={styles.sectionLabel}>RECENT HISTORY</Text>
+                  <Text style={styles.sectionLabel}>{t('pet_profile.health.sections.recent_history')}</Text>
                   {recentEvents.length > 0 ? (
                     <View style={styles.recentList}>
                       {recentEvents.map((event) => (
@@ -257,7 +263,7 @@ export default function HealthTab() {
                     </View>
                   ) : (
                     <View style={styles.emptyState}>
-                      <Text style={styles.emptyStateText}>No recent visits</Text>
+                      <Text style={styles.emptyStateText}>{t('pet_profile.health.empty.recent')}</Text>
                     </View>
                   )}
                 </View>
@@ -271,10 +277,10 @@ export default function HealthTab() {
                   <View style={[styles.iconBox, { backgroundColor: '#FCE7F3' }]}>
                     <IconSymbol android_material_icon_name="vaccines" size={24} color="#DB2777" />
                   </View>
-                  <Text style={styles.cardTitle}>Vaccinations</Text>
+                  <Text style={styles.cardTitle}>{t('pet_profile.health.titles.vaccinations')}</Text>
                 </View>
                 <Pressable onPress={() => router.push(`/(tabs)/pets/vaccination/new?petId=${id}`)}>
-                  <Text style={styles.linkText}>+ Add New</Text>
+                  <Text style={styles.linkText}>{t('pet_profile.health.actions.add_new')}</Text>
                 </Pressable>
               </View>
 
@@ -300,13 +306,13 @@ export default function HealthTab() {
                             <Text style={[
                               styles.statusBadgeText,
                               isDueSoon ? styles.statusTextDue : styles.statusTextActive
-                            ]}>{status}</Text>
+                            ]}>{t(`pet_profile.health.badges.${status.toLowerCase().replace(' ', '_')}` as any)}</Text>
                           </View>
                         </View>
                         <Text style={styles.vaccineName}>{vaccination.name}</Text>
                         <Text style={styles.vaccineProvider}>{vaccination.provider || 'Standard Vaccine'}</Text>
                         <View style={styles.vaccineFooter}>
-                          <Text style={styles.expiresLabel}>EXPIRES</Text>
+                          <Text style={styles.expiresLabel}>{t('common.expires_short') || 'EXPIRES'}</Text>
                           <Text style={[
                             styles.expiresDate,
                             isDueSoon && styles.expiresDateDue
@@ -319,7 +325,7 @@ export default function HealthTab() {
                   })
                 ) : (
                   <View style={styles.emptyState}>
-                    <Text style={styles.emptyStateText}>No vaccinations recorded</Text>
+                    <Text style={styles.emptyStateText}>{t('pet_profile.health.empty.vaccinations')}</Text>
                   </View>
                 )}
               </View>
@@ -332,14 +338,14 @@ export default function HealthTab() {
                   <View style={[styles.iconBox, { backgroundColor: '#F3E8FF' }]}>
                     <IconSymbol android_material_icon_name="medication" size={24} color="#9333EA" />
                   </View>
-                  <Text style={styles.cardTitle}>Treatments & Meds</Text>
+                  <Text style={styles.cardTitle}>{t('pet_profile.health.titles.treatments')}</Text>
                 </View>
                 <View style={styles.headerActions}>
                   <Pressable style={styles.iconBtn}>
                     <IconSymbol android_material_icon_name="filter-list" size={24} color="#6B7280" />
                   </Pressable>
                   <Pressable onPress={() => router.push(`/(tabs)/pets/treatment/new?petId=${id}`)}>
-                    <Text style={styles.linkText}>+ Add Tx</Text>
+                    <Text style={styles.linkText}>{t('pet_profile.health.actions.add_tx')}</Text>
                   </Pressable>
                 </View>
               </View>
@@ -379,7 +385,7 @@ export default function HealthTab() {
                   ))
                 ) : (
                   <View style={styles.emptyState}>
-                    <Text style={styles.emptyStateText}>No current treatments</Text>
+                    <Text style={styles.emptyStateText}>{t('pet_profile.health.empty.treatments')}</Text>
                   </View>
                 )}
               </View>
@@ -389,11 +395,11 @@ export default function HealthTab() {
 
           {/* Sidebar Column */}
           <View style={styles.sidebarColumn}>
-            
+
             {/* Allergies Sidebar */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Allergies</Text>
+                <Text style={styles.cardTitle}>{t('pet_profile.health.titles.allergies')}</Text>
                 <Pressable style={styles.editBtn}>
                   <IconSymbol android_material_icon_name="edit" size={20} color="#6366F1" />
                 </Pressable>
@@ -406,9 +412,9 @@ export default function HealthTab() {
                       styles.allergyItem,
                       allergy.severity === 'severe' ? styles.allergySevere : styles.allergyMild
                     ]}>
-                      <IconSymbol 
-                        android_material_icon_name={allergy.severity === 'severe' ? 'warning' : 'eco'} 
-                        size={20} 
+                      <IconSymbol
+                        android_material_icon_name={allergy.severity === 'severe' ? 'warning' : 'eco'}
+                        size={20}
                         color={allergy.severity === 'severe' ? '#EF4444' : '#CA8A04'}
                       />
                       <View style={styles.allergyContent}>
@@ -429,11 +435,11 @@ export default function HealthTab() {
                   ))
                 ) : (
                   <View style={styles.emptyState}>
-                    <Text style={styles.emptyStateText}>No allergies recorded</Text>
+                    <Text style={styles.emptyStateText}>{t('pet_profile.health.empty.allergies')}</Text>
                   </View>
                 )}
                 <Pressable style={styles.addAllergyBtn}>
-                  <Text style={styles.addAllergyText}>+ Add Allergy</Text>
+                  <Text style={styles.addAllergyText}>{t('pet_profile.health.actions.add_allergy')}</Text>
                 </Pressable>
               </View>
             </View>
@@ -441,7 +447,7 @@ export default function HealthTab() {
             {/* Health Log */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Health Log</Text>
+                <Text style={styles.cardTitle}>{t('pet_profile.health.titles.health_log')}</Text>
                 <Pressable>
                   <IconSymbol android_material_icon_name="history" size={24} color="#6B7280" />
                 </Pressable>
@@ -449,12 +455,12 @@ export default function HealthTab() {
 
               <View style={styles.logList}>
                 <View style={styles.logLine} />
-                
+
                 {/* Log Items (Mock Data) */}
-                <LogItem 
-                  color="#6366F1" 
-                  title="Weight Check" 
-                  date="Oct 20" 
+                <LogItem
+                  color="#6366F1"
+                  title="Weight Check"
+                  date="Oct 20"
                   desc="Recorded at home."
                 >
                   <View style={styles.weightBadge}>
@@ -463,29 +469,29 @@ export default function HealthTab() {
                   </View>
                 </LogItem>
 
-                <LogItem 
-                  color="#9CA3AF" 
-                  title="Symptom Log" 
-                  date="Oct 12" 
+                <LogItem
+                  color="#9CA3AF"
+                  title="Symptom Log"
+                  date="Oct 12"
                   desc="Mild lethargy noted in the evening. Appetite normal."
                 />
 
-                <LogItem 
-                  color="#3B82F6" 
-                  title="Condition Resolved" 
-                  date="Oct 10" 
+                <LogItem
+                  color="#3B82F6"
+                  title="Condition Resolved"
+                  date="Oct 10"
                   desc="Otitis Externa (Ear Infection) marked as resolved."
                 />
 
-                <LogItem 
-                  color="#9CA3AF" 
-                  title="Note Added" 
-                  date="Sep 15" 
+                <LogItem
+                  color="#9CA3AF"
+                  title="Note Added"
+                  date="Sep 15"
                   desc="Started new bag of food. Transitioning over 7 days."
                 />
 
                 <Pressable style={styles.viewHistoryBtn}>
-                  <Text style={styles.viewHistoryText}>View Full History</Text>
+                  <Text style={styles.viewHistoryText}>{t('pet_profile.health.actions.view_history')}</Text>
                 </Pressable>
               </View>
             </View>

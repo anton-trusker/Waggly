@@ -4,8 +4,26 @@
     "language": "Language",
     "select_language": "Select language",
     "search_language": "Search language...",
+    "age": {
+      "day_one": "{{count}} day",
+      "day_other": "{{count}} days",
+      "week_one": "{{count}} week",
+      "week_other": "{{count}} weeks",
+      "month_one": "{{count}} month",
+      "month_other": "{{count}} months",
+      "year_one": "{{count}} year",
+      "year_other": "{{count}} years",
+      "year_month": "{{years}} {{years_label}} {{months}} {{months_label}}"
+    },
     "save": "Save",
+    "required": "Required",
+    "phone_input": {
+      "placeholder": "Phone number",
+      "select_country": "Select Country",
+      "search_placeholder": "Search country name or code..."
+    },
     "cancel": "Cancel",
+    "delete": "Delete",
     "loading": "Loading...",
     "error": "An error occurred",
     "close": "Close",
@@ -20,6 +38,318 @@
     "skip": "Skip for now",
     "finish": "Finish",
     "saving": "Saving..."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "my_pets": "My Pets",
+    "calendar": "Calendar",
+    "pets": "Pets",
+    "documents": "Documents",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Alerts"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle_unread": "{{count}} unread",
+    "subtitle_all_caught_up": "All caught up!",
+    "mark_all_read": "Mark all read",
+    "empty_title": "No notifications",
+    "empty_subtitle": "You're all caught up!",
+    "empty_filter": "No notifications match this filter.",
+    "filter_all": "All",
+    "filter_health": "Health",
+    "filter_events": "Events",
+    "filter_social": "Social",
+    "filter_system": "System",
+    "clear_all_title": "Clear All",
+    "clear_all_message": "Are you sure you want to delete all notifications?",
+    "delete_title": "Delete",
+    "delete_message": "Delete this notification?"
+  },
+  "pet_profile": {
+    "treatments_medications": "Treatments & Medications",
+    "add_new": "+ Add New",
+    "current_prescriptions": "CURRENT PRESCRIPTIONS",
+    "recent_treatments": "RECENT TREATMENTS",
+    "no_active_medications": "No active medications",
+    "no_recent_treatments": "No recent treatments",
+    "allergies": "Allergies",
+    "no_allergies": "NO ALLERGIES",
+    "past_conditions": "Past Conditions",
+    "no_past_conditions": "No past conditions recorded.",
+    "vaccinations": "Vaccinations",
+    "official_records": "Official immunization records",
+    "add_entry": "Add Entry",
+    "rabies_section": "V. VACCINATION AGAINST RABIES",
+    "other_vaccines_section": "VI. OTHER VACCINATIONS (DHPP / LEPTO)",
+    "no_rabies": "No rabies vaccinations recorded",
+    "no_other_vaccines": "No other vaccinations recorded",
+    "important_notes": "Important Notes",
+    "edit": {
+      "title": "Edit Pet",
+      "success": "Success",
+      "success_message": "Pet updated successfully!",
+      "error": "Error",
+      "name_required": "Pet name is required",
+      "sections": {
+        "basic_info": "Basic Information",
+        "medical_info": "Medical Information",
+        "notes": "Notes"
+      },
+      "labels": {
+        "name": "Pet Name *",
+        "species": "Species",
+        "breed": "Breed",
+        "color": "Color",
+        "gender": "Gender",
+        "dob": "Date of Birth",
+        "weight": "Weight",
+        "unit": "Unit",
+        "spayed_neutered": "Spayed/Neutered",
+        "microchip": "Microchip Number"
+      },
+      "placeholders": {
+        "name": "e.g., Max, Luna, Bella",
+        "breed": "e.g., Golden Retriever",
+        "color": "e.g., Brown, Black",
+        "dob": "YYYY-MM-DD",
+        "weight": "0.0",
+        "microchip": "e.g., 123456789012345",
+        "notes": "Additional notes about your pet..."
+      },
+      "save_changes": "Save Changes"
+    },
+    "documents": {
+      "title": "All Documents",
+      "search_placeholder": "Search by title...",
+      "no_documents": "No documents found",
+      "upload_cta": "Upload a Document",
+      "actions": {
+        "scan": "Scan Doc",
+        "upload": "Upload File",
+        "autofill": "Auto-Fill"
+      },
+      "filters": {
+        "all_types": "All Types",
+        "last_6_months": "Last 6 Months"
+      },
+      "types": {
+        "vaccination": "Vaccination",
+        "lab_result": "Lab Result",
+        "invoice": "Invoice",
+        "prescription": "Prescription",
+        "insurance": "Insurance",
+        "medical": "Medical",
+        "other": "Other"
+      }
+    },
+    "health": {
+      "titles": {
+        "visits": "Visits",
+        "vaccinations": "Vaccinations",
+        "treatments": "Treatments & Meds",
+        "allergies": "Allergies",
+        "health_log": "Health Log"
+      },
+      "actions": {
+        "add_visit": "Add Visit",
+        "add_vaccine": "Add Vaccine",
+        "add_tx": "Add Tx",
+        "add_image": "Add Image",
+        "add_doc": "Add Doc",
+        "add_record": "Add Record",
+        "new_visit": "New Visit",
+        "add_new": "+ Add New",
+        "add_allergy": "+ Add Allergy",
+        "view_history": "View Full History",
+        "filter": "Filter"
+      },
+      "sections": {
+        "upcoming": "UPCOMING",
+        "recent_history": "RECENT HISTORY"
+      },
+      "badges": {
+        "today": "TODAY",
+        "tomorrow": "TOMORROW",
+        "days": "DAYS",
+        "due_soon": "DUE SOON",
+        "active": "ACTIVE",
+        "expired": "EXPIRED"
+      },
+      "empty": {
+        "upcoming": "No upcoming visits",
+        "recent": "No recent visits",
+        "vaccinations": "No vaccinations recorded",
+        "treatments": "No current treatments",
+        "allergies": "No allergies recorded"
+      }
+    },
+    "history": {
+      "filters": {
+        "all": "All",
+        "vaccinations": "Vaccinations",
+        "visits": "Visits",
+        "medications": "Medications",
+        "weight": "Weight"
+      },
+      "empty": {
+        "title": "No History Yet",
+        "desc": "Events like vaccinations, visits, and weight logs will appear here",
+        "pet_not_found": "Pet not found",
+        "load_error": "Unable to load pet history"
+      }
+    },
+    "album": {
+      "title": "Photo Gallery",
+      "subtitle": "Manage {{name}}'s photos, videos, and albums.",
+      "actions": {
+        "new_album": "New Album",
+        "add_media": "Add Media",
+        "load_more": "Load More",
+        "create_album": "Create Album",
+        "view_all": "View All"
+      },
+      "headers": {
+        "albums": "Albums"
+      },
+      "filters": {
+        "all": "All",
+        "photos": "Photos",
+        "videos": "Videos",
+        "favorites": "Favorites"
+      },
+      "sort": {
+        "label": "Sort by:",
+        "newest": "Newest First"
+      }
+    },
+    "events": {
+      "title": "Events & Schedule",
+      "subtitle": "Manage {{name}}'s appointments and activities.",
+      "actions": {
+        "add_event": "Add Event",
+        "add_first": "Add First Event"
+      },
+      "sections": {
+        "upcoming": "Upcoming Events",
+        "past": "Past Events"
+      },
+      "empty": {
+        "title": "No events yet",
+        "desc": "Add events to track your pet's care schedule"
+      },
+      "time": {
+        "all_day": "All day",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "in_days": "In {{days}} days"
+      },
+      "types": {
+        "vaccination": "Vaccination",
+        "treatment": "Treatment",
+        "vet": "Vet Visit",
+        "grooming": "Grooming",
+        "walking": "Walking",
+        "feeding": "Feeding"
+      }
+    },
+    "settings": {
+      "sections": {
+        "management": "Pet Management",
+        "privacy": "Privacy",
+        "notifications": "Notifications"
+      },
+      "items": {
+        "transfer": {
+          "title": "Transfer Ownership",
+          "desc": "Transfer this pet to another user"
+        },
+        "delete": {
+          "title": "Delete Pet",
+          "deleting": "Deleting...",
+          "desc": "Permanently remove this pet from your account"
+        },
+        "privacy_settings": {
+          "title": "Privacy Settings",
+          "desc": "Control who can view this pet's profile"
+        },
+        "notifications": {
+          "title": "Notification Preferences",
+          "desc": "Manage reminders and alerts for this pet"
+        }
+      },
+      "alerts": {
+        "delete": {
+          "title": "Delete Pet",
+          "message": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete"
+        },
+        "coming_soon": {
+          "title": "Coming Soon",
+          "transfer": "Transfer ownership feature will be available soon.",
+          "privacy": "Privacy settings will be available soon.",
+          "notifications": "Notification preferences will be available soon."
+        },
+        "error": {
+          "title": "Error",
+          "delete_failed": "Failed to delete pet. Please try again."
+        }
+      },
+      "info": {
+        "id": "Pet ID:",
+        "created": "Created:"
+      }
+    },
+    "share": {
+      "title": "Share Profile",
+      "desc": "Share this pet's profile with family, friends, or your veterinarian.",
+      "action": "Share Now",
+      "message": "Check out this pet profile on Pawzly! {{url}}",
+      "message_title": "Pet Profile"
+    },
+    "history_timeline": "History & Timeline",
+    "view_full_timeline": "View Full Timeline",
+    "loading": "Loading pet overview...",
+    "table_headers": {
+      "date": "Date",
+      "manufacturer_batch": "Manufacturer / Batch",
+      "valid_from": "Valid From",
+      "valid_until": "Valid Until",
+      "veterinarian": "Veterinarian",
+      "vaccine_type": "Vaccine Type",
+      "batch": "Batch",
+      "next_due": "Next Due",
+      "clinic": "Clinic"
+    }
+  },
+  "allergy_form": {
+    "add_title": "Add Allergy",
+    "edit_title": "Edit Allergy",
+    "save": "Save Allergy",
+    "name": "Allergy Name",
+    "severity": "Severity",
+    "reaction": "Reaction Details",
+    "notes": "Notes",
+    "mild": "Mild",
+    "moderate": "Moderate",
+    "severe": "Severe"
+  },
+  "treatment_form": {
+    "add_title": "Add Treatment",
+    "edit_title": "Edit Treatment",
+    "type": "Type",
+    "name": "Name",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "cost": "Cost",
+    "notes": "Notes",
+    "submit_add": "Add Treatment",
+    "submit_update": "Update Treatment"
   },
   "onboarding": {
     "welcome_title": "Hello, Pet Parent!",
@@ -61,14 +391,6 @@
     "sign_out_title": "Sign Out",
     "sign_out_message": "Are you sure you want to sign out?"
   },
-  "navigation": {
-    "home": "Home",
-    "calendar": "Calendar",
-    "pets": "Pets",
-    "profile": "Profile",
-    "settings": "Settings",
-    "notifications": "Alerts"
-  },
   "add_pet": {
     "type_title": "Type",
     "breed_title": "Breed",
@@ -98,7 +420,107 @@
     "error_breed": "Please select or enter a breed.",
     "error_name": "Name is required.",
     "error_birth": "Birth date or approximate age is required.",
-    "error_weight": "Please enter a valid number for weight."
+    "error_weight": "Please enter a valid number for weight.",
+    "error_create": "Failed to create pet",
+    "success_title": "Success!",
+    "success_message": "{{name}} has been added to your family.",
+    "steps": {
+      "basic_info": "Basic Info",
+      "details": "Details",
+      "health_id": "Health & ID",
+      "contacts": "Contacts",
+      "review": "Review"
+    },
+    "step1": {
+      "title": "Let's meet your companion",
+      "add_photo": "Add Photo",
+      "name_label": "PET'S NAME",
+      "name_placeholder": "e.g., Bella, Max",
+      "species_label": "WHAT ARE THEY?",
+      "gender_label": "GENDER",
+      "male": "Male",
+      "female": "Female",
+      "continue": "Continue"
+    },
+    "step2": {
+      "title": "Details needed",
+      "subtitle": "Help us tailor the experience.",
+      "breed_label": "BREED",
+      "breed_placeholder": "Select breed type",
+      "dob_label": "DATE OF BIRTH",
+      "age_hint": "Age: {{age}}",
+      "weight_label": "WEIGHT",
+      "height_label": "HEIGHT",
+      "blood_type_label": "BLOOD TYPE (Optional)",
+      "blood_type_placeholder": "Select blood type",
+      "search_breed": "Search breed...",
+      "close": "Close"
+    },
+    "step3": {
+      "title": "Almost there!",
+      "subtitle": "Important medical and tracking details.",
+      "microchip_title": "Microchip Details",
+      "emergency_title": "Emergency Contact",
+      "microchip_label": "MICROCHIP NUMBER",
+      "microchip_placeholder": "985112345678900",
+      "implantation_date_label": "IMPLANTATION DATE",
+      "contact_name_label": "CONTACT NAME",
+      "contact_name_placeholder": "Full name",
+      "phone_label": "PHONE NUMBER",
+      "phone_placeholder": "+1 (555) 123-4567",
+      "tag_id_label": "COLLAR TAG ID",
+      "tag_id_placeholder": "Tag or License #",
+      "optional": "(Optional)",
+      "modal_title": "Implantation Date"
+    },
+    "step4": {
+      "title": "Care Team",
+      "subtitle": "Who helps take care of your pet?",
+      "vet_card_title": "Primary Veterinarian",
+      "clinic_name_label": "CLINIC NAME",
+      "clinic_name_placeholder": "e.g. City Vet Clinic",
+      "vet_name_label": "VET'S NAME",
+      "vet_name_placeholder": "Dr. Smith",
+      "address_label": "ADDRESS",
+      "address_placeholder": "123 Main St",
+      "country_label": "COUNTRY",
+      "country_placeholder": "United States",
+      "phone_label": "PHONE NUMBER",
+      "phone_placeholder": "+1 (555) 123-4567"
+    },
+    "step5": {
+      "title": "Let's review",
+      "subtitle": "Everything looks good? Let's create {{name}}'s profile!",
+      "gender_label": "GENDER",
+      "age_label": "AGE",
+      "weight_label": "WEIGHT",
+      "height_label": "HEIGHT",
+      "blood_label": "BLOOD",
+      "identification_header": "IDENTIFICATION",
+      "microchip_label": "Microchip",
+      "registry_label": "Registry",
+      "implantation_date_label": "Implantation Date",
+      "tag_id_label": "Tag ID",
+      "not_provided": "Not provided",
+      "contacts_header": "CONTACTS",
+      "vet_clinic_label": "VET CLINIC",
+      "vet_label": "Vet:",
+      "emergency_label": "EMERGENCY",
+      "creating_profile": "Creating Profile...",
+      "create_profile": "Create Profile"
+    },
+    "wizard": {
+      "cancel": "Cancel",
+      "step_indicator": "STEP {{current}} OF {{total}}"
+    },
+    "species": {
+      "dog": "Dog",
+      "cat": "Cat",
+      "bird": "Bird",
+      "rabbit": "Rabbit",
+      "reptile": "Reptile",
+      "other": "Other"
+    }
   },
   "pwa": {
     "install_title": "Install Pawzly App",
@@ -110,5 +532,305 @@
     "help_center": "Help Center",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy"
+  },
+  "auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Sign in to continue to Pawzly",
+    "email_label": "Email Address",
+    "email_placeholder": "name@example.com",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "forgot_password": "Forgot Password?",
+    "sign_in": "Sign In",
+    "or_continue": "Or continue with",
+    "no_account": "Don't have an account?",
+    "sign_up_link": "Sign Up",
+    "signup_title": "Create your account",
+    "signup_subtitle": "Join thousands of pet parents using Pawzly",
+    "confirm_password_label": "Confirm Password",
+    "create_account": "Create Account",
+    "already_have_account": "Already have an account?",
+    "login_link": "Log In",
+    "hero_title": "Welcome back to Pawzly",
+    "hero_subtitle": "Your pet's health and happiness, all in one place. Sign in to access your dashboard and manage your furry friends.",
+    "reset_title": "Reset Password",
+    "reset_subtitle": "Enter your email and we'll send you a link to reset your password",
+    "send_reset_link": "Send Reset Link",
+    "back_to_login": "Back to Login",
+    "google": "Google",
+    "apple": "Apple",
+    "login_failed": "Login Failed",
+    "enter_both": "Please enter both email and password.",
+    "fill_all": "Please fill in all fields.",
+    "passwords_mismatch": "Passwords do not match.",
+    "signup_failed": "Signup Failed",
+    "verify_email": "Please check your email to verify your account.",
+    "reset_sent": "Password reset email sent! Please check your inbox."
+  },
+  "calendar": {
+    "filter_filters": "Filters",
+    "filter_done": "Done",
+    "period_3m": "3 Months",
+    "period_6m": "6 Months",
+    "period_1y": "Year",
+    "period_all": "All Upcoming"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle_count": "{{count}} documents stored",
+    "upload_button": "Upload",
+    "delete_bulk": "Delete",
+    "selected_count": "{{count}} selected",
+    "select_all": "Select All",
+    "empty_title": "No documents found",
+    "empty_subtitle": "Upload your first document to get started",
+    "empty_button": "Upload Document",
+    "filter_pets": "Pets",
+    "filter_all_pets": "All Pets",
+    "filter_types": "Document Types",
+    "type_all": "All Documents",
+    "type_vaccination": "Vaccinations",
+    "type_medical": "Medical Reports",
+    "type_legal": "Legal",
+    "type_insurance": "Insurance",
+    "delete_confirm_title": "Delete Document",
+    "delete_confirm_message": "Are you sure you want to delete {{name}}?",
+    "delete_bulk_confirm_title": "Delete Documents",
+    "delete_bulk_confirm_message": "Delete {{count}} documents?",
+    "size_unknown": "Unknown size"
+  },
+  "profile": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "tab_account": "Account",
+    "tab_notifications": "Notifications",
+    "tab_privacy": "Privacy",
+    "sign_out": "Sign Out",
+    "section_personal": "Personal Information",
+    "label_first_name": "First Name",
+    "label_last_name": "Last Name",
+    "label_email": "Email",
+    "label_dob": "Date of Birth",
+    "label_gender": "Gender",
+    "label_phone": "Phone",
+    "label_website": "Website",
+    "label_address": "Address",
+    "label_country": "Country",
+    "label_city": "City",
+    "label_language": "Language",
+    "label_bio": "Bio",
+    "placeholder_bio": "Tell us about yourself...",
+    "save_changes": "Save Changes",
+    "section_security": "Security",
+    "change_password": "Change Password",
+    "section_quick_links": "Quick Links",
+    "manage_co_owners": "Manage Co-Owners",
+    "section_notifications": "Notification Preferences",
+    "subsection_general": "General Notifications",
+    "subsection_pet_care": "Pet Care Reminders",
+    "subsection_communication": "Communication Preferences",
+    "notif_email": "Email Notifications",
+    "notif_email_desc": "Receive important updates via email",
+    "notif_push": "Push Notifications",
+    "notif_push_desc": "Get push notifications on your device",
+    "notif_health": "Health Reminders",
+    "notif_health_desc": "Reminders for vaccinations and medications",
+    "notif_event": "Event Reminders",
+    "notif_event_desc": "Reminders for upcoming appointments and events",
+    "notif_weight": "Weight Tracking",
+    "notif_weight_desc": "Reminders to log your pet's weight",
+    "notif_newsletter": "Newsletter",
+    "notif_newsletter_desc": "Receive tips and updates about pet care",
+    "notif_updates": "Product Updates",
+    "notif_updates_desc": "Get notified about new features and improvements",
+    "sign_out_confirm_title": "Sign Out",
+    "sign_out_confirm_message": "Are you sure you want to sign out?",
+    "delete_account": "Delete Account",
+    "delete_account_confirm": "Are you sure? This action cannot be undone.",
+    "download_data": "Download Data",
+    "download_data_desc": "This will download all your account data.",
+    "sign_out_all": "Sign Out All Devices",
+    "sign_out_all_confirm": "This will sign you out of all devices except this one.",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "gender_other": "Other",
+    "select_country": "Select country",
+    "weight": "WEIGHT",
+    "color": "COLOR",
+    "blood_type": "BLOOD TYPE",
+    "reg": "Reg"
+  }
+  "dashboard": {
+    "welcome_back": "Welcome back,",
+    "subtitle": "Here's what's happening today.",
+    "upcoming_care": "Upcoming Care",
+    "see_all": "See All",
+    "no_upcoming_events": "No upcoming events scheduled.",
+    "no_pet_assigned": "No pet assigned",
+    "no_pet_assigned": "No pet assigned",
+    "history_activity": "History & Activity",
+    "activity_feed": "Activity Feed",
+    "view_all_activity": "View All Activity",
+    "loading_activity": "Loading activity...",
+    "no_recent_activity": "No recent activity recorded.",
+    "view_full_timeline": "View Full Timeline",
+    "time_ago": {
+      "just_now": "Just now",
+      "minutes_ago": "{{count}}m ago",
+      "hours_ago": "{{count}}h ago",
+      "days_ago": "{{count}}d ago"
+    },
+    "days_remaining": {
+      "today": "TODAY",
+      "tomorrow": "TOMORROW",
+      "days": "{{count}} DAYS"
+    }
+  },
+  "calendar": {
+    "period_3m": "3 Months",
+    "period_6m": "6 Months",
+    "period_1y": "Year",
+    "period_all": "All Upcoming",
+    "filter_filters": "Filters",
+    "filter_done": "Done",
+    "upcoming_events": "Upcoming Events",
+    "scheduled_count": "{{count}} event scheduled",
+    "scheduled_count_plural": "{{count}} events scheduled",
+    "no_events": "No events scheduled",
+    "add_first_event": "Add your first event to get started",
+    "past_events": "Past Events",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "event_types": {
+      "vaccination": "Vaccination",
+      "treatment": "Treatment",
+      "vet": "Vet Visit",
+      "grooming": "Grooming",
+      "walking": "Walking",
+      "other": "Event"
+    },
+    "filter_by_pet": "Filter by Pet",
+    "all": "All",
+    "none": "None",
+    "show_less": "Show Less",
+    "show_more": "Show {{count}} More",
+    "event_type_title": "Event Type",
+    "upcoming_summary": "Upcoming",
+    "pets_selected": "{{count}} pets selected",
+    "types_selected": "{{count}} event types selected",
+    "grid": {
+      "today": "Today",
+      "more_events": "+{{count}} more"
+    }
+  },
+  "my_pets_page": {
+    "title": "My Pets",
+    "subtitle": "Manage your pets and quick actions",
+    "add_pet": "Add Pet",
+    "loading": "Loading pets...",
+    "empty_title": "No Pets Yet",
+    "empty_text": "Add your first pet to start managing their health and care",
+    "add_first_pet": "Add Your First Pet",
+    "book_visit": "Book Visit"
+  },
+  "visit_form": {
+    "title": "Add New Visit",
+    "submit": "Save Visit",
+    "provider_type_title": "PROVIDER TYPE",
+    "service_type_title": "Service Type",
+    "date": "Date",
+    "business_name": "Business Name *",
+    "business_name_placeholder": "Enter {{type}} name...",
+    "address_label": "Business Address (Optional)",
+    "address_placeholder": "Search address...",
+    "total_cost": "Total Cost",
+    "currency": "Currency",
+    "notes_label": "Reason / Notes",
+    "notes_placeholder": "Details about this visit...",
+    "error_select_pet": "Please select a pet",
+    "error_business_name": "Business name is required",
+    "error_provider_name": "Provider name is required",
+    "provider_types": {
+      "veterinary": "Veterinary",
+      "groomer": "Grooming",
+      "trainer": "Training",
+      "boarder": "Boarding",
+      "daycare": "Daycare",
+      "walker": "Walker",
+      "sitter": "Sitter",
+      "behaviorist": "Behaviorist",
+      "nutritionist": "Nutritionist"
+    },
+    "urgency": {
+      "routine": "Routine",
+      "urgent": "Urgent",
+      "emergency": "Emergency"
+    },
+    "services": {
+      "routine_checkup": "Routine Check-up",
+      "emergency": "Emergency",
+      "vaccination": "Vaccination",
+      "specialist": "Specialist",
+      "dental": "Dental",
+      "surgery": "Surgery",
+      "lab_work": "Lab Work",
+      "follow_up": "Follow-up",
+      "full_grooming": "Full Grooming",
+      "bath_only": "Bath Only",
+      "nail_trim": "Nail Trim",
+      "haircut": "Haircut",
+      "deshedding": "De-shedding",
+      "teeth_brushing": "Teeth Brushing",
+      "obedience": "Obedience",
+      "behavioral": "Behavioral",
+      "puppy_class": "Puppy Class",
+      "agility": "Agility",
+      "private_session": "Private Session",
+      "group_class": "Group Class",
+      "overnight_boarding": "Overnight Boarding",
+      "extended_stay": "Extended Stay",
+      "daycare_boarding": "Daycare Boarding",
+      "full_day": "Full Day",
+      "half_day": "Half Day",
+      "trial_day": "Trial Day",
+      "walk_30min": "30min Walk",
+      "walk_1hr": "1hr Walk",
+      "group_walk": "Group Walk",
+      "private_walk": "Private Walk",
+      "in_home": "In-Home",
+      "drop_in": "Drop-In Visit",
+      "overnight": "Overnight",
+      "assessment": "Assessment",
+      "training_session": "Training Session",
+      "consultation": "Consultation",
+      "diet_plan": "Diet Plan"
+    }
+  },
+  "quick_actions_menu": {
+    "title": "Quick Actions",
+    "subtitle": "Choose an action to add for your pet",
+    "select_pet": "Select Pet",
+    "actions": {
+      "visit": {
+        "title": "Visit",
+        "desc": "Record a vet visit"
+      },
+      "photos": {
+        "title": "Photos",
+        "desc": "Add pet photos"
+      },
+      "vaccine": {
+        "title": "Vaccine",
+        "desc": "Record vaccination"
+      },
+      "documents": {
+        "title": "Documents",
+        "desc": "Upload documents"
+      },
+      "medication": {
+        "title": "Medication",
+        "desc": "Add medication"
+      }
+    }
   }
 }

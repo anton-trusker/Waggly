@@ -2,10 +2,11 @@
   "common": {
     "welcome": "Bienvenue sur Pawzly",
     "language": "Langue",
-    "select_language": "Choisir la langue",
+    "select_language": "Changer de langue",
     "search_language": "Rechercher une langue...",
     "save": "Enregistrer",
     "cancel": "Annuler",
+    "delete": "Supprimer",
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
     "close": "Fermer",
@@ -21,19 +22,128 @@
     "finish": "Terminer",
     "saving": "Enregistrement..."
   },
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "home": "Accueil",
+    "my_pets": "Mes animaux",
+    "calendar": "Calendrier",
+    "pets": "Animaux",
+    "documents": "Documents",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "notifications": "Alertes"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle_unread": "{{count}} non lus",
+    "subtitle_all_caught_up": "Tout est à jour !",
+    "mark_all_read": "Tout marquer comme lu",
+    "empty_title": "Pas de notifications",
+    "empty_subtitle": "Vous êtes à jour !",
+    "empty_filter": "Aucune notification ne correspond à ce filtre.",
+    "filter_all": "Tout",
+    "filter_health": "Santé",
+    "filter_events": "Événements",
+    "filter_social": "Social",
+    "filter_system": "Système",
+    "clear_all_title": "Tout effacer",
+    "clear_all_message": "Êtes-vous sûr de vouloir supprimer toutes les notifications ?",
+    "delete_title": "Supprimer",
+    "delete_message": "Supprimer cette notification ?"
+  },
+  "pet_profile": {
+    "treatments_medications": "Traitements et médicaments",
+    "add_new": "+ Ajouter",
+    "current_prescriptions": "PRESCRIPTIONS EN COURS",
+    "recent_treatments": "TRAITEMENTS RÉCENTS",
+    "no_active_medications": "Aucun médicament actif",
+    "no_recent_treatments": "Aucun traitement récent",
+    "allergies": "Allergies",
+    "no_allergies": "AUCUNE ALLERGIE",
+    "past_conditions": "Conditions passées",
+    "no_past_conditions": "Aucune condition passée enregistrée.",
+    "vaccinations": "Vaccinations",
+    "official_records": "Dossiers d'immunisation officiels",
+    "add_entry": "Ajouter une entrée",
+    "rabies_section": "V. VACCINATION CONTRE LA RAGE",
+    "other_vaccines_section": "VI. AUTRES VACCINATIONS",
+    "no_rabies": "Aucune vaccination contre la rage enregistrée",
+    "no_other_vaccines": "Aucune autre vaccination enregistrée",
+    "important_notes": "Notes importantes",
+    "history_timeline": "Historique et chronologie",
+    "view_full_timeline": "Voir la chronologie complète",
+    "loading": "Chargement de l'aperçu...",
+    "table_headers": {
+      "date": "Date",
+      "manufacturer_batch": "Fabricant / Lot",
+      "valid_from": "Valide du",
+      "valid_until": "Valide au",
+      "veterinarian": "Vétérinaire",
+      "vaccine_type": "Type de vaccin",
+      "batch": "Lot",
+      "next_due": "Prochaine échéance",
+      "clinic": "Clinique"
+    }
+  },
+  "widgets": {
+    "quick_actions": {
+      "visit": "Visite",
+      "vaccine": "Vaccin",
+      "meds": "Médicaments",
+      "weight": "Poids",
+      "doc": "Document"
+    }
+  },
+  "passport": {
+    "label": "PASSEPORT",
+    "unknown_breed": "Race inconnue",
+    "dob": "DATE DE NAISSANCE",
+    "weight": "POIDS",
+    "color": "COULEUR",
+    "blood_type": "GROUPE SANGUIN",
+    "reg": "Reg"
+  },
+  "allergy_form": {
+    "add_title": "Ajouter une allergie",
+    "edit_title": "Modifier l'allergie",
+    "save": "Enregistrer l'allergie",
+    "name": "Nom de l'allergie",
+    "severity": "Gravité",
+    "reaction": "Détails de la réaction",
+    "notes": "Notes",
+    "mild": "Léger",
+    "moderate": "Modéré",
+    "severe": "Grave"
+  },
+  "treatment_form": {
+    "add_title": "Ajouter un traitement",
+    "edit_title": "Modifier le traitement",
+    "type": "Type",
+    "name": "Nom",
+    "dosage": "Dosage",
+    "frequency": "Fréquence",
+    "start_date": "Date de début",
+    "end_date": "Date de fin",
+    "cost": "Coût",
+    "notes": "Notes",
+    "submit_add": "Ajouter le traitement",
+    "submit_update": "Mettre à jour le traitement"
+  },
   "onboarding": {
     "welcome_title": "Bonjour, Parent d'animal !",
-    "welcome_subtitle": "Gérez la santé et l'historique de votre animal facilement. Sélectionnez votre langue pour commencer.",
+    "welcome_subtitle": "Gérez la santé et l'historique de votre animal en toute simplicité. Sélectionnez votre langue pour commencer.",
+    "select_language_title": "Choisir la langue",
+    "select_language_subtitle": "Choisissez votre langue préférée pour continuer.",
     "get_started": "Commencer",
-    "terms_privacy": "En continuant, vous acceptez nos Conditions d'utilisation et Politique de confidentialité",
-    "name_title": "Comment vous appelez-vous ?",
-    "name_subtitle": "Nous utilisons cela pour personnaliser votre expérience.",
+    "terms_privacy": "En continuant, vous acceptez nos conditions d'utilisation et notre politique de confidentialité",
+    "name_title": "Quel est votre nom ?",
+    "name_subtitle": "Nous utiliserons cela pour personnaliser votre expérience et vous adresser correctement.",
     "first_name": "Prénom",
     "last_name": "Nom",
     "first_name_placeholder": "ex. Sarah",
     "last_name_placeholder": "ex. Jenkins",
     "gender_title": "Comment vous identifiez-vous ?",
-    "gender_subtitle": "Nous utilisons cela pour personnaliser votre expérience.",
+    "gender_subtitle": "Nous utilisons cela pour personnaliser votre expérience et vous adresser correctement.",
     "gender_female": "Femme",
     "gender_male": "Homme",
     "gender_non_binary": "Non-binaire",
@@ -44,38 +154,141 @@
     "change_photo": "Changer la photo"
   },
   "profile": {
-    "title": "Profil",
-    "edit_profile": "Modifier le profil",
-    "first_name": "Prénom",
-    "last_name": "Nom",
-    "enter_first_name": "Entrez votre prénom",
-    "enter_last_name": "Entrez votre nom",
-    "saved_message": "Votre profil a été mis à jour",
-    "failed_save": "Échec de l'enregistrement du profil",
-    "account": "Compte",
-    "co_owners": "Co-propriétaires",
-    "notifications_settings": "Paramètres de notifications",
-    "sign_out": "Déconnexion",
-    "sign_out_title": "Déconnexion",
-    "sign_out_message": "Êtes-vous sûr de vouloir vous déconnecter ?"
+    "title": "Paramètres",
+    "subtitle": "Gérer votre compte et vos préférences",
+    "tab_account": "Compte",
+    "tab_notifications": "Notifications",
+    "tab_privacy": "Confidentialité",
+    "sign_out": "Se déconnecter",
+    "section_personal": "Informations personnelles",
+    "label_first_name": "Prénom",
+    "label_last_name": "Nom",
+    "label_email": "E-mail",
+    "label_dob": "Date de naissance",
+    "label_gender": "Genre",
+    "label_phone": "Téléphone",
+    "label_website": "Site web",
+    "label_address": "Adresse",
+    "label_country": "Pays",
+    "label_city": "Ville",
+    "label_language": "Langue",
+    "label_bio": "Bio",
+    "placeholder_bio": "Parlez-nous de vous...",
+    "save_changes": "Enregistrer les modifications",
+    "section_security": "Sécurité",
+    "change_password": "Changer le mot de passe",
+    "section_quick_links": "Liens rapides",
+    "manage_co_owners": "Gérer les co-propriétaires",
+    "section_notifications": "Préférences de notification",
+    "subsection_general": "Notifications générales",
+    "subsection_pet_care": "Rappels de soins",
+    "subsection_communication": "Préférences de communication",
+    "notif_email": "Notifications par e-mail",
+    "notif_email_desc": "Recevoir les mises à jour importantes par e-mail",
+    "notif_push": "Notifications push",
+    "notif_push_desc": "Recevoir des notifications sur votre appareil",
+    "notif_health": "Rappels de santé",
+    "notif_health_desc": "Rappels pour les vaccinations et médicaments",
+    "notif_event": "Rappels d'événements",
+    "notif_event_desc": "Rappels pour les rendez-vous à venir",
+    "notif_weight": "Suivi du poids",
+    "notif_weight_desc": "Rappels pour enregistrer le poids",
+    "notif_newsletter": "Newsletter",
+    "notif_newsletter_desc": "Recevoir des conseils et mises à jour",
+    "notif_updates": "Mises à jour produit",
+    "notif_updates_desc": "Être informé des nouvelles fonctionnalités",
+    "sign_out_confirm_title": "Se déconnecter",
+    "sign_out_confirm_message": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "delete_account": "Supprimer le compte",
+    "delete_account_confirm": "Êtes-vous sûr ? Cette action est irréversible.",
+    "download_data": "Télécharger les données",
+    "download_data_desc": "Cela téléchargera toutes vos données.",
+    "sign_out_all": "Se déconnecter de partout",
+    "sign_out_all_confirm": "Cela vous déconnectera de tous les appareils.",
+    "gender_male": "Homme",
+    "gender_female": "Femme",
+    "gender_other": "Autre",
+    "select_country": "Sélectionner le pays",
+    "search_city": "Rechercher une ville...",
+    "success_update": "Profil mis à jour avec succès",
+    "error_update": "Échec de la mise à jour du profil",
+    "request_sent": "Demande envoyée"
   },
-  "navigation": {
-    "home": "Accueil",
-    "calendar": "Calendrier",
-    "pets": "Animaux",
-    "profile": "Profil",
-    "settings": "Paramètres",
-    "notifications": "Alertes"
+  "auth": {
+    "login_title": "Bon retour",
+    "login_subtitle": "Connectez-vous pour continuer sur Pawzly",
+    "email_label": "Adresse e-mail",
+    "email_placeholder": "nom@exemple.com",
+    "password_label": "Mot de passe",
+    "password_placeholder": "Entrez votre mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "sign_in": "Se connecter",
+    "or_continue": "Ou continuer avec",
+    "no_account": "Pas encore de compte ?",
+    "sign_up_link": "S'inscrire",
+    "signup_title": "Créer votre compte",
+    "signup_subtitle": "Rejoignez des milliers de parents d'animaux",
+    "confirm_password_label": "Confirmer le mot de passe",
+    "create_account": "Créer un compte",
+    "already_have_account": "Vous avez déjà un compte ?",
+    "login_link": "Se connecter",
+    "hero_title": "Bon retour sur Pawzly",
+    "hero_subtitle": "La santé de votre animal en un seul endroit.",
+    "reset_title": "Réinitialiser le mot de passe",
+    "reset_subtitle": "Entrez votre e-mail pour recevoir le lien",
+    "send_reset_link": "Envoyer le lien",
+    "back_to_login": "Retour à la connexion",
+    "google": "Google",
+    "apple": "Apple",
+    "login_failed": "Échec de la connexion",
+    "enter_both": "Veuillez entrer l'e-mail et le mot de passe.",
+    "fill_all": "Veuillez remplir tous les champs.",
+    "passwords_mismatch": "Les mots de passe ne correspondent pas.",
+    "signup_failed": "Échec de l'inscription",
+    "verify_email": "Veuillez vérifier vos e-mails.",
+    "reset_sent": "E-mail de réinitialisation envoyé !"
+  },
+  "calendar": {
+    "filter_filters": "Filtres",
+    "filter_done": "Terminé",
+    "period_3m": "3 mois",
+    "period_6m": "6 mois",
+    "period_1y": "An",
+    "period_all": "Tous les événements"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle_count": "{{count}} documents stockés",
+    "upload_button": "Télécharger",
+    "delete_bulk": "Supprimer",
+    "selected_count": "{{count}} sélectionnés",
+    "select_all": "Tout sélectionner",
+    "empty_title": "Aucun document trouvé",
+    "empty_subtitle": "Téléchargez votre premier document",
+    "empty_button": "Télécharger un document",
+    "filter_pets": "Animaux",
+    "filter_all_pets": "Tous les animaux",
+    "filter_types": "Types de documents",
+    "type_all": "Tous les documents",
+    "type_vaccination": "Vaccinations",
+    "type_medical": "Rapports médicaux",
+    "type_legal": "Légal",
+    "type_insurance": "Assurance",
+    "delete_confirm_title": "Supprimer le document",
+    "delete_confirm_message": "Êtes-vous sûr de vouloir supprimer {{name}} ?",
+    "delete_bulk_confirm_title": "Supprimer les documents",
+    "delete_bulk_confirm_message": "Supprimer {{count}} documents ?",
+    "size_unknown": "Taille inconnue"
   },
   "add_pet": {
     "type_title": "Type",
     "breed_title": "Race",
     "details_title": "Détails",
     "additional_title": "Infos supplémentaires",
-    "search_species": "Rechercher par espèce",
-    "select_species": "Sélectionner une espèce",
+    "search_species": "Rechercher par espèce d'animal",
+    "select_species": "Sélectionner l'espèce",
     "enter_species": "Entrer l'espèce",
-    "search_breed": "Rechercher ou entrer une race",
+    "search_breed": "Rechercher ou entrer une race personnalisée",
     "enter_breed": "Entrer une race personnalisée",
     "pet_name": "Quel est le nom de votre animal ?",
     "pet_name_placeholder": "Nom de votre animal",
@@ -83,25 +296,25 @@
     "birth_date_placeholder": "AAAA-MM-JJ",
     "calculated_age": "Âge calculé : {{age}}",
     "approx_age_label": "Ou âge approximatif",
-    "approx_age_placeholder": "ex., 2 ans 3 mois",
-    "gender": "Sexe",
+    "approx_age_placeholder": "ex. 2 ans 3 mois",
+    "gender": "Genre",
     "male": "Mâle",
     "female": "Femelle",
     "weight": "Poids",
-    "weight_hint": "Optionnel. Ajustez le curseur ou tapez pour entrer.",
-    "saving": "Enregistrement...",
+    "weight_hint": "Facultatif. Ajustez le curseur ou appuyez sur le nombre pour entrer.",
+    "saving": "Enregistrement de l'animal...",
     "success": "Animal ajouté avec succès !",
     "go_dashboard": "Aller au tableau de bord",
     "error_type": "Veuillez sélectionner un type d'animal.",
     "error_breed": "Veuillez sélectionner ou entrer une race.",
     "error_name": "Le nom est requis.",
     "error_birth": "La date de naissance ou l'âge approximatif est requis.",
-    "error_weight": "Veuillez entrer un poids valide."
+    "error_weight": "Veuillez entrer un nombre valide pour le poids."
   },
   "pwa": {
-    "install_title": "Installer l'app Pawzly",
-    "install_ios": "Appuyez sur Partager et sélectionnez 'Sur l'écran d'accueil'",
-    "install_android": "Appuyez sur le menu et sélectionnez 'Installer l'application'"
+    "install_title": "Installer l'application Pawzly",
+    "install_ios": "Appuyez sur le bouton Partager et sélectionnez 'Sur l'écran d'accueil'",
+    "install_android": "Appuyez sur le bouton Menu et sélectionnez 'Installer l'application'"
   },
   "support": {
     "title": "Support",
@@ -109,4 +322,293 @@
     "terms_of_service": "Conditions d'utilisation",
     "privacy_policy": "Politique de confidentialité"
   }
+},
+"widgets": {
+  "quick_actions": {
+    "add_visit": "Visite",
+    "add_vaccine": "Vaccin",
+    "add_medication": "Médic.",
+    "log_weight": "Poids",
+    "add_document": "Document"
+  }
+},
+"passport": {
+  "label": "Passeport",
+  "unknown_breed": "Race inconnue",
+  "dob": "Né(e)",
+  "weight": "Poids",
+  "color": "Couleur",
+  "blood_type": "Groupe sanguin",
+  "reg": "Immat."
+},
+"pet_profile": {
+  "table_headers": {
+    "vaccine": "VACCIN",
+    "date_given": "DATE",
+    "expires": "EXPIRE"
+  },
+  "history_timeline": "Historique",
+  "view_full_timeline": "Voir tout l'historique",
+  "loading": "Chargement...",
+  "overview": {
+    "about": "À propos",
+    "no_notes": "Aucune note disponible.",
+    "health_status": "État de santé",
+    "up_to_date": "À jour",
+    "attention_needed": "Attention requise",
+    "critical_alert": "Alerte critique",
+    "unknown_status": "Statut inconnu"
+  },
+  "edit": {
+    "title": "Modifier l'animal",
+    "success": "Succès",
+    "success_message": "Animal mis à jour avec succès !",
+    "error": "Erreur",
+    "name_required": "Le nom de l'animal est requis",
+    "sections": {
+      "basic_info": "Informations de base",
+      "medical_info": "Informations médicales",
+      "notes": "Notes"
+    },
+    "labels": {
+      "name": "Nom *",
+      "species": "Espèce",
+      "breed": "Race",
+      "color": "Couleur",
+      "gender": "Sexe",
+      "dob": "Date de naissance",
+      "weight": "Poids",
+      "unit": "Unité",
+      "spayed_neutered": "Stérilisé/Castré",
+      "microchip": "Numéro de puce"
+    },
+    "placeholders": {
+      "name": "ex: Max, Luna",
+      "breed": "ex: Golden Retriever",
+      "color": "ex: Brun, Noir",
+      "dob": "AAAA-MM-JJ",
+      "weight": "0.0",
+      "microchip": "ex: 123456789012345",
+      "notes": "Notes supplémentaires..."
+    },
+    "save_changes": "Enregistrer"
+  },
+  "documents": {
+    "title": "Tous les documents",
+    "search_placeholder": "Rechercher...",
+    "no_documents": "Aucun document trouvé",
+    "upload_cta": "Télécharger un document",
+    "actions": {
+      "scan": "Scanner",
+      "upload": "Télécharger",
+      "autofill": "Remplissage auto"
+    },
+    "filters": {
+      "all_types": "Tous les types",
+      "last_6_months": "6 derniers mois"
+    },
+    "types": {
+      "vaccination": "Vaccination",
+      "lab_result": "Résultat Labo",
+      "invoice": "Facture",
+      "prescription": "Ordonnance",
+      "insurance": "Assurance",
+      "medical": "Médical",
+      "other": "Autre"
+    }
+  },
+  "health": {
+    "titles": {
+      "visits": "Visites",
+      "vaccinations": "Vaccinations",
+      "treatments": "Traitements",
+      "allergies": "Allergies",
+      "health_log": "Journal de santé"
+    },
+    "actions": {
+      "add_visit": "Ajouter Visite",
+      "add_vaccine": "Ajouter Vaccin",
+      "add_tx": "Ajouter T3",
+      "add_image": "Ajouter Image",
+      "add_doc": "Ajouter Doc",
+      "add_record": "Ajouter Enreg.",
+      "new_visit": "Nouvelle Visite",
+      "add_new": "+ Nouveau",
+      "add_allergy": "+ Allergie",
+      "view_history": "Voir l'historique",
+      "filter": "Filtrer"
+    },
+    "sections": {
+      "upcoming": "À VENIR",
+      "recent_history": "HISTORIQUE RÉCENT"
+    },
+    "badges": {
+      "today": "AUJOURD'HUI",
+      "tomorrow": "DEMAIN",
+      "days": "JOURS",
+      "due_soon": "BIENTÔT",
+      "active": "ACTIF",
+      "expired": "EXPIRÉ"
+    },
+    "empty": {
+      "upcoming": "Aucune visite à venir",
+      "recent": "Aucune visite récente",
+      "vaccinations": "Aucune vaccination enregistrée",
+      "treatments": "Aucun traitement en cours",
+      "allergies": "Aucune allergie enregistrée"
+    }
+  },
+  "history": {
+    "filters": {
+      "all": "Tout",
+      "vaccinations": "Vaccinations",
+      "visits": "Visites",
+      "medications": "Médicaments",
+      "weight": "Poids"
+    },
+    "empty": {
+      "title": "Aucun historique",
+      "desc": "Les événements apparaîtront ici",
+      "pet_not_found": "Animal non trouvé",
+      "load_error": "Erreur de chargement"
+    }
+  },
+  "album": {
+    "title": "Galerie Photo",
+    "subtitle": "Gérez les photos et albums de {{name}}.",
+    "actions": {
+      "new_album": "Nouvel album",
+      "add_media": "Ajouter média",
+      "load_more": "Charger plus",
+      "create_album": "Créer un album",
+      "view_all": "Voir tout"
+    },
+    "headers": {
+      "albums": "Albums"
+    },
+    "filters": {
+      "all": "Tout",
+      "photos": "Photos",
+      "videos": "Vidéos",
+      "favorites": "Favoris"
+    },
+    "sort": {
+      "label": "Trier par:",
+      "newest": "Plus récents"
+    }
+  },
+  "events": {
+    "title": "Événements & Agenda",
+    "subtitle": "Gérez les rendez-vous de {{name}}.",
+    "actions": {
+      "add_event": "Ajouter événement",
+      "add_first": "Ajouter premier événement"
+    },
+    "sections": {
+      "upcoming": "Événements à venir",
+      "past": "Événements passés"
+    },
+    "empty": {
+      "title": "Aucun événement",
+      "desc": "Ajoutez des événements pour suivre les soins"
+    },
+    "time": {
+      "all_day": "Toute la journée",
+      "today": "Aujourd'hui",
+      "tomorrow": "Demain",
+      "in_days": "Dans {{days}} jours"
+    },
+    "types": {
+      "vaccination": "Vaccination",
+      "treatment": "Traitement",
+      "vet": "Vétérinaire",
+      "grooming": "Toilettage",
+      "walking": "Promenade",
+      "feeding": "Repas"
+    }
+  },
+  "settings": {
+    "sections": {
+      "management": "Gestion",
+      "privacy": "Confidentialité",
+      "notifications": "Notifications"
+    },
+    "items": {
+      "transfer": {
+        "title": "Transférer la propriété",
+        "desc": "Transférer cet animal à un autre utilisateur"
+      },
+      "delete": {
+        "title": "Supprimer l'animal",
+        "deleting": "Suppression...",
+        "desc": "Supprimer définitivement cet animal"
+      },
+      "privacy_settings": {
+        "title": "Paramètres de confidentialité",
+        "desc": "Qui peut voir ce profil"
+      },
+      "notifications": {
+        "title": "Préférences de notification",
+        "desc": "Gérer les rappels et alertes"
+      }
+    },
+    "alerts": {
+      "delete": {
+        "title": "Supprimer l'animal",
+        "message": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer"
+      },
+      "coming_soon": {
+        "title": "Bientôt disponible",
+        "transfer": "Le transfert sera bientôt disponible.",
+        "privacy": "Les paramètres de confidentialité seront bientôt disponibles.",
+        "notifications": "Les préférences de notification seront bientôt disponibles."
+      },
+      "error": {
+        "title": "Erreur",
+        "delete_failed": "Échec de la suppression. Veuillez réessayer."
+      }
+    },
+    "info": {
+      "id": "ID Animal:",
+      "created": "Créé le:"
+    }
+  },
+  "share": {
+    "title": "Partager le profil",
+    "desc": "Partagez ce profil avec votre famille ou vétérinaire.",
+    "action": "Partager",
+    "message": "Découvrez ce profil d'animal sur Pawzly ! {{url}}",
+    "message_title": "Profil Animal"
+  }
+}
+},
+"quick_actions_menu": {
+"title": "Actions Rapides",
+"subtitle": "Choisir une action pour votre animal",
+"select_pet": "Sélectionner un animal",
+"actions": {
+  "visit": {
+    "title": "Visite",
+    "desc": "Enregistrer une visite"
+  },
+  "photos": {
+    "title": "Photos",
+    "desc": "Ajouter des photos"
+  },
+  "vaccine": {
+    "title": "Vaccin",
+    "desc": "Enregistrer un vaccin"
+  },
+  "documents": {
+    "title": "Documents",
+    "desc": "Télécharger des documents"
+  },
+  "medication": {
+    "title": "Médicaments",
+    "desc": "Ajouter un médicament"
+  }
+}
+}
 }

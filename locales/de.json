@@ -6,7 +6,8 @@
     "search_language": "Sprache suchen...",
     "save": "Speichern",
     "cancel": "Abbrechen",
-    "loading": "Laden...",
+    "delete": "Löschen",
+    "loading": "Wird geladen...",
     "error": "Ein Fehler ist aufgetreten",
     "close": "Schließen",
     "search": "Suchen...",
@@ -19,21 +20,130 @@
     "load_more_results": "Mehr Ergebnisse laden",
     "skip": "Vorerst überspringen",
     "finish": "Beenden",
-    "saving": "Speichern..."
+    "saving": "Wird gespeichert..."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "my_pets": "Meine Haustiere",
+    "calendar": "Kalender",
+    "pets": "Haustiere",
+    "documents": "Dokumente",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "notifications": "Alarme"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "subtitle_unread": "{{count}} ungelesen",
+    "subtitle_all_caught_up": "Alles auf dem neuesten Stand!",
+    "mark_all_read": "Alle als gelesen markieren",
+    "empty_title": "Keine Benachrichtigungen",
+    "empty_subtitle": "Sie sind auf dem neuesten Stand!",
+    "empty_filter": "Keine Benachrichtigungen entsprechen diesem Filter.",
+    "filter_all": "Alle",
+    "filter_health": "Gesundheit",
+    "filter_events": "Ereignisse",
+    "filter_social": "Soziales",
+    "filter_system": "System",
+    "clear_all_title": "Alle löschen",
+    "clear_all_message": "Sind Sie sicher, dass Sie alle Benachrichtigungen löschen möchten?",
+    "delete_title": "Löschen",
+    "delete_message": "Diese Benachrichtigung löschen?"
+  },
+  "pet_profile": {
+    "treatments_medications": "Behandlungen & Medikamente",
+    "add_new": "+ Neu hinzufügen",
+    "current_prescriptions": "AKTUELLE REZEPTE",
+    "recent_treatments": "LETZTE BEHANDLUNGEN",
+    "no_active_medications": "Keine aktiven Medikamente",
+    "no_recent_treatments": "Keine letzten Behandlungen",
+    "allergies": "Allergien",
+    "no_allergies": "KEINE ALLERGIEN",
+    "past_conditions": "Vergangene Beschwerden",
+    "no_past_conditions": "Keine vergangenen Beschwerden aufgezeichnet.",
+    "vaccinations": "Impfungen",
+    "official_records": "Offizielle Impfpässe",
+    "add_entry": "Eintrag hinzufügen",
+    "rabies_section": "V. TOLLWUTIMPFUNG",
+    "other_vaccines_section": "VI. SONSTIGE IMPFUNGEN",
+    "no_rabies": "Keine Tollwutimpfungen aufgezeichnet",
+    "no_other_vaccines": "Keine anderen Impfungen aufgezeichnet",
+    "important_notes": "Wichtige Notizen",
+    "history_timeline": "Verlauf & Zeitachse",
+    "view_full_timeline": "Vollständige Zeitachse anzeigen",
+    "loading": "Lade Haustierübersicht...",
+    "table_headers": {
+      "date": "Datum",
+      "manufacturer_batch": "Hersteller / Charge",
+      "valid_from": "Gültig ab",
+      "valid_until": "Gültig bis",
+      "veterinarian": "Tierarzt",
+      "vaccine_type": "Impfstofftyp",
+      "batch": "Charge",
+      "next_due": "Nächste Fälligkeit",
+      "clinic": "Klinik"
+    }
+  },
+  "widgets": {
+    "quick_actions": {
+      "visit": "Besuch",
+      "vaccine": "Impfung",
+      "meds": "Medikamente",
+      "weight": "Gewicht",
+      "doc": "Dokument"
+    }
+  },
+  "passport": {
+    "label": "HEIMTIERAUSWEIS",
+    "unknown_breed": "Unbekannte Rasse",
+    "dob": "GEBURTSDATUM",
+    "weight": "GEWICHT",
+    "color": "FARBE",
+    "blood_type": "BLUTGRUPPE",
+    "reg": "Reg"
+  },
+  "allergy_form": {
+    "add_title": "Allergie hinzufügen",
+    "edit_title": "Allergie bearbeiten",
+    "save": "Allergie speichern",
+    "name": "Name der Allergie",
+    "severity": "Schweregrad",
+    "reaction": "Reaktion",
+    "notes": "Notizen",
+    "mild": "Mild",
+    "moderate": "Mittel",
+    "severe": "Schwer"
+  },
+  "treatment_form": {
+    "add_title": "Behandlung hinzufügen",
+    "edit_title": "Behandlung bearbeiten",
+    "type": "Typ",
+    "name": "Name",
+    "dosage": "Dosierung",
+    "frequency": "Häufigkeit",
+    "start_date": "Startdatum",
+    "end_date": "Enddatum",
+    "cost": "Kosten",
+    "notes": "Notizen",
+    "submit_add": "Behandlung hinzufügen",
+    "submit_update": "Behandlung aktualisieren"
   },
   "onboarding": {
-    "welcome_title": "Hallo, Tierhalter!",
-    "welcome_subtitle": "Verwalten Sie die Gesundheit und Geschichte Ihres Haustieres einfach. Wählen Sie Ihre Sprache.",
-    "get_started": "Loslegen",
+    "welcome_title": "Hallo, Haustier-Elternteil!",
+    "welcome_subtitle": "Verwalten Sie die Gesundheit und Geschichte Ihres Haustieres mit Leichtigkeit. Wählen Sie Ihre Sprache, um zu beginnen.",
+    "select_language_title": "Sprache auswählen",
+    "select_language_subtitle": "Wählen Sie Ihre bevorzugte Sprache, um fortzufahren.",
+    "get_started": "Los geht's",
     "terms_privacy": "Durch Fortfahren stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu",
     "name_title": "Wie heißen Sie?",
-    "name_subtitle": "Wir verwenden dies, um Ihr Erlebnis zu personalisieren.",
+    "name_subtitle": "Wir verwenden dies, um Ihre Erfahrung zu personalisieren und Sie korrekt anzusprechen.",
     "first_name": "Vorname",
     "last_name": "Nachname",
     "first_name_placeholder": "z.B. Sarah",
     "last_name_placeholder": "z.B. Müller",
     "gender_title": "Wie identifizieren Sie sich?",
-    "gender_subtitle": "Wir verwenden dies, um Sie korrekt anzusprechen.",
+    "gender_subtitle": "Wir verwenden dies, um Ihre Erfahrung zu personalisieren und Sie korrekt anzusprechen.",
     "gender_female": "Weiblich",
     "gender_male": "Männlich",
     "gender_non_binary": "Nicht-binär",
@@ -44,28 +154,131 @@
     "change_photo": "Foto ändern"
   },
   "profile": {
-    "title": "Profil",
-    "edit_profile": "Profil bearbeiten",
-    "first_name": "Vorname",
-    "last_name": "Nachname",
-    "enter_first_name": "Vorname eingeben",
-    "enter_last_name": "Nachname eingeben",
-    "saved_message": "Ihr Profil wurde aktualisiert",
-    "failed_save": "Profil konnte nicht gespeichert werden",
-    "account": "Konto",
-    "co_owners": "Mitbesitzer",
-    "notifications_settings": "Benachrichtigungseinstellungen",
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihr Konto und Ihre Einstellungen",
+    "tab_account": "Konto",
+    "tab_notifications": "Benachrichtigungen",
+    "tab_privacy": "Datenschutz",
     "sign_out": "Abmelden",
-    "sign_out_title": "Abmelden",
-    "sign_out_message": "Möchten Sie sich wirklich abmelden?"
+    "section_personal": "Persönliche Informationen",
+    "label_first_name": "Vorname",
+    "label_last_name": "Nachname",
+    "label_email": "E-Mail",
+    "label_dob": "Geburtsdatum",
+    "label_gender": "Geschlecht",
+    "label_phone": "Telefon",
+    "label_website": "Webseite",
+    "label_address": "Adresse",
+    "label_country": "Land",
+    "label_city": "Stadt",
+    "label_language": "Sprache",
+    "label_bio": "Bio",
+    "placeholder_bio": "Erzählen Sie uns über sich...",
+    "save_changes": "Änderungen speichern",
+    "section_security": "Sicherheit",
+    "change_password": "Passwort ändern",
+    "section_quick_links": "Quick Links",
+    "manage_co_owners": "Miteigentümer verwalten",
+    "section_notifications": "Benachrichtigungseinstellungen",
+    "subsection_general": "Allgemeine Benachrichtigungen",
+    "subsection_pet_care": "Haustierpflege-Erinnerungen",
+    "subsection_communication": "Kommunikationseinstellungen",
+    "notif_email": "E-Mail-Benachrichtigungen",
+    "notif_email_desc": "Wichtige Updates per E-Mail erhalten",
+    "notif_push": "Push-Benachrichtigungen",
+    "notif_push_desc": "Push-Benachrichtigungen auf Ihrem Gerät erhalten",
+    "notif_health": "Gesundheits-Erinnerungen",
+    "notif_health_desc": "Erinnerungen für Impfungen und Medikamente",
+    "notif_event": "Ereignis-Erinnerungen",
+    "notif_event_desc": "Erinnerungen für anstehende Termine",
+    "notif_weight": "Gewichtsverfolgung",
+    "notif_weight_desc": "Erinnerungen zum Protokollieren des Gewichts",
+    "notif_newsletter": "Newsletter",
+    "notif_newsletter_desc": "Tipps und Updates zur Haustierpflege erhalten",
+    "notif_updates": "Produkt-Updates",
+    "notif_updates_desc": "Benachrichtigungen über neue Funktionen",
+    "sign_out_confirm_title": "Abmelden",
+    "sign_out_confirm_message": "Sind Sie sicher, dass Sie sich abmelden möchten?",
+    "delete_account": "Konto löschen",
+    "delete_account_confirm": "Sind Sie sicher? Dies kann nicht rückgängig gemacht werden.",
+    "download_data": "Daten herunterladen",
+    "download_data_desc": "Laden Sie alle Ihre Kontodaten herunter.",
+    "sign_out_all": "Von allen Geräten abmelden",
+    "sign_out_all_confirm": "Dies meldet Sie von allen Geräten außer diesem ab.",
+    "gender_male": "Männlich",
+    "gender_female": "Weiblich",
+    "gender_other": "Andere",
+    "select_country": "Land auswählen",
+    "search_city": "Stadt suchen...",
+    "success_update": "Profil erfolgreich aktualisiert",
+    "error_update": "Profil konnte nicht aktualisiert werden",
+    "request_sent": "Anfrage gesendet"
   },
-  "navigation": {
-    "home": "Startseite",
-    "calendar": "Kalender",
-    "pets": "Haustiere",
-    "profile": "Profil",
-    "settings": "Einstellungen",
-    "notifications": "Benachrichtigungen"
+  "auth": {
+    "login_title": "Willkommen zurück",
+    "login_subtitle": "Melden Sie sich an, um fortzufahren",
+    "email_label": "E-Mail-Adresse",
+    "email_placeholder": "name@beispiel.de",
+    "password_label": "Passwort",
+    "password_placeholder": "Geben Sie Ihr Passwort ein",
+    "forgot_password": "Passwort vergessen?",
+    "sign_in": "Anmelden",
+    "or_continue": "Oder weiter mit",
+    "no_account": "Noch kein Konto?",
+    "sign_up_link": "Registrieren",
+    "signup_title": "Konto erstellen",
+    "signup_subtitle": "Werden Sie Teil der Pawzly-Community",
+    "confirm_password_label": "Passwort bestätigen",
+    "create_account": "Konto erstellen",
+    "already_have_account": "Haben Sie bereits ein Konto?",
+    "login_link": "Einloggen",
+    "hero_title": "Willkommen zurück bei Pawzly",
+    "hero_subtitle": "Die Gesundheit Ihres Haustieres an einem Ort.",
+    "reset_title": "Passwort zurücksetzen",
+    "reset_subtitle": "Geben Sie Ihre E-Mail ein, um den Reset-Link zu erhalten",
+    "send_reset_link": "Link senden",
+    "back_to_login": "Zurück zum Login",
+    "google": "Google",
+    "apple": "Apple",
+    "login_failed": "Anmeldung fehlgeschlagen",
+    "enter_both": "Bitte geben Sie E-Mail und Passwort ein.",
+    "fill_all": "Bitte füllen Sie alle Felder aus.",
+    "passwords_mismatch": "Passwörter stimmen nicht überein.",
+    "signup_failed": "Registrierung fehlgeschlagen",
+    "verify_email": "Bitte überprüfen Sie Ihre E-Mails.",
+    "reset_sent": "E-Mail zum Zurücksetzen gesendet!"
+  },
+  "calendar": {
+    "filter_filters": "Filter",
+    "filter_done": "Fertig",
+    "period_3m": "3 Monate",
+    "period_6m": "6 Monate",
+    "period_1y": "Jahr",
+    "period_all": "Alle Anstehenden"
+  },
+  "documents": {
+    "title": "Dokumente",
+    "subtitle_count": "{{count}} Dokumente gespeichert",
+    "upload_button": "Hochladen",
+    "delete_bulk": "Löschen",
+    "selected_count": "{{count}} ausgewählt",
+    "select_all": "Alle auswählen",
+    "empty_title": "Keine Dokumente gefunden",
+    "empty_subtitle": "Laden Sie Ihr erstes Dokument hoch",
+    "empty_button": "Dokument hochladen",
+    "filter_pets": "Haustiere",
+    "filter_all_pets": "Alle Haustiere",
+    "filter_types": "Dokumenttypen",
+    "type_all": "Alle Dokumente",
+    "type_vaccination": "Impfungen",
+    "type_medical": "Ärztliche Berichte",
+    "type_legal": "Rechtliches",
+    "type_insurance": "Versicherung",
+    "delete_confirm_title": "Dokument löschen",
+    "delete_confirm_message": "Sind Sie sicher, dass Sie {{name}} löschen möchten?",
+    "delete_bulk_confirm_title": "Dokumente löschen",
+    "delete_bulk_confirm_message": "{{count}} Dokumente löschen?",
+    "size_unknown": "Unbekannte Größe"
   },
   "add_pet": {
     "type_title": "Typ",
@@ -75,10 +288,10 @@
     "search_species": "Nach Tierart suchen",
     "select_species": "Art auswählen",
     "enter_species": "Art eingeben",
-    "search_breed": "Rasse suchen oder eingeben",
-    "enter_breed": "Benutzerdefinierte Rasse",
+    "search_breed": "Suchen oder benutzerdefinierte Rasse eingeben",
+    "enter_breed": "Benutzerdefinierte Rasse eingeben",
     "pet_name": "Wie heißt Ihr Haustier?",
-    "pet_name_placeholder": "Name des Haustieres",
+    "pet_name_placeholder": "Name Ihres Haustieres",
     "birth_date_label": "Geburtsdatum oder Alter",
     "birth_date_placeholder": "JJJJ-MM-TT",
     "calculated_age": "Berechnetes Alter: {{age}}",
@@ -88,20 +301,20 @@
     "male": "Männlich",
     "female": "Weiblich",
     "weight": "Gewicht",
-    "weight_hint": "Optional. Schieberegler anpassen oder Zahl eingeben.",
+    "weight_hint": "Optional. Schieberegler anpassen oder Zahl antippen, um einzugeben.",
     "saving": "Haustier speichern...",
     "success": "Haustier erfolgreich hinzugefügt!",
     "go_dashboard": "Zum Dashboard",
-    "error_type": "Bitte wählen Sie eine Tierart.",
-    "error_breed": "Bitte wählen Sie eine Rasse.",
+    "error_type": "Bitte wählen Sie eine Tierart aus.",
+    "error_breed": "Bitte wählen Sie eine Rasse aus oder geben Sie eine ein.",
     "error_name": "Name ist erforderlich.",
-    "error_birth": "Geburtsdatum oder ungefähres Alter erforderlich.",
-    "error_weight": "Bitte geben Sie ein gültiges Gewicht ein."
+    "error_birth": "Geburtsdatum oder ungefähres Alter ist erforderlich.",
+    "error_weight": "Bitte geben Sie eine gültige Zahl für das Gewicht ein."
   },
   "pwa": {
     "install_title": "Pawzly App installieren",
-    "install_ios": "Tippen Sie auf Teilen und wählen Sie 'Zum Home-Bildschirm'",
-    "install_android": "Tippen Sie auf das Menü und wählen Sie 'App installieren'"
+    "install_ios": "Tippen Sie auf die Teilen-Schaltfläche und wählen Sie 'Zum Home-Bildschirm'",
+    "install_android": "Tippen Sie auf die Menü-Schaltfläche und wählen Sie 'App installieren'"
   },
   "support": {
     "title": "Support",
@@ -109,4 +322,293 @@
     "terms_of_service": "Nutzungsbedingungen",
     "privacy_policy": "Datenschutzrichtlinie"
   }
+},
+"widgets": {
+  "quick_actions": {
+    "add_visit": "Besuch",
+    "add_vaccine": "Impfung",
+    "add_medication": "Medik.",
+    "log_weight": "Gewicht",
+    "add_document": "Dokument"
+  }
+},
+"passport": {
+  "label": "Heimtierausweis",
+  "unknown_breed": "Unbekannte Rasse",
+  "dob": "Geb",
+  "weight": "Gewicht",
+  "color": "Farbe",
+  "blood_type": "Blutgruppe",
+  "reg": "Reg"
+},
+"pet_profile": {
+  "table_headers": {
+    "vaccine": "IMPFSTOFF",
+    "date_given": "DATUM",
+    "expires": "LÄUFT AB"
+  },
+  "history_timeline": "Verlauf & Zeitachse",
+  "view_full_timeline": "Vollständigen Verlauf anzeigen",
+  "loading": "Lade Haustierübersicht...",
+  "overview": {
+    "about": "Über",
+    "no_notes": "Keine Notizen verfügbar.",
+    "health_status": "Gesundheitsstatus",
+    "up_to_date": "Alles aktuell",
+    "attention_needed": "Aufmerksamkeit erforderlich",
+    "critical_alert": "Kritischer Alarm",
+    "unknown_status": "Status unbekannt"
+  },
+  "edit": {
+    "title": "Haustier bearbeiten",
+    "success": "Erfolg",
+    "success_message": "Haustier erfolgreich aktualisiert!",
+    "error": "Fehler",
+    "name_required": "Name des Haustiers ist erforderlich",
+    "sections": {
+      "basic_info": "Grundinformationen",
+      "medical_info": "Medizinische Informationen",
+      "notes": "Notizen"
+    },
+    "labels": {
+      "name": "Name *",
+      "species": "Art",
+      "breed": "Rasse",
+      "color": "Farbe",
+      "gender": "Geschlecht",
+      "dob": "Geburtsdatum",
+      "weight": "Gewicht",
+      "unit": "Einheit",
+      "spayed_neutered": "Kastriert/Sterilisiert",
+      "microchip": "Mikrochip-Nummer"
+    },
+    "placeholders": {
+      "name": "z.B. Max, Luna",
+      "breed": "z.B. Golden Retriever",
+      "color": "z.B. Braun, Schwarz",
+      "dob": "JJJJ-MM-TT",
+      "weight": "0.0",
+      "microchip": "z.B. 123456789012345",
+      "notes": "Zusätzliche Notizen..."
+    },
+    "save_changes": "Änderungen speichern"
+  },
+  "documents": {
+    "title": "Alle Dokumente",
+    "search_placeholder": "Suche nach Titel...",
+    "no_documents": "Keine Dokumente gefunden",
+    "upload_cta": "Dokument hochladen",
+    "actions": {
+      "scan": "Scannen",
+      "upload": "Hochladen",
+      "autofill": "Auto-Fill"
+    },
+    "filters": {
+      "all_types": "Alle Typen",
+      "last_6_months": "Letzte 6 Monate"
+    },
+    "types": {
+      "vaccination": "Impfung",
+      "lab_result": "Laborergebnis",
+      "invoice": "Rechnung",
+      "prescription": "Rezept",
+      "insurance": "Versicherung",
+      "medical": "Medizinisch",
+      "other": "Sonstiges"
+    }
+  },
+  "health": {
+    "titles": {
+      "visits": "Besuche",
+      "vaccinations": "Impfungen",
+      "treatments": "Behandlungen & Medis",
+      "allergies": "Allergien",
+      "health_log": "Gesundheitstagebuch"
+    },
+    "actions": {
+      "add_visit": "Besuch+",
+      "add_vaccine": "Impfung+",
+      "add_tx": "Behandl.+",
+      "add_image": "Bild+",
+      "add_doc": "Dok+",
+      "add_record": "Eintrag+",
+      "new_visit": "Neuer Besuch",
+      "add_new": "+ Hinzufügen",
+      "add_allergy": "+ Allergie",
+      "view_history": "Verlauf ansehen",
+      "filter": "Filter"
+    },
+    "sections": {
+      "upcoming": "KOMMEND",
+      "recent_history": "JÜNGSTER VERLAUF"
+    },
+    "badges": {
+      "today": "HEUTE",
+      "tomorrow": "MORGEN",
+      "days": "TAGE",
+      "due_soon": "BALD FÄLLIG",
+      "active": "AKTIV",
+      "expired": "ABGELAUFEN"
+    },
+    "empty": {
+      "upcoming": "Keine kommenden Besuche",
+      "recent": "Keine jüngsten Besuche",
+      "vaccinations": "Keine Impfungen aufgezeichnet",
+      "treatments": "Keine aktuellen Behandlungen",
+      "allergies": "Keine Allergien aufgezeichnet"
+    }
+  },
+  "history": {
+    "filters": {
+      "all": "Alle",
+      "vaccinations": "Impfungen",
+      "visits": "Besuche",
+      "medications": "Medikamente",
+      "weight": "Gewicht"
+    },
+    "empty": {
+      "title": "Noch kein Verlauf",
+      "desc": "Ereignisse wie Impfungen, Besuche und Gewichtsprotokolle erscheinen hier",
+      "pet_not_found": "Haustier nicht gefunden",
+      "load_error": "Verlauf konnte nicht geladen werden"
+    }
+  },
+  "album": {
+    "title": "Fotogalerie",
+    "subtitle": "Verwalten Sie Fotos, Videos und Alben von {{name}}.",
+    "actions": {
+      "new_album": "Neues Album",
+      "add_media": "Medien hinzu",
+      "load_more": "Mehr laden",
+      "create_album": "Album erstellen",
+      "view_all": "Alle ansehen"
+    },
+    "headers": {
+      "albums": "Alben"
+    },
+    "filters": {
+      "all": "Alle",
+      "photos": "Fotos",
+      "videos": "Videos",
+      "favorites": "Favoriten"
+    },
+    "sort": {
+      "label": "Sortieren nach:",
+      "newest": "Neueste zuerst"
+    }
+  },
+  "events": {
+    "title": "Termine & Zeitplan",
+    "subtitle": "Verwalten Sie Termine und Aktivitäten von {{name}}.",
+    "actions": {
+      "add_event": "Termin hinzu",
+      "add_first": "Ersten Termin hinzufügen"
+    },
+    "sections": {
+      "upcoming": "Kommende Termine",
+      "past": "Vergangene Termine"
+    },
+    "empty": {
+      "title": "Noch keine Termine",
+      "desc": "Fügen Sie Termine hinzu, um den Pflegeplan zu verfolgen"
+    },
+    "time": {
+      "all_day": "Ganztägig",
+      "today": "Heute",
+      "tomorrow": "Morgen",
+      "in_days": "In {{days}} Tagen"
+    },
+    "types": {
+      "vaccination": "Impfung",
+      "treatment": "Behandlung",
+      "vet": "Tierarztbesuch",
+      "grooming": "Fellpflege",
+      "walking": "Gassi gehen",
+      "feeding": "Fütterung"
+    }
+  },
+  "settings": {
+    "sections": {
+      "management": "Verwaltung",
+      "privacy": "Privatsphäre",
+      "notifications": "Benachrichtigungen"
+    },
+    "items": {
+      "transfer": {
+        "title": "Besitz übertragen",
+        "desc": "Haustier an einen anderen Nutzer übertragen"
+      },
+      "delete": {
+        "title": "Haustier löschen",
+        "deleting": "Löscht...",
+        "desc": "Dieses Haustier dauerhaft entfernen"
+      },
+      "privacy_settings": {
+        "title": "Privatsphäre-Einstellungen",
+        "desc": "Wer kann dieses Profil sehen"
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "desc": "Erinnerungen und Alarme verwalten"
+      }
+    },
+    "alerts": {
+      "delete": {
+        "title": "Haustier löschen",
+        "message": "Sind Sie sicher, dass Sie {{name}} löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+        "cancel": "Abbrechen",
+        "confirm": "Löschen"
+      },
+      "coming_soon": {
+        "title": "Kommt bald",
+        "transfer": "Besitzübertragung ist bald verfügbar.",
+        "privacy": "Privatsphäre-Einstellungen sind bald verfügbar.",
+        "notifications": "Benachrichtigungseinstellungen sind bald verfügbar."
+      },
+      "error": {
+        "title": "Fehler",
+        "delete_failed": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "info": {
+      "id": "Tier-ID:",
+      "created": "Erstellt:"
+    }
+  },
+  "share": {
+    "title": "Profil teilen",
+    "desc": "Teilen Sie dieses Profil mit Familie, Freunden oder Ihrem Tierarzt.",
+    "action": "Jetzt teilen",
+    "message": "Schau dir dieses Haustierprofil auf Pawzly an! {{url}}",
+    "message_title": "Haustierprofil"
+  }
+}
+},
+"quick_actions_menu": {
+"title": "Schnellaktionen",
+"subtitle": "Wählen Sie eine Aktion für Ihr Haustier",
+"select_pet": "Haustier auswählen",
+"actions": {
+  "visit": {
+    "title": "Besuch",
+    "desc": "Tierarztbesuch erfassen"
+  },
+  "photos": {
+    "title": "Fotos",
+    "desc": "Fotos hinzufügen"
+  },
+  "vaccine": {
+    "title": "Impfung",
+    "desc": "Impfung erfassen"
+  },
+  "documents": {
+    "title": "Dokumente",
+    "desc": "Dokumente hochladen"
+  },
+  "medication": {
+    "title": "Medikamente",
+    "desc": "Medikament hinzufügen"
+  }
+}
+}
 }

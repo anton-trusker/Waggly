@@ -16,7 +16,8 @@ import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal'; // Added
 import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
-import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal'; // Added
+import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
+import { useLocale } from '@/hooks/useLocale';
 
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
@@ -29,6 +30,7 @@ export default function OverviewTab() {
   const isLargeScreen = width >= 1024;
   const isMobile = width < 768; // Mobile breakpoint
 
+  const { t } = useLocale();
   const { theme } = useAppTheme();
   const { pets } = usePets();
   const pet = pets.find(p => p.id === petId) as Pet | undefined;
@@ -55,7 +57,7 @@ export default function OverviewTab() {
   if (!pet) {
     return (
       <View style={{ padding: 24 }}>
-        <Text style={{ fontSize: 16, color: '#6B7280' }}>Loading pet overview...</Text>
+        <Text style={{ fontSize: 16, color: '#6B7280' }}>{t('pet_profile.loading')}</Text>
       </View>
     );
   }
@@ -101,7 +103,7 @@ export default function OverviewTab() {
             {/* Allergies Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Allergies</Text>
+                <Text style={styles.cardTitle}>{t('pet_profile.allergies')}</Text>
                 <TouchableOpacity
                   style={styles.addButtonSmall}
                   onPress={() => {
@@ -129,7 +131,7 @@ export default function OverviewTab() {
                   ))
                 ) : (
                   <View style={[styles.allergyTag, { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' }]}>
-                    <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>NO ALLERGIES</Text>
+                    <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>{t('pet_profile.no_allergies')}</Text>
                   </View>
                 )}
               </View>
@@ -138,7 +140,7 @@ export default function OverviewTab() {
             {/* Past Conditions Card */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Past Conditions</Text>
+                <Text style={styles.cardTitle}>{t('pet_profile.past_conditions')}</Text>
                 <TouchableOpacity
                   style={styles.addButtonSmall}
                   onPress={() => {
@@ -167,16 +169,16 @@ export default function OverviewTab() {
                           <Text style={styles.timelineItemTitle}>{cond.name}</Text>
                           <View style={styles.timelineDateBadge}>
                             <Text style={styles.timelineDateBadgeText}>
-                              {cond.diagnosed_date ? new Date(cond.diagnosed_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown'}
+                              {cond.diagnosed_date ? new Date(cond.diagnosed_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { month: 'short', year: 'numeric' }) : t('pet_profile.unknown')}
                             </Text>
                           </View>
                         </View>
-                        <Text style={styles.timelineItemDesc}>{cond.description || cond.treatment_plan || cond.notes || 'No details'}</Text>
+                        <Text style={styles.timelineItemDesc}>{cond.description || cond.treatment_plan || cond.notes || t('pet_profile.no_details')}</Text>
                       </View>
                     </TouchableOpacity>
                   ))
                 ) : (
-                  <Text style={{ color: '#9CA3AF', fontStyle: 'italic', marginLeft: 8 }}>No past conditions recorded.</Text>
+                  <Text style={{ color: '#9CA3AF', fontStyle: 'italic', marginLeft: 8 }}>{t('pet_profile.no_past_conditions')}</Text>
                 )}
               </View>
             </View>
@@ -192,8 +194,8 @@ export default function OverviewTab() {
                 <View style={styles.vaccHeaderLeft}>
                   <Ionicons name="medical" size={20} color="#fff" />
                   <View>
-                    <Text style={styles.vaccTitle}>Vaccinations</Text>
-                    <Text style={styles.vaccSubtitle}>Official immunization records</Text>
+                    <Text style={styles.vaccTitle}>{t('pet_profile.vaccinations')}</Text>
+                    <Text style={styles.vaccSubtitle}>{t('pet_profile.official_records')}</Text>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -201,19 +203,19 @@ export default function OverviewTab() {
                   onPress={() => setVaccinationOpen(true)}
                 >
                   <Ionicons name="add" size={16} color="#fff" />
-                  <Text style={styles.addEntryText}>Add Entry</Text>
+                  <Text style={styles.addEntryText}>{t('pet_profile.add_entry')}</Text>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.vaccinationsTable}>
                 {/* Rabies Section */}
-                <Text style={styles.vaccSectionTitle}>V. VACCINATION AGAINST RABIES</Text>
+                <Text style={styles.vaccSectionTitle}>{t('pet_profile.rabies_section')}</Text>
                 <View style={styles.tableHeader}>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Date</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Manufacturer / Batch</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Valid From</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Valid Until</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Veterinarian</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.date')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>{t('pet_profile.table_headers.manufacturer_batch')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.valid_from')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.valid_until')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.veterinarian')}</Text>
                 </View>
                 {vaccinations.filter(v => v.vaccine_name?.toLowerCase().includes('rabies')).length > 0 ? (
                   vaccinations.filter(v => v.vaccine_name?.toLowerCase().includes('rabies')).map((vacc) => (
@@ -225,39 +227,39 @@ export default function OverviewTab() {
                         setVaccinationOpen(true);
                       }}
                     >
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                       <View style={{ flex: 2 }}>
                         <Text style={styles.vaccName}>{vacc.vaccine_name}</Text>
-                        <Text style={styles.vaccBatch}>Batch: {vacc.batch_number || 'N/A'}</Text>
+                        <Text style={styles.vaccBatch}>{t('pet_profile.table_headers.batch')}: {vacc.batch_number || t('pet_profile.na')}</Text>
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                       <View style={{ flex: 1 }}>
                         {vacc.next_due_date && new Date(vacc.next_due_date) > new Date() ? (
                           <View style={styles.validBadge}>
-                            <Text style={styles.validBadgeText}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                            <Text style={styles.validBadgeText}>{new Date(vacc.next_due_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                             <Ionicons name="checkmark-circle" size={14} color="#059669" />
                           </View>
                         ) : (
-                          <Text style={styles.expiredText}>{vacc.next_due_date ? new Date(vacc.next_due_date).toLocaleDateString('en-GB') : 'N/A'}</Text>
+                          <Text style={styles.expiredText}>{vacc.next_due_date ? new Date(vacc.next_due_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' }) : t('pet_profile.na')}</Text>
                         )}
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || 'N/A'}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || t('pet_profile.na')}</Text>
                     </TouchableOpacity>
                   ))
                 ) : (
                   <View style={styles.emptyTableRow}>
-                    <Text style={styles.emptyTableText}>No rabies vaccinations recorded</Text>
+                    <Text style={styles.emptyTableText}>{t('pet_profile.no_rabies')}</Text>
                   </View>
                 )}
 
                 {/* Other Vaccinations */}
-                <Text style={[styles.vaccSectionTitle, { marginTop: 24 }]}>VI. OTHER VACCINATIONS (DHPP / LEPTO)</Text>
+                <Text style={[styles.vaccSectionTitle, { marginTop: 24 }]}>{t('pet_profile.other_vaccines_section')}</Text>
                 <View style={styles.tableHeader}>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Date</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Vaccine Type</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Batch</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Next Due</Text>
-                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Clinic</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.date')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>{t('pet_profile.table_headers.vaccine_type')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.batch')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.next_due')}</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>{t('pet_profile.table_headers.clinic')}</Text>
                 </View>
                 {vaccinations.filter(v => !v.vaccine_name?.toLowerCase().includes('rabies')).length > 0 ? (
                   vaccinations.filter(v => !v.vaccine_name?.toLowerCase().includes('rabies')).map((vacc) => (
@@ -269,27 +271,27 @@ export default function OverviewTab() {
                         setVaccinationOpen(true);
                       }}
                     >
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}</Text>
                       <Text style={[styles.vaccName, { flex: 2 }]}>{vacc.vaccine_name}</Text>
-                      <Text style={[styles.vaccBatch, { flex: 1 }]}>#{vacc.batch_number || 'N/A'}</Text>
+                      <Text style={[styles.vaccBatch, { flex: 1 }]}>#{vacc.batch_number || t('pet_profile.na')}</Text>
                       <View style={{ flex: 1 }}>
                         {vacc.next_due_date && (
                           new Date(vacc.next_due_date) < new Date() ? (
                             <View style={styles.warningBadge}>
-                              <Text style={styles.warningText}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                              <Text style={styles.warningText}>{new Date(vacc.next_due_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}</Text>
                               <Ionicons name="warning" size={12} color="#EA580C" />
                             </View>
                           ) : (
-                            <Text style={styles.tableCell}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                            <Text style={styles.tableCell}>{new Date(vacc.next_due_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}</Text>
                           )
                         )}
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || 'N/A'}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || t('pet_profile.na')}</Text>
                     </TouchableOpacity>
                   ))
                 ) : (
                   <View style={styles.emptyTableRow}>
-                    <Text style={styles.emptyTableText}>No other vaccinations recorded</Text>
+                    <Text style={styles.emptyTableText}>{t('pet_profile.no_other_vaccines')}</Text>
                   </View>
                 )}
               </View>
@@ -300,20 +302,20 @@ export default function OverviewTab() {
               <View style={styles.treatmentsHeader}>
                 <View style={styles.treatmentsHeaderLeft}>
                   <Ionicons name="medical" size={20} color="#4F46E5" />
-                  <Text style={styles.treatmentsTitle}>Treatments & Medications</Text>
+                  <Text style={styles.treatmentsTitle}>{t('pet_profile.treatments_medications')}</Text>
                 </View>
                 <TouchableOpacity onPress={() => {
                   setSelectedTreatment(null);
                   setTreatmentOpen(true);
                 }}>
-                  <Text style={styles.viewHistoryLink}>+ Add New</Text>
+                  <Text style={styles.viewHistoryLink}>{t('pet_profile.add_new')}</Text>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.treatmentsGrid}>
                 {/* Current Prescriptions (Active Medications) */}
                 <View style={styles.treatmentsColumn}>
-                  <Text style={styles.treatmentsSectionTitle}>CURRENT PRESCRIPTIONS</Text>
+                  <Text style={styles.treatmentsSectionTitle}>{t('pet_profile.current_prescriptions')}</Text>
                   {treatments.filter(t => t.is_active && t.category === 'Medication').length > 0 ? (
                     treatments.filter(t => t.is_active && t.category === 'Medication').slice(0, 3).map((treatment) => (
                       <TouchableOpacity
@@ -329,20 +331,20 @@ export default function OverviewTab() {
                         </View>
                         <View style={styles.medInfo}>
                           <Text style={styles.medName}>{treatment.treatment_name}</Text>
-                          <Text style={styles.medDosage}>{treatment.dosage_value ? `${treatment.dosage_value} ${treatment.dosage_unit || ''}` : treatment.dosage || 'No dosage'} • {treatment.frequency}</Text>
+                          <Text style={styles.medDosage}>{treatment.dosage_value ? `${treatment.dosage_value} ${treatment.dosage_unit || ''}` : treatment.dosage || t('pet_profile.no_dosage')} • {treatment.frequency}</Text>
                         </View>
                       </TouchableOpacity>
                     ))
                   ) : (
                     <View style={[styles.medCard, { backgroundColor: '#F9FAFB', borderColor: '#E5E7EB' }]}>
-                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>No active medications</Text>
+                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>{t('pet_profile.no_active_medications')}</Text>
                     </View>
                   )}
                 </View>
 
                 {/* Recent Treatments (All types, simplified view) */}
                 <View style={styles.treatmentsColumn}>
-                  <Text style={styles.treatmentsSectionTitle}>RECENT TREATMENTS</Text>
+                  <Text style={styles.treatmentsSectionTitle}>{t('pet_profile.recent_treatments')}</Text>
                   <View style={styles.treatmentTimeline}>
                     {treatments.length > 0 ? (
                       treatments.slice(0, 3).map((treatment) => (
@@ -360,12 +362,12 @@ export default function OverviewTab() {
                             <Text style={styles.treatmentTimelineDesc}>{treatment.notes || treatment.category || 'Treatment'}</Text>
                           </View>
                           <Text style={styles.treatmentTimelineDate}>
-                            {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'N/A'}
+                            {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' }) : t('pet_profile.na')}
                           </Text>
                         </TouchableOpacity>
                       ))
                     ) : (
-                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>No recent treatments</Text>
+                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>{t('pet_profile.no_recent_treatments')}</Text>
                     )}
                   </View>
                 </View>
@@ -376,16 +378,16 @@ export default function OverviewTab() {
             <View style={styles.notesCard}>
               <View style={styles.notesHeader}>
                 <Ionicons name="document-text" size={20} color="#CA8A04" />
-                <Text style={styles.notesTitle}>Important Notes</Text>
+                <Text style={styles.notesTitle}>{t('pet_profile.important_notes')}</Text>
               </View>
               <Text style={styles.notesText}>
-                {(pet as any).notes || 'No important notes added yet. Add notes about travel requirements, dietary restrictions, or other important information.'}
+                {(pet as any).notes || t('pet_profile.no_notes_placeholder')}
               </Text>
             </View>
 
             {/* History Timeline */}
             <View style={styles.card}>
-              <Text style={[styles.cardTitle, { marginBottom: 24 }]}>History & Timeline</Text>
+              <Text style={[styles.cardTitle, { marginBottom: 24 }]}>{t('pet_profile.history_timeline')}</Text>
               <View style={styles.timelineList}>
                 {/* Item 1 */}
                 <View style={styles.timelineItem}>
@@ -399,13 +401,13 @@ export default function OverviewTab() {
                         <View style={[styles.timelineIconSmall, { backgroundColor: '#DBEAFE' }]}>
                           <IconSymbol android_material_icon_name="medical-services" size={14} color="#2563EB" />
                         </View>
-                        <Text style={styles.timelineItemTitle}>Dental Cleaning</Text>
+                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.dental_title')}</Text>
                       </View>
                       <Text style={styles.timelineDateText}>12 Oct</Text>
                     </View>
-                    <Text style={styles.timelineSubtitle}>Pawzly Vet Clinic • Dr. Smith</Text>
+                    <Text style={styles.timelineSubtitle}>{t('pet_profile.mock_timeline.dental_subtitle')}</Text>
                     <View style={styles.timelineNoteBox}>
-                      <Text style={styles.timelineNoteText}>Routine cleaning completed. Mild gingivitis noted on upper molars.</Text>
+                      <Text style={styles.timelineNoteText}>{t('pet_profile.mock_timeline.dental_note')}</Text>
                     </View>
                   </View>
                 </View>
@@ -422,13 +424,13 @@ export default function OverviewTab() {
                         <View style={[styles.timelineIconSmall, { backgroundColor: '#D1FAE5' }]}>
                           <IconSymbol android_material_icon_name="monitor-weight" size={14} color="#059669" />
                         </View>
-                        <Text style={styles.timelineItemTitle}>Weight Logged</Text>
+                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.weight_title')}</Text>
                       </View>
                       <Text style={styles.timelineDateText}>01 Oct</Text>
                     </View>
                     <View style={styles.weightRow}>
-                      <Text style={styles.weightValue}>24.5 kg</Text>
-                      <Text style={styles.weightChange}>(+0.2)</Text>
+                      <Text style={styles.weightValue}>{t('pet_profile.mock_timeline.weight_val')}</Text>
+                      <Text style={styles.weightChange}>{t('pet_profile.mock_timeline.weight_change')}</Text>
                     </View>
                   </View>
                 </View>
@@ -444,20 +446,20 @@ export default function OverviewTab() {
                         <View style={[styles.timelineIconSmall, { backgroundColor: '#CCFBF1' }]}>
                           <IconSymbol android_material_icon_name="healing" size={14} color="#0D9488" />
                         </View>
-                        <Text style={styles.timelineItemTitle}>Dewclaw Removal</Text>
+                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.dewclaw_title')}</Text>
                       </View>
                       <Text style={styles.timelineDateText}>28 Aug</Text>
                     </View>
-                    <Text style={styles.timelineSubtitle}>Pawzly Vet Clinic • Surgery</Text>
+                    <Text style={styles.timelineSubtitle}>{t('pet_profile.mock_timeline.dewclaw_subtitle')}</Text>
                     <View style={styles.timelineNoteBox}>
-                      <Text style={styles.timelineNoteText}>Healed well. Stitches removed. Patient is recovering nicely.</Text>
+                      <Text style={styles.timelineNoteText}>{t('pet_profile.mock_timeline.dewclaw_note')}</Text>
                     </View>
                   </View>
                 </View>
 
               </View>
               <TouchableOpacity style={styles.viewTimelineBtn}>
-                <Text style={styles.viewTimelineText}>View Full Timeline</Text>
+                <Text style={styles.viewTimelineText}>{t('pet_profile.view_full_timeline')}</Text>
               </TouchableOpacity>
             </View>
 

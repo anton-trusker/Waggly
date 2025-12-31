@@ -3,8 +3,20 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { Ionicons } from '@expo/vector-icons';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Notification } from '@/types';
+import { useLocale } from '@/hooks/useLocale';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, de, fr, ru } from 'date-fns/locale';
 
-const NOTIFICATION_TYPES = ['All', 'Health', 'Events', 'Social', 'System'];
+const FILTER_KEYS = ['all', 'health', 'events', 'social', 'system'];
+
+const getDateFnsLocale = (locale: string) => {
+    switch (locale) {
+        case 'de': return de;
+        case 'fr': return fr;
+        case 'ru': return ru;
+        default: return enUS;
+    }
+};
 
 export default function NotificationsPage() {
     const {
@@ -15,14 +27,15 @@ export default function NotificationsPage() {
         markAllAsRead,
         clearAll,
         deleteNotification,
-        sendTestNotification // For testing
+        sendTestNotification
     } = useNotifications();
 
-    const [selectedFilter, setSelectedFilter] = useState('All');
+    const { t, locale } = useLocale();
+    const [selectedFilter, setSelectedFilter] = useState('all');
 
     const filteredNotifications = notifications.filter(notif => {
-        if (selectedFilter === 'All') return true;
-        return (notif.type || 'system').toLowerCase() === selectedFilter.toLowerCase();
+        if (selectedFilter === 'all') return true;
+        return (notif.type || 'system').toLowerCase() === selectedFilter;
     });
 
     const getIconInfo = (type: string) => {
@@ -30,7 +43,7 @@ export default function NotificationsPage() {
         switch (t) {
             case 'health': return { icon: 'medical', color: '#EF4444' };
             case 'vaccination': return { icon: 'medical', color: '#EF4444' };
-            case 'medication': return { icon: 'bandage', color: '#EF4444' }; // Fallback for health subtypes
+            case 'medication': return { icon: 'bandage', color: '#EF4444' };
             case 'events': return { icon: 'calendar', color: '#6366F1' };
             case 'visit': return { icon: 'fitness', color: '#6366F1' };
             case 'social': return { icon: 'people', color: '#10B981' };
@@ -42,14 +55,7 @@ export default function NotificationsPage() {
     const formatTime = (dateString: string | null) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        const now = new Date();
-        const diff = (now.getTime() - date.getTime()) / 1000; // seconds
-
-        if (diff < 60) return 'Just now';
-        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-        if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-        return date.toLocaleDateString();
+        return formatDistanceToNow(date, { addSuffix: true, locale: getDateFnsLocale(locale) });
     };
 
     const handleTestNotification = () => {
@@ -64,11 +70,22 @@ export default function NotificationsPage() {
 
     const confirmClearAll = () => {
         Alert.alert(
-            "Clear All",
-            "Are you sure you want to delete all notifications?",
+            t('notifications.clear_all_title'),
+            t('notifications.clear_all_message'),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Clear", style: "destructive", onPress: clearAll }
+                { text: t('common.cancel'), style: "cancel" },
+                { text: t('common.delete'), style: "destructive", onPress: clearAll }
+            ]
+        );
+    };
+
+    const confirmDelete = (id: string) => {
+        Alert.alert(
+            t('notifications.delete_title'),
+            t('notifications.delete_message'),
+            [
+                { text: t('common.cancel'), style: "cancel" },
+                { text: t('common.delete'), style: "destructive", onPress: () => deleteNotification(id) }
             ]
         );
     };
@@ -78,9 +95,11 @@ export default function NotificationsPage() {
             {/* Header */}
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.title}>Notifications</Text>
+                    <Text style={styles.title}>{t('notifications.title')}</Text>
                     <Text style={styles.subtitle}>
-                        {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
+                        {unreadCount > 0
+                            ? t('notifications.subtitle_unread', { count: unreadCount })
+                            : t('notifications.subtitle_all_caught_up')}
                     </Text>
                 </View>
                 <View style={styles.headerActions}>
@@ -91,7 +110,7 @@ export default function NotificationsPage() {
                     {unreadCount > 0 && (
                         <TouchableOpacity style={styles.markAllButton} onPress={() => markAllAsRead()}>
                             <Ionicons name="checkmark-done" size={20} color="#6366F1" />
-                            <Text style={styles.markAllButtonText}>Mark all read</Text>
+                            <Text style={styles.markAllButtonText}>{t('notifications.mark_all_read')}</Text>
                         </TouchableOpacity>
                     )}
                     {notifications.length > 0 && (
@@ -104,22 +123,22 @@ export default function NotificationsPage() {
 
             {/* Filters */}
             <View style={styles.filters}>
-                {NOTIFICATION_TYPES.map((type) => (
+                {FILTER_KEYS.map((key) => (
                     <TouchableOpacity
-                        key={type}
+                        key={key}
                         style={[
                             styles.filterChip,
-                            selectedFilter === type && styles.filterChipActive,
+                            selectedFilter === key && styles.filterChipActive,
                         ]}
-                        onPress={() => setSelectedFilter(type)}
+                        onPress={() => setSelectedFilter(key)}
                     >
                         <Text
                             style={[
                                 styles.filterChipText,
-                                selectedFilter === type && styles.filterChipTextActive,
+                                selectedFilter === key && styles.filterChipTextActive,
                             ]}
                         >
-                            {type}
+                            {t(`notifications.filter_${key}`)}
                         </Text>
                     </TouchableOpacity>
                 ))}
@@ -135,9 +154,11 @@ export default function NotificationsPage() {
                     {filteredNotifications.length === 0 ? (
                         <View style={styles.emptyState}>
                             <Ionicons name="notifications-off-outline" size={64} color="#D1D5DB" />
-                            <Text style={styles.emptyStateText}>No notifications</Text>
+                            <Text style={styles.emptyStateText}>{t('notifications.empty_title')}</Text>
                             <Text style={styles.emptyStateSubtext}>
-                                {notifications.length === 0 ? "You're all caught up!" : "No notifications match this filter."}
+                                {notifications.length === 0
+                                    ? t('notifications.empty_subtitle')
+                                    : t('notifications.empty_filter')}
                             </Text>
                         </View>
                     ) : (
@@ -151,8 +172,7 @@ export default function NotificationsPage() {
                                         !notif.is_read && styles.notificationCardUnread,
                                     ]}
                                     onPress={() => !notif.is_read && markAsRead(notif.id)}
-                                    // Optional: Long press to delete single notification?
-                                    onLongPress={() => Alert.alert("Delete", "Delete this notification?", [{ text: "Cancel" }, { text: "Delete", onPress: () => deleteNotification(notif.id) }])}
+                                    onLongPress={() => confirmDelete(notif.id)}
                                 >
                                     <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
                                         <Ionicons name={icon as any} size={24} color={color} />

@@ -11,6 +11,7 @@ import RichTextInput from './shared/RichTextInput';
 import PlacesAutocomplete from '@/components/ui/PlacesAutocomplete';
 import FormModal, { FormState } from '@/components/ui/FormModal';
 import BottomSheetSelect from '@/components/ui/BottomSheetSelect';
+import { useLocale } from '@/hooks/useLocale';
 
 interface VisitFormModalProps {
     visible: boolean;
@@ -20,15 +21,15 @@ interface VisitFormModalProps {
 }
 
 const PROVIDER_TYPES = [
-    { type: 'veterinary', label: 'Veterinary', icon: 'medical' as const },
-    { type: 'groomer', label: 'Grooming', icon: 'cut' as const },
-    { type: 'trainer', label: 'Training', icon: 'school' as const },
-    { type: 'boarder', label: 'Boarding', icon: 'bed' as const },
-    { type: 'daycare', label: 'Daycare', icon: 'home' as const },
-    { type: 'walker', label: 'Walker', icon: 'walk' as const },
-    { type: 'sitter', label: 'Sitter', icon: 'person' as const },
-    { type: 'behaviorist', label: 'Behaviorist', icon: 'fitness' as const },
-    { type: 'nutritionist', label: 'Nutritionist', icon: 'restaurant' as const },
+    { type: 'veterinary', labelKey: 'veterinary', icon: 'medical' as const },
+    { type: 'groomer', labelKey: 'groomer', icon: 'cut' as const },
+    { type: 'trainer', labelKey: 'trainer', icon: 'school' as const },
+    { type: 'boarder', labelKey: 'boarder', icon: 'bed' as const },
+    { type: 'daycare', labelKey: 'daycare', icon: 'home' as const },
+    { type: 'walker', labelKey: 'walker', icon: 'walk' as const },
+    { type: 'sitter', labelKey: 'sitter', icon: 'person' as const },
+    { type: 'behaviorist', labelKey: 'behaviorist', icon: 'fitness' as const },
+    { type: 'nutritionist', labelKey: 'nutritionist', icon: 'restaurant' as const },
 ];
 
 const SERVICE_CATEGORIES: Record<string, string[]> = {
@@ -44,9 +45,9 @@ const SERVICE_CATEGORIES: Record<string, string[]> = {
 };
 
 const URGENCY_LEVELS = [
-    { label: 'Routine', value: 'routine', color: '#10B981' },
-    { label: 'Urgent', value: 'urgent', color: '#FBBF24' },
-    { label: 'Emergency', value: 'emergency', color: '#EF4444' },
+    { labelKey: 'routine', value: 'routine', color: '#10B981' },
+    { labelKey: 'urgent', value: 'urgent', color: '#FBBF24' },
+    { labelKey: 'emergency', value: 'emergency', color: '#EF4444' },
 ];
 
 const CURRENCIES = [
@@ -83,6 +84,7 @@ interface VisitFormData {
 
 export default function VisitFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VisitFormModalProps) {
     const { pets } = usePets();
+    const { t } = useLocale();
     // Force Light Theme
     const theme = designSystem;
 
@@ -124,11 +126,11 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
     const handleSubmit = async (data: VisitFormData) => {
         if (!selectedPetId) {
-            Alert.alert('Error', 'Please select a pet');
+            Alert.alert(t('common.error'), t('visit_form.error_select_pet'));
             return;
         }
         if (!data.business_name) {
-            Alert.alert('Error', 'Please enter provider/business name');
+            Alert.alert(t('common.error'), t('visit_form.error_business_name'));
             return;
         }
 
@@ -188,7 +190,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
     const validate = (data: VisitFormData) => {
         const errors: Record<string, string> = {};
-        if (!data.business_name.trim()) errors.business_name = 'Business name is required';
+        if (!data.business_name.trim()) errors.business_name = t('visit_form.error_business_name');
         return errors;
     };
 
@@ -201,11 +203,11 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         <FormModal
             visible={visible}
             onClose={onClose}
-            title="Add New Visit"
+            title={t('visit_form.title')}
             initialData={initialData}
             onSubmit={handleSubmit}
             validate={validate}
-            submitLabel="Save Visit"
+            submitLabel={t('visit_form.submit')}
             forceLight // Force White Modal Background
         >
             {(formState: FormState<VisitFormData>) => {
@@ -218,7 +220,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
                         {/* Provider Type Selector */}
                         <View style={styles.section}>
-                            <Text style={[styles.sectionLabel, { color: theme.colors.text.secondary }]}>PROVIDER TYPE</Text>
+                            <Text style={[styles.sectionLabel, { color: theme.colors.text.secondary }]}>{t('visit_form.provider_type_title')}</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 <View style={styles.providerRow}>
                                     {PROVIDER_TYPES.map(provider => (
@@ -248,7 +250,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                     { color: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.text.secondary }
                                                 ]}
                                             >
-                                                {provider.label}
+                                                {t(`visit_form.provider_types.${provider.labelKey}`)}
                                             </Text>
                                         </TouchableOpacity>
                                     ))}
@@ -273,7 +275,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                         ]}
                                     >
                                         <Text style={[styles.urgencyText, { color: formState.data.urgency === level.value ? level.color : theme.colors.text.secondary }]}>
-                                            {level.label}
+                                            {t(`visit_form.urgency.${level.labelKey}`)}
                                         </Text>
                                     </TouchableOpacity>
                                 ))}
@@ -281,7 +283,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
                             {/* Service Category */}
                             <View style={styles.fieldGroup}>
-                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Service Type</Text>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.service_type_title')}</Text>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                     <View style={styles.chipRow}>
                                         {availableCategories.map(category => (
@@ -308,14 +310,14 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             </View>
 
                             <UniversalDatePicker
-                                label="Date"
+                                label={t('visit_form.date')}
                                 value={formState.data.date}
                                 onChange={(text) => formState.updateField('date', text)}
                             />
 
                             {/* Business Name */}
                             <View style={styles.fieldGroup}>
-                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Business Name *</Text>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.business_name')}</Text>
                                 <TextInput
                                     style={[
                                         styles.input,
@@ -325,7 +327,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                             borderColor: formState.errors.business_name ? theme.colors.status.error[500] : theme.colors.border.primary
                                         }
                                     ]}
-                                    placeholder={`Enter ${selectedProvider?.label.toLowerCase()} name...`}
+                                    placeholder={t('visit_form.business_name_placeholder', { type: selectedProvider ? t(`visit_form.provider_types.${selectedProvider.labelKey}`).toLowerCase() : '' })}
                                     placeholderTextColor={theme.colors.text.tertiary}
                                     value={formState.data.business_name}
                                     onChangeText={(text) => formState.updateField('business_name', text)}
@@ -340,14 +342,14 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             <PlacesAutocomplete
                                 value={formState.data.business_address}
                                 onSelect={(place) => handlePlaceSelect(place, formState)}
-                                placeholder="Search address..."
+                                placeholder={t('visit_form.address_placeholder')}
                                 types={['veterinary_care', 'establishment']}
-                                label="Business Address (Optional)"
+                                label={t('visit_form.address_label')}
                             />
 
                             <View style={styles.row}>
                                 <View style={styles.flex1}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Total Cost</Text>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.total_cost')}</Text>
                                     <TextInput
                                         style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
                                         placeholder="0.00"
@@ -359,7 +361,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 </View>
                                 <View style={[styles.flex1, { flex: 0.8 }]}>
                                     <BottomSheetSelect
-                                        label="Currency"
+                                        label={t('visit_form.currency')}
                                         value={formState.data.currency}
                                         onChange={(val) => formState.updateField('currency', val)}
                                         options={CURRENCIES}
@@ -369,8 +371,8 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             </View>
 
                             <RichTextInput
-                                label="Reason / Notes"
-                                placeholder="Details about this visit..."
+                                label={t('visit_form.notes_label')}
+                                placeholder={t('visit_form.notes_placeholder')}
                                 value={formState.data.notes}
                                 onChangeText={(text) => formState.updateField('notes', text)}
                                 minHeight={80}

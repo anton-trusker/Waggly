@@ -212,7 +212,7 @@ export const getLastDayOfMonth = (dateStr: string): string => {
  * Formats age from a Date object into human-readable format
  * Returns formats like "2 years 3 months", "6 months", "3 weeks", or "5 days"
  */
-export const formatAge = (birthDate: Date): string => {
+export const formatAge = (birthDate: Date, t: any = (key: string, options?: any) => key): string => {
   const today = new Date();
   const birth = new Date(birthDate);
 
@@ -223,10 +223,10 @@ export const formatAge = (birthDate: Date): string => {
   // For very young pets (less than 8 weeks)
   if (diffDays < 56) {
     if (diffDays < 14) {
-      return diffDays === 1 ? '1 day' : `${diffDays} days`;
+      return t('common.age.day', { count: diffDays });
     }
     const weeks = Math.floor(diffDays / 7);
-    return weeks === 1 ? '1 week' : `${weeks} weeks`;
+    return t('common.age.week', { count: weeks });
   }
 
   // Calculate years and months
@@ -246,12 +246,16 @@ export const formatAge = (birthDate: Date): string => {
 
   // Format output
   if (years === 0) {
-    return months === 1 ? '1 month' : `${months} months`;
+    return t('common.age.month', { count: months });
   } else if (months === 0) {
-    return years === 1 ? '1 year' : `${years} years`;
+    return t('common.age.year', { count: years });
   } else {
-    const yearStr = years === 1 ? '1 year' : `${years} years`;
-    const monthStr = months === 1 ? '1 month' : `${months} months`;
+    // Return compound string: "X years Y months"
+    // We need to construct this carefully using t
+    const yearStr = t('common.age.year', { count: years });
+    const monthStr = t('common.age.month', { count: months });
+    // Assuming simple concatenation is acceptable for now, or use a specific key for combination
+    // For cleaner localization, use a combined key if supported, or space them
     return `${yearStr} ${monthStr}`;
   }
 };

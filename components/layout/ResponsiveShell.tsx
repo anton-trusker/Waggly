@@ -45,31 +45,31 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     const mobileTabs: TabBarItem[] = [
         {
             name: 'dashboard',
-            label: 'Home',
+            label: 'navigation.home',
             icon: 'home' as any,
             route: '/(tabs)/(home)',
         },
         {
             name: 'calendar',
-            label: 'Calendar',
+            label: 'navigation.calendar',
             icon: 'event' as any,
             route: '/(tabs)/calendar',
         },
         {
             name: 'pets',
-            label: 'Pets',
+            label: 'navigation.pets',
             icon: 'pets' as any,
             route: '/(tabs)/pets',
         },
         {
             name: 'notifications',
-            label: 'Alerts',
+            label: 'navigation.notifications',
             icon: 'notifications' as any,
             route: '/(tabs)/notifications',
         },
         {
             name: 'menu',
-            label: 'Menu',
+            label: 'navigation.profile',
             icon: 'menu' as any,
             route: '/(tabs)/profile',
         },

@@ -4,20 +4,22 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { supabase } from '@/lib/supabase';
+import { useLocale } from '@/hooks/useLocale';
 
 const SPECIES_OPTIONS = [
-    { id: 'dog', label: 'Dog', icon: '🐕' },
-    { id: 'cat', label: 'Cat', icon: '🐈' },
-    { id: 'other', label: 'Other', icon: '🐾' },
+    { id: 'dog', labelKey: 'add_pet.species.dog', icon: '🐕' },
+    { id: 'cat', labelKey: 'add_pet.species.cat', icon: '🐈' },
+    { id: 'other', labelKey: 'add_pet.species.other', icon: '🐾' },
 ];
 
 const GENDER_OPTIONS = [
-    { id: 'male', label: 'Male' },
-    { id: 'female', label: 'Female' },
-    { id: 'unknown', label: 'Unknown' },
+    { id: 'male', labelKey: 'add_pet.step1.male' },
+    { id: 'female', labelKey: 'add_pet.step1.female' },
+    { id: 'unknown', labelKey: 'common.unknown' }, // reusing common.unknown if exists or add_pet keys
 ];
 
 export default function EditPetPage() {
+    const { t } = useLocale();
     const router = useRouter();
     const params = useLocalSearchParams();
     const petId = params.id as string;
@@ -63,7 +65,7 @@ export default function EditPetPage() {
 
     const handleSave = async () => {
         if (!formData.name) {
-            Alert.alert('Error', 'Pet name is required');
+            Alert.alert(t('pet_profile.edit.error'), t('pet_profile.edit.name_required'));
             return;
         }
 
@@ -88,10 +90,12 @@ export default function EditPetPage() {
 
             if (error) throw error;
 
-            Alert.alert('Success', 'Pet updated successfully!');
+            if (error) throw error;
+
+            Alert.alert(t('pet_profile.edit.success'), t('pet_profile.edit.success_message'));
             router.back();
         } catch (error: any) {
-            Alert.alert('Error', error.message);
+            Alert.alert(t('pet_profile.edit.error'), error.message);
         } finally {
             setLoading(false);
         }
@@ -115,13 +119,13 @@ export default function EditPetPage() {
                             <Ionicons name="arrow-back" size={24} color="#6B7280" />
                         </TouchableOpacity>
                         <View>
-                            <Text style={styles.title}>Edit Pet</Text>
+                            <Text style={styles.title}>{t('pet_profile.edit.title')}</Text>
                             <Text style={styles.subtitle}>{pet.name}</Text>
                         </View>
                     </View>
                     <View style={styles.headerActions}>
                         <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                            <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.saveButton, loading && styles.saveButtonDisabled]}
@@ -133,7 +137,7 @@ export default function EditPetPage() {
                             ) : (
                                 <>
                                     <Ionicons name="checkmark" size={20} color="#fff" />
-                                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                                    <Text style={styles.saveButtonText}>{t('pet_profile.edit.save_changes')}</Text>
                                 </>
                             )}
                         </TouchableOpacity>
@@ -144,14 +148,14 @@ export default function EditPetPage() {
                 <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
                     {/* Basic Information Section */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Basic Information</Text>
+                        <Text style={styles.sectionTitle}>{t('pet_profile.edit.sections.basic_info')}</Text>
 
                         {/* Pet Name */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Pet Name *</Text>
+                            <Text style={styles.label}>{t('pet_profile.edit.labels.name')}</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="e.g., Max, Luna, Bella"
+                                placeholder={t('pet_profile.edit.placeholders.name')}
                                 value={formData.name}
                                 onChangeText={(text) => updateField('name', text)}
                             />
@@ -159,7 +163,7 @@ export default function EditPetPage() {
 
                         {/* Species */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Species</Text>
+                            <Text style={styles.label}>{t('pet_profile.edit.labels.species')}</Text>
                             <View style={styles.optionsGrid}>
                                 {SPECIES_OPTIONS.map((option) => (
                                     <TouchableOpacity
@@ -171,7 +175,7 @@ export default function EditPetPage() {
                                         onPress={() => updateField('species', option.id)}
                                     >
                                         <Text style={styles.optionIcon}>{option.icon}</Text>
-                                        <Text style={styles.optionLabel}>{option.label}</Text>
+                                        <Text style={styles.optionLabel}>{t(option.labelKey)}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
@@ -180,19 +184,19 @@ export default function EditPetPage() {
                         {/* Breed & Color */}
                         <View style={styles.row}>
                             <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Breed</Text>
+                                <Text style={styles.label}>{t('pet_profile.edit.labels.breed')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="e.g., Golden Retriever"
+                                    placeholder={t('pet_profile.edit.placeholders.breed')}
                                     value={formData.breed}
                                     onChangeText={(text) => updateField('breed', text)}
                                 />
                             </View>
                             <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Color</Text>
+                                <Text style={styles.label}>{t('pet_profile.edit.labels.color')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="e.g., Brown, Black"
+                                    placeholder={t('pet_profile.edit.placeholders.color')}
                                     value={formData.color}
                                     onChangeText={(text) => updateField('color', text)}
                                 />
@@ -201,7 +205,7 @@ export default function EditPetPage() {
 
                         {/* Gender */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Gender</Text>
+                            <Text style={styles.label}>{t('pet_profile.edit.labels.gender')}</Text>
                             <View style={styles.radioGroup}>
                                 {GENDER_OPTIONS.map((option) => (
                                     <TouchableOpacity
@@ -212,7 +216,7 @@ export default function EditPetPage() {
                                         <View style={styles.radio}>
                                             {formData.gender === option.id && <View style={styles.radioSelected} />}
                                         </View>
-                                        <Text style={styles.radioLabel}>{option.label}</Text>
+                                        <Text style={styles.radioLabel}>{t(option.labelKey)}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
@@ -220,10 +224,10 @@ export default function EditPetPage() {
 
                         {/* Date of Birth */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Date of Birth</Text>
+                            <Text style={styles.label}>{t('pet_profile.edit.labels.dob')}</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="YYYY-MM-DD"
+                                placeholder={t('pet_profile.edit.placeholders.dob')}
                                 value={formData.date_of_birth}
                                 onChangeText={(text) => updateField('date_of_birth', text)}
                             />
@@ -232,17 +236,17 @@ export default function EditPetPage() {
                         {/* Weight */}
                         <View style={styles.row}>
                             <View style={[styles.inputGroup, styles.flex2]}>
-                                <Text style={styles.label}>Weight</Text>
+                                <Text style={styles.label}>{t('pet_profile.edit.labels.weight')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="0.0"
+                                    placeholder={t('pet_profile.edit.placeholders.weight')}
                                     keyboardType="decimal-pad"
                                     value={formData.weight?.toString()}
                                     onChangeText={(text) => updateField('weight', parseFloat(text) || 0)}
                                 />
                             </View>
                             <View style={[styles.inputGroup, styles.flex1]}>
-                                <Text style={styles.label}>Unit</Text>
+                                <Text style={styles.label}>{t('pet_profile.edit.labels.unit')}</Text>
                                 <View style={styles.segmentedControl}>
                                     {['kg', 'lbs'].map((unit) => (
                                         <TouchableOpacity
@@ -272,7 +276,7 @@ export default function EditPetPage() {
                             style={styles.toggleRow}
                             onPress={() => updateField('is_spayed_neutered', !formData.is_spayed_neutered)}
                         >
-                            <Text style={styles.toggleLabel}>Spayed/Neutered</Text>
+                            <Text style={styles.toggleLabel}>{t('pet_profile.edit.labels.spayed_neutered')}</Text>
                             <View style={[styles.toggle, formData.is_spayed_neutered && styles.toggleActive]}>
                                 <View
                                     style={[
@@ -286,14 +290,14 @@ export default function EditPetPage() {
 
                     {/* Medical Information Section */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Medical Information</Text>
+                        <Text style={styles.sectionTitle}>{t('pet_profile.edit.sections.medical_info')}</Text>
 
                         {/* Microchip */}
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Microchip Number</Text>
+                            <Text style={styles.label}>{t('pet_profile.edit.labels.microchip')}</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="e.g., 123456789012345"
+                                placeholder={t('pet_profile.edit.placeholders.microchip')}
                                 value={formData.microchip_number}
                                 onChangeText={(text) => updateField('microchip_number', text)}
                             />
@@ -302,11 +306,11 @@ export default function EditPetPage() {
 
                     {/* Notes Section */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Notes</Text>
+                        <Text style={styles.sectionTitle}>{t('pet_profile.edit.sections.notes')}</Text>
                         <View style={styles.inputGroup}>
                             <TextInput
                                 style={[styles.input, styles.textarea]}
-                                placeholder="Additional notes about your pet..."
+                                placeholder={t('pet_profile.edit.placeholders.notes')}
                                 multiline
                                 numberOfLines={6}
                                 value={formData.notes}

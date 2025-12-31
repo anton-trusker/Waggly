@@ -1,144 +1,150 @@
+```typescript
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function SettingsTab() {
-    const router = useRouter();
-    const params = useLocalSearchParams();
-    const petId = params.id as string;
-    const { pets, deletePet } = usePets();
-    const pet = pets.find(p => p.id === petId);
-    const [isDeleting, setIsDeleting] = useState(false);
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { pets, deletePet } = usePets();
+  const pet = pets.find(p => p.id === id);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { t, locale } = useLocale();
 
-    const handleDeletePet = () => {
-        Alert.alert(
-            'Delete Pet',
-            `Are you sure you want to delete ${pet?.name}? This action cannot be undone.`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: async () => {
-                        setIsDeleting(true);
-                        try {
-                            await deletePet(petId);
-                            router.replace('/(tabs)/pets');
-                        } catch (error) {
-                            Alert.alert('Error', 'Failed to delete pet. Please try again.');
-                            setIsDeleting(false);
-                        }
-                    }
-                }
-            ]
-        );
-    };
-
-    const handleTransferOwnership = () => {
-        Alert.alert('Coming Soon', 'Transfer ownership feature will be available soon.');
-    };
-
-    const handlePrivacySettings = () => {
-        Alert.alert('Coming Soon', 'Privacy settings will be available soon.');
-    };
-
-    const handleNotifications = () => {
-        Alert.alert('Coming Soon', 'Notification preferences will be available soon.');
-    };
-
-    return (
-        <ScrollView style={styles.container}>
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Pet Management</Text>
-
-                <TouchableOpacity
-                    style={styles.settingItem}
-                    onPress={handleTransferOwnership}
-                >
-                    <View style={styles.settingIcon}>
-                        <Ionicons name="swap-horizontal" size={20} color="#3B82F6" />
-                    </View>
-                    <View style={styles.settingContent}>
-                        <Text style={styles.settingTitle}>Transfer Ownership</Text>
-                        <Text style={styles.settingDescription}>
-                            Transfer this pet to another user
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.settingItem, styles.dangerItem]}
-                    onPress={handleDeletePet}
-                    disabled={isDeleting}
-                >
-                    <View style={[styles.settingIcon, styles.dangerIcon]}>
-                        <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                    </View>
-                    <View style={styles.settingContent}>
-                        <Text style={[styles.settingTitle, styles.dangerText]}>
-                            {isDeleting ? 'Deleting...' : 'Delete Pet'}
-                        </Text>
-                        <Text style={styles.settingDescription}>
-                            Permanently remove this pet from your account
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Privacy</Text>
-
-                <TouchableOpacity
-                    style={styles.settingItem}
-                    onPress={handlePrivacySettings}
-                >
-                    <View style={styles.settingIcon}>
-                        <Ionicons name="shield-checkmark" size={20} color="#8B5CF6" />
-                    </View>
-                    <View style={styles.settingContent}>
-                        <Text style={styles.settingTitle}>Privacy Settings</Text>
-                        <Text style={styles.settingDescription}>
-                            Control who can view this pet's profile
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Notifications</Text>
-
-                <TouchableOpacity
-                    style={styles.settingItem}
-                    onPress={handleNotifications}
-                >
-                    <View style={styles.settingIcon}>
-                        <Ionicons name="notifications" size={20} color="#F59E0B" />
-                    </View>
-                    <View style={styles.settingContent}>
-                        <Text style={styles.settingTitle}>Notification Preferences</Text>
-                        <Text style={styles.settingDescription}>
-                            Manage reminders and alerts for this pet
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.infoSection}>
-                <Text style={styles.infoText}>
-                    Pet ID: {petId}
-                </Text>
-                <Text style={styles.infoText}>
-                    Created: {pet?.created_at ? new Date(pet.created_at).toLocaleDateString() : 'Unknown'}
-                </Text>
-            </View>
-        </ScrollView>
+  const handleDeletePet = () => {
+    Alert.alert(
+      t('pet_profile.settings.alerts.delete.title'),
+      t('pet_profile.settings.alerts.delete.message', { name: pet?.name }),
+      [
+        {
+          text: t('pet_profile.settings.alerts.delete.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('pet_profile.settings.alerts.delete.confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            setIsDeleting(true);
+            try {
+              await deletePet(id);
+              router.replace('/(tabs)/pets');
+            } catch (error) {
+              console.error('Failed to delete pet:', error);
+              Alert.alert(t('pet_profile.settings.alerts.error.title'), t('pet_profile.settings.alerts.error.delete_failed'));
+              setIsDeleting(false);
+            }
+          },
+        },
+      ]
     );
+  };
+
+  const handleTransfer = () => {
+    Alert.alert(t('pet_profile.settings.alerts.coming_soon.title'), t('pet_profile.settings.alerts.coming_soon.transfer'));
+  };
+
+  const handlePrivacy = () => {
+    Alert.alert(t('pet_profile.settings.alerts.coming_soon.title'), t('pet_profile.settings.alerts.coming_soon.privacy'));
+  };
+
+  const handleNotifications = () => {
+    Alert.alert(t('pet_profile.settings.alerts.coming_soon.title'), t('pet_profile.settings.alerts.coming_soon.notifications'));
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('pet_profile.settings.sections.management')}</Text>
+
+        <TouchableOpacity
+          style={styles.item}
+          onPress={handleTransfer}
+        >
+          <View style={styles.iconContainer}>
+            <IconSymbol android_material_icon_name="diversity_1" size={24} color="#4B5563" />
+          </View>
+          <View style={styles.itemContent}>
+            <Text style={styles.itemTitle}>{t('pet_profile.settings.items.transfer.title')}</Text>
+            <Text style={styles.itemDesc}>
+              {t('pet_profile.settings.items.transfer.desc')}
+            </Text>
+          </View>
+          <IconSymbol android_material_icon_name="chevron_right" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.item, styles.dangerItem]}
+          onPress={handleDeletePet}
+          disabled={isDeleting}
+        >
+          <View style={[styles.iconContainer, styles.dangerIconContainer]}>
+            <IconSymbol android_material_icon_name="delete" size={24} color="#EF4444" />
+          </View>
+          <View style={styles.itemContent}>
+            <Text style={styles.dangerTitle}>
+              {isDeleting ? t('pet_profile.settings.items.delete.deleting') : t('pet_profile.settings.items.delete.title')}
+            </Text>
+            <Text style={styles.itemDesc}>
+              {t('pet_profile.settings.items.delete.desc')}
+            </Text>
+          </View>
+          <IconSymbol android_material_icon_name="chevron_right" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('pet_profile.settings.sections.privacy')}</Text>
+
+        <TouchableOpacity
+          style={styles.item}
+          onPress={handlePrivacy}
+        >
+          <View style={styles.iconContainer}>
+            <IconSymbol android_material_icon_name="visibility" size={24} color="#4B5563" />
+          </View>
+          <View style={styles.itemContent}>
+            <Text style={styles.itemTitle}>{t('pet_profile.settings.items.privacy_settings.title')}</Text>
+            <Text style={styles.itemDesc}>
+              {t('pet_profile.settings.items.privacy_settings.desc')}
+            </Text>
+          </View>
+          <IconSymbol android_material_icon_name="chevron_right" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('pet_profile.settings.sections.notifications')}</Text>
+
+        <TouchableOpacity
+          style={styles.item}
+          onPress={handleNotifications}
+        >
+          <View style={styles.iconContainer}>
+            <IconSymbol android_material_icon_name="notifications" size={24} color="#4B5563" />
+          </View>
+          <View style={styles.itemContent}>
+            <Text style={styles.itemTitle}>{t('pet_profile.settings.items.notifications.title')}</Text>
+            <Text style={styles.itemDesc}>
+              {t('pet_profile.settings.items.notifications.desc')}
+            </Text>
+          </View>
+          <IconSymbol android_material_icon_name="chevron_right" size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          {t('pet_profile.settings.info.id')} {id}
+        </Text>
+        <Text style={styles.footerText}>
+          {t('pet_profile.settings.info.created')} {pet?.created_at ? new Date(pet.created_at).toLocaleDateString(locale) : t('common.unknown')}
+        </Text>
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

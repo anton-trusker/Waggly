@@ -6,18 +6,22 @@ import { usePets } from '@/hooks/usePets';
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import * as Linking from 'expo-linking';
 import DragDropZone from '@/components/desktop/DragDropZone';
-
-const DOCUMENT_TYPES = [
-    { id: 'all', label: 'All Documents', icon: 'document-text' },
-    { id: 'vaccination', label: 'Vaccinations', icon: 'medical' },
-    { id: 'medical', label: 'Medical Reports', icon: 'fitness' },
-    { id: 'legal', label: 'Legal', icon: 'shield-checkmark' },
-    { id: 'insurance', label: 'Insurance', icon: 'umbrella' },
-];
+import { useLocale } from '@/hooks/useLocale';
 
 export default function DocumentsPage() {
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
+    const { t } = useLocale();
+
+    // Note: Moving DOCUMENT_TYPES inside component or using a hook to get translated labels
+    const docTypes = [
+        { id: 'all', label: t('documents.type_all'), icon: 'document-text' },
+        { id: 'vaccination', label: t('documents.type_vaccination'), icon: 'medical' },
+        { id: 'medical', label: t('documents.type_medical'), icon: 'fitness' },
+        { id: 'legal', label: t('documents.type_legal'), icon: 'shield-checkmark' },
+        { id: 'insurance', label: t('documents.type_insurance'), icon: 'umbrella' },
+    ];
+
     const [selectedType, setSelectedType] = useState('all');
     const [selectedPetId, setSelectedPetId] = useState('all');
     const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
@@ -67,12 +71,12 @@ export default function DocumentsPage() {
 
     const deleteSelected = async () => {
         Alert.alert(
-            'Delete Documents',
-            `Delete ${selectedIds.size} documents?`,
+            t('documents.delete_bulk_confirm_title'),
+            t('documents.delete_bulk_confirm_message', { count: selectedIds.size }),
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         // Delete sequentially or parallel
@@ -118,12 +122,12 @@ export default function DocumentsPage() {
 
     const handleDelete = (doc: any) => {
         Alert.alert(
-            'Delete Document',
-            `Are you sure you want to delete ${doc.file_name}?`,
+            t('documents.delete_confirm_title'),
+            t('documents.delete_confirm_message', { name: doc.file_name }),
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         await deleteDocument(doc.id, doc.file_url);
@@ -135,7 +139,7 @@ export default function DocumentsPage() {
     };
 
     const formatSize = (bytes?: number) => {
-        if (!bytes) return 'Unknown size';
+        if (!bytes) return t('documents.size_unknown');
         const k = 1024;
         const sizes = ['B', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -150,7 +154,7 @@ export default function DocumentsPage() {
             contentContainerStyle={isMobile ? styles.filtersContentMobile : undefined}
         >
             <View style={!isMobile && { gap: 4 }}>
-                <Text style={styles.sidebarTitle}>Pets</Text>
+                <Text style={styles.sidebarTitle}>{t('documents.filter_pets')}</Text>
                 <TouchableOpacity
                     style={[
                         styles.filterItem,
@@ -168,7 +172,7 @@ export default function DocumentsPage() {
                         styles.filterText,
                         selectedPetId === 'all' && styles.filterTextActive,
                     ]}>
-                        All Pets
+                        {t('documents.filter_all_pets')}
                     </Text>
                 </TouchableOpacity>
 
@@ -198,8 +202,8 @@ export default function DocumentsPage() {
 
                 <View style={{ height: 24, width: isMobile ? 24 : 0 }} />
 
-                <Text style={styles.sidebarTitle}>Document Types</Text>
-                {DOCUMENT_TYPES.map((type) => (
+                <Text style={styles.sidebarTitle}>{t('documents.filter_types')}</Text>
+                {docTypes.map((type) => (
                     <TouchableOpacity
                         key={type.id}
                         style={[
@@ -234,24 +238,24 @@ export default function DocumentsPage() {
                 {/* Header */}
                 <View style={[styles.header, isMobile && styles.headerMobile]}>
                     <View>
-                        <Text style={styles.title}>Documents</Text>
+                        <Text style={styles.title}>{t('documents.title')}</Text>
                         <Text style={styles.subtitle}>
-                            {documents.length} documents stored
+                            {t('documents.subtitle_count', { count: documents.length })}
                         </Text>
                     </View>
                     <View style={styles.headerActions}>
                         {isSelectionMode ? (
                             <View style={styles.bulkActions}>
-                                <Text style={styles.selectedCount}>{selectedIds.size} selected</Text>
+                                <Text style={styles.selectedCount}>{t('documents.selected_count', { count: selectedIds.size })}</Text>
                                 <TouchableOpacity style={styles.bulkActionButton} onPress={deleteSelected}>
                                     <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                                    <Text style={[styles.bulkActionText, { color: '#EF4444' }]}>Delete</Text>
+                                    <Text style={[styles.bulkActionText, { color: '#EF4444' }]}>{t('documents.delete_bulk')}</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
                             <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
                                 <Ionicons name="cloud-upload-outline" size={20} color="#fff" />
-                                <Text style={styles.uploadButtonText}>Upload</Text>
+                                <Text style={styles.uploadButtonText}>{t('documents.upload_button')}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -274,7 +278,7 @@ export default function DocumentsPage() {
                                             <Ionicons name="checkmark" size={14} color="#fff" />
                                         )}
                                     </View>
-                                    <Text style={styles.selectAllText}>Select All</Text>
+                                    <Text style={styles.selectAllText}>{t('documents.select_all')}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -282,13 +286,13 @@ export default function DocumentsPage() {
                         {filteredDocuments.length === 0 ? (
                             <View style={styles.emptyState}>
                                 <Ionicons name="folder-open-outline" size={64} color="#D1D5DB" />
-                                <Text style={styles.emptyStateText}>No documents found</Text>
+                                <Text style={styles.emptyStateText}>{t('documents.empty_title')}</Text>
                                 <Text style={styles.emptyStateSubtext}>
-                                    Upload your first document to get started
+                                    {t('documents.empty_subtitle')}
                                 </Text>
                                 <TouchableOpacity style={styles.emptyButton} onPress={handleUpload}>
                                     <Ionicons name="add-circle-outline" size={20} color="#6366F1" />
-                                    <Text style={styles.emptyButtonText}>Upload Document</Text>
+                                    <Text style={styles.emptyButtonText}>{t('documents.empty_button')}</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (

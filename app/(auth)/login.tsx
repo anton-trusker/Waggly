@@ -19,6 +19,7 @@ import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { supabase } from '@/lib/supabase';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -27,17 +28,18 @@ export default function LoginScreen() {
   const { signIn } = useAuth();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const { t } = useLocale();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+      Alert.alert(t('common.error'), t('auth.enter_both'));
       return;
     }
     setLoading(true);
     const { error } = await signIn(email, password);
     setLoading(false);
     if (error) {
-      Alert.alert('Login Failed', error.message);
+      Alert.alert(t('auth.login_failed'), error.message);
     } else {
       router.replace('/(tabs)/(home)');
     }
@@ -58,11 +60,11 @@ export default function LoginScreen() {
 
       if (error) {
         console.error('Google login error:', error);
-        Alert.alert('Login Failed', error.message || 'Google authentication failed.');
+        Alert.alert(t('auth.login_failed'), error.message || t('common.error'));
       }
     } catch (error: any) {
       console.error('Google login failed:', error);
-      Alert.alert('Login Failed', error.message || 'An unexpected error occurred.');
+      Alert.alert(t('auth.login_failed'), error.message || t('common.error'));
     }
   };
 
@@ -109,13 +111,13 @@ export default function LoginScreen() {
       {!isDesktop && renderMobileHeader()}
       {isDesktop && renderDesktopHeader()}
 
-      <Text style={styles.title}>Welcome back</Text>
-      <Text style={styles.subtitle}>Sign in to continue to Pawzly</Text>
+      <Text style={styles.title}>{t('auth.login_title')}</Text>
+      <Text style={styles.subtitle}>{t('auth.login_subtitle')}</Text>
 
       <View style={styles.inputs}>
         <Input
-          label="Email Address"
-          placeholder="name@example.com"
+          label={t('auth.email_label')}
+          placeholder={t('auth.email_placeholder')}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -124,8 +126,8 @@ export default function LoginScreen() {
 
         <View>
           <Input
-            label="Password"
-            placeholder="Enter your password"
+            label={t('auth.password_label')}
+            placeholder={t('auth.password_placeholder')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -135,13 +137,13 @@ export default function LoginScreen() {
             style={styles.forgotPassword}
             onPress={() => router.push('/(auth)/forgot-password')}
           >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            <Text style={styles.forgotPasswordText}>{t('auth.forgot_password')}</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <EnhancedButton
-        title="Sign In"
+        title={t('auth.sign_in')}
         onPress={handleLogin}
         loading={loading}
         fullWidth
@@ -149,7 +151,7 @@ export default function LoginScreen() {
 
       <View style={styles.divider}>
         <View style={styles.line} />
-        <Text style={styles.orText}>Or continue with</Text>
+        <Text style={styles.orText}>{t('auth.or_continue')}</Text>
         <View style={styles.line} />
       </View>
 
@@ -161,7 +163,7 @@ export default function LoginScreen() {
           <View style={styles.googleIcon}>
             <Text style={styles.googleIconText}>G</Text>
           </View>
-          <Text style={styles.socialButtonText}>Google</Text>
+          <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
         </TouchableOpacity>
 
         {/* Hidden Apple Signin 
@@ -176,9 +178,9 @@ export default function LoginScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't have an account? </Text>
+        <Text style={styles.footerText}>{t('auth.no_account')} </Text>
         <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-          <Text style={styles.signUpLink}>Sign Up</Text>
+          <Text style={styles.signUpLink}>{t('auth.sign_up_link')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -188,8 +190,8 @@ export default function LoginScreen() {
     return (
       <View style={styles.desktopContainer}>
         <AuthHeroPanel
-          title="Welcome back to Pawzly"
-          subtitle="Your pet's health and happiness, all in one place. Sign in to access your dashboard and manage your furry friends."
+          title={t('auth.hero_title')}
+          subtitle={t('auth.hero_subtitle')}
         />
         <View style={styles.desktopFormPanel}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

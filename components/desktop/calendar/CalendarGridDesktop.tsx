@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocale } from '@/hooks/useLocale';
 
 interface CalendarGridDesktopProps {
     events: any[];
@@ -14,6 +15,7 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
     onEventClick
 }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
+    const { t, locale } = useLocale();
 
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
@@ -84,23 +86,31 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
         );
     };
 
-    const monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+    // Generate localized day names (Sun, Mon, Tue...)
+    const dayNames = useMemo(() => {
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            // Jan 2, 2000 was a Sunday
+            const date = new Date(2000, 0, i + 2);
+            days.push(date.toLocaleDateString(locale, { weekday: 'short' }));
+        }
+        return days;
+    }, [locale]);
 
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const monthYear = useMemo(() => {
+        return currentDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+    }, [currentDate, locale]);
 
     return (
         <View style={styles.container}>
             {/* Header with navigation */}
             <View style={styles.header}>
                 <Text style={styles.monthYear}>
-                    {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                    {monthYear}
                 </Text>
                 <View style={styles.navigation}>
                     <TouchableOpacity style={styles.todayButton} onPress={goToToday}>
-                        <Text style={styles.todayButtonText}>Today</Text>
+                        <Text style={styles.todayButtonText}>{t('calendar.today')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.navButton} onPress={goToPreviousMonth}>
                         <Ionicons name="chevron-back" size={20} color="#6B7280" />
@@ -161,7 +171,7 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
                                                 </TouchableOpacity>
                                             ))}
                                             {dayEvents.length > 3 && (
-                                                <Text style={styles.moreEvents}>+{dayEvents.length - 3} more</Text>
+                                                <Text style={styles.moreEvents}>{t('calendar.grid.more_events', { count: dayEvents.length - 3 })}</Text>
                                             )}
                                         </View>
                                     </>

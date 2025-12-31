@@ -9,10 +9,13 @@ import { useEvents, type EventType } from '@/hooks/useEvents';
 import { designSystem } from '@/constants/designSystem';
 
 import { startOfDay, addMonths, endOfDay, isAfter, isBefore } from 'date-fns';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function CalendarPage() {
     const { width } = useWindowDimensions();
     const isMobile = width < 1024;
+    const { t } = useLocale();
+
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedPets, setSelectedPets] = useState<string[]>([]);
     const [selectedTypes, setSelectedTypes] = useState<EventType[]>([]);
@@ -101,25 +104,25 @@ export default function CalendarPage() {
                                     style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('3m')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>3 Months</Text>
+                                    <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === '6m' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('6m')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>6 Months</Text>
+                                    <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>{t('calendar.period_6m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('1y')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>Year</Text>
+                                    <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('all')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>All Upcoming</Text>
+                                    <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
                                 </TouchableOpacity>
                             </ScrollView>
                         </View>
@@ -148,25 +151,25 @@ export default function CalendarPage() {
                                     style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('3m')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>3 Months</Text>
+                                    <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === '6m' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('6m')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>6 Months</Text>
+                                    <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>{t('calendar.period_6m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('1y')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>Year</Text>
+                                    <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
                                     onPress={() => setPeriod('all')}
                                 >
-                                    <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>All Upcoming</Text>
+                                    <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -211,9 +214,9 @@ export default function CalendarPage() {
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Filters</Text>
+                            <Text style={styles.modalTitle}>{t('calendar.filter_filters')}</Text>
                             <TouchableOpacity onPress={() => setShowFiltersModal(false)}>
-                                <Text style={styles.modalDone}>Done</Text>
+                                <Text style={styles.modalDone}>{t('calendar.filter_done')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.modalContent}>

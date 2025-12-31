@@ -4,8 +4,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function DocumentsTab() {
+  const { t } = useLocale();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
@@ -14,15 +16,15 @@ export default function DocumentsTab() {
   const { pets } = usePets();
   const { documents, fetchDocuments } = useDocuments(id);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedType, setSelectedType] = useState('All Types');
-  const [selectedTime, setSelectedTime] = useState('Last 6 Months');
+  const [selectedType, setSelectedType] = useState('all_types');
+  const [selectedTime, setSelectedTime] = useState('last_6_months');
 
   const pet = pets?.find(p => p.id === id);
-  
+
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
-  
+
   const documentTypes = {
     vaccination: { icon: 'vaccines', color: '#DB2777', bgColor: '#FCE7F3' },
     lab_result: { icon: 'biotech', color: '#2563EB', bgColor: '#DBEAFE' },
@@ -34,9 +36,9 @@ export default function DocumentsTab() {
   } as const;
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'Unknown';
+    if (!dateString) return t('common.unknown');
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString();
   };
 
   const getDocumentIcon = (type: string) => {
@@ -44,18 +46,18 @@ export default function DocumentsTab() {
   };
 
   const allDocs = documents || [];
-  
+
   // Filter logic
   const filteredDocs = allDocs.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (doc.file_name || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === 'All Types' || doc.type === selectedType;
+    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (doc.file_name || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = selectedType === 'all_types' || doc.type === selectedType;
     return matchesSearch && matchesType;
   });
 
   const renderActionTile = (label: string, icon: string, color: string, bgColor: string, onPress: () => void) => (
-    <TouchableOpacity 
-      style={[styles.actionTile, isMobile && styles.actionTileMobile]} 
+    <TouchableOpacity
+      style={[styles.actionTile, isMobile && styles.actionTileMobile]}
       onPress={onPress}
     >
       <View style={[styles.actionIconBox, { backgroundColor: bgColor }, isMobile && styles.actionIconBoxMobile]}>
@@ -70,21 +72,21 @@ export default function DocumentsTab() {
       {/* Desktop Header & Actions */}
       {!isMobile && (
         <View style={styles.desktopHeader}>
-          <Text style={styles.sectionTitle}>All Documents ({filteredDocs.length})</Text>
+          <Text style={styles.sectionTitle}>{t('pet_profile.documents.title')} ({filteredDocs.length})</Text>
           <View style={styles.desktopActions}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.desktopBtnSecondary}
               onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any)}
             >
               <IconSymbol android_material_icon_name="document-scanner" size={20} color="#6366F1" />
-              <Text style={styles.desktopBtnTextSecondary}>Scan Doc</Text>
+              <Text style={styles.desktopBtnTextSecondary}>{t('pet_profile.documents.actions.scan')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.desktopBtnPrimary}
               onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
-              <Text style={styles.desktopBtnTextPrimary}>Upload File</Text>
+              <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.actions.upload')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -93,9 +95,9 @@ export default function DocumentsTab() {
       {/* Mobile Actions */}
       {isMobile && (
         <View style={styles.mobileActionsContainer}>
-          {renderActionTile('Scan Doc', 'document-scanner', '#6366F1', '#E0E7FF', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any))}
-          {renderActionTile('Upload', 'upload-file', '#059669', '#D1FAE5', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any))}
-          {renderActionTile('Auto-Fill', 'auto-fix-high', '#EA580C', '#FFEDD5', () => {})}
+          {renderActionTile(t('pet_profile.documents.actions.scan'), 'document-scanner', '#6366F1', '#E0E7FF', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any))}
+          {renderActionTile(t('pet_profile.documents.actions.upload'), 'upload-file', '#059669', '#D1FAE5', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any))}
+          {renderActionTile(t('pet_profile.documents.actions.autofill'), 'auto-fix-high', '#EA580C', '#FFEDD5', () => { })}
         </View>
       )}
 
@@ -103,23 +105,23 @@ export default function DocumentsTab() {
       <View style={[styles.filterContainer, isMobile && styles.filterContainerMobile]}>
         <View style={styles.searchBox}>
           <IconSymbol android_material_icon_name="search" size={20} color="#9CA3AF" />
-          <TextInput 
+          <TextInput
             style={styles.searchInput}
-            placeholder="Search by title..."
+            placeholder={t('pet_profile.documents.search_placeholder')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#9CA3AF"
           />
         </View>
-        
+
         {!isMobile && (
           <View style={styles.filterRow}>
             <View style={styles.filterChip}>
-              <Text style={styles.filterChipText}>{selectedType}</Text>
+              <Text style={styles.filterChipText}>{t(`pet_profile.documents.filters.${selectedType}` as any)}</Text>
               <IconSymbol android_material_icon_name="expand-more" size={16} color="#6B7280" />
             </View>
             <View style={styles.filterChip}>
-              <Text style={styles.filterChipText}>{selectedTime}</Text>
+              <Text style={styles.filterChipText}>{t(`pet_profile.documents.filters.${selectedTime}` as any)}</Text>
               <IconSymbol android_material_icon_name="expand-more" size={16} color="#6B7280" />
             </View>
           </View>
@@ -135,22 +137,22 @@ export default function DocumentsTab() {
               <View style={[styles.docIconBox, { backgroundColor: iconConfig.bgColor }]}>
                 <IconSymbol android_material_icon_name={iconConfig.icon as any} size={24} color={iconConfig.color} />
               </View>
-              
+
               <View style={styles.docContent}>
                 <View style={styles.docHeader}>
                   <Text style={styles.docName} numberOfLines={1}>{doc.name}</Text>
                 </View>
-                
+
                 <View style={styles.docMetaRow}>
-                  <Text style={styles.docType}>{doc.type}</Text>
+                  <Text style={styles.docType}>{t(`pet_profile.documents.types.${doc.type}` as any) || doc.type}</Text>
                   <Text style={styles.docDot}>•</Text>
                   <Text style={styles.docDate}>{formatDate(doc.created_at)}</Text>
                 </View>
-                
+
                 <View style={styles.docFooter}>
                   <View style={styles.docClinic}>
                     <IconSymbol android_material_icon_name="attach-file" size={12} color="#9CA3AF" />
-                    <Text style={styles.docClinicText} numberOfLines={1}>{doc.mime_type || 'Unknown type'}</Text>
+                    <Text style={styles.docClinicText} numberOfLines={1}>{doc.mime_type || t('common.unknown')}</Text>
                   </View>
                   {typeof doc.size_bytes === 'number' && (
                     <Text style={styles.docSize}>
@@ -161,7 +163,7 @@ export default function DocumentsTab() {
                   )}
                 </View>
               </View>
-              
+
               {!isMobile && (
                 <View style={styles.docActions}>
                   <TouchableOpacity style={styles.iconBtn}>
@@ -178,17 +180,17 @@ export default function DocumentsTab() {
             </TouchableOpacity>
           );
         })}
-        
+
         {filteredDocs.length === 0 && (
           <View style={styles.emptyState}>
             <IconSymbol android_material_icon_name="folder-open" size={48} color="#D1D5DB" />
-            <Text style={styles.emptyStateText}>No documents found</Text>
-            <TouchableOpacity 
+            <Text style={styles.emptyStateText}>{t('pet_profile.documents.no_documents')}</Text>
+            <TouchableOpacity
               style={styles.desktopBtnPrimary}
               onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
-              <Text style={styles.desktopBtnTextPrimary}>Upload a Document</Text>
+              <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.upload_cta')}</Text>
             </TouchableOpacity>
           </View>
         )}

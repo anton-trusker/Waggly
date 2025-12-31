@@ -5,6 +5,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { COUNTRIES, Country } from '@/constants/countries';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { useLocale } from '@/hooks/useLocale';
 
 interface PhoneInputProps {
     value: string;
@@ -15,6 +16,7 @@ interface PhoneInputProps {
 
 export default function PhoneInput({ value, onChangeText, defaultCountryCode = 'US', error }: PhoneInputProps) {
     const { colors } = useAppTheme();
+    const { t } = useLocale();
     const [selectedCountry, setSelectedCountry] = useState<Country>(
         COUNTRIES.find(c => c.code === defaultCountryCode) || COUNTRIES.find(c => c.code === 'US') || COUNTRIES[0]
     );
@@ -101,7 +103,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
 
                 <TextInput
                     style={[styles.input, dynamicStyles.input]}
-                    placeholder="Phone number"
+                    placeholder={t('common.phone_input.placeholder')}
                     placeholderTextColor={dynamicStyles.placeholder}
                     keyboardType="phone-pad"
                     value={value}
@@ -118,7 +120,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
             >
                 <View style={[styles.modalContainer, dynamicStyles.modalContainer]}>
                     <View style={[styles.modalHeader, dynamicStyles.modalHeader]}>
-                        <Text style={[styles.modalTitle, dynamicStyles.modalTitle]}>Select Country</Text>
+                        <Text style={[styles.modalTitle, dynamicStyles.modalTitle]}>{t('common.phone_input.select_country')}</Text>
                         <TouchableOpacity onPress={() => setModalVisible(false)}>
                             <IconSymbol ios_icon_name="xmark" android_material_icon_name="close" size={24} color={colors.text.primary} />
                         </TouchableOpacity>
@@ -127,7 +129,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
                         <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={20} color={colors.text.tertiary} />
                         <TextInput
                             style={[styles.searchInput, dynamicStyles.searchInput]}
-                            placeholder="Search country name or code..."
+                            placeholder={t('common.phone_input.search_placeholder')}
                             placeholderTextColor={dynamicStyles.placeholder}
                             value={searchQuery}
                             onChangeText={setSearchQuery}

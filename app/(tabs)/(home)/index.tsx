@@ -60,8 +60,8 @@ export default function DashboardPage() {
                 {/* Header (Greeting) */}
                 <View style={styles.header}>
                     <View>
-                        <Text style={[styles.welcomeText, { color: theme.colors.text.primary }]}>Welcome back,</Text>
-                        <Text style={[styles.subtitleText, { color: theme.colors.text.secondary }]}>Here's what's happening today.</Text>
+                        <Text style={[styles.welcomeText, { color: theme.colors.text.primary }]}>{t('dashboard.welcome_back')}</Text>
+                        <Text style={[styles.subtitleText, { color: theme.colors.text.secondary }]}>{t('dashboard.subtitle')}</Text>
                     </View>
                     <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
                         <View style={styles.avatarPlaceholder}>

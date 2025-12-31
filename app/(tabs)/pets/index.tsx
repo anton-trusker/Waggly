@@ -5,39 +5,41 @@ import { useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function PetsListPage() {
   const router = useRouter();
   const { pets, loading } = usePets();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+  const { t } = useLocale();
   const [visitPetId, setVisitPetId] = useState<string | null>(null);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.header, isMobile && styles.headerMobile]}>
         <View>
-          <Text style={styles.title}>My Pets</Text>
-          <Text style={styles.subtitle}>Manage your pets and quick actions</Text>
+          <Text style={styles.title}>{t('my_pets_page.title')}</Text>
+          <Text style={styles.subtitle}>{t('my_pets_page.subtitle')}</Text>
         </View>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/new' as any)}>
             <Ionicons name="add" size={20} color="#fff" />
-            <Text style={styles.addButtonText}>Add Pet</Text>
+            <Text style={styles.addButtonText}>{t('my_pets_page.add_pet')}</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       {loading ? (
-        <Text style={styles.loadingText}>Loading pets...</Text>
+        <Text style={styles.loadingText}>{t('my_pets_page.loading')}</Text>
       ) : pets.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>🐾</Text>
-          <Text style={styles.emptyTitle}>No Pets Yet</Text>
-          <Text style={styles.emptyText}>Add your first pet to start managing their health and care</Text>
+          <Text style={styles.emptyTitle}>{t('my_pets_page.empty_title')}</Text>
+          <Text style={styles.emptyText}>{t('my_pets_page.empty_text')}</Text>
           <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/new' as any)}>
             <Ionicons name="add" size={20} color="#fff" />
-            <Text style={styles.addButtonText}>Add Your First Pet</Text>
+            <Text style={styles.addButtonText}>{t('my_pets_page.add_first_pet')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -51,7 +53,7 @@ export default function PetsListPage() {
               <View style={styles.cardActions}>
                 <TouchableOpacity style={styles.secondaryButton} onPress={() => setVisitPetId(pet.id)}>
                   <Ionicons name="calendar-outline" size={18} color="#374151" />
-                  <Text style={styles.secondaryButtonText}>Book Visit</Text>
+                  <Text style={styles.secondaryButtonText}>{t('my_pets_page.book_visit')}</Text>
                 </TouchableOpacity>
               </View>
             </View>

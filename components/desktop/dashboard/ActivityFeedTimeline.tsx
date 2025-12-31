@@ -2,17 +2,19 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
+import { useLocale } from '@/hooks/useLocale';
 
 const ActivityFeedTimeline: React.FC = () => {
     const { activities, loading } = useActivityFeed(10);
+    const { t } = useLocale();
 
     if (loading) {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.heading}>Activity Feed</Text>
+                    <Text style={styles.heading}>{t('dashboard.activity_feed')}</Text>
                 </View>
-                <Text style={styles.loadingText}>Loading...</Text>
+                <Text style={styles.loadingText}>{t('dashboard.loading_activity')}</Text>
             </View>
         );
     }
@@ -21,9 +23,9 @@ const ActivityFeedTimeline: React.FC = () => {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.heading}>Activity Feed</Text>
+                    <Text style={styles.heading}>{t('dashboard.activity_feed')}</Text>
                 </View>
-                <Text style={styles.emptyText}>No recent activity</Text>
+                <Text style={styles.emptyText}>{t('dashboard.no_recent_activity')}</Text>
             </View>
         );
     }
@@ -33,10 +35,10 @@ const ActivityFeedTimeline: React.FC = () => {
         const time = new Date(timestamp);
         const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
 
-        if (diffInSeconds < 60) return 'Just now';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        if (diffInSeconds < 60) return t('dashboard.time_ago.just_now');
+        if (diffInSeconds < 3600) return t('dashboard.time_ago.minutes_ago', { count: Math.floor(diffInSeconds / 60) });
+        if (diffInSeconds < 86400) return t('dashboard.time_ago.hours_ago', { count: Math.floor(diffInSeconds / 3600) });
+        if (diffInSeconds < 604800) return t('dashboard.time_ago.days_ago', { count: Math.floor(diffInSeconds / 86400) });
         return time.toLocaleDateString();
     };
 
@@ -55,7 +57,7 @@ const ActivityFeedTimeline: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.heading}>Activity Feed</Text>
+                <Text style={styles.heading}>{t('dashboard.activity_feed')}</Text>
                 <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
             </View>
 
@@ -102,7 +104,7 @@ const ActivityFeedTimeline: React.FC = () => {
 
             {/* View All Link */}
             <View style={styles.footer}>
-                <Text style={styles.viewAllText}>View All Activity →</Text>
+                <Text style={styles.viewAllText}>{t('dashboard.view_all_activity')} →</Text>
             </View>
         </View>
     );

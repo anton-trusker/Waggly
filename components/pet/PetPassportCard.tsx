@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useLocale } from '@/hooks/useLocale';
 import { Pet } from '@/types';
-import { formatAge } from '@/lib/age';
-import { designSystem } from '@/constants/designSystem';
 
 interface PetPassportCardProps {
     pet: Pet;
@@ -12,6 +11,7 @@ interface PetPassportCardProps {
 }
 
 export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
+    const { t } = useLocale();
     // Generate a consistent color theme based on pet id or index? 
     // For now, let's use a nice default passport blue/purple gradient.
     const gradientColors = ['#4F46E5', '#818CF8'] as const;
@@ -37,7 +37,7 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
                             size={14}
                             color="rgba(255,255,255,0.8)"
                         />
-                        <Text style={styles.passportLabel}>PASSPORT</Text>
+                        <Text style={styles.passportLabel}>{t('passport.label')}</Text>
                     </View>
 
                     <View style={styles.headerRight}>
@@ -106,9 +106,9 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
                                     />
                                 </View>
                             </View>
-                            <Text style={styles.breedText}>{pet.breed || pet.species || 'Unknown Breed'}</Text>
+                            <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
                             {pet.registration_id && (
-                                <Text style={styles.regText}>Reg: {pet.registration_id}</Text>
+                                <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
                             )}
                         </View>
                     </View>
@@ -117,16 +117,16 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
                     <View style={styles.detailsTable}>
                         <View style={styles.tableRow}>
                             <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>DATE OF BIRTH</Text>
+                                <Text style={styles.tableCellLabel}>{t('passport.dob')}</Text>
                                 <Text style={styles.tableCellValue}>
                                     {pet.date_of_birth
-                                        ? new Date(pet.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        ? new Date(pet.date_of_birth).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })
                                         : '--'}
                                 </Text>
                             </View>
                             <View style={styles.tableCellDivider} />
                             <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>WEIGHT</Text>
+                                <Text style={styles.tableCellLabel}>{t('passport.weight')}</Text>
                                 <Text style={styles.tableCellValue}>
                                     {pet.weight ? `${pet.weight} kg` : '--'}
                                 </Text>
@@ -135,14 +135,14 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
                         <View style={styles.tableRowDivider} />
                         <View style={styles.tableRow}>
                             <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>COLOR</Text>
+                                <Text style={styles.tableCellLabel}>{t('passport.color')}</Text>
                                 <Text style={styles.tableCellValue} numberOfLines={1}>
                                     {pet.color || '--'}
                                 </Text>
                             </View>
                             <View style={styles.tableCellDivider} />
                             <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>BLOOD TYPE</Text>
+                                <Text style={styles.tableCellLabel}>{t('passport.blood_type')}</Text>
                                 <Text style={styles.tableCellValue}>
                                     {pet.blood_type || '--'}
                                 </Text>

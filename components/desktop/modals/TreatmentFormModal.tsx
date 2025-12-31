@@ -9,6 +9,7 @@ import RichTextInput from './shared/RichTextInput';
 import FormModal, { FormState } from '@/components/ui/FormModal';
 import BottomSheetSelect from '@/components/ui/BottomSheetSelect';
 import { Treatment } from '@/types';
+import { useLocale } from '@/hooks/useLocale';
 
 interface TreatmentFormModalProps {
     visible: boolean;
@@ -54,6 +55,7 @@ interface TreatmentFormData {
 
 export default function TreatmentFormModal({ visible, onClose, petId: initialPetId, existingTreatment, onSuccess }: TreatmentFormModalProps) {
     const { pets } = usePets();
+    const { t } = useLocale();
     // Force light theme for premium consistent look
     const theme = designSystem;
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
@@ -140,11 +142,11 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
         <FormModal
             visible={visible}
             onClose={onClose}
-            title={existingTreatment ? "Edit Treatment" : "Add Treatment"}
+            title={existingTreatment ? t('treatment_form.edit_title') : t('treatment_form.add_title')}
             initialData={initialData}
             onSubmit={handleSubmit}
             successMessage={existingTreatment ? "Treatment updated successfully" : "Treatment added successfully"}
-            submitLabel={existingTreatment ? "Update Treatment" : "Save Treatment"}
+            submitLabel={existingTreatment ? t('treatment_form.submit_update') : t('treatment_form.submit_add')}
             validate={validate}
             forceLight
         >
@@ -156,7 +158,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
 
                     {/* Treatment Type */}
                     <View style={styles.section}>
-                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Type</Text>
+                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.type')}</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             <View style={styles.chipRow}>
                                 {TREATMENT_TYPES.map(type => (
@@ -184,7 +186,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                     <View style={[styles.card, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.secondary, borderWidth: 1 }]}>
                         {/* Name */}
                         <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Name</Text>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.name')}</Text>
                             <TextInput
                                 style={[
                                     styles.input,
@@ -204,7 +206,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                         {/* Dosage */}
                         <View style={styles.row}>
                             <View style={[styles.flex1, { flex: 2 }]}>
-                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Dosage</Text>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.dosage')}</Text>
                                 <TextInput
                                     style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
                                     placeholder="e.g. 50"
@@ -227,7 +229,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
 
                         {/* Frequency */}
                         <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Frequency</Text>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.frequency')}</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 <View style={styles.chipRow}>
                                     {FREQUENCIES.map(freq => (
@@ -255,14 +257,14 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                         <View style={styles.row}>
                             <View style={styles.flex1}>
                                 <UniversalDatePicker
-                                    label="Start Date"
+                                    label={t('treatment_form.start_date')}
                                     value={formState.data.start_date}
                                     onChange={(text) => formState.updateField('start_date', text)}
                                 />
                             </View>
                             <View style={styles.flex1}>
                                 <UniversalDatePicker
-                                    label="End Date"
+                                    label={t('treatment_form.end_date')}
                                     value={formState.data.end_date}
                                     onChange={(text) => formState.updateField('end_date', text)}
                                     placeholder="Ongoing"
@@ -284,7 +286,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                         {/* Cost */}
                         <View style={styles.row}>
                             <View style={[styles.flex1, { flex: 2 }]}>
-                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Cost</Text>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.cost')}</Text>
                                 <TextInput
                                     style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
                                     placeholder="0.00"
@@ -306,7 +308,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                         </View>
 
                         <RichTextInput
-                            label="Instructions / Notes"
+                            label={t('treatment_form.notes')}
                             placeholder="e.g. Give with food..."
                             value={formState.data.notes}
                             onChangeText={(text) => formState.updateField('notes', text)}

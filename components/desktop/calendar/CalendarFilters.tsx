@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
 import type { EventType } from '@/hooks/useEvents';
+import { useLocale } from '@/hooks/useLocale';
 
 interface CalendarFiltersProps {
     selectedPets: string[];
@@ -11,13 +12,13 @@ interface CalendarFiltersProps {
     onTypesChange: (types: EventType[]) => void;
 }
 
-const EVENT_TYPES: { id: EventType; label: string; icon: string; color: string }[] = [
-    { id: 'vaccination', label: 'Vaccination', icon: 'medkit', color: '#6366F1' },
-    { id: 'treatment', label: 'Treatment', icon: 'bandage', color: '#F59E0B' },
-    { id: 'vet', label: 'Vet Visit', icon: 'medkit', color: '#10B981' },
-    { id: 'grooming', label: 'Grooming', icon: 'cut', color: '#06B6D4' },
-    { id: 'walking', label: 'Walking', icon: 'walk', color: '#A855F7' },
-    { id: 'other', label: 'Other', icon: 'ellipsis-horizontal', color: '#8B5CF6' },
+const EVENT_TYPES: { id: EventType; labelKey: string; icon: string; color: string }[] = [
+    { id: 'vaccination', labelKey: 'vaccination', icon: 'medkit', color: '#6366F1' },
+    { id: 'treatment', labelKey: 'treatment', icon: 'bandage', color: '#F59E0B' },
+    { id: 'vet', labelKey: 'vet', icon: 'medkit', color: '#10B981' },
+    { id: 'grooming', labelKey: 'grooming', icon: 'cut', color: '#06B6D4' },
+    { id: 'walking', labelKey: 'walking', icon: 'walk', color: '#A855F7' },
+    { id: 'other', labelKey: 'other', icon: 'ellipsis-horizontal', color: '#8B5CF6' },
 ];
 
 const CalendarFilters: React.FC<CalendarFiltersProps> = ({
@@ -27,6 +28,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
     onTypesChange,
 }) => {
     const { pets } = usePets();
+    const { t } = useLocale();
     const [showAllPets, setShowAllPets] = useState(false);
 
     const togglePet = (petId: string) => {
@@ -60,14 +62,14 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
             {/* Filter by Pet */}
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Filter by Pet</Text>
+                    <Text style={styles.sectionTitle}>{t('calendar.filter_by_pet')}</Text>
                     <View style={styles.selectButtons}>
                         <TouchableOpacity onPress={selectAllPets}>
-                            <Text style={styles.selectButtonText}>All</Text>
+                            <Text style={styles.selectButtonText}>{t('calendar.all')}</Text>
                         </TouchableOpacity>
                         <Text style={styles.selectDivider}>|</Text>
                         <TouchableOpacity onPress={deselectAllPets}>
-                            <Text style={styles.selectButtonText}>None</Text>
+                            <Text style={styles.selectButtonText}>{t('calendar.none')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -102,7 +104,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
                         onPress={() => setShowAllPets(!showAllPets)}
                     >
                         <Text style={styles.showMoreText}>
-                            {showAllPets ? 'Show Less' : `Show ${pets.length - 5} More`}
+                            {showAllPets ? t('calendar.show_less') : t('calendar.show_more', { count: pets.length - 5 })}
                         </Text>
                     </TouchableOpacity>
                 )}
@@ -110,7 +112,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
 
             {/* Event Type */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Event Type</Text>
+                <Text style={styles.sectionTitle}>{t('calendar.event_type_title')}</Text>
                 <View style={styles.filterList}>
                     {EVENT_TYPES.map((type) => (
                         <TouchableOpacity
@@ -126,7 +128,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
                             <View style={[styles.typeIcon, { backgroundColor: type.color + '20' }]}>
                                 <Ionicons name={type.icon as any} size={14} color={type.color} />
                             </View>
-                            <Text style={styles.filterLabel}>{type.label}</Text>
+                            <Text style={styles.filterLabel}>{t(`calendar.event_types.${type.labelKey}`)}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -134,13 +136,13 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
 
             {/* Upcoming Events Summary */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Upcoming</Text>
+                <Text style={styles.sectionTitle}>{t('calendar.upcoming_summary')}</Text>
                 <View style={styles.upcomingList}>
                     <Text style={styles.upcomingText}>
-                        {selectedPets.length} pets selected
+                        {t('calendar.pets_selected', { count: selectedPets.length })}
                     </Text>
                     <Text style={styles.upcomingText}>
-                        {selectedTypes.length} event types selected
+                        {t('calendar.types_selected', { count: selectedTypes.length })}
                     </Text>
                 </View>
             </View>

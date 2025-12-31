@@ -8,6 +8,7 @@ import { Allergy } from '@/types';
 import PetSelector from './shared/PetSelector';
 import RichTextInput from './shared/RichTextInput';
 import FormModal, { FormState } from '@/components/ui/FormModal';
+import { useLocale } from '@/hooks/useLocale';
 
 interface AllergyModalProps {
     visible: boolean;
@@ -32,6 +33,7 @@ interface AllergyFormData {
 
 export default function AllergyModal({ visible, onClose, petId: initialPetId, existingAllergy, onSuccess }: AllergyModalProps) {
     const { pets } = usePets();
+    const { t } = useLocale();
     // Force Light Theme
     const theme = designSystem;
 
@@ -111,12 +113,12 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
         <FormModal
             visible={visible}
             onClose={onClose}
-            title={existingAllergy ? 'Edit Allergy' : 'Add Allergy'}
+            title={existingAllergy ? t('allergy_form.edit_title') : t('allergy_form.add_title')}
             initialData={initialData}
             onSubmit={handleSubmit}
             onSuccess={onSuccess}
             validate={validate}
-            submitLabel="Save Allergy"
+            submitLabel={t('allergy_form.save')}
             forceLight // Force White Modal Background
         >
             {(formState: FormState<AllergyFormData>) => (
@@ -130,7 +132,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
 
                     <View style={[styles.card, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.secondary, borderWidth: 1 }]}>
                         <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Allergy Name</Text>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('allergy_form.name')}</Text>
                             <TextInput
                                 style={[
                                     styles.input,
@@ -153,7 +155,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                         </View>
 
                         <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Severity</Text>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('allergy_form.severity')}</Text>
                             <View style={styles.severityRow}>
                                 {SEVERITY_LEVELS.map((level) => (
                                     <TouchableOpacity
@@ -166,7 +168,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                         ]}
                                     >
                                         <Text style={[styles.severityText, { color: formState.data.severity === level.id ? level.color : theme.colors.text.secondary }]}>
-                                            {level.label}
+                                            {t(`allergy_form.${level.id}`)}
                                         </Text>
                                     </TouchableOpacity>
                                 ))}
@@ -174,7 +176,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                         </View>
 
                         <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Reaction Details</Text>
+                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('allergy_form.reaction')}</Text>
                             <TextInput
                                 style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
                                 placeholder="e.g. Swelling, Hives"
@@ -185,7 +187,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                         </View>
 
                         <RichTextInput
-                            label="Notes"
+                            label={t('allergy_form.notes')}
                             placeholder="Additional notes..."
                             value={formState.data.notes}
                             onChangeText={(text) => formState.updateField('notes', text)}

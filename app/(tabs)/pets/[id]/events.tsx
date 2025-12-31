@@ -1,21 +1,32 @@
 import React from 'react';
-import { View, ScrollView, Text, Pressable } from 'react-native';
+import { View, ScrollView, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function EventsTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { pets } = usePets();
   const { events } = useEvents({ petIds: [id] });
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const isLargeScreen = width >= 1024;
+  const { t, locale } = useLocale();
 
   const pet = pets?.find(p => p.id === id);
   if (!pet) return null;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: true });
   };
 
   const getEventIcon = (type?: string) => {
@@ -50,29 +61,27 @@ export default function EventsTab() {
       <View className="p-4 lg:p-8">
         <View className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
-          <View className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <View>
-              <Text className="text-xl font-bold text-text-light dark:text-text-dark">Events & Schedule</Text>
-              <Text className="text-sm text-muted-light dark:text-muted-dark mt-1">Manage {pet.name}'s appointments and activities.</Text>
+          <View style={styles.header}>
+            <View style={styles.headerText}>
+              <Text style={styles.title}>{t('pet_profile.events.title')}</Text>
+              <Text style={styles.subtitle}>{t('pet_profile.events.subtitle', { name: pet.name })}</Text>
             </View>
-            <View className="flex items-center gap-3 w-full sm:w-auto">
-              <Pressable 
-                onPress={() => router.push(`/(tabs)/pets/events/new?petId=${id}`)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl shadow-lg shadow-primary/30 text-sm font-medium transition-all transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                <IconSymbol name="add" size={20} />
-                <Text>Add Event</Text>
-              </Pressable>
-            </View>
+            <TouchableOpacity
+              style={styles.btnPrimary}
+              onPress={() => router.push(`/(tabs)/pets/calendar/new?petId=${id}` as any)}
+            >
+              <IconSymbol android_material_icon_name="add" size={20} color="#fff" />
+              <Text style={styles.btnTextPrimary}>{t('pet_profile.events.actions.add_event')}</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Upcoming Events */}
           {upcomingEvents.length > 0 && (
             <View className="space-y-4">
-              <Text className="text-lg font-bold text-text-light dark:text-text-dark flex items-center gap-2">
-                <IconSymbol name="schedule" size={24} className="text-primary" />
-                Upcoming Events
-              </Text>
+              <View style={styles.sectionHeader}>
+                <IconSymbol android_material_icon_name="event" size={24} color="#5E2D91" />
+                <Text style={styles.sectionTitle}>{t('pet_profile.events.sections.upcoming')}</Text>
+              </View>
               <View className="space-y-3">
                 {upcomingEvents.map((event) => {
                   const daysUntil = Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
@@ -86,10 +95,17 @@ export default function EventsTab() {
                           <View className="flex justify-between items-start">
                             <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
                             <Text className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                              {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil} days`}
+                              {daysUntil === 0 ? t('common.today') : daysUntil === 1 ? t('common.tomorrow') : t('common.in_x_days', { count: daysUntil })}
                             </Text>
                           </View>
-                          <Text className="text-sm text-muted-light dark:text-muted-dark mt-1">{formatDate(event.date)} • {event.time || 'All day'}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                            <IconSymbol android_material_icon_name="calendar_today" size={14} color="#6B7280" />
+                            <Text style={styles.eventTimeText}>{formatDate(event.date)}</Text>
+                            <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                            <Text style={styles.eventTimeText}>
+                              {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                            </Text>
+                          </View>
                           {event.location && (
                             <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
                           )}
@@ -108,10 +124,10 @@ export default function EventsTab() {
           {/* Past Events */}
           {pastEvents.length > 0 && (
             <View className="space-y-4">
-              <Text className="text-lg font-bold text-text-light dark:text-text-dark flex items-center gap-2">
-                <IconSymbol name="history" size={24} className="text-primary" />
-                Past Events
-              </Text>
+              <View style={styles.sectionHeader}>
+                <IconSymbol android_material_icon_name="history" size={24} color="#6B7280" />
+                <Text style={styles.sectionTitle}>{t('pet_profile.events.sections.past')}</Text>
+              </View>
               <View className="space-y-3">
                 {pastEvents.map((event) => (
                   <View key={event.id} className="bg-card-light dark:bg-card-dark rounded-xl p-4 border border-border-light dark:border-border-dark">
@@ -124,7 +140,12 @@ export default function EventsTab() {
                           <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
                           <Text className="text-sm text-muted-light dark:text-muted-dark">{formatDate(event.date)}</Text>
                         </View>
-                        <Text className="text-sm text-muted-light dark:text-muted-dark mt-1">{event.time || 'All day'}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                          <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                          <Text style={styles.eventTimeText}>
+                            {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                          </Text>
+                        </View>
                         {event.location && (
                           <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
                         )}
@@ -140,18 +161,18 @@ export default function EventsTab() {
           )}
 
           {/* Empty State */}
-          {(!events || events.length === 0) && (
-            <View className="bg-card-light dark:bg-card-dark rounded-xl p-8 border border-border-light dark:border-border-dark text-center">
-              <IconSymbol name="event" size={48} className="text-muted-light dark:text-muted-dark mx-auto mb-4" />
-              <Text className="text-lg font-bold text-text-light dark:text-text-dark mb-2">No events yet</Text>
-              <Text className="text-sm text-muted-light dark:text-muted-dark mb-4">Add events to track your pet's care schedule</Text>
-              <Pressable 
-                onPress={() => router.push(`/(tabs)/pets/events/new?petId=${id}`)}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          {events.length === 0 && (
+            <View style={styles.emptyState}>
+              <IconSymbol android_material_icon_name="event-busy" size={48} color="#D1D5DB" />
+              <Text style={styles.emptyStateTitle}>{t('pet_profile.events.empty.title')}</Text>
+              <Text style={styles.emptyStateDesc}>{t('pet_profile.events.empty.desc')}</Text>
+              <TouchableOpacity
+                style={styles.btnPrimary}
+                onPress={() => router.push(`/(tabs)/pets/calendar/new?petId=${id}` as any)}
               >
-                <IconSymbol name="add" size={16} />
-                <Text>Add First Event</Text>
-              </Pressable>
+                <IconSymbol android_material_icon_name="add" size={20} color="#fff" />
+                <Text style={styles.btnTextPrimary}>{t('pet_profile.events.actions.add_first')}</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>

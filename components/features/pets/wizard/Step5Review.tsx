@@ -7,6 +7,7 @@ import { Step2Data } from './Step2Details';
 import { Step3Data } from './Step3Identification';
 import { Step4Data } from './Step4Contacts';
 import { formatAge } from '@/utils/dateUtils';
+import { useLocale } from '@/hooks/useLocale';
 
 interface Step5Props {
     data: Step1Data & Step2Data & Step3Data & Step4Data;
@@ -15,6 +16,7 @@ interface Step5Props {
 }
 
 export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props) {
+    const { t, locale } = useLocale();
 
     return (
         <View style={styles.container}>
@@ -23,8 +25,8 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Let's review</Text>
-                    <Text style={styles.subtitle}>Everything looks good? Let's create {data.name}'s profile!</Text>
+                    <Text style={styles.title}>{t('add_pet.step5.title')}</Text>
+                    <Text style={styles.subtitle}>{t('add_pet.step5.subtitle', { name: data.name })}</Text>
                 </View>
 
                 <View style={styles.card}>
@@ -48,12 +50,12 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                     {/* Basic Info Grid */}
                     <View style={styles.detailsGrid}>
                         <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>GENDER</Text>
+                            <Text style={styles.detailLabel}>{t('add_pet.step5.gender_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.gender || '-'}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>AGE</Text>
-                            <Text style={styles.detailValue} numberOfLines={1}>{data.dateOfBirth ? formatAge(data.dateOfBirth) : '-'}</Text>
+                            <Text style={styles.detailLabel}>{t('add_pet.step5.age_label')}</Text>
+                            <Text style={styles.detailValue} numberOfLines={1}>{data.dateOfBirth ? formatAge(data.dateOfBirth, t) : '-'}</Text>
                         </View>
                     </View>
 
@@ -62,44 +64,35 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                     {/* Health Grid */}
                     <View style={styles.detailsGrid}>
                         <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>WEIGHT</Text>
+                            <Text style={styles.detailLabel}>{t('add_pet.step5.weight_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.weight ? `${data.weight} ${data.weightUnit}` : '-'}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>HEIGHT</Text>
+                            <Text style={styles.detailLabel}>{t('add_pet.step5.height_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.height ? `${data.height} ${data.heightUnit}` : '-'}</Text>
                         </View>
                         <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>BLOOD</Text>
+                            <Text style={styles.detailLabel}>{t('add_pet.step5.blood_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.bloodType || '-'}</Text>
                         </View>
                     </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionHeader}>IDENTIFICATION</Text>
+                    <Text style={styles.sectionHeader}>{t('add_pet.step5.identification_header')}</Text>
                     <View style={styles.infoRow}>
                         <IconSymbol ios_icon_name="memorychip" android_material_icon_name="memory" size={20} color={designSystem.colors.text.secondary} />
                         <View>
-                            <Text style={styles.infoLabel}>Microchip</Text>
-                            <Text style={styles.infoText}>{data.microchipNumber || 'Not provided'}</Text>
+                            <Text style={styles.infoLabel}>{t('add_pet.step5.microchip_label')}</Text>
+                            <Text style={styles.infoText}>{data.microchipNumber || t('add_pet.step5.not_provided')}</Text>
                         </View>
                     </View>
-                    {data.registryProvider && (
-                        <View style={styles.infoRow}>
-                            <IconSymbol ios_icon_name="building.2" android_material_icon_name="domain" size={20} color={designSystem.colors.text.secondary} />
-                            <View>
-                                <Text style={styles.infoLabel}>Registry</Text>
-                                <Text style={styles.infoText}>{data.registryProvider}</Text>
-                            </View>
-                        </View>
-                    )}
                     {data.implantationDate && (
                         <View style={styles.infoRow}>
                             <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.secondary} />
                             <View>
-                                <Text style={styles.infoLabel}>Implantation Date</Text>
-                                <Text style={styles.infoText}>{data.implantationDate.toLocaleDateString()}</Text>
+                                <Text style={styles.infoLabel}>{t('add_pet.step5.implantation_date_label')}</Text>
+                                <Text style={styles.infoText}>{data.implantationDate.toLocaleDateString(locale === 'en' ? 'en-US' : locale)}</Text>
                             </View>
                         </View>
                     )}
@@ -107,7 +100,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                         <View style={styles.infoRow}>
                             <IconSymbol ios_icon_name="tag" android_material_icon_name="sell" size={20} color={designSystem.colors.text.secondary} />
                             <View>
-                                <Text style={styles.infoLabel}>Tag ID</Text>
+                                <Text style={styles.infoLabel}>{t('add_pet.step5.tag_id_label')}</Text>
                                 <Text style={styles.infoText}>{data.tagId}</Text>
                             </View>
                         </View>
@@ -116,12 +109,12 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
 
                 {(data.vetClinicName || data.emergencyContactName) && (
                     <View style={styles.section}>
-                        <Text style={styles.sectionHeader}>CONTACTS</Text>
+                        <Text style={styles.sectionHeader}>{t('add_pet.step5.contacts_header')}</Text>
                         {data.vetClinicName && (
                             <View style={styles.contactItem}>
-                                <Text style={styles.contactLabel}>VET CLINIC</Text>
+                                <Text style={styles.contactLabel}>{t('add_pet.step5.vet_clinic_label')}</Text>
                                 <Text style={styles.contactName}>{data.vetClinicName}</Text>
-                                {data.vetName && <Text style={styles.contactSub}>Vet: {data.vetName}</Text>}
+                                {data.vetName && <Text style={styles.contactSub}>{t('add_pet.step5.vet_label')} {data.vetName}</Text>}
                                 {data.vetAddress && <Text style={styles.contactSub}>{data.vetAddress}</Text>}
                                 {data.vetCountry && <Text style={styles.contactSub}>{data.vetCountry}</Text>}
                                 {data.vetPhone && <Text style={styles.contactSub}>{data.vetPhone}</Text>}
@@ -129,7 +122,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                         )}
                         {data.emergencyContactName && (
                             <View style={styles.contactItem}>
-                                <Text style={[styles.contactLabel, { color: designSystem.colors.error[500] }]}>EMERGENCY</Text>
+                                <Text style={[styles.contactLabel, { color: designSystem.colors.error[500] }]}>{t('add_pet.step5.emergency_label')}</Text>
                                 <Text style={styles.contactName}>{data.emergencyContactName}</Text>
                                 {data.emergencyContactPhone && <Text style={styles.contactSub}>{data.emergencyContactPhone}</Text>}
                             </View>
@@ -148,10 +141,10 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
-                        <Text style={styles.submitButtonText}>Creating Profile...</Text>
+                        <Text style={styles.submitButtonText}>{t('add_pet.step5.creating_profile')}</Text>
                     ) : (
                         <>
-                            <Text style={styles.submitButtonText}>Create Profile</Text>
+                            <Text style={styles.submitButtonText}>{t('add_pet.step5.create_profile')}</Text>
                             <IconSymbol
                                 ios_icon_name="plus"
                                 android_material_icon_name="add"

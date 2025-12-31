@@ -7,6 +7,7 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import EnhancedSelection from '@/components/ui/EnhancedSelection';
 import { COUNTRIES } from '@/constants/countries';
 import PlacesAutocomplete, { Place } from '@/components/ui/PlacesAutocomplete';
+import { useLocale } from '@/hooks/useLocale';
 
 export interface Step4Data {
     vetName: string;
@@ -30,6 +31,7 @@ const COUNTRY_OPTIONS_WITH_FLAG = COUNTRIES.map(c => ({
 
 export default function Step4Contacts({ initialData, onNext }: Step4Props) {
     const { colors } = useAppTheme();
+    const { t } = useLocale();
     const [vetName, setVetName] = useState(initialData.vetName || '');
     const [vetClinicName, setVetClinicName] = useState(initialData.vetClinicName || '');
     const [vetAddress, setVetAddress] = useState(initialData.vetAddress || '');
@@ -79,8 +81,8 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={[styles.title, dynamicStyles.title]}>Contacts & Care</Text>
-                    <Text style={[styles.subtitle, dynamicStyles.subtitle]}>Veterinarian and emergency details.</Text>
+                    <Text style={[styles.title, dynamicStyles.title]}>{t('add_pet.step4.title')}</Text>
+                    <Text style={[styles.subtitle, dynamicStyles.subtitle]}>{t('add_pet.step4.subtitle')}</Text>
                 </View>
 
                 <View style={styles.formSection}>
@@ -90,11 +92,11 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                         <View style={[styles.sectionIcon, { backgroundColor: colors.error[50] }]}>
                             <IconSymbol ios_icon_name="exclamationmark.triangle.fill" android_material_icon_name="emergency" size={20} color={colors.error[500]} />
                         </View>
-                        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Emergency Contact</Text>
+                        <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t('add_pet.step3.emergency_title')}</Text>
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={[styles.label, dynamicStyles.label]}>CONTACT NAME</Text>
+                        <Text style={[styles.label, dynamicStyles.label]}>{t('add_pet.step3.contact_name_label')}</Text>
                         <View style={styles.inputContainer}>
                             <IconSymbol
                                 ios_icon_name="person.fill"
@@ -105,7 +107,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                             />
                             <TextInput
                                 style={[styles.input, dynamicStyles.input]}
-                                placeholder="e.g. Jane Doe"
+                                placeholder={t('add_pet.step3.contact_name_placeholder')}
                                 placeholderTextColor={dynamicStyles.placeholder}
                                 value={emergencyContactName}
                                 onChangeText={setEmergencyContactName}
@@ -114,11 +116,11 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={[styles.label, dynamicStyles.label]}>EMERGENCY PHONE</Text>
+                        <Text style={[styles.label, dynamicStyles.label]}>{t('add_pet.step4.phone_label')}</Text>
                         <PhoneInput
                             value={emergencyContactPhone}
                             onChangeText={setEmergencyContactPhone}
-                            error={emergencyContactName && !emergencyContactPhone ? "Required" : undefined}
+                            error={emergencyContactName && !emergencyContactPhone ? t('common.required') : undefined}
                         />
                     </View>
 
@@ -132,7 +134,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                             <View style={[styles.sectionIcon, { backgroundColor: designSystem.colors.primary[50] }]}>
                                 <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="medical-services" size={20} color={designSystem.colors.primary[500]} />
                             </View>
-                            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>Veterinarian</Text>
+                            <Text style={[styles.sectionTitle, dynamicStyles.sectionTitle]}>{t('add_pet.step4.vet_card_title')}</Text>
                         </View>
                         <IconSymbol
                             ios_icon_name={showVet ? "chevron.up" : "chevron.down"}
@@ -151,18 +153,18 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                     // Optionally set clinic name from place name if available
                                     // setVetClinicName(place.name || vetClinicName);
                                 }}
-                                placeholder="Search for vet clinic or address..."
+                                placeholder={t('add_pet.step4.address_placeholder')}
                                 types={['veterinary_care', 'establishment', 'address']}
-                                label="VET CLINIC ADDRESS"
+                                label={t('add_pet.step4.address_label')}
                             />
 
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, dynamicStyles.label]}>CLINIC NAME <Text style={styles.optional}>(Optional)</Text></Text>
+                                <Text style={[styles.label, dynamicStyles.label]}>{t('add_pet.step4.clinic_name_label')} <Text style={styles.optional}>{t('add_pet.step3.optional')}</Text></Text>
                                 <View style={styles.inputContainer}>
                                     <IconSymbol ios_icon_name="building.2" android_material_icon_name="domain" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
                                     <TextInput
                                         style={[styles.input, dynamicStyles.input]}
-                                        placeholder="e.g. City Vet Clinic"
+                                        placeholder={t('add_pet.step4.clinic_name_placeholder')}
                                         placeholderTextColor={dynamicStyles.placeholder}
                                         value={vetClinicName}
                                         onChangeText={setVetClinicName}
@@ -172,12 +174,12 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
 
                             <View style={styles.row}>
                                 <View style={styles.col}>
-                                    <Text style={[styles.label, dynamicStyles.label]}>VET NAME <Text style={styles.optional}>(Optional)</Text></Text>
+                                    <Text style={[styles.label, dynamicStyles.label]}>{t('add_pet.step4.vet_name_label')} <Text style={styles.optional}>{t('add_pet.step3.optional')}</Text></Text>
                                     <View style={styles.inputContainer}>
                                         <IconSymbol ios_icon_name="person.fill" android_material_icon_name="person" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
                                         <TextInput
                                             style={[styles.input, dynamicStyles.input]}
-                                            placeholder="Dr. Smith"
+                                            placeholder={t('add_pet.step4.vet_name_placeholder')}
                                             placeholderTextColor={dynamicStyles.placeholder}
                                             value={vetName}
                                             onChangeText={setVetName}
@@ -186,7 +188,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                 </View>
 
                                 <View style={styles.col}>
-                                    <Text style={[styles.label, dynamicStyles.label]}>PHONE <Text style={styles.optional}>(Optional)</Text></Text>
+                                    <Text style={[styles.label, dynamicStyles.label]}>{t('add_pet.step4.phone_label')} <Text style={styles.optional}>{t('add_pet.step3.optional')}</Text></Text>
                                     <PhoneInput
                                         value={vetPhone}
                                         onChangeText={setVetPhone}
@@ -206,7 +208,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                     style={styles.continueButton}
                     onPress={handleNext}
                 >
-                    <Text style={[styles.continueButtonText, dynamicStyles.continueButtonText]}>Review & Finish</Text>
+                    <Text style={[styles.continueButtonText, dynamicStyles.continueButtonText]}>{t('add_pet.step5.create_profile')}</Text>
                     <IconSymbol
                         ios_icon_name="checkmark.circle.fill"
                         android_material_icon_name="check"

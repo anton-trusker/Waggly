@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useLocale } from '@/hooks/useLocale';
 
 interface MiniCalendarProps {
     selectedDate: Date;
@@ -8,6 +9,8 @@ interface MiniCalendarProps {
 }
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect, events = [] }) => {
+    const { locale } = useLocale();
+
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
@@ -64,13 +67,25 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
         });
     };
 
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    // Generate localized day names (S, M, T...)
+    const dayNames = useMemo(() => {
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            // Jan 2, 2000 was a Sunday
+            const date = new Date(2000, 0, i + 2);
+            days.push(date.toLocaleDateString(locale, { weekday: 'narrow' }));
+        }
+        return days;
+    }, [locale]);
+
+    const monthYear = useMemo(() => {
+        return selectedDate.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+    }, [selectedDate, locale]);
 
     return (
         <View style={styles.container}>
             <Text style={styles.monthText}>
-                {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+                {monthYear}
             </Text>
 
             <View style={styles.dayNames}>

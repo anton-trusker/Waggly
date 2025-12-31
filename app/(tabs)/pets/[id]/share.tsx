@@ -1,42 +1,46 @@
+```typescript
 import React from 'react';
 import { View, Text, StyleSheet, Share, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { usePets } from '@/hooks/usePets';
+import { useLocale } from '@/hooks/useLocale';
 import { designSystem } from '@/constants/designSystem';
 
-export default function ShareScreen() {
-    const { id } = useLocalSearchParams<{ id: string }>();
+export default function ShareTab() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { pets } = usePets();
+  const pet = pets?.find(p => p.id === id);
+  const { t } = useLocale();
 
-    const handleShare = async () => {
-        try {
-            await Share.share({
-                message: `Check out this pet profile on Pawzly! https://pawzly.app/pets/${id}`,
-                url: `https://pawzly.app/pets/${id}`,
-                title: 'Pet Profile'
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    };
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: t('pet_profile.share.message', { url: `https://pawzly.app/pets/${id}` }),
+url: `https://pawzly.app/pets/${id}`,
+    title: t('pet_profile.share.message_title'),
+      });
+    } catch (error) {
+    console.error(error);
+}
+  };
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.content}>
-                <View style={styles.iconContainer}>
-                    <Ionicons name="share-social" size={64} color={designSystem.colors.primary[500]} />
-                </View>
-                <Text style={styles.title}>Share Profile</Text>
+return (
+    <View style={styles.container}>
+        <View style={styles.content}>
+            <View style={styles.card}>
+                <IconSymbol android_material_icon_name="share" size={48} color="#6366F1" style={styles.icon} />
+                <Text style={styles.title}>{t('pet_profile.share.title')}</Text>
                 <Text style={styles.description}>
-                    Share this pet's profile with family, friends, or your veterinarian.
+                    {t('pet_profile.share.desc')}
                 </Text>
-
-                <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-                    <Ionicons name="share-outline" size={20} color="#fff" />
-                    <Text style={styles.shareButtonText}>Share Now</Text>
+                <TouchableOpacity style={styles.button} onPress={onShare}>
+                    <Text style={styles.buttonText}>{t('pet_profile.share.action')}</Text>
                 </TouchableOpacity>
             </View>
         </View>
-    );
+    </View>
+);
 }
 
 const styles = StyleSheet.create({

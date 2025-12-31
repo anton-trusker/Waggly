@@ -8,6 +8,7 @@ import { useMedications } from '@/hooks/useMedications';
 import { useMedicalVisits } from '@/hooks/useMedicalVisits';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
 import { format } from 'date-fns';
+import { useLocale } from '@/hooks/useLocale';
 
 type EventType = 'all' | 'vaccination' | 'visit' | 'medication' | 'weight';
 
@@ -23,6 +24,7 @@ interface TimelineEvent {
 }
 
 export default function HistoryTab() {
+    const { t, locale } = useLocale();
     const params = useLocalSearchParams();
     const petId = params.id as string;
     const { pets } = usePets();
@@ -50,8 +52,10 @@ export default function HistoryTab() {
             events.push({
                 id: `vacc-${v.id}`,
                 type: 'vaccination',
-                title: v.vaccine_name || 'Vaccination',
-                description: v.notes || `Batch: ${v.batch_number || 'N/A'}`,
+                id: `vacc-${v.id}`,
+                type: 'vaccination',
+                title: v.vaccine_name || t('pet_profile.history.filters.vaccinations'),
+                description: v.notes || `Batch: ${v.batch_number || t('common.na')}`,
                 date: new Date(v.date_given || v.created_at),
                 icon: 'medical',
                 color: '#EC4899',
@@ -64,7 +68,9 @@ export default function HistoryTab() {
             events.push({
                 id: `med-${m.id}`,
                 type: 'medication',
-                title: m.medication_name || 'Medication',
+                id: `med-${m.id}`,
+                type: 'medication',
+                title: m.medication_name || t('pet_profile.history.filters.medications'),
                 description: `${m.dosage_value || ''} ${m.dosage_unit || ''} - ${m.frequency || ''}`.trim(),
                 date: new Date(m.start_date || m.created_at),
                 icon: 'medkit',
@@ -78,7 +84,9 @@ export default function HistoryTab() {
             events.push({
                 id: `visit-${v.id}`,
                 type: 'visit',
-                title: v.visit_type || 'Vet Visit',
+                id: `visit-${v.id}`,
+                type: 'visit',
+                title: v.visit_type || t('pet_profile.history.filters.visits'),
                 description: v.notes || `Visit to ${v.clinic_name || 'clinic'}`,
                 date: new Date(v.visit_date || v.created_at),
                 icon: 'calendar',
@@ -92,7 +100,9 @@ export default function HistoryTab() {
             events.push({
                 id: `weight-${w.id}`,
                 type: 'weight',
-                title: 'Weight Logged',
+                id: `weight-${w.id}`,
+                type: 'weight',
+                title: t('pet_profile.history.filters.weight'),
                 description: `${w.weight} ${w.unit || 'kg'}`,
                 date: new Date(w.recorded_at || w.created_at),
                 icon: 'fitness',
@@ -110,19 +120,19 @@ export default function HistoryTab() {
         : allEvents.filter(e => e.type === filter);
 
     const filterOptions: { key: EventType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-        { key: 'all', label: 'All', icon: 'list' },
-        { key: 'vaccination', label: 'Vaccinations', icon: 'medical' },
-        { key: 'visit', label: 'Visits', icon: 'calendar' },
-        { key: 'medication', label: 'Medications', icon: 'medkit' },
-        { key: 'weight', label: 'Weight', icon: 'fitness' },
+        { key: 'all', label: t('pet_profile.history.filters.all'), icon: 'list' },
+        { key: 'vaccination', label: t('pet_profile.history.filters.vaccinations'), icon: 'medical' },
+        { key: 'visit', label: t('pet_profile.history.filters.visits'), icon: 'calendar' },
+        { key: 'medication', label: t('pet_profile.history.filters.medications'), icon: 'medkit' },
+        { key: 'weight', label: t('pet_profile.history.filters.weight'), icon: 'fitness' },
     ];
 
     if (!pet) {
         return (
             <View style={styles.container}>
                 <View style={styles.emptyState}>
-                    <Text style={styles.emptyTitle}>Pet not found</Text>
-                    <Text style={styles.emptyDesc}>Unable to load pet history</Text>
+                    <Text style={styles.emptyTitle}>{t('pet_profile.history.empty.pet_not_found')}</Text>
+                    <Text style={styles.emptyDesc}>{t('pet_profile.history.empty.load_error')}</Text>
                 </View>
             </View>
         );
@@ -164,9 +174,9 @@ export default function HistoryTab() {
                     {filteredEvents.length === 0 ? (
                         <View style={styles.emptyState}>
                             <Ionicons name="time-outline" size={48} color="#D1D5DB" />
-                            <Text style={styles.emptyTitle}>No History Yet</Text>
+                            <Text style={styles.emptyTitle}>{t('pet_profile.history.empty.title')}</Text>
                             <Text style={styles.emptyDesc}>
-                                Events like vaccinations, visits, and weight logs will appear here
+                                {t('pet_profile.history.empty.desc')}
                             </Text>
                         </View>
                     ) : (
@@ -190,7 +200,7 @@ export default function HistoryTab() {
                                                 <Text style={styles.eventTitle}>{event.title}</Text>
                                                 <View style={[styles.eventTypeBadge, { backgroundColor: event.bgColor }]}>
                                                     <Text style={[styles.eventTypeText, { color: event.color }]}>
-                                                        {event.type.toUpperCase()}
+                                                        {t(`pet_profile.history.filters.${event.type}` as any).toUpperCase()}
                                                     </Text>
                                                 </View>
                                             </View>
@@ -199,7 +209,7 @@ export default function HistoryTab() {
                                             )}
                                         </View>
                                         <Text style={styles.eventDate}>
-                                            {format(event.date, 'MMM dd')}
+                                            {event.date.toLocaleDateString(locale, { month: 'short', day: '2-digit' })}
                                         </Text>
                                     </View>
                                 </View>

@@ -19,6 +19,7 @@ import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { supabase } from '@/lib/supabase';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
@@ -28,14 +29,15 @@ export default function SignupScreen() {
   const { signUp } = useAuth();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const { t } = useLocale();
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      Alert.alert(t('common.error'), t('auth.fill_all'));
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Alert.alert(t('common.error'), t('auth.passwords_mismatch'));
       return;
     }
 
@@ -44,9 +46,9 @@ export default function SignupScreen() {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Signup Failed', error.message);
+      Alert.alert(t('auth.signup_failed'), error.message);
     } else {
-      Alert.alert('Success', 'Please check your email to verify your account.');
+      Alert.alert('Success', t('auth.verify_email'));
       router.replace('/(auth)/login');
     }
   };
@@ -63,11 +65,11 @@ export default function SignupScreen() {
 
       if (error) {
         console.error('Google signup error:', error);
-        Alert.alert('Signup Failed', error.message || 'Google authentication failed.');
+        Alert.alert(t('auth.signup_failed'), error.message || t('common.error'));
       }
     } catch (error: any) {
       console.error('Google signup failed:', error);
-      Alert.alert('Signup Failed', error.message || 'An unexpected error occurred.');
+      Alert.alert(t('auth.signup_failed'), error.message || t('common.error'));
     }
   };
 
@@ -110,13 +112,13 @@ export default function SignupScreen() {
       {!isDesktop && renderMobileHeader()}
       {isDesktop && renderDesktopHeader()}
 
-      <Text style={styles.title}>Create your account</Text>
-      <Text style={styles.subtitle}>Join thousands of pet parents using Pawzly</Text>
+      <Text style={styles.title}>{t('auth.signup_title')}</Text>
+      <Text style={styles.subtitle}>{t('auth.signup_subtitle')}</Text>
 
       <View style={styles.inputs}>
         <Input
-          label="Email Address"
-          placeholder="name@example.com"
+          label={t('auth.email_label')}
+          placeholder={t('auth.email_placeholder')}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -124,8 +126,8 @@ export default function SignupScreen() {
         />
 
         <Input
-          label="Password"
-          placeholder="Create a password"
+          label={t('auth.password_label')}
+          placeholder={t('auth.password_placeholder')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -133,8 +135,8 @@ export default function SignupScreen() {
         />
 
         <Input
-          label="Confirm Password"
-          placeholder="Confirm your password"
+          label={t('auth.confirm_password_label')}
+          placeholder={t('auth.password_placeholder')}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
@@ -143,7 +145,7 @@ export default function SignupScreen() {
       </View>
 
       <EnhancedButton
-        title="Create Account"
+        title={t('auth.create_account')}
         onPress={handleSignup}
         loading={loading}
         fullWidth
@@ -151,7 +153,7 @@ export default function SignupScreen() {
 
       <View style={styles.divider}>
         <View style={styles.line} />
-        <Text style={styles.orText}>Or sign up with</Text>
+        <Text style={styles.orText}>{t('auth.or_continue')}</Text>
         <View style={styles.line} />
       </View>
 
@@ -163,7 +165,7 @@ export default function SignupScreen() {
           <View style={styles.googleIcon}>
             <Text style={styles.googleIconText}>G</Text>
           </View>
-          <Text style={styles.socialButtonText}>Google</Text>
+          <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
         </TouchableOpacity>
 
         {/* Hidden Apple
@@ -178,9 +180,9 @@ export default function SignupScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account? </Text>
+        <Text style={styles.footerText}>{t('auth.already_have_account')} </Text>
         <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
-          <Text style={styles.signUpLink}>Log In</Text>
+          <Text style={styles.signUpLink}>{t('auth.login_link')}</Text>
         </TouchableOpacity>
       </View>
     </View>

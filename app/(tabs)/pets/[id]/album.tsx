@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function AlbumTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -11,10 +12,12 @@ export default function AlbumTab() {
   const { pets } = usePets();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
-  const isLargeScreen = width >= 1024;
 
-  const [selectedFilter, setSelectedFilter] = useState('All');
-  const [sortBy, setSortBy] = useState('Newest First');
+  const isLargeScreen = width >= 1024;
+  const { t } = useLocale();
+
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
 
   const pet = pets?.find(p => p.id === id);
   if (!pet) return null;
@@ -39,13 +42,13 @@ export default function AlbumTab() {
     { id: '8', url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=800', type: 'photo', isFavorite: false },
   ];
 
-  const filteredPhotos = selectedFilter === 'All' 
-    ? photos 
-    : selectedFilter === 'Photos' 
-    ? photos.filter(p => p.type === 'photo')
-    : selectedFilter === 'Videos'
-    ? photos.filter(p => p.type === 'video')
-    : photos.filter(p => p.isFavorite);
+  const filteredPhotos = selectedFilter === 'all'
+    ? photos
+    : selectedFilter === 'photos'
+      ? photos.filter(p => p.type === 'photo')
+      : selectedFilter === 'videos'
+        ? photos.filter(p => p.type === 'video')
+        : photos.filter(p => p.isFavorite);
 
   // Responsive columns
   const numColumns = isMobile ? 2 : isLargeScreen ? 4 : 3;
@@ -53,31 +56,31 @@ export default function AlbumTab() {
   // Calculate item width based on container padding (assumed 24 or 32) and gap
   const containerPadding = isMobile ? 24 : 32;
   // This is an approximation for inline styles; a better way is flexBasis or percentage
-  
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
-        
+
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.title}>Photo Gallery</Text>
-            <Text style={styles.subtitle}>Manage {pet.name}'s photos, videos, and albums.</Text>
+            <Text style={styles.title}>{t('pet_profile.album.title')}</Text>
+            <Text style={styles.subtitle}>{t('pet_profile.album.subtitle', { name: pet.name })}</Text>
           </View>
           <View style={styles.headerActions}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.btnSecondary}
               onPress={() => router.push(`/(tabs)/pets/albums/new?petId=${id}` as any)}
             >
               <IconSymbol android_material_icon_name="create-new-folder" size={20} color="#6B7280" />
-              <Text style={styles.btnTextSecondary}>New Album</Text>
+              <Text style={styles.btnTextSecondary}>{t('pet_profile.album.actions.new_album')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.btnPrimary}
               onPress={() => router.push(`/(tabs)/pets/photos/add?petId=${id}` as any)}
             >
               <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#fff" />
-              <Text style={styles.btnTextPrimary}>Add Media</Text>
+              <Text style={styles.btnTextPrimary}>{t('pet_profile.album.actions.add_media')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -87,16 +90,16 @@ export default function AlbumTab() {
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitleRow}>
               <IconSymbol android_material_icon_name="folder" size={24} color="#5E2D91" />
-              <Text style={styles.sectionTitle}>Albums</Text>
+              <Text style={styles.sectionTitle}>{t('pet_profile.album.headers.albums')}</Text>
             </View>
             <TouchableOpacity>
-              <Text style={styles.viewAllLink}>View All</Text>
+              <Text style={styles.viewAllLink}>{t('pet_profile.album.actions.view_all')}</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.albumsScroll}
           >
             {albums.map((album) => (
@@ -109,21 +112,21 @@ export default function AlbumTab() {
                 <View style={styles.albumInfo}>
                   <Text style={styles.albumName}>{album.name}</Text>
                   <Text style={styles.albumCount}>
-                    {album.count} {album.type === 'mixed' ? 'Items' : album.type}
+                    {album.count} {album.type === 'mixed' ? t('common.items') : t(`pet_profile.documents.types.${album.type}` as any) || album.type}
                   </Text>
                 </View>
               </TouchableOpacity>
             ))}
-            
+
             {/* Create Album Card */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.createAlbumCard}
               onPress={() => router.push(`/(tabs)/pets/albums/new?petId=${id}` as any)}
             >
               <View style={styles.createIconCircle}>
                 <IconSymbol android_material_icon_name="add" size={32} color="#9CA3AF" />
               </View>
-              <Text style={styles.createAlbumText}>Create Album</Text>
+              <Text style={styles.createAlbumText}>{t('pet_profile.album.actions.create_album')}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -132,13 +135,14 @@ export default function AlbumTab() {
         <View style={styles.section}>
           {/* Filters & Sort */}
           <View style={[styles.filtersRow, isMobile && styles.filtersRowMobile]}>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false} 
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.filtersScroll}
               style={styles.filtersScroll}
               contentContainerStyle={styles.filtersContainer}
             >
-              {['All', 'Photos', 'Videos', 'Favorites'].map((filter) => {
+              {['all', 'photos', 'videos', 'favorites'].map((filter) => {
                 const isActive = selectedFilter === filter;
                 return (
                   <TouchableOpacity
@@ -146,16 +150,18 @@ export default function AlbumTab() {
                     onPress={() => setSelectedFilter(filter)}
                     style={[styles.filterChip, isActive && styles.filterChipActive]}
                   >
-                    <Text style={[styles.filterText, isActive && styles.filterTextActive]}>{filter}</Text>
+                    <Text style={[styles.filterText, isActive && styles.filterTextActive]}>
+                      {t(`pet_profile.album.filters.${filter}` as any)}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
             </ScrollView>
 
             <View style={styles.sortContainer}>
-              <Text style={styles.sortLabel}>Sort by:</Text>
+              <Text style={styles.sortLabel}>{t('pet_profile.album.sort.label')}</Text>
               <TouchableOpacity style={styles.sortButton}>
-                <Text style={styles.sortButtonText}>{sortBy}</Text>
+                <Text style={styles.sortButtonText}>{t(`pet_profile.album.sort.${sortBy}` as any)}</Text>
                 <IconSymbol android_material_icon_name="expand_more" size={16} color="#374151" />
               </TouchableOpacity>
             </View>
@@ -164,22 +170,22 @@ export default function AlbumTab() {
           {/* Grid */}
           <View style={styles.grid}>
             {filteredPhotos.map((photo) => (
-              <TouchableOpacity 
-                key={photo.id} 
+              <TouchableOpacity
+                key={photo.id}
                 style={[
-                  styles.gridItem, 
+                  styles.gridItem,
                   { width: isMobile ? '48%' : isLargeScreen ? '23%' : '31%' } // Approx percentages accounting for gap
                 ]}
               >
                 <Image source={{ uri: photo.url }} style={styles.gridImage} />
-                
+
                 {/* Video Duration */}
                 {photo.type === 'video' && (
                   <View style={styles.videoBadge}>
                     <Text style={styles.videoDuration}>{photo.duration}</Text>
                   </View>
                 )}
-                
+
                 {/* Video Icon Overlay */}
                 {photo.type === 'video' && (
                   <View style={styles.playIconOverlay}>
@@ -192,7 +198,7 @@ export default function AlbumTab() {
 
           {/* Load More */}
           <TouchableOpacity style={styles.loadMoreBtn}>
-            <Text style={styles.loadMoreText}>Load More</Text>
+            <Text style={styles.loadMoreText}>{t('pet_profile.album.actions.load_more')}</Text>
             <IconSymbol android_material_icon_name="expand-more" size={20} color="#6B7280" />
           </TouchableOpacity>
 

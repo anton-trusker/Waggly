@@ -17,6 +17,7 @@ import { router, Href } from 'expo-router';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { IconSymbol } from './IconSymbol';
 import { usePets } from '@/hooks/usePets';
+import { useLocale } from '@/hooks/useLocale';
 import { Pet } from '@/types';
 
 const { height: screenHeight } = Dimensions.get('window');
@@ -80,6 +81,7 @@ const quickActions: QuickAction[] = [
 
 export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
   const { pets } = usePets();
+  const { t } = useLocale();
   const [slideAnim] = useState(new Animated.Value(0));
   const [fadeAnim] = useState(new Animated.Value(0));
   const [pendingAction, setPendingAction] = useState<QuickAction | null>(null);
@@ -167,7 +169,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
       return (
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>Select Pet</Text>
+            <Text style={styles.title}>{t('quick_actions_menu.select_pet')}</Text>
             <TouchableOpacity onPress={() => setShowPetSelection(false)}>
               <IconSymbol
                 android_material_icon_name="arrow-back"
@@ -208,7 +210,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
     return (
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>Quick Actions</Text>
+          <Text style={styles.title}>{t('quick_actions_menu.title')}</Text>
           <TouchableOpacity onPress={onClose}>
             <IconSymbol
               android_material_icon_name="close"
@@ -219,7 +221,9 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.subtitle}>Choose an action to add for your pet</Text>
+
+
+        <Text style={styles.subtitle}>{t('quick_actions_menu.subtitle')}</Text>
 
         <ScrollView style={styles.actionsList} showsVerticalScrollIndicator={false}>
           {quickActions.map((action, index) => (
@@ -242,8 +246,8 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
               </View>
 
               <View style={styles.actionContent}>
-                <Text style={styles.actionTitle}>{action.title}</Text>
-                <Text style={styles.actionDescription}>{action.description}</Text>
+                <Text style={styles.actionTitle}>{t(`quick_actions_menu.actions.${action.id}.title`)}</Text>
+                <Text style={styles.actionDescription}>{t(`quick_actions_menu.actions.${action.id}.desc`)}</Text>
               </View>
 
               <IconSymbol
@@ -255,7 +259,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+      </View >
     );
   };
 

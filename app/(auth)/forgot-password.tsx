@@ -15,15 +15,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { colors, commonStyles } from '@/styles/commonStyles';
 import { designSystem } from '@/constants/designSystem';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const { resetPassword } = useAuth();
+  const { t } = useLocale();
 
   const handleResetPassword = async () => {
     if (!email) {
-      Alert.alert('Error', 'Please enter your email');
+      Alert.alert(t('common.error'), t('auth.email_placeholder'));
       return;
     }
 
@@ -36,8 +38,8 @@ export default function ForgotPasswordScreen() {
     } else {
       Alert.alert(
         'Success',
-        'Password reset email sent! Please check your inbox.',
-        [{ text: 'OK', onPress: () => router.back() }]
+        t('auth.reset_sent'),
+        [{ text: t('common.close'), onPress: () => router.back() }]
       );
     }
   };
@@ -46,18 +48,18 @@ export default function ForgotPasswordScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Text style={styles.logo}>🔑</Text>
-        <Text style={styles.title}>Reset Password</Text>
+        <Text style={styles.title}>{t('auth.reset_title')}</Text>
         <Text style={styles.subtitle}>
-          Enter your email and we&apos;ll send you a link to reset your password
+          {t('auth.reset_subtitle')}
         </Text>
       </View>
 
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Text style={commonStyles.inputLabel}>Email</Text>
+          <Text style={commonStyles.inputLabel}>{t('auth.email_label')}</Text>
           <TextInput
             style={commonStyles.input}
-            placeholder="Enter your email"
+            placeholder={t('auth.email_placeholder')}
             placeholderTextColor={colors.textSecondary}
             value={email}
             onChangeText={setEmail}
@@ -68,7 +70,7 @@ export default function ForgotPasswordScreen() {
         </View>
 
         <EnhancedButton
-          title="Send Reset Link"
+          title={t('auth.send_reset_link')}
           variant="primary"
           size="lg"
           onPress={handleResetPassword}
@@ -78,7 +80,7 @@ export default function ForgotPasswordScreen() {
         />
 
         <EnhancedButton
-          title="Back to Login"
+          title={t('auth.back_to_login')}
           variant="secondary"
           size="lg"
           onPress={() => router.back()}

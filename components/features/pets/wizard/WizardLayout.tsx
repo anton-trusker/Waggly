@@ -4,6 +4,7 @@ import { useNavigation } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { useLocale } from '@/hooks/useLocale';
 
 interface WizardLayoutProps {
     children: React.ReactNode;
@@ -24,6 +25,7 @@ export default function WizardLayout({
 }: WizardLayoutProps) {
     const navigation = useNavigation();
     const { colors } = useAppTheme();
+    const { t } = useLocale();
 
     const handleCancel = () => {
         if (onCancel) {
@@ -63,7 +65,7 @@ export default function WizardLayout({
                     onPress={handleCancel}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                    <Text style={styles.cancelButton}>Cancel</Text>
+                    <Text style={styles.cancelButton}>{t('add_pet.wizard.cancel')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -83,7 +85,7 @@ export default function WizardLayout({
                     ))}
                 </View>
                 <Text style={[styles.stepIndicator, dynamicStyles.stepIndicator]}>
-                    STEP {currentStep} OF {totalSteps}
+                    {t('add_pet.wizard.step_indicator', { current: currentStep, total: totalSteps })}
                 </Text>
             </View>
 

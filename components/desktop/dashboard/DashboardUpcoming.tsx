@@ -5,10 +5,12 @@ import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useEvents } from '@/hooks/useEvents';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function DashboardUpcoming() {
     const router = useRouter();
     const { theme } = useAppTheme();
+    const { t } = useLocale();
     const { events } = useEvents();
     const [showCount, setShowCount] = useState<3 | 5 | 'all'>(3);
 
@@ -49,10 +51,10 @@ export default function DashboardUpcoming() {
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <View style={styles.orangeDot} />
-                    <Text style={styles.heading}>Upcoming Care</Text>
+                    <Text style={styles.heading}>{t('dashboard.upcoming_care')}</Text>
                 </View>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/calendar' as any)}>
-                    <Text style={[styles.viewAllLink, { color: theme.colors.primary[500] }]}>See All</Text>
+                    <Text style={[styles.viewAllLink, { color: theme.colors.primary[500] }]}>{t('dashboard.see_all')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -80,7 +82,7 @@ export default function DashboardUpcoming() {
 
             <View style={styles.list}>
                 {upcomingEvents.length === 0 ? (
-                    <Text style={styles.emptyText}>No upcoming events scheduled.</Text>
+                    <Text style={styles.emptyText}>{t('dashboard.no_upcoming_events')}</Text>
                 ) : (
                     upcomingEvents.map((event) => {
                         const daysAway = Math.ceil((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
@@ -101,19 +103,19 @@ export default function DashboardUpcoming() {
                                     </View>
                                     <View style={[styles.badge, { backgroundColor: getBgColor(event.type) }]}>
                                         <Text style={[styles.badgeText, { color: getEventColor(event.type) }]}>
-                                            {daysAway === 0 ? 'TODAY' : daysAway === 1 ? 'TOMORROW' : `${daysAway} DAYS`}
+                                            {daysAway === 0 ? t('dashboard.days_remaining.today') : daysAway === 1 ? t('dashboard.days_remaining.tomorrow') : t('dashboard.days_remaining.days', { count: daysAway })}
                                         </Text>
                                     </View>
                                 </View>
 
                                 <View style={styles.cardContent}>
                                     <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
-                                    <Text style={styles.subtitle} numberOfLines={1}>{event.petName || 'No pet assigned'}</Text>
+                                    <Text style={styles.subtitle} numberOfLines={1}>{event.petName || t('dashboard.no_pet_assigned')}</Text>
                                 </View>
 
                                 <View style={styles.cardFooter}>
                                     <Text style={styles.dateText}>
-                                        {new Date(event.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                        {new Date(event.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                     </Text>
                                     <IconSymbol android_material_icon_name="chevron-right" ios_icon_name="chevron.right" size={16} color="#9CA3AF" />
                                 </View>

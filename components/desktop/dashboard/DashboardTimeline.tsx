@@ -4,9 +4,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { useLocale } from '@/hooks/useLocale';
 
 export default function DashboardTimeline() {
     const { theme } = useAppTheme();
+    const { t } = useLocale();
     const { activities, loading } = useActivityFeed(5); // Get top 5 recent
 
     const getTimeAgo = (timestamp: string) => {
@@ -14,10 +16,10 @@ export default function DashboardTimeline() {
         const time = new Date(timestamp);
         const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
 
-        if (diffInSeconds < 60) return 'Just now';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        if (diffInSeconds < 60) return t('dashboard.time_ago.just_now');
+        if (diffInSeconds < 3600) return t('dashboard.time_ago.minutes_ago', { count: Math.floor(diffInSeconds / 60) });
+        if (diffInSeconds < 86400) return t('dashboard.time_ago.hours_ago', { count: Math.floor(diffInSeconds / 3600) });
+        if (diffInSeconds < 604800) return t('dashboard.time_ago.days_ago', { count: Math.floor(diffInSeconds / 86400) });
         return time.toLocaleDateString();
     };
 
@@ -33,13 +35,13 @@ export default function DashboardTimeline() {
 
     return (
         <View style={[styles.container, { backgroundColor: '#fff', borderColor: theme.colors.border.primary }]}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>History & Activity</Text>
+            <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>{t('dashboard.history_activity')}</Text>
 
             <View style={styles.list}>
                 {loading ? (
-                    <Text style={styles.loadingText}>Loading activity...</Text>
+                    <Text style={styles.loadingText}>{t('dashboard.loading_activity')}</Text>
                 ) : activities.length === 0 ? (
-                    <Text style={styles.emptyText}>No recent activity recorded.</Text>
+                    <Text style={styles.emptyText}>{t('dashboard.no_recent_activity')}</Text>
                 ) : (
                     activities.map((item, index) => {
                         const styleInfo = getIconInfo(item.type);
@@ -94,7 +96,7 @@ export default function DashboardTimeline() {
             </View>
 
             <TouchableOpacity style={styles.footerBtn}>
-                <Text style={[styles.footerBtnText, { color: theme.colors.primary[500] }]}>View Full Timeline</Text>
+                <Text style={[styles.footerBtnText, { color: theme.colors.primary[500] }]}>{t('dashboard.view_full_timeline')}</Text>
             </TouchableOpacity>
         </View>
     );

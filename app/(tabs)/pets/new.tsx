@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/hooks/useLocale';
 import WizardLayout from '@/components/features/pets/wizard/WizardLayout';
 import Step1BasicInfo, { Step1Data } from '@/components/features/pets/wizard/Step1BasicInfo';
 import Step2Details, { Step2Data } from '@/components/features/pets/wizard/Step2Details';
@@ -43,7 +44,7 @@ export default function AddPetWizardScreen() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState<WizardData>(INITIAL_DATA);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { t } = useTranslation();
+    const { t } = useLocale();
     const { addPet, updatePet } = usePets();
     const { user } = useAuth();
 
@@ -103,7 +104,7 @@ export default function AddPetWizardScreen() {
             });
 
             if (petError || !petData) {
-                throw new Error(petError?.message ?? 'Failed to create pet');
+                throw new Error(petError?.message ?? t('add_pet.error_create'));
             }
 
             const petId = (petData as any).id;
@@ -156,13 +157,13 @@ export default function AddPetWizardScreen() {
             }
 
             Alert.alert(
-                'Success!',
-                `${formData.name} has been added to your family.`,
+                t('add_pet.success_title'),
+                t('add_pet.success_message', { name: formData.name }),
                 [{ text: 'OK', onPress: () => router.replace('/(tabs)/(home)') }]
             );
 
         } catch (error: any) {
-            Alert.alert('Error', error.message || 'Something went wrong.');
+            Alert.alert(t('common.error'), error.message || t('common.error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -170,11 +171,11 @@ export default function AddPetWizardScreen() {
 
     const getStepTitle = () => {
         switch (step) {
-            case 1: return 'Basic Info';
-            case 2: return 'Details';
-            case 3: return 'Health & ID';
-            case 4: return 'Contacts';
-            case 5: return 'Review';
+            case 1: return t('add_pet.steps.basic_info');
+            case 2: return t('add_pet.steps.details');
+            case 3: return t('add_pet.steps.health_id');
+            case 4: return t('add_pet.steps.contacts');
+            case 5: return t('add_pet.steps.review');
             default: return '';
         }
     };

@@ -16,7 +16,7 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader';
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const { profile, upsertProfile, loading: profileLoading } = useProfile();
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale, t } = useLocale();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
@@ -160,21 +160,21 @@ export default function ProfilePage() {
     setSaving(false);
 
     if (error) {
-      Alert.alert('Error', 'Failed to update profile');
+      Alert.alert(t('common.error'), t('profile.error_update'));
     } else {
-      Alert.alert('Success', 'Profile updated successfully');
+      Alert.alert('Success', t('profile.success_update'));
       setIsEditing(false);
     }
   };
 
   const handleSignOut = async () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('profile.sign_out_confirm_title'),
+      t('profile.sign_out_confirm_message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sign Out',
+          text: t('profile.sign_out'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -183,7 +183,7 @@ export default function ProfilePage() {
             } catch (error) {
               console.error('Sign out error:', error);
               Alert.alert(
-                'Error',
+                t('common.error'),
                 'Failed to sign out. Please try again.'
               );
             }
@@ -248,8 +248,8 @@ export default function ProfilePage() {
     <View style={styles.container}>
       {/* Header */}
       <View style={[styles.header, isMobile && styles.headerMobile]}>
-        <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Manage your account and preferences</Text>
+        <Text style={styles.title}>{t('profile.title')}</Text>
+        <Text style={styles.subtitle}>{t('profile.subtitle')}</Text>
       </View>
 
       <View style={[styles.content, isMobile && styles.contentMobile]}>
@@ -270,7 +270,7 @@ export default function ProfilePage() {
                 color={activeTab === 'account' ? '#6366F1' : '#6B7280'}
               />
               <Text style={[styles.sidebarText, activeTab === 'account' && styles.sidebarTextActive]}>
-                Account
+                {t('profile.tab_account')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                 color={activeTab === 'notifications' ? '#6366F1' : '#6B7280'}
               />
               <Text style={[styles.sidebarText, activeTab === 'notifications' && styles.sidebarTextActive]}>
-                Notifications
+                {t('profile.tab_notifications')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -296,7 +296,7 @@ export default function ProfilePage() {
                 color={activeTab === 'privacy' ? '#6366F1' : '#6B7280'}
               />
               <Text style={[styles.sidebarText, activeTab === 'privacy' && styles.sidebarTextActive]}>
-                Privacy
+                {t('profile.tab_privacy')}
               </Text>
             </TouchableOpacity>
 
@@ -305,7 +305,7 @@ export default function ProfilePage() {
                 <View style={styles.sidebarDivider} />
                 <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
                   <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                  <Text style={[styles.sidebarText, { color: '#EF4444' }]}>Sign Out</Text>
+                  <Text style={[styles.sidebarText, { color: '#EF4444' }]}>{t('profile.sign_out')}</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -329,11 +329,11 @@ export default function ProfilePage() {
 
               {isEditing ? (
                 <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Personal Information</Text>
+                  <Text style={styles.sectionTitle}>{t('profile.section_personal')}</Text>
 
                   <View style={[styles.row, isMobile && styles.rowMobile]}>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>First Name</Text>
+                      <Text style={styles.label}>{t('profile.label_first_name')}</Text>
                       <TextInput
                         style={styles.input}
                         value={firstName}
@@ -342,7 +342,7 @@ export default function ProfilePage() {
                       />
                     </View>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Last Name</Text>
+                      <Text style={styles.label}>{t('profile.label_last_name')}</Text>
                       <TextInput
                         style={styles.input}
                         value={lastName}
@@ -353,7 +353,7 @@ export default function ProfilePage() {
                   </View>
 
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Email</Text>
+                    <Text style={styles.label}>{t('profile.label_email')}</Text>
                     <View style={styles.emailContainer}>
                       <Ionicons name="mail-outline" size={20} color="#6B7280" style={{ marginRight: 10 }} />
                       <Text style={styles.emailText}>{user?.email || 'No email set'}</Text>
@@ -362,7 +362,7 @@ export default function ProfilePage() {
 
                   <View style={styles.row}>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Date of Birth</Text>
+                      <Text style={styles.label}>{t('profile.label_dob')}</Text>
                       {Platform.OS === 'web' ? (
                         <input
                           type="date"
@@ -392,7 +392,7 @@ export default function ProfilePage() {
                       )}
                     </View>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Gender</Text>
+                      <Text style={styles.label}>{t('profile.label_gender')}</Text>
                       <View style={styles.genderRow}>
                         {['male', 'female', 'other'].map((g) => (
                           <TouchableOpacity
@@ -416,7 +416,7 @@ export default function ProfilePage() {
                   </View>
 
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Phone</Text>
+                    <Text style={styles.label}>{t('profile.label_phone')}</Text>
                     <View style={styles.phoneRow}>
                       <TouchableOpacity
                         style={styles.phoneCountryButton}
@@ -441,7 +441,7 @@ export default function ProfilePage() {
                   </View>
 
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Website</Text>
+                    <Text style={styles.label}>{t('profile.label_website')}</Text>
                     <TextInput
                       style={styles.input}
                       value={website}
@@ -453,7 +453,7 @@ export default function ProfilePage() {
                   </View>
 
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Address</Text>
+                    <Text style={styles.label}>{t('profile.label_address')}</Text>
                     <TextInput
                       style={styles.input}
                       value={address}
@@ -464,19 +464,19 @@ export default function ProfilePage() {
 
                   <View style={styles.row}>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Country</Text>
+                      <Text style={styles.label}>{t('profile.label_country')}</Text>
                       <TouchableOpacity
                         style={styles.dropdownButton}
                         onPress={() => setShowCountryPicker(true)}
                       >
                         <Text style={countryCode ? styles.dropdownText : styles.dropdownPlaceholder}>
-                          {countryCode ? `${COUNTRIES.find(c => c.code === countryCode)?.flag} ${COUNTRIES.find(c => c.code === countryCode)?.name}` : 'Select country'}
+                          {countryCode ? `${COUNTRIES.find(c => c.code === countryCode)?.flag} ${COUNTRIES.find(c => c.code === countryCode)?.name}` : t('profile.select_country')}
                         </Text>
                         <Ionicons name="chevron-down" size={20} color="#6B7280" />
                       </TouchableOpacity>
                     </View>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>City</Text>
+                      <Text style={styles.label}>{t('profile.label_city')}</Text>
                       <View style={styles.cityAutocomplete}>
                         <View style={styles.cityInputContainer}>
                           <Ionicons name="location-outline" size={18} color="#6B7280" style={{ marginRight: 8 }} />
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                             style={styles.cityInput}
                             value={cityAutocomplete.query || cityAutocomplete.selectedCity}
                             onChangeText={cityAutocomplete.setQuery}
-                            placeholder="Search city..."
+                            placeholder={t('profile.search_city')}
                             placeholderTextColor="#9CA3AF"
                             onFocus={() => setShowCityDropdown(true)}
                             onBlur={() => setTimeout(() => setShowCityDropdown(false), 200)}
@@ -524,22 +524,28 @@ export default function ProfilePage() {
 
                   <View style={styles.row}>
                     <View style={[styles.inputGroup, styles.flex1]}>
-                      <Text style={styles.label}>Language</Text>
+                      <Text style={styles.label}>{t('profile.label_language')}</Text>
                       <View style={styles.languageRow}>
-                        {['en', 'es', 'fr'].map((lang) => (
+                        {['en', 'de', 'fr', 'ru'].map((lang) => (
                           <TouchableOpacity
                             key={lang}
                             style={[
                               styles.langChip,
                               languageCode === lang && styles.langChipActive
                             ]}
-                            onPress={() => setLanguageCode(lang)}
+                            onPress={() => {
+                              setLanguageCode(lang);
+                              setLocale(lang); // Immediate update
+                            }}
                           >
                             <Text style={[
                               styles.langText,
                               languageCode === lang && styles.langTextActive
                             ]}>
-                              {lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Français'}
+                              {lang === 'en' ? 'English' :
+                                lang === 'de' ? 'Deutsch' :
+                                  lang === 'fr' ? 'Français' :
+                                    lang === 'ru' ? 'Русский' : lang}
                             </Text>
                           </TouchableOpacity>
                         ))}
@@ -548,12 +554,12 @@ export default function ProfilePage() {
                   </View>
 
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Bio</Text>
+                    <Text style={styles.label}>{t('profile.label_bio')}</Text>
                     <TextInput
                       style={[styles.input, styles.textArea]}
                       value={bio}
                       onChangeText={setBio}
-                      placeholder="Tell us about yourself..."
+                      placeholder={t('profile.placeholder_bio')}
                       multiline
                       numberOfLines={4}
                       textAlignVertical="top"
@@ -568,55 +574,55 @@ export default function ProfilePage() {
                     {saving ? (
                       <ActivityIndicator color="#fff" size="small" />
                     ) : (
-                      <Text style={styles.saveButtonText}>Save Changes</Text>
+                      <Text style={styles.saveButtonText}>{t('profile.save_changes')}</Text>
                     )}
                   </TouchableOpacity>
                 </View>
               ) : (
                 <View style={styles.profileView}>
                   <View style={styles.infoSection}>
-                    <Text style={styles.infoLabel}>Full Name</Text>
+                    <Text style={styles.infoLabel}>{t('profile.label_first_name')} / {t('profile.label_last_name')}</Text>
                     <Text style={styles.infoValue}>{firstName} {lastName}</Text>
                   </View>
 
                   {dateOfBirth && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Date of Birth</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_dob')}</Text>
                       <Text style={styles.infoValue}>{dateOfBirth}</Text>
                     </View>
                   )}
 
                   {gender && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Gender</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_gender')}</Text>
                       <Text style={styles.infoValue}>{gender}</Text>
                     </View>
                   )}
 
                   {phone && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Phone</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_phone')}</Text>
                       <Text style={styles.infoValue}>{phone}</Text>
                     </View>
                   )}
 
                   {website && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Website</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_website')}</Text>
                       <Text style={[styles.infoValue, styles.link]}>{website}</Text>
                     </View>
                   )}
 
                   {address && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Address</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_address')}</Text>
                       <Text style={styles.infoValue}>{address}</Text>
                     </View>
                   )}
 
                   {countryCode && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Country</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_country')}</Text>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <Text style={{ fontSize: 20 }}>
                           {COUNTRIES.find(c => c.code === countryCode)?.flag}
@@ -630,40 +636,41 @@ export default function ProfilePage() {
 
                   {languageCode && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Language</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_language')}</Text>
                       <Text style={styles.infoValue}>
                         {languageCode === 'en' ? 'English' :
-                          languageCode === 'es' ? 'Español' :
-                            languageCode === 'fr' ? 'Français' : languageCode}
+                          languageCode === 'de' ? 'Deutsch' :
+                            languageCode === 'fr' ? 'Français' :
+                              languageCode === 'ru' ? 'Русский' : languageCode}
                       </Text>
                     </View>
                   )}
 
                   {bio && (
                     <View style={styles.infoSection}>
-                      <Text style={styles.infoLabel}>Bio</Text>
+                      <Text style={styles.infoLabel}>{t('profile.label_bio')}</Text>
                       <Text style={styles.infoValue}>{bio}</Text>
                     </View>
                   )}
                 </View>
               )}
 
-              <Text style={styles.sectionTitle}>Security</Text>
+              <Text style={styles.sectionTitle}>{t('profile.section_security')}</Text>
               <View style={styles.section}>
                 <TouchableOpacity style={styles.changePasswordButton}>
                   <Ionicons name="key-outline" size={20} color="#6366F1" />
-                  <Text style={styles.changePasswordText}>Change Password</Text>
+                  <Text style={styles.changePasswordText}>{t('profile.change_password')}</Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.sectionTitle}>Quick Links</Text>
+              <Text style={styles.sectionTitle}>{t('profile.section_quick_links')}</Text>
               <View style={styles.section}>
                 <TouchableOpacity
                   style={styles.changePasswordButton}
                   onPress={() => router.push('/(tabs)/profile/co-owners' as any)}
                 >
                   <Ionicons name="people-outline" size={20} color="#6366F1" />
-                  <Text style={styles.changePasswordText}>Manage Co-Owners</Text>
+                  <Text style={styles.changePasswordText}>{t('profile.manage_co_owners')}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -671,7 +678,7 @@ export default function ProfilePage() {
                 <View style={{ marginTop: 24 }}>
                   <TouchableOpacity style={[styles.dangerButton, { justifyContent: 'center', backgroundColor: '#FEF2F2', borderRadius: 12 }]} onPress={handleSignOut}>
                     <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                    <Text style={styles.dangerButtonText}>Sign Out</Text>
+                    <Text style={styles.dangerButtonText}>{t('profile.sign_out')}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -680,16 +687,16 @@ export default function ProfilePage() {
 
           {activeTab === 'notifications' && (
             <View style={styles.tabContent}>
-              <Text style={styles.sectionTitle}>Notification Preferences</Text>
+              <Text style={styles.sectionTitle}>{t('profile.section_notifications')}</Text>
 
               <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>General Notifications</Text>
+                <Text style={styles.subsectionTitle}>{t('profile.subsection_general')}</Text>
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Email Notifications</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_email')}</Text>
                     <Text style={styles.settingDescription}>
-                      Receive important updates via email
+                      {t('profile.notif_email_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -702,9 +709,9 @@ export default function ProfilePage() {
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Push Notifications</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_push')}</Text>
                     <Text style={styles.settingDescription}>
-                      Get push notifications on your device
+                      {t('profile.notif_push_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -717,13 +724,13 @@ export default function ProfilePage() {
               </View>
 
               <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Pet Care Reminders</Text>
+                <Text style={styles.subsectionTitle}>{t('profile.subsection_pet_care')}</Text>
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Health Reminders</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_health')}</Text>
                     <Text style={styles.settingDescription}>
-                      Reminders for vaccinations and medications
+                      {t('profile.notif_health_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -736,9 +743,9 @@ export default function ProfilePage() {
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Event Reminders</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_event')}</Text>
                     <Text style={styles.settingDescription}>
-                      Reminders for upcoming appointments and events
+                      {t('profile.notif_event_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -751,9 +758,9 @@ export default function ProfilePage() {
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Weight Tracking</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_weight')}</Text>
                     <Text style={styles.settingDescription}>
-                      Reminders to log your pet's weight
+                      {t('profile.notif_weight_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -766,13 +773,13 @@ export default function ProfilePage() {
               </View>
 
               <View style={styles.section}>
-                <Text style={styles.subsectionTitle}>Communication Preferences</Text>
+                <Text style={styles.subsectionTitle}>{t('profile.subsection_communication')}</Text>
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Newsletter</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_newsletter')}</Text>
                     <Text style={styles.settingDescription}>
-                      Receive tips and updates about pet care
+                      {t('profile.notif_newsletter_desc')}
                     </Text>
                   </View>
                   <Switch
@@ -785,9 +792,9 @@ export default function ProfilePage() {
 
                 <View style={styles.settingRow}>
                   <View style={styles.settingInfo}>
-                    <Text style={styles.settingLabel}>Product Updates</Text>
+                    <Text style={styles.settingLabel}>{t('profile.notif_updates')}</Text>
                     <Text style={styles.settingDescription}>
-                      Get notified about new features and improvements
+                      {t('profile.notif_updates_desc')}
                     </Text>
                   </View>
                   <Switch

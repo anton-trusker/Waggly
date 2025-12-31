@@ -4,6 +4,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
+import { useLocale } from '@/hooks/useLocale';
 
 export interface Step3Data {
     microchipNumber: string;
@@ -36,6 +37,7 @@ const BLOOD_TYPES = [
 ];
 
 export default function Step3Identification({ initialData, onNext }: Step3Props) {
+    const { t, locale } = useLocale();
     // Microchip
     const [microchipNumber, setMicrochipNumber] = useState(initialData.microchipNumber);
     const [implantationDate, setImplantationDate] = useState<Date | undefined>(initialData.implantationDate);
@@ -71,8 +73,8 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Almost there!</Text>
-                    <Text style={styles.subtitle}>Important medical and tracking details.</Text>
+                    <Text style={styles.title}>{t('add_pet.step3.title')}</Text>
+                    <Text style={styles.subtitle}>{t('add_pet.step3.subtitle')}</Text>
                 </View>
 
                 <View style={styles.formSection}>
@@ -80,16 +82,16 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                     <View style={styles.card}>
                         <View style={styles.cardHeader}>
                             <IconSymbol ios_icon_name="memorychip" android_material_icon_name="memory" size={24} color={designSystem.colors.primary[500]} />
-                            <Text style={styles.cardTitle}>Microchip Details</Text>
+                            <Text style={styles.cardTitle}>{t('add_pet.step3.microchip_title')}</Text>
                         </View>
 
                         {/* Microchip Number and Implantation Date on one row */}
                         <View style={styles.row}>
                             <View style={styles.col}>
-                                <Text style={styles.label}>MICROCHIP NUMBER</Text>
+                                <Text style={styles.label}>{t('add_pet.step3.microchip_label')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="985112345678900"
+                                    placeholder={t('add_pet.step3.microchip_placeholder')}
                                     placeholderTextColor={designSystem.colors.text.tertiary}
                                     keyboardType="number-pad"
                                     value={microchipNumber}
@@ -98,13 +100,13 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             </View>
 
                             <View style={styles.col}>
-                                <Text style={styles.label}>IMPLANTATION DATE</Text>
+                                <Text style={styles.label}>{t('add_pet.step3.implantation_date_label')}</Text>
                                 <View style={styles.dateInputContainer}>
                                     <TextInput
                                         style={styles.dateInput}
                                         placeholder="MM/DD/YYYY"
                                         placeholderTextColor={designSystem.colors.text.tertiary}
-                                        value={implantationDate ? implantationDate.toLocaleDateString('en-US') : ''}
+                                        value={implantationDate ? implantationDate.toLocaleDateString(locale === 'en' ? 'en-US' : locale) : ''}
                                         onChangeText={(text) => {
                                             if (text === '') {
                                                 setImplantationDate(undefined);
@@ -136,16 +138,16 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                     <View style={styles.card}>
                         <View style={styles.cardHeader}>
                             <IconSymbol ios_icon_name="exclamationmark.triangle.fill" android_material_icon_name="emergency" size={24} color={designSystem.colors.error[500]} />
-                            <Text style={styles.cardTitle}>Emergency Contact</Text>
+                            <Text style={styles.cardTitle}>{t('add_pet.step3.emergency_title')}</Text>
                         </View>
 
                         {/* Emergency Contact Name and Phone on one row */}
                         <View style={styles.row}>
                             <View style={styles.col}>
-                                <Text style={styles.label}>CONTACT NAME</Text>
+                                <Text style={styles.label}>{t('add_pet.step3.contact_name_label')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Full name"
+                                    placeholder={t('add_pet.step3.contact_name_placeholder')}
                                     placeholderTextColor={designSystem.colors.text.tertiary}
                                     value={emergencyContactName}
                                     onChangeText={setEmergencyContactName}
@@ -153,10 +155,10 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             </View>
 
                             <View style={styles.col}>
-                                <Text style={styles.label}>PHONE NUMBER</Text>
+                                <Text style={styles.label}>{t('add_pet.step3.phone_label')}</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="+1 (555) 123-4567"
+                                    placeholder={t('add_pet.step3.phone_placeholder')}
                                     placeholderTextColor={designSystem.colors.text.tertiary}
                                     keyboardType="phone-pad"
                                     value={emergencyContactPhone}
@@ -168,7 +170,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
 
                     {/* Tag ID */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>COLLAR TAG ID <Text style={styles.optional}>(Optional)</Text></Text>
+                        <Text style={styles.label}>{t('add_pet.step3.tag_id_label')} <Text style={styles.optional}>{t('add_pet.step3.optional')}</Text></Text>
                         <View style={styles.inputContainer}>
                             <IconSymbol
                                 ios_icon_name="tag"
@@ -179,7 +181,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             />
                             <TextInput
                                 style={styles.inputWithIcon}
-                                placeholder="Tag or License #"
+                                placeholder={t('add_pet.step3.tag_id_placeholder')}
                                 placeholderTextColor={designSystem.colors.text.tertiary}
                                 value={tagId}
                                 onChangeText={setTagId}
@@ -195,7 +197,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                     style={styles.continueButton}
                     onPress={handleNext}
                 >
-                    <Text style={styles.continueButtonText}>Continue</Text>
+                    <Text style={styles.continueButtonText}>{t('add_pet.step1.continue')}</Text>
                     <IconSymbol
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
@@ -210,7 +212,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                 date={implantationDate || new Date()}
                 onClose={() => setShowDateModal(false)}
                 onConfirm={onDateConfirm}
-                title="Implantation Date"
+                title={t('add_pet.step3.modal_title')}
             />
         </View>
     );

@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useLocale } from '@/hooks/useLocale';
+
 interface AuthHeroPanelProps {
     title?: string;
     subtitle?: string;
@@ -9,10 +11,14 @@ interface AuthHeroPanelProps {
 }
 
 const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
-    title = 'Your pet’s world, made simple and caring',
-    subtitle = 'Create a free account to keep health records in one place, find trusted services, and enjoy life with your furry friend.',
+    title,
+    subtitle,
     imageUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCKmzQafI0lwQLzWGSp53vEZNjNuyJyB9LYgChbPGhna-8OG4YM1_7pzMqgt2onupgVxvi-9eiOQ_xu3ZX59JGdpX8QVklYPchWxP0WSOLJJ76tbs9NFXTkBi_XfhhDSJt6ejzhqwS879Xl1EMkr7Msuh1-NN5aJyebTXKbPGnZo6aER73ilwh0bHteBY7Y1xbOb0YF0iTbNEDjW3rXwSzupC67bwCYOylhCpqFzoPjJLwbTdZUGbuTPAe2J42-astBgnw7sWaoQPQ'
 }) => {
+    const { t } = useLocale();
+    const displayTitle = title || t('auth.hero_title');
+    const displaySubtitle = subtitle || t('auth.hero_subtitle');
+
     return (
         <View style={styles.container}>
             <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
@@ -23,8 +29,8 @@ const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
                 style={styles.overlay}
             />
             <View style={styles.contentBottom}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.subtitle}>{subtitle}</Text>
+                <Text style={styles.title}>{displayTitle}</Text>
+                <Text style={styles.subtitle}>{displaySubtitle}</Text>
             </View>
         </View>
     );

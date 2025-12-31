@@ -6,6 +6,7 @@ import { useBreeds } from '@/hooks/useBreeds';
 import { formatAge } from '@/utils/dateUtils';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
+import { useLocale } from '@/hooks/useLocale';
 
 const BLOOD_TYPES = [
     { label: 'DEA 1.1 Positive', value: 'DEA 1.1 Positive' },
@@ -33,6 +34,7 @@ interface Step2Props {
 }
 
 export default function Step2Details({ initialData, species, onNext }: Step2Props) {
+    const { t, locale } = useLocale();
     const [breed, setBreed] = useState(initialData.breed);
     const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(initialData.dateOfBirth);
     const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
@@ -79,21 +81,21 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Details needed</Text>
-                    <Text style={styles.subtitle}>Help us tailor the experience.</Text>
+                    <Text style={styles.title}>{t('add_pet.step2.title')}</Text>
+                    <Text style={styles.subtitle}>{t('add_pet.step2.subtitle')}</Text>
                 </View>
 
                 <View style={styles.formSection}>
                     {/* Breed - Only for dogs and cats */}
                     {showBreedSearch && (
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>BREED</Text>
+                            <Text style={styles.label}>{t('add_pet.step2.breed_label')}</Text>
                             <TouchableOpacity
                                 style={styles.dropdownTrigger}
                                 onPress={() => setShowBreedModal(true)}
                             >
                                 <Text style={breed ? styles.inputText : styles.placeholderText}>
-                                    {breed || "Select breed type"}
+                                    {breed || t('add_pet.step2.breed_placeholder')}
                                 </Text>
                                 <IconSymbol ios_icon_name="chevron.down" android_material_icon_name="expand-more" size={20} color={designSystem.colors.primary[500]} />
                             </TouchableOpacity>
@@ -102,13 +104,13 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
 
                     {/* Date of Birth */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>DATE OF BIRTH</Text>
+                        <Text style={styles.label}>{t('add_pet.step2.dob_label')}</Text>
                         <View style={styles.dateInputContainer}>
                             <TextInput
                                 style={styles.dateInput}
                                 placeholder="MM/DD/YYYY"
                                 placeholderTextColor={designSystem.colors.text.tertiary}
-                                value={dateOfBirth ? dateOfBirth.toLocaleDateString('en-US') : ''}
+                                value={dateOfBirth ? dateOfBirth.toLocaleDateString(locale === 'en' ? 'en-US' : locale) : ''}
                                 onChangeText={(text) => {
                                     if (text === '') {
                                         setDateOfBirth(undefined);
@@ -133,14 +135,14 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             </TouchableOpacity>
                         </View>
                         {dateOfBirth && (
-                            <Text style={styles.hint}>Age: {formatAge(dateOfBirth)}</Text>
+                            <Text style={styles.hint}>{t('add_pet.step2.age_hint', { age: formatAge(dateOfBirth, t) })}</Text>
                         )}
                     </View>
 
                     {/* Weight and Height on one row */}
                     <View style={styles.row}>
                         <View style={styles.col}>
-                            <Text style={styles.label}>WEIGHT</Text>
+                            <Text style={styles.label}>{t('add_pet.step2.weight_label')}</Text>
                             <View style={styles.inputWithUnit}>
                                 <TextInput
                                     style={[styles.input, { flex: 1 }]}
@@ -168,7 +170,7 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                         </View>
 
                         <View style={styles.col}>
-                            <Text style={styles.label}>HEIGHT</Text>
+                            <Text style={styles.label}>{t('add_pet.step2.height_label')}</Text>
                             <View style={styles.inputWithUnit}>
                                 <TextInput
                                     style={[styles.input, { flex: 1 }]}
@@ -198,8 +200,8 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
 
                     {/* Blood Type */}
                     <ModernSelect
-                        label="BLOOD TYPE (Optional)"
-                        placeholder="Select blood type"
+                        label={t('add_pet.step2.blood_type_label')}
+                        placeholder={t('add_pet.step2.blood_type_placeholder')}
                         value={bloodType}
                         options={BLOOD_TYPES}
                         onChange={setBloodType}
@@ -215,7 +217,7 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                     style={styles.continueButton}
                     onPress={handleNext}
                 >
-                    <Text style={styles.continueButtonText}>Continue</Text>
+                    <Text style={styles.continueButtonText}>{t('add_pet.step1.continue')}</Text>
                     <IconSymbol
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
@@ -245,14 +247,14 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={20} color={designSystem.colors.text.tertiary} />
                             <TextInput
                                 style={styles.searchInput}
-                                placeholder="Search breed..."
+                                placeholder={t('add_pet.step2.search_breed')}
                                 value={breedQuery}
                                 onChangeText={setBreedQuery}
                                 autoFocus
                             />
                         </View>
                         <TouchableOpacity onPress={() => setShowBreedModal(false)} style={styles.closeButton}>
-                            <Text style={styles.closeText}>Close</Text>
+                            <Text style={styles.closeText}>{t('add_pet.step2.close')}</Text>
                         </TouchableOpacity>
                     </View>
                     <FlatList

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useLocale } from '@/hooks/useLocale';
 import { LanguageSelector } from './LanguageSelector';
 
 const SidebarNav: React.FC = () => {
@@ -13,12 +14,13 @@ const SidebarNav: React.FC = () => {
     const { user } = useAuth();
     const { profile } = useProfile();
     const { unreadCount } = useNotifications();
+    const { t } = useLocale();
 
     const navItems = [
-        { label: 'Dashboard', icon: 'grid-outline', path: '/(tabs)/(home)' },
-        { label: 'My Pets', icon: 'paw-outline', path: '/(tabs)/pets' },
-        { label: 'Calendar', icon: 'calendar-outline', path: '/(tabs)/calendar' },
-        { label: 'Documents', icon: 'folder-open-outline', path: '/(tabs)/documents' },
+        { label: t('navigation.dashboard'), icon: 'grid-outline', path: '/(tabs)/(home)' },
+        { label: t('navigation.my_pets'), icon: 'paw-outline', path: '/(tabs)/pets' },
+        { label: t('navigation.calendar'), icon: 'calendar-outline', path: '/(tabs)/calendar' },
+        { label: t('navigation.documents'), icon: 'folder-open-outline', path: '/(tabs)/documents' },
         // Hidden: Vets & Clinics, Community
     ];
 

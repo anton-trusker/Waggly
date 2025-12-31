@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image,
 import * as ImagePicker from 'expo-image-picker';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
-
+import { useLocale } from '@/hooks/useLocale';
 
 export interface Step1Data {
     name: string;
@@ -18,15 +18,16 @@ interface Step1Props {
 }
 
 const SPECIES_OPTIONS = [
-    { id: 'dog', label: 'Dog', icon: '🐕', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
-    { id: 'cat', label: 'Cat', icon: '🐈', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
-    { id: 'bird', label: 'Bird', icon: '🦜', iosIcon: 'bird.fill', androidIcon: 'flutter_dash' },
-    { id: 'rabbit', label: 'Rabbit', icon: '🐰', iosIcon: 'hare.fill', androidIcon: 'cruelty_free' },
-    { id: 'reptile', label: 'Reptile', icon: '🦎', iosIcon: 'lizard.fill', androidIcon: 'pets' },
-    { id: 'other', label: 'Other', icon: '🐾', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
+    { id: 'dog', labelKey: 'dog', icon: '🐕', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
+    { id: 'cat', labelKey: 'cat', icon: '🐈', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
+    { id: 'bird', labelKey: 'bird', icon: '🦜', iosIcon: 'bird.fill', androidIcon: 'flutter_dash' },
+    { id: 'rabbit', labelKey: 'rabbit', icon: '🐰', iosIcon: 'hare.fill', androidIcon: 'cruelty_free' },
+    { id: 'reptile', labelKey: 'reptile', icon: '🦎', iosIcon: 'lizard.fill', androidIcon: 'pets' },
+    { id: 'other', labelKey: 'other', icon: '🐾', iosIcon: 'pawprint.fill', androidIcon: 'pets' },
 ] as const;
 
 export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
+    const { t } = useLocale();
     const [name, setName] = useState(initialData.name);
     const [species, setSpecies] = useState(initialData.species);
     const [photoUri, setPhotoUri] = useState(initialData.photoUri);
@@ -58,7 +59,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.heroSection}>
-                    <Text style={styles.heroTitle}>Let's meet your companion</Text>
+                    <Text style={styles.heroTitle}>{t('add_pet.step1.title')}</Text>
                 </View>
 
                 {/* Photo Upload */}
@@ -85,16 +86,16 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                             />
                         </View>
                     </TouchableOpacity>
-                    <Text style={styles.addPhotoLabel}>Add Photo</Text>
+                    <Text style={styles.addPhotoLabel}>{t('add_pet.step1.add_photo')}</Text>
                 </View>
 
                 {/* Form Fields */}
                 <View style={styles.formSection}>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>PET'S NAME</Text>
+                        <Text style={styles.label}>{t('add_pet.step1.name_label')}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="e.g., Bella, Max"
+                            placeholder={t('add_pet.step1.name_placeholder')}
                             placeholderTextColor={designSystem.colors.text.tertiary}
                             value={name}
                             onChangeText={setName}
@@ -102,7 +103,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>WHAT ARE THEY?</Text>
+                        <Text style={styles.label}>{t('add_pet.step1.species_label')}</Text>
                         <View style={styles.speciesRow}>
                             {SPECIES_OPTIONS.map((opt) => (
                                 <TouchableOpacity
@@ -121,7 +122,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                                         styles.speciesLabel,
                                         species === opt.id && styles.speciesLabelSelected
                                     ]}>
-                                        {opt.label}
+                                        {t(`add_pet.species.${opt.labelKey}`)}
                                     </Text>
                                 </TouchableOpacity>
                             ))}
@@ -129,7 +130,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>GENDER</Text>
+                        <Text style={styles.label}>{t('add_pet.step1.gender_label')}</Text>
                         <View style={styles.genderRow}>
                             <TouchableOpacity
                                 style={[styles.genderCard, gender === 'male' && styles.genderCardSelected]}
@@ -142,7 +143,9 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                                     size={24}
                                     color={gender === 'male' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
                                 />
-                                <Text style={[styles.genderLabel, gender === 'male' && styles.genderLabelSelected]}>Male</Text>
+                                <Text style={[styles.genderLabel, gender === 'male' && styles.genderLabelSelected]}>
+                                    {t('add_pet.step1.male')}
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.genderCard, gender === 'female' && styles.genderCardSelected]}
@@ -155,7 +158,9 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                                     size={24}
                                     color={gender === 'female' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
                                 />
-                                <Text style={[styles.genderLabel, gender === 'female' && styles.genderLabelSelected]}>Female</Text>
+                                <Text style={[styles.genderLabel, gender === 'female' && styles.genderLabelSelected]}>
+                                    {t('add_pet.step1.female')}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -170,7 +175,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                     onPress={handleNext}
                     disabled={!name.trim()}
                 >
-                    <Text style={styles.continueButtonText}>Continue</Text>
+                    <Text style={styles.continueButtonText}>{t('add_pet.step1.continue')}</Text>
                     <IconSymbol
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"

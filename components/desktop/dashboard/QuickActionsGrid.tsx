@@ -1,46 +1,49 @@
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useLocale } from '@/hooks/useLocale';
 
 interface QuickActionsGridProps {
     onActionPress: (actionId: string) => void;
 }
 
 export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProps) {
+    const { t } = useLocale();
+
     const actions = [
         {
             id: 'visit',
-            label: 'Visit',
+            label: t('widgets.quick_actions.visit'),
             icon: 'medical-services',
             iosIcon: 'cross.case.fill',
             colors: ['#4F46E5', '#818CF8'] // Indigo
         },
         {
             id: 'vaccine',
-            label: 'Vaccine',
+            label: t('widgets.quick_actions.vaccine'),
             icon: 'vaccines',
             iosIcon: 'syringe.fill',
             colors: ['#059669', '#34D399'] // Emerald
         },
         {
             id: 'meds',
-            label: 'Meds',
+            label: t('widgets.quick_actions.meds'),
             icon: 'medication',
             iosIcon: 'pills.fill',
             colors: ['#D946EF', '#F472B6'] // Fuchsia
         },
         {
             id: 'weight',
-            label: 'Weight',
+            label: t('widgets.quick_actions.weight'),
             icon: 'monitor-weight',
             iosIcon: 'scalemass.fill',
             colors: ['#F59E0B', '#FBBF24'] // Amber
         },
         {
             id: 'doc',
-            label: 'Doc',
+            label: t('widgets.quick_actions.doc'),
             icon: 'description',
             iosIcon: 'doc.fill',
             colors: ['#8B5CF6', '#A78BFA'] // Violet

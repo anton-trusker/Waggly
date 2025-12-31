@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { format, isToday, isTomorrow, isThisWeek, isPast } from 'date-fns';
+import { useLocale } from '@/hooks/useLocale';
 
 interface Event {
     id: string;
@@ -21,16 +22,18 @@ interface UpcomingEventsListProps {
     onEventClick?: (event: Event) => void;
 }
 
-const EVENT_TYPE_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
-    vaccination: { icon: 'syringe', color: designSystem.colors.success[500], label: 'Vaccination' },
-    treatment: { icon: 'pill', color: designSystem.colors.warning[500], label: 'Treatment' },
-    vet: { icon: 'medical-bag', color: designSystem.colors.primary[500], label: 'Vet Visit' },
-    grooming: { icon: 'cut', color: designSystem.colors.secondary.leaf, label: 'Grooming' },
-    walking: { icon: 'walk', color: designSystem.colors.primary[400], label: 'Walking' },
-    other: { icon: 'calendar', color: designSystem.colors.neutral[500], label: 'Event' },
+const EVENT_TYPE_CONFIG: Record<string, { icon: string; color: string; labelKey: string }> = {
+    vaccination: { icon: 'syringe', color: designSystem.colors.success[500], labelKey: 'vaccination' },
+    treatment: { icon: 'pill', color: designSystem.colors.warning[500], labelKey: 'treatment' },
+    vet: { icon: 'medical-bag', color: designSystem.colors.primary[500], labelKey: 'vet' },
+    grooming: { icon: 'cut', color: designSystem.colors.secondary.leaf, labelKey: 'grooming' },
+    walking: { icon: 'walk', color: designSystem.colors.primary[400], labelKey: 'walking' },
+    other: { icon: 'calendar', color: designSystem.colors.neutral[500], labelKey: 'other' },
 };
 
 export default function UpcomingEventsList({ events, onEventClick }: UpcomingEventsListProps) {
+    const { t } = useLocale();
+
     // Normalize events - convert dueDate string to Date object for sorting/filtering
     const normalizedEvents = events.map(e => ({
         ...e,
@@ -43,8 +46,8 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
     const pastEvents = sortedEvents.filter(event => isPast(event.date) && !isToday(event.date));
 
     const getDateLabel = (date: Date) => {
-        if (isToday(date)) return 'Today';
-        if (isTomorrow(date)) return 'Tomorrow';
+        if (isToday(date)) return t('calendar.today');
+        if (isTomorrow(date)) return t('calendar.tomorrow');
         if (isThisWeek(date)) return format(date, 'EEEE');
         return format(date, 'MMM dd, yyyy');
     };
@@ -77,7 +80,7 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
                         </View>
                         <View style={[styles.typeBadge, { backgroundColor: `${config.color}15` }]}>
                             <Text style={[styles.typeBadgeText, { color: config.color }]}>
-                                {config.label}
+                                {t(`calendar.event_types.${config.labelKey}`)}
                             </Text>
                         </View>
                     </View>
@@ -124,9 +127,9 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Upcoming Events</Text>
+                <Text style={styles.headerTitle}>{t('calendar.upcoming_events')}</Text>
                 <Text style={styles.headerSubtitle}>
-                    {upcomingEvents.length} event{upcomingEvents.length !== 1 ? 's' : ''} scheduled
+                    {t(upcomingEvents.length !== 1 ? 'calendar.scheduled_count_plural' : 'calendar.scheduled_count', { count: upcomingEvents.length })}
                 </Text>
             </View>
 
@@ -138,8 +141,8 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
                         size={48}
                         color={designSystem.colors.text.tertiary}
                     />
-                    <Text style={styles.emptyTitle}>No events scheduled</Text>
-                    <Text style={styles.emptySubtitle}>Add your first event to get started</Text>
+                    <Text style={styles.emptyTitle}>{t('calendar.no_events')}</Text>
+                    <Text style={styles.emptySubtitle}>{t('calendar.add_first_event')}</Text>
                 </View>
             ) : (
                 <>
@@ -151,7 +154,7 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
 
                     {pastEvents.length > 0 && (
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Past Events</Text>
+                            <Text style={styles.sectionTitle}>{t('calendar.past_events')}</Text>
                             {pastEvents.slice(0, 5).map(renderEvent)}
                         </View>
                     )}
