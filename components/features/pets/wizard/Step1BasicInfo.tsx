@@ -9,6 +9,7 @@ export interface Step1Data {
     name: string;
     species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'reptile' | 'other';
     photoUri?: string;
+    gender: 'male' | 'female';
 }
 
 interface Step1Props {
@@ -29,6 +30,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
     const [name, setName] = useState(initialData.name);
     const [species, setSpecies] = useState(initialData.species);
     const [photoUri, setPhotoUri] = useState(initialData.photoUri);
+    const [gender, setGender] = useState<'male' | 'female'>(initialData.gender || 'male');
 
     const handlePhotoPick = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -45,7 +47,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
 
     const handleNext = () => {
         if (name.trim()) {
-            onNext({ name, species, photoUri });
+            onNext({ name, species, photoUri, gender });
         }
     };
 
@@ -125,6 +127,38 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                             ))}
                         </View>
                     </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>GENDER</Text>
+                        <View style={styles.genderRow}>
+                            <TouchableOpacity
+                                style={[styles.genderCard, gender === 'male' && styles.genderCardSelected]}
+                                onPress={() => setGender('male')}
+                                activeOpacity={0.7}
+                            >
+                                <IconSymbol
+                                    ios_icon_name="circle"
+                                    android_material_icon_name="male"
+                                    size={24}
+                                    color={gender === 'male' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
+                                />
+                                <Text style={[styles.genderLabel, gender === 'male' && styles.genderLabelSelected]}>Male</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.genderCard, gender === 'female' && styles.genderCardSelected]}
+                                onPress={() => setGender('female')}
+                                activeOpacity={0.7}
+                            >
+                                <IconSymbol
+                                    ios_icon_name="circle"
+                                    android_material_icon_name="female"
+                                    size={24}
+                                    color={gender === 'female' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
+                                />
+                                <Text style={[styles.genderLabel, gender === 'female' && styles.genderLabelSelected]}>Female</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
                 <View style={{ height: Platform.OS === 'web' ? 100 : 160 }} />
             </ScrollView>
@@ -170,22 +204,22 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     photoContainer: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 16,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        marginBottom: 12,
         position: 'relative',
         ...designSystem.shadows.sm,
     },
     photo: {
         width: '100%',
         height: '100%',
-        borderRadius: 60,
+        borderRadius: 40,
     },
     photoPlaceholder: {
         width: '100%',
         height: '100%',
-        borderRadius: 60,
+        borderRadius: 40,
         backgroundColor: designSystem.colors.neutral[100],
         borderWidth: 2,
         borderColor: designSystem.colors.neutral[200],
@@ -198,17 +232,17 @@ const styles = StyleSheet.create({
         bottom: 0,
         right: 0,
         backgroundColor: designSystem.colors.primary[500],
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 3,
+        borderWidth: 2,
         borderColor: designSystem.colors.background.primary,
     },
     addPhotoLabel: {
-        ...(designSystem.typography.title.medium as any),
-        color: designSystem.colors.text.primary,
+        ...(designSystem.typography.body.small as any),
+        color: designSystem.colors.text.secondary,
     },
     formSection: {
         gap: 24,
@@ -236,40 +270,73 @@ const styles = StyleSheet.create({
     speciesRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 12,
-        rowGap: 16,
+        gap: 16,
+        rowGap: 20,
     },
     speciesItem: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         alignItems: 'center',
         gap: 8,
     },
     speciesBox: {
-        width: 25,
-        height: 25,
+        width: 48,
+        height: 48,
         backgroundColor: designSystem.colors.neutral[0],
-        borderWidth: 1.5,
+        borderWidth: 2,
         borderColor: designSystem.colors.neutral[200],
-        borderRadius: 6,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
+        ...designSystem.shadows.sm,
     },
     speciesBoxSelected: {
         borderColor: designSystem.colors.primary[500],
-        borderWidth: 2,
+        borderWidth: 2.5,
         backgroundColor: designSystem.colors.primary[50],
     },
     speciesIcon: {
-        fontSize: 16,
-        lineHeight: 16,
+        fontSize: 24,
+        lineHeight: 24,
     },
     speciesLabel: {
         ...(designSystem.typography.label.small as any),
         color: designSystem.colors.text.secondary,
         fontWeight: '600',
+        fontSize: 11,
     },
     speciesLabelSelected: {
         color: designSystem.colors.primary[700],
+        fontWeight: '700',
+    },
+    genderRow: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    genderCard: {
+        flex: 1,
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 2,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        ...designSystem.shadows.sm,
+    },
+    genderCardSelected: {
+        borderColor: designSystem.colors.primary[500],
+        backgroundColor: designSystem.colors.primary[50],
+    },
+    genderLabel: {
+        ...(designSystem.typography.label.medium as any),
+        color: designSystem.colors.text.secondary,
+        fontWeight: '600',
+    },
+    genderLabelSelected: {
+        color: designSystem.colors.primary[700],
+        fontWeight: '700',
     },
     checkIcon: {
         position: 'absolute',

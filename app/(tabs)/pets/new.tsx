@@ -20,8 +20,8 @@ const INITIAL_DATA: WizardData = {
     name: '',
     species: 'dog',
     photoUri: undefined,
-    breed: '',
     gender: 'male',
+    breed: '',
     dateOfBirth: undefined,
     weight: 0,
     weightUnit: 'kg',
@@ -29,7 +29,6 @@ const INITIAL_DATA: WizardData = {
     heightUnit: 'cm',
     bloodType: '',
     microchipNumber: '',
-    registryProvider: '',
     implantationDate: undefined,
     tagId: '',
     vetClinicName: '',
@@ -49,7 +48,7 @@ export default function AddPetWizardScreen() {
     const { addPet, updatePet } = usePets();
     const { user } = useAuth();
 
-    const totalSteps = 5;
+    const totalSteps = 4;
 
     const updateData = (data: Partial<WizardData>) => {
         setFormData(prev => ({ ...prev, ...data }));
@@ -67,12 +66,7 @@ export default function AddPetWizardScreen() {
 
     const handleNextStep3 = (data: Step3Data) => {
         updateData(data);
-        setStep(4);
-    };
-
-    const handleNextStep4 = (data: Step4Data) => {
-        updateData(data);
-        setStep(5);
+        setStep(4); // Go directly to review
     };
 
     const handleBack = () => {
