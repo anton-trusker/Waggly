@@ -7,14 +7,10 @@ import ModernSelect from '@/components/ui/ModernSelect';
 
 export interface Step3Data {
     microchipNumber: string;
-    registryProvider: string;
     implantationDate?: Date;
     tagId: string;
-    weight: number;
-    weightUnit: 'kg' | 'lbs';
-    height: number;
-    heightUnit: 'cm' | 'in';
-    bloodType: string;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
 }
 
 interface Step3Props {
@@ -42,16 +38,12 @@ const BLOOD_TYPES = [
 export default function Step3Identification({ initialData, onNext }: Step3Props) {
     // Microchip
     const [microchipNumber, setMicrochipNumber] = useState(initialData.microchipNumber);
-    const [registryProvider, setRegistryProvider] = useState(initialData.registryProvider);
     const [implantationDate, setImplantationDate] = useState<Date | undefined>(initialData.implantationDate);
     const [tagId, setTagId] = useState(initialData.tagId);
 
-    // Health
-    const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
-    const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData.weightUnit);
-    const [height, setHeight] = useState(initialData.height ? initialData.height.toString() : '');
-    const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>(initialData.heightUnit);
-    const [bloodType, setBloodType] = useState(initialData.bloodType);
+    // Emergency Contacts
+    const [emergencyContactName, setEmergencyContactName] = useState(initialData.emergencyContactName || '');
+    const [emergencyContactPhone, setEmergencyContactPhone] = useState(initialData.emergencyContactPhone || '');
 
     // Modals
     const [showDateModal, setShowDateModal] = useState(false);
@@ -59,14 +51,10 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
     const handleNext = () => {
         onNext({
             microchipNumber,
-            registryProvider,
             implantationDate,
             tagId,
-            weight: parseFloat(weight) || 0,
-            weightUnit,
-            height: parseFloat(height) || 0,
-            heightUnit,
-            bloodType,
+            emergencyContactName,
+            emergencyContactPhone,
         });
     };
 
@@ -83,7 +71,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Health & Identification</Text>
+                    <Text style={styles.title}>Almost there!</Text>
                     <Text style={styles.subtitle}>Important medical and tracking details.</Text>
                 </View>
 
@@ -95,111 +83,67 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             <Text style={styles.cardTitle}>Microchip Details</Text>
                         </View>
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>MICROCHIP NUMBER</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g. 985112345678900"
-                                placeholderTextColor={designSystem.colors.text.tertiary}
-                                keyboardType="number-pad"
-                                value={microchipNumber}
-                                onChangeText={setMicrochipNumber}
-                            />
-                        </View>
+                        {/* Microchip Number and Implantation Date on one row */}
+                        <View style={styles.row}>
+                            <View style={styles.col}>
+                                <Text style={styles.label}>MICROCHIP NUMBER</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="985112345678900"
+                                    placeholderTextColor={designSystem.colors.text.tertiary}
+                                    keyboardType="number-pad"
+                                    value={microchipNumber}
+                                    onChangeText={setMicrochipNumber}
+                                />
+                            </View>
 
-                        <ModernSelect
-                            label="REGISTRY PROVIDER"
-                            placeholder="Select provider"
-                            value={registryProvider}
-                            options={REGISTRY_PROVIDERS}
-                            onChange={setRegistryProvider}
-                            searchable
-                        />
-
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>IMPLANTATION DATE</Text>
-                            <TouchableOpacity
-                                style={styles.dateTrigger}
-                                onPress={() => setShowDateModal(true)}
-                            >
-                                <Text style={implantationDate ? styles.inputText : styles.placeholderText}>
-                                    {implantationDate ? implantationDate.toLocaleDateString() : 'Select date'}
-                                </Text>
-                                <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.primary[500]} />
-                            </TouchableOpacity>
+                            <View style={styles.col}>
+                                <Text style={styles.label}>IMPLANTATION DATE</Text>
+                                <TouchableOpacity
+                                    style={styles.dateTrigger}
+                                    onPress={() => setShowDateModal(true)}
+                                >
+                                    <Text style={implantationDate ? styles.inputText : styles.placeholderText}>
+                                        {implantationDate ? implantationDate.toLocaleDateString() : 'Select date'}
+                                    </Text>
+                                    <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.primary[500]} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
 
-                    {/* --- Health Card --- */}
+                    {/* --- Emergency Contact Card --- */}
                     <View style={styles.card}>
                         <View style={styles.cardHeader}>
-                            <IconSymbol ios_icon_name="heart.fill" android_material_icon_name="favorite" size={24} color={designSystem.colors.error[500]} />
-                            <Text style={styles.cardTitle}>Health Metrics</Text>
+                            <IconSymbol ios_icon_name="exclamationmark.triangle.fill" android_material_icon_name="emergency" size={24} color={designSystem.colors.error[500]} />
+                            <Text style={styles.cardTitle}>Emergency Contact</Text>
                         </View>
 
-                        {/* Weight */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>WEIGHT</Text>
-                            <View style={styles.row}>
+                        {/* Emergency Contact Name and Phone on one row */}
+                        <View style={styles.row}>
+                            <View style={styles.col}>
+                                <Text style={styles.label}>CONTACT NAME</Text>
                                 <TextInput
-                                    style={[styles.input, { flex: 1 }]}
-                                    placeholder="0.0"
-                                    keyboardType="numeric"
-                                    value={weight}
-                                    onChangeText={setWeight}
+                                    style={styles.input}
+                                    placeholder="Full name"
+                                    placeholderTextColor={designSystem.colors.text.tertiary}
+                                    value={emergencyContactName}
+                                    onChangeText={setEmergencyContactName}
                                 />
-                                <View style={styles.toggle}>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, weightUnit === 'kg' && styles.toggleSelected]}
-                                        onPress={() => setWeightUnit('kg')}
-                                    >
-                                        <Text style={[styles.toggleText, weightUnit === 'kg' && styles.toggleTextSelected]}>KG</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, weightUnit === 'lbs' && styles.toggleSelected]}
-                                        onPress={() => setWeightUnit('lbs')}
-                                    >
-                                        <Text style={[styles.toggleText, weightUnit === 'lbs' && styles.toggleTextSelected]}>LBS</Text>
-                                    </TouchableOpacity>
-                                </View>
+                            </View>
+
+                            <View style={styles.col}>
+                                <Text style={styles.label}>PHONE NUMBER</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="+1 (555) 123-4567"
+                                    placeholderTextColor={designSystem.colors.text.tertiary}
+                                    keyboardType="phone-pad"
+                                    value={emergencyContactPhone}
+                                    onChangeText={setEmergencyContactPhone}
+                                />
                             </View>
                         </View>
-
-                        {/* Height */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>HEIGHT (Optional)</Text>
-                            <View style={styles.row}>
-                                <TextInput
-                                    style={[styles.input, { flex: 1 }]}
-                                    placeholder="0.0"
-                                    keyboardType="numeric"
-                                    value={height}
-                                    onChangeText={setHeight}
-                                />
-                                <View style={styles.toggle}>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, heightUnit === 'cm' && styles.toggleSelected]}
-                                        onPress={() => setHeightUnit('cm')}
-                                    >
-                                        <Text style={[styles.toggleText, heightUnit === 'cm' && styles.toggleTextSelected]}>CM</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, heightUnit === 'in' && styles.toggleSelected]}
-                                        onPress={() => setHeightUnit('in')}
-                                    >
-                                        <Text style={[styles.toggleText, heightUnit === 'in' && styles.toggleTextSelected]}>IN</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-
-                        <ModernSelect
-                            label="BLOOD TYPE (Optional)"
-                            placeholder="Select blood type"
-                            value={bloodType}
-                            options={BLOOD_TYPES}
-                            onChange={setBloodType}
-                        />
                     </View>
 
                     {/* Tag ID */}

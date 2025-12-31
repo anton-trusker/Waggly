@@ -23,8 +23,8 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.headerSection}>
-                    <Text style={styles.title}>Review Profile</Text>
-                    <Text style={styles.subtitle}>Double check everything before we welcome {data.name} to the family.</Text>
+                    <Text style={styles.title}>Let's review</Text>
+                    <Text style={styles.subtitle}>Everything looks good? Let's create {data.name}'s profile!</Text>
                 </View>
 
                 <View style={styles.card}>

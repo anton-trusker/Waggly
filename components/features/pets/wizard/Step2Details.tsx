@@ -5,11 +5,25 @@ import { designSystem } from '@/constants/designSystem';
 import { useBreeds } from '@/hooks/useBreeds';
 import { formatAge } from '@/utils/dateUtils';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import ModernSelect from '@/components/ui/ModernSelect';
+
+const BLOOD_TYPES = [
+    { label: 'DEA 1.1 Positive', value: 'DEA 1.1 Positive' },
+    { label: 'DEA 1.1 Negative', value: 'DEA 1.1 Negative' },
+    { label: 'Type A', value: 'Type A' },
+    { label: 'Type B', value: 'Type B' },
+    { label: 'Type AB', value: 'Type AB' },
+    { label: 'Unknown', value: 'Unknown' },
+];
 
 export interface Step2Data {
     breed: string;
-    gender: 'male' | 'female';
     dateOfBirth?: Date;
+    weight: number;
+    weightUnit: 'kg' | 'lbs';
+    height: number;
+    heightUnit: 'cm' | 'in';
+    bloodType: string;
 }
 
 interface Step2Props {
@@ -20,8 +34,12 @@ interface Step2Props {
 
 export default function Step2Details({ initialData, species, onNext }: Step2Props) {
     const [breed, setBreed] = useState(initialData.breed);
-    const [gender, setGender] = useState<'male' | 'female'>(initialData.gender);
     const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(initialData.dateOfBirth);
+    const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
+    const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData.weightUnit || 'kg');
+    const [height, setHeight] = useState(initialData.height ? initialData.height.toString() : '');
+    const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>(initialData.heightUnit || 'cm');
+    const [bloodType, setBloodType] = useState(initialData.bloodType || '');
 
     // Custom Modal States
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -37,8 +55,12 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
     const handleNext = () => {
         onNext({
             breed,
-            gender,
             dateOfBirth,
+            weight: parseFloat(weight) || 0,
+            weightUnit,
+            height: parseFloat(height) || 0,
+            heightUnit,
+            bloodType,
         });
     };
 
@@ -57,103 +79,123 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                 keyboardShouldPersistTaps="handled"
             >
                 <View style={styles.headerSection}>
-                    <View style={styles.iconContainer}>
-                        <IconSymbol
-                            ios_icon_name="pawprint.fill"
-                            android_material_icon_name="pets"
-                            size={28}
-                            color={designSystem.colors.primary[500]}
-                        />
-                    </View>
                     <Text style={styles.title}>Details needed</Text>
                     <Text style={styles.subtitle}>Help us tailor the experience.</Text>
                 </View>
 
                 <View style={styles.formSection}>
-                    {/* Breed and Gender - Two Columns */}
-                    <View style={styles.row}>
-                        {/* Breed Input */}
-                        <View style={styles.col}>
+                    {/* Breed - Only for dogs and cats */}
+                    {showBreedSearch && (
+                        <View style={styles.inputGroup}>
                             <Text style={styles.label}>BREED</Text>
-                            {showBreedSearch ? (
-                                <TouchableOpacity
-                                    style={styles.dropdownTrigger}
-                                    onPress={() => setShowBreedModal(true)}
-                                >
-                                    <Text style={breed ? styles.inputText : styles.placeholderText}>
-                                        {breed || "Select breed type"}
-                                    </Text>
-                                    <IconSymbol ios_icon_name="chevron.down" android_material_icon_name="expand-more" size={20} color={designSystem.colors.primary[500]} />
-                                </TouchableOpacity>
-                            ) : (
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Enter breed or type"
-                                    placeholderTextColor={designSystem.colors.text.tertiary}
-                                    value={breed}
-                                    onChangeText={setBreed}
-                                />
-                            )}
+                            <TouchableOpacity
+                                style={styles.dropdownTrigger}
+                                onPress={() => setShowBreedModal(true)}
+                            >
+                                <Text style={breed ? styles.inputText : styles.placeholderText}>
+                                    {breed || "Select breed type"}
+                                </Text>
+                                <IconSymbol ios_icon_name="chevron.down" android_material_icon_name="expand-more" size={20} color={designSystem.colors.primary[500]} />
+                            </TouchableOpacity>
                         </View>
+                    )}
 
-                        {/* Gender Selection */}
+                    {/* Date of Birth */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>DATE OF BIRTH</Text>
+                        <View style={styles.dateInputContainer}>
+                            <TextInput
+                                style={styles.dateInput}
+                                placeholder="MM/DD/YYYY"
+                                placeholderTextColor={designSystem.colors.text.tertiary}
+                                value={dateOfBirth ? dateOfBirth.toLocaleDateString() : ''}
+                                editable={false}
+                            />
+                            <TouchableOpacity
+                                style={styles.calendarButton}
+                                onPress={() => setShowDatePicker(true)}
+                            >
+                                <IconSymbol
+                                    ios_icon_name="calendar"
+                                    android_material_icon_name="event"
+                                    size={20}
+                                    color={designSystem.colors.primary[500]}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        {dateOfBirth && (
+                            <Text style={styles.hint}>Age: {formatAge(dateOfBirth)}</Text>
+                        )}
+                    </View>
+
+                    {/* Weight and Height on one row */}
+                    <View style={styles.row}>
                         <View style={styles.col}>
-                            <Text style={styles.label}>GENDER</Text>
-                            <View style={styles.genderRow}>
-                                <TouchableOpacity
-                                    style={[styles.genderCard, gender === 'male' && styles.genderCardSelected]}
-                                    onPress={() => setGender('male')}
-                                >
-                                    <IconSymbol
-                                        ios_icon_name="circle" // SFSymbol fallback
-                                        android_material_icon_name="male"
-                                        size={28}
-                                        color={gender === 'male' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
-                                    />
-                                    <Text style={[styles.genderLabel, gender === 'male' && styles.genderLabelSelected]}>Male</Text>
-                                    {gender === 'male' && (
-                                        <View style={styles.checkIcon}>
-                                            <IconSymbol ios_icon_name="checkmark.circle.fill" android_material_icon_name="check-circle" size={18} color={designSystem.colors.primary[500]} />
-                                        </View>
-                                    )}
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.genderCard, gender === 'female' && styles.genderCardSelected]}
-                                    onPress={() => setGender('female')}
-                                >
-                                    <IconSymbol
-                                        ios_icon_name="circle" // SFSymbol fallback
-                                        android_material_icon_name="female"
-                                        size={28}
-                                        color={gender === 'female' ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
-                                    />
-                                    <Text style={[styles.genderLabel, gender === 'female' && styles.genderLabelSelected]}>Female</Text>
-                                    {gender === 'female' && (
-                                        <View style={styles.checkIcon}>
-                                            <IconSymbol ios_icon_name="checkmark.circle.fill" android_material_icon_name="check-circle" size={18} color={designSystem.colors.primary[500]} />
-                                        </View>
-                                    )}
-                                </TouchableOpacity>
+                            <Text style={styles.label}>WEIGHT</Text>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput
+                                    style={[styles.input, { flex: 1 }]}
+                                    placeholder="0.0"
+                                    keyboardType="numeric"
+                                    value={weight}
+                                    onChangeText={setWeight}
+                                    placeholderTextColor={designSystem.colors.text.tertiary}
+                                />
+                                <View style={styles.toggle}>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, weightUnit === 'kg' && styles.toggleSelected]}
+                                        onPress={() => setWeightUnit('kg')}
+                                    >
+                                        <Text style={[styles.toggleText, weightUnit === 'kg' && styles.toggleTextSelected]}>KG</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, weightUnit === 'lbs' && styles.toggleSelected]}
+                                        onPress={() => setWeightUnit('lbs')}
+                                    >
+                                        <Text style={[styles.toggleText, weightUnit === 'lbs' && styles.toggleTextSelected]}>LBS</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
 
-                        {/* Date of Birth Custom Picker */}
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>DATE OF BIRTH</Text>
-                            <TouchableOpacity
-                                style={styles.dateTrigger}
-                                onPress={() => setShowDatePicker(true)}
-                            >
-                                <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
-                                <Text style={dateOfBirth ? styles.inputText : styles.placeholderText}>
-                                    {dateOfBirth ? dateOfBirth.toLocaleDateString() : 'MM/DD/YYYY'}
-                                </Text>
-                            </TouchableOpacity>
-                            {dateOfBirth && (
-                                <Text style={styles.hint}>Age: {formatAge(dateOfBirth)}</Text>
-                            )}
+                        <View style={styles.col}>
+                            <Text style={styles.label}>HEIGHT</Text>
+                            <View style={styles.inputWithUnit}>
+                                <TextInput
+                                    style={[styles.input, { flex: 1 }]}
+                                    placeholder="0.0"
+                                    keyboardType="numeric"
+                                    value={height}
+                                    onChangeText={setHeight}
+                                    placeholderTextColor={designSystem.colors.text.tertiary}
+                                />
+                                <View style={styles.toggle}>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, heightUnit === 'cm' && styles.toggleSelected]}
+                                        onPress={() => setHeightUnit('cm')}
+                                    >
+                                        <Text style={[styles.toggleText, heightUnit === 'cm' && styles.toggleTextSelected]}>CM</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.toggleOption, heightUnit === 'in' && styles.toggleSelected]}
+                                        onPress={() => setHeightUnit('in')}
+                                    >
+                                        <Text style={[styles.toggleText, heightUnit === 'in' && styles.toggleTextSelected]}>IN</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
                     </View>
+
+                    {/* Blood Type */}
+                    <ModernSelect
+                        label="BLOOD TYPE (Optional)"
+                        placeholder="Select blood type"
+                        value={bloodType}
+                        options={BLOOD_TYPES}
+                        onChange={setBloodType}
+                        searchable
+                    />
                 </View>
                 <View style={{ height: Platform.OS === 'web' ? 100 : 160 }} />
             </ScrollView>
@@ -246,8 +288,35 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 16,
     },
-    col: {
-        flex: 1,
+    col: { flex: 1, gap: 8 },
+    inputWithUnit: {
+        flexDirection: 'row',
+        gap: 8,
+        alignItems: 'center',
+    },
+    toggle: {
+        flexDirection: 'row',
+        backgroundColor: designSystem.colors.neutral[100],
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    toggleOption: {
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        minWidth: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    toggleSelected: {
+        backgroundColor: designSystem.colors.primary[500],
+    },
+    toggleText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: designSystem.colors.text.secondary,
+    },
+    toggleTextSelected: {
+        color: designSystem.colors.neutral[0],
     },
     inputGroup: { gap: 8 },
     label: { ...(designSystem.typography.label.small as any), color: designSystem.colors.text.secondary, letterSpacing: 1, fontWeight: '700' },
@@ -266,6 +335,26 @@ const styles = StyleSheet.create({
         backgroundColor: designSystem.colors.neutral[0], borderWidth: 1, borderColor: designSystem.colors.neutral[200],
         borderRadius: 12, paddingHorizontal: 16, paddingLeft: 48, paddingVertical: 16, ...designSystem.shadows.sm,
         position: 'relative',
+    },
+    dateInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        ...designSystem.shadows.sm,
+    },
+    dateInput: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        fontSize: 16,
+        color: designSystem.colors.text.primary,
+    },
+    calendarButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 16,
     },
     inputText: { fontSize: 16, color: designSystem.colors.text.primary },
     placeholderText: { fontSize: 16, color: designSystem.colors.text.tertiary },

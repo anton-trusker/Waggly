@@ -6,7 +6,6 @@ import WizardLayout from '@/components/features/pets/wizard/WizardLayout';
 import Step1BasicInfo, { Step1Data } from '@/components/features/pets/wizard/Step1BasicInfo';
 import Step2Details, { Step2Data } from '@/components/features/pets/wizard/Step2Details';
 import Step3Identification, { Step3Data } from '@/components/features/pets/wizard/Step3Identification';
-import Step4Contacts, { Step4Data } from '@/components/features/pets/wizard/Step4Contacts';
 import Step5Review from '@/components/features/pets/wizard/Step5Review';
 import { usePets } from '@/hooks/usePets';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +13,7 @@ import { uploadPetPhoto } from '@/lib/storage';
 import { supabase } from '@/lib/supabase';
 
 // Combined Data Type
-type WizardData = Step1Data & Step2Data & Step3Data & Step4Data;
+type WizardData = Step1Data & Step2Data & Step3Data;
 
 const INITIAL_DATA: WizardData = {
     name: '',
@@ -99,7 +98,6 @@ export default function AddPetWizardScreen() {
                 height: formData.height > 0 ? finalHeightCm : undefined,
                 blood_type: formData.bloodType || undefined,
                 microchip_number: formData.microchipNumber || undefined,
-                registry_provider: formData.registryProvider || undefined,
                 microchip_implantation_date: formData.implantationDate ? formData.implantationDate.toISOString().split('T')[0] : undefined,
                 registration_id: formData.tagId || undefined,
             });
@@ -208,12 +206,6 @@ export default function AddPetWizardScreen() {
                 />
             )}
             {step === 4 && (
-                <Step4Contacts
-                    initialData={formData}
-                    onNext={handleNextStep4}
-                />
-            )}
-            {step === 5 && (
                 <Step5Review
                     data={formData}
                     onSubmit={handleSubmit}
