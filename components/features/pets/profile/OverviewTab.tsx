@@ -72,7 +72,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport }: Ove
             {/* Quick Actions Row */}
             <View style={styles.quickActionsRow}>
                 {[
-                    { id: 'visit', label: 'Book Visit', icon: 'calendar_today', iosIcon: 'calendar', colors: ['#3B82F6', '#60A5FA'] },
+                    { id: 'visit', label: 'Book Visit', icon: 'event', iosIcon: 'calendar', colors: ['#3B82F6', '#60A5FA'] },
                     { id: 'vaccine', label: 'Add Vaccine', icon: 'vaccines', iosIcon: 'syringe', colors: ['#EC4899', '#F472B6'] },
                     { id: 'meds', label: 'Add Meds', icon: 'medication', iosIcon: 'pills', colors: ['#8B5CF6', '#A78BFA'] },
                     { id: 'vet', label: 'Add Vet', icon: 'medical_services', iosIcon: 'cross', colors: ['#F97316', '#FB923C'], onPress: onAddVet },

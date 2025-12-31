@@ -45,46 +45,70 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     try {
+      // Use window.location.origin for web, or allow Supabase to handle default for native
+      const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: false
+          redirectTo,
+          // skipBrowserRedirect: false // Default is false, removing explicit set to avoid issues
         }
       });
 
       if (error) {
         console.error('Google login error:', error);
-        Alert.alert('Login Failed', 'Google authentication failed. Please try again.');
+        Alert.alert('Login Failed', error.message || 'Google authentication failed.');
       }
     } catch (error: any) {
       console.error('Google login failed:', error);
-      Alert.alert('Login Failed', error.message || 'Google authentication failed. Please try again.');
+      Alert.alert('Login Failed', error.message || 'An unexpected error occurred.');
     }
   };
 
   const handleAppleLogin = async () => {
+    // Hidden per request
+    return;
+    /*
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: false
         }
       });
-
-      if (error) {
-        console.error('Apple login error:', error);
-        Alert.alert('Login Failed', 'Apple authentication failed. Please try again.');
-      }
-    } catch (error: any) {
-      console.error('Apple login failed:', error);
-      Alert.alert('Login Failed', error.message || 'Apple authentication failed. Please try again.');
-    }
+      // ...
+    } catch (error) { ... }
+    */
   };
+
+  const renderDesktopHeader = () => (
+    <View style={styles.desktopHeader}>
+      <View style={styles.desktopLogoContainer}>
+        <IconSymbol android_material_icon_name="pets" size={28} color={designSystem.colors.primary[600]} />
+      </View>
+      <Text style={styles.desktopAppName}>Pawzly</Text>
+    </View>
+  );
+
+  const renderMobileHeader = () => (
+    <View style={styles.mobileHeader}>
+      <View style={styles.logoContainer}>
+        <IconSymbol android_material_icon_name="pets" size={40} color={designSystem.colors.primary[600]} />
+      </View>
+      <Text style={styles.appName}>Pawzly</Text>
+    </View>
+  );
 
   const renderForm = () => (
     <View style={[styles.formContainer, isDesktop && styles.formContainerDesktop]}>
+      {/* Dynamic Headers based on platform/view within the form flow if needed, but we place them outside in main render usually. 
+          However, for Mobile, "In center before Form" suggests inside scrollview.
+          For Desktop, "Add Header...". We'll put it top left of form panel.
+      */}
+      {!isDesktop && renderMobileHeader()}
+      {isDesktop && renderDesktopHeader()}
+
       <Text style={styles.title}>Welcome back</Text>
       <Text style={styles.subtitle}>Sign in to continue to Pawzly</Text>
 
@@ -140,6 +164,7 @@ export default function LoginScreen() {
           <Text style={styles.socialButtonText}>Google</Text>
         </TouchableOpacity>
 
+        {/* Hidden Apple Signin 
         <TouchableOpacity
           style={styles.socialButton}
           onPress={handleAppleLogin}
@@ -147,6 +172,7 @@ export default function LoginScreen() {
           <IconSymbol android_material_icon_name="apple" size={20} color={designSystem.colors.text.primary} />
           <Text style={styles.socialButtonText}>Apple</Text>
         </TouchableOpacity>
+        */}
       </View>
 
       <View style={styles.footer}>
@@ -203,6 +229,7 @@ const styles = StyleSheet.create({
   desktopFormPanel: {
     flex: 1,
     backgroundColor: designSystem.colors.background.primary,
+    justifyContent: 'center', // Center vertically
   },
   desktopScrollContent: {
     flexGrow: 1,
@@ -219,8 +246,50 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 40,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     paddingTop: 60,
+  },
+
+  // Header Logic
+  mobileHeader: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  desktopHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 48,
+    gap: 12,
+  },
+
+  logoContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: designSystem.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  desktopLogoContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: designSystem.colors.primary[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  appName: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: designSystem.colors.text.primary,
+    letterSpacing: -0.5,
+  },
+  desktopAppName: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: designSystem.colors.text.primary,
+    letterSpacing: -0.5,
   },
 
   // Form Container
@@ -229,16 +298,17 @@ const styles = StyleSheet.create({
   },
   formContainerDesktop: {
     maxWidth: 480,
+    alignSelf: 'center', // Ensure centered in panel
   },
 
   // Typography
   title: {
-    ...designSystem.typography.headline.medium,
+    ...(designSystem.typography.headline.medium as any),
     color: designSystem.colors.text.primary,
     marginBottom: 8,
   },
   subtitle: {
-    ...designSystem.typography.body.large,
+    ...(designSystem.typography.body.large as any),
     color: designSystem.colors.text.secondary,
     marginBottom: 32,
   },
@@ -253,7 +323,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   forgotPasswordText: {
-    ...designSystem.typography.label.medium,
+    ...(designSystem.typography.label.medium as any),
     color: designSystem.colors.primary[500],
   },
 
@@ -269,7 +339,7 @@ const styles = StyleSheet.create({
     backgroundColor: designSystem.colors.border.primary,
   },
   orText: {
-    ...designSystem.typography.body.small,
+    ...(designSystem.typography.body.small as any),
     color: designSystem.colors.text.tertiary,
     paddingHorizontal: 16,
   },
@@ -292,7 +362,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   socialButtonText: {
-    ...designSystem.typography.body.medium,
+    ...(designSystem.typography.body.medium as any),
     color: designSystem.colors.text.primary,
     fontWeight: '600',
   },
@@ -317,11 +387,11 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   footerText: {
-    ...designSystem.typography.body.medium,
+    ...(designSystem.typography.body.medium as any),
     color: designSystem.colors.text.secondary,
   },
   signUpLink: {
-    ...designSystem.typography.body.medium,
+    ...(designSystem.typography.body.medium as any),
     color: designSystem.colors.primary[500],
     fontWeight: 'bold',
   },

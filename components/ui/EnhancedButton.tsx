@@ -15,6 +15,8 @@ export interface ButtonProps extends TouchableOpacityProps {
   disabled?: boolean;
   fullWidth?: boolean;
   rounded?: boolean;
+  textStyle?: any;
+  iconColor?: string;
 }
 
 export function Button({
@@ -28,24 +30,26 @@ export function Button({
   fullWidth = false,
   rounded = false,
   style,
+  textStyle,
+  iconColor,
   ...props
 }: ButtonProps) {
   const [isPressed, setIsPressed] = useState(false);
   const { t } = useLocale();
-  
+
   const getVariantStyles = () => {
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: disabled || loading 
-            ? designSystem.colors.primary[300] 
+          backgroundColor: disabled || loading
+            ? designSystem.colors.primary[300]
             : designSystem.colors.primary[500],
           borderColor: 'transparent',
         };
       case 'secondary':
         return {
-          backgroundColor: disabled || loading 
-            ? designSystem.colors.neutral[100] 
+          backgroundColor: disabled || loading
+            ? designSystem.colors.neutral[100]
             : designSystem.colors.neutral[0],
           borderColor: designSystem.colors.neutral[300],
           borderWidth: 1,
@@ -62,8 +66,8 @@ export function Button({
         };
       case 'danger':
         return {
-          backgroundColor: disabled || loading 
-            ? designSystem.colors.error[100] 
+          backgroundColor: disabled || loading
+            ? designSystem.colors.error[100]
             : designSystem.colors.error[500],
           borderColor: 'transparent',
         };
@@ -71,7 +75,7 @@ export function Button({
         return {};
     }
   };
-  
+
   const getSizeStyles = () => {
     switch (size) {
       case 'sm':
@@ -93,7 +97,7 @@ export function Button({
         return {};
     }
   };
-  
+
   const getTextColor = () => {
     if (disabled || loading) {
       switch (variant) {
@@ -109,7 +113,7 @@ export function Button({
           return designSystem.colors.text.primary;
       }
     }
-    
+
     switch (variant) {
       case 'primary':
       case 'danger':
@@ -123,7 +127,7 @@ export function Button({
         return designSystem.colors.text.primary;
     }
   };
-  
+
   const getTextSize = () => {
     switch (size) {
       case 'sm':
@@ -136,7 +140,7 @@ export function Button({
         return designSystem.typography.label.medium;
     }
   };
-  
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -156,16 +160,16 @@ export function Button({
     >
       <View style={styles.content}>
         {loading && (
-          <ActivityIndicator 
-            size="small" 
-            color={variant === 'primary' || variant === 'danger' 
-              ? designSystem.colors.text.inverse 
+          <ActivityIndicator
+            size="small"
+            color={variant === 'primary' || variant === 'danger'
+              ? designSystem.colors.text.inverse
               : designSystem.colors.primary[500]
             }
             style={styles.loadingIndicator}
           />
         )}
-        
+
         {icon && iconPosition === 'left' && !loading && (
           <IconSymbol
             android_material_icon_name={icon}
@@ -175,7 +179,7 @@ export function Button({
             style={styles.leftIcon}
           />
         )}
-        
+
         <Text style={[
           styles.text,
           getTextSize(),
@@ -183,7 +187,7 @@ export function Button({
         ]}>
           {t(title, { defaultValue: title })}
         </Text>
-        
+
         {icon && iconPosition === 'right' && !loading && (
           <IconSymbol
             android_material_icon_name={icon}

@@ -1,333 +1,231 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, useWindowDimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import WizardStepBasicInfo from '@/components/desktop/pets/wizard/WizardStepBasicInfo';
-import WizardStepContactInfo from '@/components/desktop/pets/wizard/WizardStepContactInfo';
-import WizardStepDetails from '@/components/desktop/pets/wizard/WizardStepDetails';
-import WizardStepReview from '@/components/desktop/pets/wizard/WizardStepReview';
+import { Alert } from 'react-native';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import WizardLayout from '@/components/features/pets/wizard/WizardLayout';
+import Step1BasicInfo, { Step1Data } from '@/components/features/pets/wizard/Step1BasicInfo';
+import Step2Details, { Step2Data } from '@/components/features/pets/wizard/Step2Details';
+import Step3Identification, { Step3Data } from '@/components/features/pets/wizard/Step3Identification';
+import Step4Contacts, { Step4Data } from '@/components/features/pets/wizard/Step4Contacts';
+import Step5Review from '@/components/features/pets/wizard/Step5Review';
+import { usePets } from '@/hooks/usePets';
+import { useAuth } from '@/contexts/AuthContext';
 import { uploadPetPhoto } from '@/lib/storage';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
-import { designSystem } from '@/constants/designSystem';
 
-const STEPS = ['Basic Info', 'Contact Info', 'Details', 'Review'];
+// Combined Data Type
+type WizardData = Step1Data & Step2Data & Step3Data & Step4Data;
 
-export default function AddPetPage() {
-    const router = useRouter();
+const INITIAL_DATA: WizardData = {
+    name: '',
+    species: 'dog',
+    photoUri: undefined,
+    breed: '',
+    gender: 'male',
+    dateOfBirth: undefined,
+    weight: 0,
+    weightUnit: 'kg',
+    height: 0,
+    heightUnit: 'cm',
+    bloodType: '',
+    microchipNumber: '',
+    registryProvider: '',
+    implantationDate: undefined,
+    tagId: '',
+    vetClinicName: '',
+    vetName: '',
+    vetAddress: '',
+    vetCountry: '',
+    vetPhone: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+};
+
+export default function AddPetWizardScreen() {
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState<WizardData>(INITIAL_DATA);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { t } = useTranslation();
+    const { addPet, updatePet } = usePets();
     const { user } = useAuth();
-    const [currentStep, setCurrentStep] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const { width } = useWindowDimensions();
-    const isMobile = width < 768;
 
-    const [formData, setFormData] = useState({
-        // Basic Info
-        name: '',
-        species: '',
-        breed: '',
-        color: '',
-        gender: '',
-        date_of_birth: '',
-        weight: 0,
-        weight_unit: 'kg',
-        photoUri: undefined as string | undefined,
-        // Contact Info
-        microchip_number: '',
-        vet_name: '',
-        vet_clinic_name: '',
-        vet_address: '',
-        vet_country: '',
-        vet_phone: '',
-        emergency_contact_name: '',
-        emergency_contact_phone: '',
-        // Details
-        allergies: [],
-        special_needs: '',
-        notes: '',
-        is_spayed_neutered: false,
-    });
+    const totalSteps = 5;
 
-    const handleNext = () => {
-        if (currentStep < STEPS.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
+    const updateData = (data: Partial<WizardData>) => {
+        setFormData(prev => ({ ...prev, ...data }));
+    };
+
+    const handleNextStep1 = (data: Step1Data) => {
+        updateData(data);
+        setStep(2);
+    };
+
+    const handleNextStep2 = (data: Step2Data) => {
+        updateData(data);
+        setStep(3);
+    };
+
+    const handleNextStep3 = (data: Step3Data) => {
+        updateData(data);
+        setStep(4);
+    };
+
+    const handleNextStep4 = (data: Step4Data) => {
+        updateData(data);
+        setStep(5);
     };
 
     const handleBack = () => {
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
+        if (step > 1) {
+            setStep(step - 1);
         } else {
             router.back();
         }
     };
 
     const handleSubmit = async () => {
-        if (!user) return;
-
-        setLoading(true);
+        setIsSubmitting(true);
         try {
-            const { data, error } = await supabase
-                .from('pets')
-                .insert({
-                    user_id: user.id,
-                    name: formData.name,
-                    species: formData.species,
-                    breed: formData.breed || null,
-                    color: formData.color || null,
-                    gender: formData.gender || null,
-                    date_of_birth: formData.date_of_birth || null,
-                    weight: formData.weight || null,
-                    weight_unit: formData.weight_unit,
-                    microchip_number: formData.microchip_number || null,
-                    notes: formData.notes || null,
-                    is_spayed_neutered: formData.is_spayed_neutered,
-                })
-                .select()
-                .single();
+            // 1. Create Pet
+            const finalWeightKg = formData.weightUnit === 'kg'
+                ? formData.weight
+                : Number((formData.weight * 0.453592).toFixed(2));
 
-            if (error) throw error;
+            const finalHeightCm = formData.heightUnit === 'cm'
+                ? formData.height
+                : Number((formData.height * 2.54).toFixed(2));
 
-            const petId = data.id;
+            const { data: petData, error: petError } = await addPet({
+                name: formData.name.trim(),
+                species: formData.species,
+                breed: formData.breed || undefined,
+                gender: formData.gender,
+                date_of_birth: formData.dateOfBirth ? formData.dateOfBirth.toISOString().split('T')[0] : undefined,
+                weight: formData.weight > 0 ? finalWeightKg : undefined,
+                height: formData.height > 0 ? finalHeightCm : undefined,
+                blood_type: formData.bloodType || undefined,
+                microchip_number: formData.microchipNumber || undefined,
+                registry_provider: formData.registryProvider || undefined,
+                microchip_implantation_date: formData.implantationDate ? formData.implantationDate.toISOString().split('T')[0] : undefined,
+                registration_id: formData.tagId || undefined,
+            });
 
-            // Create Veterinarian (if provided)
-            if (formData.vet_clinic_name) {
-                await supabase
-                    .from('veterinarians')
-                    .insert({
-                        pet_id: petId,
-                        clinic_name: formData.vet_clinic_name,
-                        vet_name: formData.vet_name || undefined,
-                        address: formData.vet_address || undefined,
-                        country: formData.vet_country || undefined,
-                        phone: formData.vet_phone || undefined,
-                        is_primary: true,
-                    });
+            if (petError || !petData) {
+                throw new Error(petError?.message ?? 'Failed to create pet');
             }
 
-            // Upload Photo if exists
-            if (formData.photoUri) {
+            const petId = (petData as any).id;
+
+            // 2. Upload Photo (if any)
+            if (formData.photoUri && user) {
                 try {
                     const uploadedUrl = await uploadPetPhoto(user.id, petId, formData.photoUri);
                     if (uploadedUrl) {
-                        await supabase
-                            .from('pets')
-                            .update({ photo_url: uploadedUrl })
-                            .eq('id', petId);
+                        await updatePet(petId, { photo_url: uploadedUrl });
                     }
                 } catch (photoError) {
                     console.warn('Photo upload failed but pet created:', photoError);
+                    // Non-blocking
                 }
             }
 
-            Alert.alert('Success', 'Pet added successfully!');
-            router.replace(`/(tabs)/pets/${data.id}/overview` as any); // Navigate to new pet profile
+            // 3. Create Veterinarian (if provided)
+            if (formData.vetClinicName) {
+                const { error: vetError } = await (supabase as any)
+                    .from('veterinarians')
+                    .insert({
+                        pet_id: petId,
+                        clinic_name: formData.vetClinicName,
+                        vet_name: formData.vetName || undefined,
+                        address: formData.vetAddress || undefined,
+                        country: formData.vetCountry || undefined,
+                        phone: formData.vetPhone || undefined,
+                        is_primary: true,
+                    } as any);
+
+                if (vetError) {
+                    console.error('Failed to save vet info:', vetError);
+                }
+            }
+
+            // 4. Create Emergency Contact (if provided)
+            if (formData.emergencyContactName) {
+                const { error: emergencyError } = await (supabase as any)
+                    .from('emergency_contacts')
+                    .insert({
+                        pet_id: petId,
+                        name: formData.emergencyContactName,
+                        phone: formData.emergencyContactPhone || undefined,
+                    } as any);
+
+                if (emergencyError) {
+                    console.error('Failed to save emergency contact:', emergencyError);
+                }
+            }
+
+            Alert.alert(
+                'Success!',
+                `${formData.name} has been added to your family.`,
+                [{ text: 'OK', onPress: () => router.replace('/(tabs)/(home)') }]
+            );
+
         } catch (error: any) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Error', error.message || 'Something went wrong.');
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
+        }
+    };
+
+    const getStepTitle = () => {
+        switch (step) {
+            case 1: return 'Basic Info';
+            case 2: return 'Details';
+            case 3: return 'Health & ID';
+            case 4: return 'Contacts';
+            case 5: return 'Review';
+            default: return '';
         }
     };
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.content, isMobile && styles.contentMobile]}>
-                {/* Header */}
-                <View style={[styles.header, isMobile && styles.headerMobile]}>
-                    <Text style={[styles.title, { color: designSystem.colors.text.primary }]}>Add New Pet</Text>
-                    <TouchableOpacity onPress={() => router.back()}>
-                        <Ionicons name="close" size={24} color={designSystem.colors.text.tertiary} />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Progress Stepper */}
-                <View style={[styles.stepper, isMobile && styles.stepperMobile]}>
-                    {STEPS.map((step, index) => (
-                        <View key={index} style={styles.stepperItem}>
-                            <View style={styles.stepperLine}>
-                                {index > 0 && (
-                                    <View
-                                        style={[
-                                            styles.stepperLineSegment,
-                                            index <= currentStep && { backgroundColor: designSystem.colors.primary[500] },
-                                        ]}
-                                    />
-                                )}
-                            </View>
-                            <View
-                                style={[
-                                    styles.stepperCircle,
-                                    index <= currentStep && {
-                                        borderColor: designSystem.colors.primary[500],
-                                        backgroundColor: designSystem.colors.primary[500]
-                                    },
-                                ]}
-                            >
-                                {index < currentStep ? (
-                                    <Ionicons name="checkmark" size={16} color="#fff" />
-                                ) : (
-                                    <Text
-                                        style={[
-                                            styles.stepperNumber,
-                                            index <= currentStep && { color: '#fff' },
-                                        ]}
-                                    >
-                                        {index + 1}
-                                    </Text>
-                                )}
-                            </View>
-                            <Text
-                                style={[
-                                    styles.stepperLabel,
-                                    index <= currentStep && {
-                                        color: designSystem.colors.primary[500],
-                                        fontWeight: '600'
-                                    },
-                                ]}
-                            >
-                                {step}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-
-                {/* Step Content */}
-                <View style={[styles.stepContent, isMobile && styles.stepContentMobile]}>
-                    {currentStep === 0 && (
-                        <WizardStepBasicInfo
-                            formData={formData}
-                            onUpdate={setFormData as any}
-                            onNext={handleNext}
-                        />
-                    )}
-                    {currentStep === 1 && (
-                        <WizardStepContactInfo
-                            formData={formData}
-                            onUpdate={setFormData as any}
-                            onNext={handleNext}
-                            onBack={handleBack}
-                        />
-                    )}
-                    {currentStep === 2 && (
-                        <WizardStepDetails
-                            formData={formData}
-                            onUpdate={setFormData as any}
-                            onNext={handleNext}
-                            onBack={handleBack}
-                        />
-                    )}
-                    {currentStep === 3 && (
-                        <WizardStepReview
-                            formData={formData}
-                            onBack={handleBack}
-                            onSubmit={handleSubmit}
-                            loading={loading}
-                        />
-                    )}
-                </View>
-
-                {/* Navigation Footer (if not handled inside steps) */}
-                {/* Note: Standard WizardSteps handle navigation buttons internally? 
-                    WizardStepBasicInfo has internal Next button (line 287 of Step 2911). 
-                    Let's assume others do too, so we only need Back button for steps > 0 IF steps don't have it.
-                    Step 2911 shows only Next button. 
-                    Let's keep the Back button footer here just in case, but position it carefully. 
-                    Actually, we pass onBack to steps > 0 (lines 191, 196, 201), so they might handle it.
-                */}
-
-            </View>
-        </View>
+        <WizardLayout
+            currentStep={step}
+            totalSteps={totalSteps}
+            title={getStepTitle()}
+            onBack={handleBack}
+        >
+            {step === 1 && (
+                <Step1BasicInfo
+                    initialData={formData}
+                    onNext={handleNextStep1}
+                />
+            )}
+            {step === 2 && (
+                <Step2Details
+                    initialData={formData}
+                    species={formData.species}
+                    onNext={handleNextStep2}
+                />
+            )}
+            {step === 3 && (
+                <Step3Identification
+                    initialData={formData}
+                    onNext={handleNextStep3}
+                />
+            )}
+            {step === 4 && (
+                <Step4Contacts
+                    initialData={formData}
+                    onNext={handleNextStep4}
+                />
+            )}
+            {step === 5 && (
+                <Step5Review
+                    data={formData}
+                    onSubmit={handleSubmit}
+                    isSubmitting={isSubmitting}
+                />
+            )}
+        </WizardLayout>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: designSystem.colors.background.primary,
-    },
-    content: {
-        flex: 1,
-        maxWidth: 800,
-        alignSelf: 'center',
-        width: '100%',
-        padding: 32,
-    },
-    contentMobile: {
-        padding: 16,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 32,
-        paddingTop: 16, // Safe area padding
-    },
-    headerMobile: {
-        marginBottom: 24,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: '700',
-    },
-    stepper: {
-        flexDirection: 'row',
-        marginBottom: 40,
-        position: 'relative',
-    },
-    stepperMobile: {
-        marginBottom: 24,
-    },
-    stepperItem: {
-        flex: 1,
-        alignItems: 'center',
-        position: 'relative',
-    },
-    stepperLine: {
-        position: 'absolute',
-        left: '50%',
-        right: '-50%',
-        top: 16,
-        height: 2,
-    },
-    stepperLineSegment: {
-        height: 2,
-        backgroundColor: designSystem.colors.neutral[200],
-    },
-    stepperCircle: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#fff',
-        borderWidth: 2,
-        borderColor: designSystem.colors.neutral[200],
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-        zIndex: 1,
-    },
-    stepperNumber: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: designSystem.colors.text.secondary,
-    },
-    stepperLabel: {
-        fontSize: 12,
-        color: designSystem.colors.text.secondary,
-        textAlign: 'center',
-    },
-    stepContent: {
-        flex: 1,
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        overflow: 'hidden',
-        // shadows
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    stepContentMobile: {
-        borderRadius: 12,
-    },
-});

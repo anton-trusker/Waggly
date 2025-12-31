@@ -31,7 +31,7 @@ const MobileShell: React.FC<MobileShellProps> = ({ children }) => {
         {
             name: 'calendar',
             label: 'Calendar',
-            icon: 'calendar_today' as any,
+            icon: 'event' as any,
             route: '/web/calendar',
         },
         {

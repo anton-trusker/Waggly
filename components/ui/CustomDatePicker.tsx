@@ -9,9 +9,10 @@ interface CustomDatePickerProps {
     date: Date;
     onClose: () => void;
     onConfirm: (date: Date) => void;
+    title?: string;
 }
 
-export default function CustomDatePicker({ visible, date, onClose, onConfirm }: CustomDatePickerProps) {
+export default function CustomDatePicker({ visible, date, onClose, onConfirm, title = "Date of Birth" }: CustomDatePickerProps) {
     const [tempDate, setTempDate] = React.useState(date);
 
     React.useEffect(() => {
@@ -52,7 +53,7 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm }: 
                         <TouchableOpacity onPress={onClose}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text style={styles.title}>Date of Birth</Text>
+                        <Text style={styles.title}>{title}</Text>
                         <TouchableOpacity onPress={() => onConfirm(tempDate)}>
                             <Text style={styles.confirmText}>Confirm</Text>
                         </TouchableOpacity>

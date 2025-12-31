@@ -9,6 +9,7 @@ import OverviewTab from './overview';
 import PassportTab from './passport';
 import DocumentsTab from './documents';
 import HistoryTab from './history';
+import SettingsTab from './settings';
 import ShareModal from '@/components/sharing/ShareModal';
 import ActiveLinksList from '@/components/sharing/ActiveLinksList';
 import Button from '@/components/ui/Button';
@@ -21,7 +22,7 @@ export default function PetDetailsPage() {
     const { pets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
-    const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'documents' | 'share' | 'history'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'documents' | 'share' | 'history' | 'settings'>('overview');
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
     const [editProfileModalVisible, setEditProfileModalVisible] = useState(false);
@@ -81,7 +82,7 @@ export default function PetDetailsPage() {
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
                         {/* Sticky Tabs Header (simulated placement) */}
                         <View style={styles.mobileTabs}>
-                            {['Overview', 'Passport', 'Documents', 'Share', 'History'].map((tab) => {
+                            {['Overview', 'Passport', 'Documents', 'Share', 'History', 'Settings'].map((tab) => {
                                 const key = tab.toLowerCase() as any;
                                 const isActive = activeTab === key;
                                 return (
@@ -146,6 +147,7 @@ export default function PetDetailsPage() {
                             {activeTab === 'passport' && <PassportTab />}
                             {activeTab === 'documents' && <DocumentsTab />}
                             {activeTab === 'history' && <HistoryTab />}
+                            {activeTab === 'settings' && <SettingsTab />}
                         </View>
                     </ScrollView>
                 </>
@@ -253,6 +255,14 @@ export default function PetDetailsPage() {
                                 History
                             </Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'settings' && styles.tabActive]}
+                            onPress={() => setActiveTab('settings')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'settings' && styles.tabTextActive]}>
+                                Settings
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Desktop Tab Content */}
@@ -270,6 +280,7 @@ export default function PetDetailsPage() {
                             </View>
                         )}
                         {activeTab === 'history' && <HistoryTab />}
+                        {activeTab === 'settings' && <SettingsTab />}
                     </ScrollView>
                 </>
             )}

@@ -22,7 +22,7 @@ const getQuickActions = (theme: typeof designSystem): QuickAction[] => [
     {
         id: 'visit',
         label: 'Book Visit',
-        icon: 'calendar_today',
+        icon: 'event',
         iosIcon: 'calendar',
         colors: [theme.colors.primary[500], theme.colors.primary[400]],
     },
@@ -43,14 +43,14 @@ const getQuickActions = (theme: typeof designSystem): QuickAction[] => [
     {
         id: 'weight',
         label: 'Add Weight',
-        icon: 'monitor_weight',
+        icon: 'fitness_center',
         iosIcon: 'scalemass',
         colors: [theme.colors.status.warning[500], theme.colors.status.warning[400]],
     },
     {
         id: 'photo',
         label: 'Add Photo',
-        icon: 'add_a_photo',
+        icon: 'add_photo_alternate',
         iosIcon: 'camera',
         colors: [theme.colors.secondary.paw, theme.colors.secondary.pawLight], // Pink/Red-ish
     },

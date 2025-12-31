@@ -49,7 +49,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
         {
             name: 'calendar',
             label: 'Calendar',
-            icon: 'calendar_today' as any,
+            icon: 'event' as any,
             route: '/web/calendar',
         },
         {

@@ -8,6 +8,7 @@ import {
     Alert,
     KeyboardAvoidingView,
     Platform,
+    useWindowDimensions,
 } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -57,9 +58,24 @@ export default function FormModal<T = any>({
     showBackButton = true,
     headerIcon,
 }: FormModalProps<T>) {
+    const { width } = useWindowDimensions();
     const [formData, setFormData] = useState<T>((initialData || {}) as T);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
+
+    // Responsive modal width
+    const getModalWidth = () => {
+        if (width < 640) return '95%'; // Mobile
+        if (width < 1024) return 600; // Tablet
+        return 700; // Desktop
+    };
+
+    // Responsive padding
+    const getContentPadding = () => {
+        if (width < 640) return 16; // Mobile
+        if (width < 1024) return 24; // Tablet
+        return 32; // Desktop
+    };
 
     // Update single field
     const updateField = useCallback((field: keyof T, value: any) => {
@@ -162,9 +178,9 @@ export default function FormModal<T = any>({
                 style={styles.keyboardAvoid}
             >
                 <View style={styles.overlay}>
-                    <View style={styles.modalContainer} className="w-full max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-xl">
+                    <View style={[styles.modalContainer, { width: getModalWidth(), maxWidth: getModalWidth() }]}>
                         {/* Header */}
-                        <View style={styles.header} className="px-4 sm:px-6 py-4 sm:py-5">
+                        <View style={[styles.header, { paddingHorizontal: getContentPadding(), paddingVertical: width < 640 ? 16 : 20 }]}>
                             <View style={styles.headerContent}>
                                 {headerIcon && (
                                     <IconSymbol
@@ -203,8 +219,7 @@ export default function FormModal<T = any>({
                         {/* Content */}
                         <ScrollView
                             style={styles.scrollView}
-                            contentContainerStyle={styles.scrollContent}
-                            className="p-4 sm:p-5 md:p-6"
+                            contentContainerStyle={[styles.scrollContent, { paddingHorizontal: getContentPadding(), paddingTop: getContentPadding() }]}
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps="handled"
                         >

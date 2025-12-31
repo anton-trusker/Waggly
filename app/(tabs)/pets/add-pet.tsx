@@ -37,6 +37,13 @@ export default function AddPetScreen() {
   const [color, setColor] = useState('');
   const [microchipNumber, setMicrochipNumber] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showEmergencyContact, setShowEmergencyContact] = useState(true); // Expanded by default
+  const [showVet, setShowVet] = useState(false); // Collapsed by default
+  const [emergencyContactName, setEmergencyContactName] = useState('');
+  const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
+  const [vetClinic, setVetClinic] = useState('');
+  const [vetName, setVetName] = useState('');
+  const [vetPhone, setVetPhone] = useState('');
   const [errors, setErrors] = useState<{
     name?: string;
     dateOfBirth?: string;
@@ -135,23 +142,36 @@ export default function AddPetScreen() {
                   />
                   {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
                 </View>
-                <View style={styles.col}>
-                  <EnhancedSelection
-                    label="Species"
-                    value={species}
-                    options={[
-                      { id: 'dog', label: 'Dog', icon: '🐕' },
-                      { id: 'cat', label: 'Cat', icon: '🐈' },
-                      { id: 'other', label: 'Other', icon: '🐾' }
-                    ]}
-                    onSelect={(opt) => {
-                      setSpecies(opt.id as any);
-                      setBreed(''); // Reset breed when species changes
-                    }}
-                    placeholder="Species"
-                    icon="pawprint"
-                    searchable={false}
-                  />
+              </View>
+              {/* Pet Type Selection - Compact Cards */}
+              <View>
+                <Text style={styles.label}>Species</Text>
+                <View style={styles.petTypeRow}>
+                  {[
+                    { id: 'dog', label: 'Dog', icon: '🐕' },
+                    { id: 'cat', label: 'Cat', icon: '🐈' },
+                    { id: 'other', label: 'Other', icon: '🐾' }
+                  ].map((type) => (
+                    <TouchableOpacity
+                      key={type.id}
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      onPress={() => {
+                        setSpecies(type.id as any);
+                        setBreed(''); // Reset breed when species changes
+                      }}
+                    >
+                      <View style={[
+                        styles.petTypeCard,
+                        species === type.id && styles.petTypeCardSelected
+                      ]}>
+                        <Text style={styles.petTypeIcon}>{type.icon}</Text>
+                      </View>
+                      <Text style={[
+                        styles.petTypeLabel,
+                        species === type.id && styles.petTypeLabelSelected
+                      ]}>{type.label}</Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
               </View>
 
@@ -264,8 +284,114 @@ export default function AddPetScreen() {
               </View>
             </View>
 
+            {/* Emergency Contact Section */}
+            <View style={styles.section}>
+              <TouchableOpacity
+                style={styles.collapsibleHeader}
+                onPress={() => setShowEmergencyContact(!showEmergencyContact)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.sectionHeaderContent}>
+                  <IconSymbol ios_icon_name="phone.fill" android_material_icon_name="phone" size={18} color={colors.primary} />
+                  <Text style={styles.sectionTitle}>Emergency Contact</Text>
+                </View>
+                <IconSymbol
+                  ios_icon_name={showEmergencyContact ? "chevron.up" : "chevron.down"}
+                  android_material_icon_name={showEmergencyContact ? "expand-less" : "expand-more"}
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+
+              {showEmergencyContact && (
+                <View style={styles.collapsibleContent}>
+                  <View style={styles.row}>
+                    <View style={styles.col}>
+                      <Text style={styles.label}>Name</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Contact name"
+                        placeholderTextColor={colors.textTertiary}
+                        value={emergencyContactName}
+                        onChangeText={setEmergencyContactName}
+                      />
+                    </View>
+                    <View style={styles.col}>
+                      <Text style={styles.label}>Phone</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Phone number"
+                        placeholderTextColor={colors.textTertiary}
+                        value={emergencyContactPhone}
+                        onChangeText={setEmergencyContactPhone}
+                        keyboardType="phone-pad"
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Veterinarian Section */}
+            <View style={styles.section}>
+              <TouchableOpacity
+                style={styles.collapsibleHeader}
+                onPress={() => setShowVet(!showVet)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.sectionHeaderContent}>
+                  <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="medical-services" size={18} color={colors.primary} />
+                  <Text style={styles.sectionTitle}>Veterinarian</Text>
+                </View>
+                <IconSymbol
+                  ios_icon_name={showVet ? "chevron.up" : "chevron.down"}
+                  android_material_icon_name={showVet ? "expand-less" : "expand-more"}
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+
+              {showVet && (
+                <View style={styles.collapsibleContent}>
+                  <View>
+                    <Text style={styles.label}>Vet Clinic / Hospital</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Vet clinic name"
+                      placeholderTextColor={colors.textTertiary}
+                      value={vetClinic}
+                      onChangeText={setVetClinic}
+                    />
+                  </View>
+                  <View style={styles.row}>
+                    <View style={styles.col}>
+                      <Text style={styles.label}>Vet Name</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Veterinarian name"
+                        placeholderTextColor={colors.textTertiary}
+                        value={vetName}
+                        onChangeText={setVetName}
+                      />
+                    </View>
+                    <View style={styles.col}>
+                      <Text style={styles.label}>Phone</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Phone number"
+                        placeholderTextColor={colors.textTertiary}
+                        value={vetPhone}
+                        onChangeText={setVetPhone}
+                        keyboardType="phone-pad"
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+
             {/* Spacer for bottom button */}
-            <View style={{ height: 100 }} />
+            <View style={{ height: Platform.OS === 'web' ? 100 : 160 }} />
           </ScrollView>
         </TouchableWithoutFeedback>
 
@@ -337,7 +463,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
     marginLeft: 8,
@@ -354,7 +480,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   label: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
     color: colors.textSecondary,
     marginBottom: 6,
@@ -369,7 +495,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 14,
+    fontSize: 15,
     color: colors.text,
     minHeight: 44,
   },
@@ -378,7 +504,58 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: colors.error,
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 4,
+  },
+  petTypeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  petTypeCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 25,
+    height: 25,
+    backgroundColor: colors.background,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: 6,
+  },
+  petTypeCardSelected: {
+    backgroundColor: colors.primaryBackground,
+    borderColor: colors.primary,
+    borderWidth: 2,
+  },
+  petTypeIcon: {
+    fontSize: 16,
+    lineHeight: 16,
+  },
+  petTypeLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    marginLeft: 6,
+  },
+  petTypeLabelSelected: {
+    color: colors.primary,
+  },
+  collapsibleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+    marginBottom: 8,
+  },
+  sectionHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  collapsibleContent: {
+    marginTop: 8,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
 });

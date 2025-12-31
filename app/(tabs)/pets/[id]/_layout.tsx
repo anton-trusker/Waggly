@@ -1,73 +1,45 @@
-import React from 'react';
-import { Tabs, useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, ActivityIndicator } from 'react-native';
-import { useWindowDimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { View, Text, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
-import DesktopPetDetail from '@/components/desktop/pets/DesktopPetDetail';
-import { usePets } from '@/hooks/usePets';
-import { useVeterinarians } from '@/hooks/useVeterinarians';
-import { useConditions } from '@/hooks/useConditions';
-import { Pet } from '@/types';
 import { DesignSystemProvider } from '@/design-system/DesignSystemProvider';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
+/**
+ * This layout handles pet detail routes for both mobile and desktop.
+ * - MOBILE: Shows the tab navigation (Overview, Health, Gallery, Documents)
+ * - DESKTOP: Redirects to /web/pets/[id] for the unified pet detail page
+ */
 export default function PetDetailLayout() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const { width } = useWindowDimensions();
-    const isMobile = width < 768;
     const isDesktop = width >= 1024;
 
-    // Fetch data for Desktop View
-    const { pets, loading: petsLoading } = usePets();
-    const pet = pets.find(p => p.id === id) as Pet | undefined;
-    const { veterinarians, loading: vetsLoading } = useVeterinarians(id || null);
-    const { conditions, loading: conditionsLoading } = useConditions(id || null);
+    // Only redirect on desktop
+    useEffect(() => {
+        if (isDesktop && id) {
+            router.replace(`/web/pets/${id}` as any);
+        }
+    }, [isDesktop, id, router]);
 
-    const handleEdit = () => {
-        // Navigate to edit page (responsive modal or page)
-        // If we have a desktop modal, we could open it here, but router is safer
-        router.push(`/pets/pet-edit?id=${id}`);
-    };
-
-    const handleShare = () => {
-        // Implement share logic or open share modal
-        console.log('Share pet', id);
-    };
-
+    // Desktop: Show loading while redirecting
     if (isDesktop) {
-        if (petsLoading || vetsLoading || conditionsLoading) {
-            return (
-                <DesignSystemProvider>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
-                    </View>
-                </DesignSystemProvider>
-            );
-        }
-
-        if (!pet) {
-            return (
-                <DesignSystemProvider>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text>Pet not found</Text>
-                    </View>
-                </DesignSystemProvider>
-            );
-        }
-
         return (
             <DesignSystemProvider>
-                <DesktopPetDetail
-                    pet={pet}
-                    vets={veterinarians}
-                    conditions={conditions}
-                    onEdit={handleEdit}
-                    onShare={handleShare}
-                />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB' }}>
+                    <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
+                    <Text style={{ marginTop: 16, color: designSystem.colors.text.secondary, fontSize: 14 }}>
+                        Loading pet profile...
+                    </Text>
+                </View>
             </DesignSystemProvider>
         );
     }
+
+    // Mobile: Show tabs navigation
+    const isMobile = width < 768;
 
     return (
         <DesignSystemProvider>
@@ -77,7 +49,6 @@ export default function PetDetailLayout() {
                     tabBarActiveTintColor: designSystem.colors.primary[500],
                     tabBarInactiveTintColor: designSystem.colors.text.secondary,
                     tabBarStyle: {
-                        display: width >= 1024 ? 'none' : 'flex', // Hide on desktop logic redundant but safe
                         backgroundColor: '#fff',
                         borderTopWidth: 1,
                         borderTopColor: designSystem.colors.border.primary,
@@ -136,37 +107,29 @@ export default function PetDetailLayout() {
                         ),
                     }}
                 />
-                {/* Hidden tabs - still accessible via navigation but not shown in tab bar */}
+                {/* Hidden tabs */}
                 <Tabs.Screen
                     name="history"
                     options={{
-                        title: 'History',
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons name="time" size={isMobile ? 24 : size} color={color} />
-                        ),
+                        href: null,
                     }}
                 />
                 <Tabs.Screen
                     name="share"
                     options={{
-                        title: 'Share',
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons name="share-social" size={isMobile ? 24 : size} color={color} />
-                        ),
+                        href: null,
                     }}
                 />
-
-                {/* Hidden tabs */}
                 <Tabs.Screen
                     name="passport"
                     options={{
-                        href: null, // Hide from tab bar
+                        href: null,
                     }}
                 />
                 <Tabs.Screen
                     name="events"
                     options={{
-                        href: null, // Hide from tab bar
+                        href: null,
                     }}
                 />
             </Tabs>

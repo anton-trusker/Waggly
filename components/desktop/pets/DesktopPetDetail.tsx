@@ -14,12 +14,13 @@ interface DesktopPetDetailProps {
     conditions: Condition[];
     onEdit: () => void;
     onShare: () => void;
+    initialTab?: TabType;
 }
 
-type TabType = 'Overview' | 'Health' | 'Documents' | 'Gallery' | 'Settings';
+export type TabType = 'Overview' | 'Health' | 'Documents' | 'Gallery' | 'Settings';
 
-export default function DesktopPetDetail({ pet, vets, conditions, onEdit, onShare }: DesktopPetDetailProps) {
-    const [activeTab, setActiveTab] = useState<TabType>('Overview');
+export default function DesktopPetDetail({ pet, vets, conditions, onEdit, onShare, initialTab = 'Overview' }: DesktopPetDetailProps) {
+    const [activeTab, setActiveTab] = useState<TabType>(initialTab);
 
     const renderTabContent = () => {
         switch (activeTab) {

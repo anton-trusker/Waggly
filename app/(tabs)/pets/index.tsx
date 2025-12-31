@@ -10,8 +10,19 @@ import {
   RefreshControl,
   useWindowDimensions,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
+
 import { LinearGradient } from 'expo-linear-gradient';
+import { usePets } from '@/hooks/usePets';
+
+import { Pet } from '@/types';
+import { designSystem, getSpacing } from '@/constants/designSystem';
+import DesktopShell from '@/components/desktop/layout/DesktopShell';
+import MobileHeader from '@/components/layout/MobileHeader';
+import { EnhancedButton } from '@/components/ui/EnhancedButton';
+import PetCardDesktop from '@/components/desktop/dashboard/PetCardDesktop';
+import { Ionicons } from '@expo/vector-icons';
+import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 
 export default function PetsScreen() {
   const { pets, loading, refreshPets } = usePets();
@@ -24,12 +35,8 @@ export default function PetsScreen() {
   const isDesktop = width >= 1024;
   const showGradientHeader = isDesktop; // Only show gradient header on desktop
 
-  // Persistent state for pet selection
-  const { state: lastSelectedPetId, setState: setLastSelectedPetId } = usePersistentState(
-    persistentConfigs.petSelection.key,
-    persistentConfigs.petSelection.defaultValue,
-    { expiration: persistentConfigs.petSelection.expiration }
-  );
+  // Persistent state for pet selection (Simplified to local state for now due to missing hook)
+  const [lastSelectedPetId, setLastSelectedPetId] = useState<string | null>(null);
 
   const handlePetPress = (pet: Pet) => {
     setLastSelectedPetId(pet.id);
