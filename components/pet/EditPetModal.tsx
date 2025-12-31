@@ -69,12 +69,12 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
-        
+
         if (!formData.name?.trim()) newErrors.name = "Pet name is required";
         if (!formData.species?.trim()) newErrors.species = "Species is required";
-        
+
         // Date validation logic could be added here
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -96,16 +96,16 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
             }
 
             // 2. Update Pet Data
-            const petUpdates = {
+            const petUpdates: any = {
                 ...formData,
                 photo_url: photoUrl,
                 updated_at: new Date().toISOString(),
             };
-            
-            // Clean up fields not in Pet table if any (e.g. from joins) - TypeScript helps here
-            // But specific exclusion of joined data might be needed if formData came from a joined query
-            // Here formData comes from usePets() which should be clean
-            
+
+            // Remove UI-only fields that aren't in the database
+            delete petUpdates.role;
+            delete petUpdates.permissions;
+
             await updatePet(petId, petUpdates);
 
             // 3. Update Contacts (Vet)
@@ -113,7 +113,7 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
                 await supabase.from('veterinarians').update(vetData).eq('id', vetData.id);
             } else if (vetData.clinic_name) {
                 // Insert new vet
-                 await supabase.from('veterinarians').insert({ ...vetData, pet_id: petId, is_primary: true });
+                await supabase.from('veterinarians').insert({ ...vetData, pet_id: petId, is_primary: true });
             }
 
             // 4. Update Emergency Contact
@@ -124,7 +124,7 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
                     await supabase.from('emergency_contacts').update(emergencyData).eq('id', emergencyData.id);
                 }
             } else if (emergencyData.name) {
-                 await supabase.from('emergency_contacts').insert({ ...emergencyData, pet_id: petId });
+                await supabase.from('emergency_contacts').insert({ ...emergencyData, pet_id: petId });
             }
 
             Alert.alert('Success', 'Pet profile updated successfully!');
@@ -155,7 +155,7 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
                         {formData.photo_url ? (
                             <Image source={{ uri: formData.photo_url }} style={styles.headerAvatar} />
                         ) : (
-                            <View style={styles.headerAvatarPlaceholder}><Text style={{fontSize: 20}}>🐾</Text></View>
+                            <View style={styles.headerAvatarPlaceholder}><Text style={{ fontSize: 20 }}>🐾</Text></View>
                         )}
                         <View>
                             <Text style={styles.headerName}>{formData.name}</Text>

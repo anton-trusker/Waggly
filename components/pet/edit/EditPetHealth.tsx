@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Switch, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import DatePickerWeb from '@/components/ui/DatePickerWeb';
 import ModernSelect from '@/components/ui/ModernSelect';
 import { Pet } from '@/types/index';
 
@@ -21,25 +22,87 @@ const BLOOD_TYPES = [
     { label: 'Unknown', value: 'Unknown' },
 ];
 
-export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHealthProps) {
-    const [datePickerMode, setDatePickerMode] = useState<'implant' | 'sterilization' | null>(null);
+// Helper component for decimal inputs to handle "12." case
+const DecimalInput = ({ value, onChange, placeholder, style, error }: any) => {
+    const [localValue, setLocalValue] = useState(value?.toString() || '');
 
-    // Helper to format date for display
-    const formatDate = (dateStr?: string | null) => {
-        if (!dateStr) return 'Select Date';
-        return new Date(dateStr).toLocaleDateString();
+    useEffect(() => {
+        if (value !== undefined && value !== null && parseFloat(localValue) !== value) {
+            setLocalValue(value.toString());
+        }
+    }, [value]);
+
+    const handleChange = (text: string) => {
+        setLocalValue(text);
+        const floatVal = parseFloat(text);
+        if (!isNaN(floatVal) && text.trim() !== '') {
+            // Only update parent if it's a valid number
+            // But if text ends in '.' or '.0', we wait?
+            // Actually, best to just update parent with valid numbers, ignoring trailing format
+            // but keep localValue for display.
+
+            // If text is "12.", parseFloat is 12. Parent gets 12. 
+            // If parent updates back, it sends 12. 
+            // useEffect sees 12 === 12, so it doesn't reset localValue "12." -> Correct!
+            onChange(floatVal);
+        } else if (text === '') {
+            onChange(null);
+        }
+    };
+
+    return (
+        <TextInput
+            style={[style, error && styles.inputError]}
+            value={localValue}
+            onChangeText={handleChange}
+            placeholder={placeholder}
+            keyboardType="decimal-pad"
+        />
+    );
+};
+
+export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHealthProps) {
+    const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg');
+    const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>('cm');
+
+    // Convert storage value (metric) to display value (selected unit)
+    const getDisplayValue = (metricValue: number | null | undefined, unit: 'kg' | 'lb' | 'cm' | 'in') => {
+        if (metricValue === null || metricValue === undefined) return '';
+
+        // Return string to avoid small float errors in display
+        switch (unit) {
+            case 'kg': return metricValue.toString();
+            case 'lb': return (metricValue * 2.20462).toFixed(1); // 1 kg = 2.20462 lb
+            case 'cm': return metricValue.toString();
+            case 'in': return (metricValue / 2.54).toFixed(1);    // 1 in = 2.54 cm
+        }
+    };
+
+    // Handle change: convert display value (selected unit) back to storage value (metric)
+    const handleMetricChange = (field: 'weight' | 'height', displayValue: number | null, unit: 'kg' | 'lb' | 'cm' | 'in') => {
+        if (displayValue === null) {
+            onChange(field, null);
+            return;
+        }
+
+        let metricValue = displayValue;
+        if (unit === 'lb') metricValue = displayValue / 2.20462;
+        if (unit === 'in') metricValue = displayValue * 2.54;
+
+        // Round to 2 decimals for cleaner DB storage
+        onChange(field, parseFloat(metricValue.toFixed(2)));
     };
 
     return (
         <View style={styles.container}>
-            
+
             {/* --- Microchip Section --- */}
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <IconSymbol ios_icon_name="memorychip" android_material_icon_name="memory" size={20} color={designSystem.colors.primary[500]} />
                     <Text style={styles.sectionTitle}>MICROCHIP IDENTIFICATION</Text>
                 </View>
-                
+
                 <View style={styles.row}>
                     <View style={[styles.formGroup, { flex: 1 }]}>
                         <Text style={styles.label}>Microchip ID</Text>
@@ -62,18 +125,27 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                     </View>
                 </View>
 
-                <View style={styles.formGroup}>
-                    <Text style={styles.label}>Implantation Date</Text>
-                    <TouchableOpacity
-                        style={styles.dateInput}
-                        onPress={() => setDatePickerMode('implant')}
-                    >
-                        <Text style={data.microchip_implantation_date ? styles.inputText : styles.placeholderText}>
-                            {formatDate(data.microchip_implantation_date)}
-                        </Text>
-                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                    </TouchableOpacity>
-                </View>
+                {Platform.OS === 'web' ? (
+                    <DatePickerWeb
+                        label="Implantation Date"
+                        value={data.microchip_implantation_date || ''}
+                        onChange={(v) => onChange('microchip_implantation_date', v)}
+                        placeholder="Select Date"
+                    />
+                ) : (
+                    <View style={styles.formGroup}>
+                        <Text style={styles.label}>Implantation Date</Text>
+                        <TouchableOpacity
+                            style={styles.dateInput}
+                            onPress={() => setDatePickerMode('implant')}
+                        >
+                            <Text style={data.microchip_implantation_date ? styles.inputText : styles.placeholderText}>
+                                {formatDate(data.microchip_implantation_date)}
+                            </Text>
+                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
 
             {/* --- Physical Metrics --- */}
@@ -87,30 +159,40 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                     <View style={[styles.formGroup, { flex: 1 }]}>
                         <Text style={styles.label}>Weight</Text>
                         <View style={[styles.unitInput, errors.weight && styles.inputError]}>
-                            <TextInput
+                            <DecimalInput
                                 style={styles.unitInputField}
-                                value={data.weight?.toString() || ''}
-                                onChangeText={(v) => onChange('weight', parseFloat(v) || null)}
+                                value={getDisplayValue(data.weight, weightUnit)}
+                                onChange={(val: number | null) => handleMetricChange('weight', val, weightUnit)}
                                 placeholder="0.0"
-                                keyboardType="decimal-pad"
+                                error={!!errors.weight}
                             />
-                            <View style={styles.unitBadge}><Text style={styles.unitText}>kg</Text></View>
+                            <TouchableOpacity
+                                onPress={() => setWeightUnit(prev => prev === 'kg' ? 'lb' : 'kg')}
+                                style={styles.unitBadge}
+                            >
+                                <Text style={styles.unitText}>{weightUnit}</Text>
+                            </TouchableOpacity>
                         </View>
                         {errors.weight && <Text style={styles.errorText}>{errors.weight}</Text>}
                     </View>
                     <View style={[styles.formGroup, { flex: 1 }]}>
                         <Text style={styles.label}>Height</Text>
                         <View style={[styles.unitInput, errors.height && styles.inputError]}>
-                            <TextInput
+                            <DecimalInput
                                 style={styles.unitInputField}
-                                value={data.height?.toString() || ''}
-                                onChangeText={(v) => onChange('height', parseFloat(v) || null)}
+                                value={getDisplayValue(data.height, heightUnit)}
+                                onChange={(val: number | null) => handleMetricChange('height', val, heightUnit)}
                                 placeholder="0.0"
-                                keyboardType="decimal-pad"
+                                error={!!errors.height}
                             />
-                            <View style={styles.unitBadge}><Text style={styles.unitText}>cm</Text></View>
+                            <TouchableOpacity
+                                onPress={() => setHeightUnit(prev => prev === 'cm' ? 'in' : 'cm')}
+                                style={styles.unitBadge}
+                            >
+                                <Text style={styles.unitText}>{heightUnit}</Text>
+                            </TouchableOpacity>
                         </View>
-                         {errors.height && <Text style={styles.errorText}>{errors.height}</Text>}
+                        {errors.height && <Text style={styles.errorText}>{errors.height}</Text>}
                     </View>
                 </View>
 
@@ -124,7 +206,7 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
             </View>
 
             {/* --- Sterilization --- */}
-             <View style={styles.section}>
+            <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="medical-services" size={20} color={designSystem.colors.primary[500]} />
                     <Text style={styles.sectionTitle}>MEDICAL PROFILE</Text>
@@ -140,17 +222,28 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                 </View>
 
                 {data.is_spayed_neutered && (
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Procedure Date</Text>
-                        <TouchableOpacity
-                            style={styles.dateInput}
-                            onPress={() => setDatePickerMode('sterilization')}
-                        >
-                            <Text style={data.sterilization_date ? styles.inputText : styles.placeholderText}>
-                                {formatDate(data.sterilization_date)}
-                            </Text>
-                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                        </TouchableOpacity>
+                    <View style={{ marginTop: 8 }}>
+                        {Platform.OS === 'web' ? (
+                            <DatePickerWeb
+                                label="Procedure Date"
+                                value={data.sterilization_date || ''}
+                                onChange={(v) => onChange('sterilization_date', v)}
+                                placeholder="Select Date"
+                            />
+                        ) : (
+                            <View style={styles.formGroup}>
+                                <Text style={styles.label}>Procedure Date</Text>
+                                <TouchableOpacity
+                                    style={styles.dateInput}
+                                    onPress={() => setDatePickerMode('sterilization')}
+                                >
+                                    <Text style={data.sterilization_date ? styles.inputText : styles.placeholderText}>
+                                        {formatDate(data.sterilization_date)}
+                                    </Text>
+                                    <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
                 )}
             </View>
@@ -163,23 +256,25 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                 </Text>
             </View>
 
-            {/* Date Pickers */}
-            <CustomDatePicker
-                visible={!!datePickerMode}
-                date={
-                    datePickerMode === 'implant' && data.microchip_implantation_date ? new Date(data.microchip_implantation_date) :
-                    datePickerMode === 'sterilization' && data.sterilization_date ? new Date(data.sterilization_date) :
-                    new Date()
-                }
-                onClose={() => setDatePickerMode(null)}
-                onConfirm={(date) => {
-                    const isoDate = date.toISOString().split('T')[0];
-                    if (datePickerMode === 'implant') onChange('microchip_implantation_date', isoDate);
-                    if (datePickerMode === 'sterilization') onChange('sterilization_date', isoDate);
-                    setDatePickerMode(null);
-                }}
-                title={datePickerMode === 'implant' ? "Implantation Date" : "Procedure Date"}
-            />
+            {/* Date Pickers - Mobile Only */}
+            {Platform.OS !== 'web' && (
+                <CustomDatePicker
+                    visible={!!datePickerMode}
+                    date={
+                        datePickerMode === 'implant' && data.microchip_implantation_date ? new Date(data.microchip_implantation_date) :
+                            datePickerMode === 'sterilization' && data.sterilization_date ? new Date(data.sterilization_date) :
+                                new Date()
+                    }
+                    onClose={() => setDatePickerMode(null)}
+                    onConfirm={(date) => {
+                        const isoDate = date.toISOString().split('T')[0];
+                        if (datePickerMode === 'implant') onChange('microchip_implantation_date', isoDate);
+                        if (datePickerMode === 'sterilization') onChange('sterilization_date', isoDate);
+                        setDatePickerMode(null);
+                    }}
+                    title={datePickerMode === 'implant' ? "Implantation Date" : "Procedure Date"}
+                />
+            )}
         </View>
     );
 }

@@ -93,7 +93,7 @@ export default function PassportTab() {
                                 </View>
                                 <View style={styles.detailItem}>
                                     <Text style={styles.detailLabel}>DATE OF BIRTH</Text>
-                                    <Text style={styles.detailValue}>{formatDate((pet as any).birth_date)}</Text>
+                                    <Text style={styles.detailValue}>{formatDate(pet.date_of_birth)}</Text>
                                 </View>
                                 <View style={styles.detailItem}>
                                     <Text style={styles.detailLabel}>COAT COLOR</Text>
@@ -102,13 +102,13 @@ export default function PassportTab() {
                             </View>
 
                             {/* Microchip Section */}
-                            {(pet as any).microchip && (
+                            {pet.microchip_number && (
                                 <View style={styles.microchipSection}>
                                     <Text style={styles.detailLabel}>MICROCHIP NUMBER</Text>
-                                    <Text style={styles.microchipNumber}>{(pet as any).microchip}</Text>
-                                    {(pet as any).microchip_date && (
+                                    <Text style={styles.microchipNumber}>{pet.microchip_number}</Text>
+                                    {pet.microchip_implantation_date && (
                                         <Text style={styles.microchipMeta}>
-                                            Implanted: {formatDate((pet as any).microchip_date)} • Location: Neck
+                                            Implanted: {formatDate(pet.microchip_implantation_date)} • Location: Neck
                                         </Text>
                                     )}
                                 </View>

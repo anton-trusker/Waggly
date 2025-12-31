@@ -40,6 +40,65 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm, ti
         );
     }
 
+    // Web implementation using HTML5 date input
+    if (Platform.OS === 'web') {
+        if (!visible) return null;
+
+        const formatDateForInput = (d: Date) => {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        return (
+            <Modal
+                visible={visible}
+                transparent
+                animationType="fade"
+            >
+                <View style={styles.overlay}>
+                    <View style={[styles.container, { maxWidth: 400, alignSelf: 'center', marginTop: '20%' }]}>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={onClose}>
+                                <Text style={styles.cancelText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.title}>{title}</Text>
+                            <TouchableOpacity onPress={() => onConfirm(tempDate)}>
+                                <Text style={styles.confirmText}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={[styles.pickerContainer, { padding: 24 }]}>
+                            <input
+                                type="date"
+                                value={formatDateForInput(tempDate)}
+                                onChange={(e) => {
+                                    const newDate = new Date(e.target.value);
+                                    if (!isNaN(newDate.getTime())) {
+                                        setTempDate(newDate);
+                                        onConfirm(newDate); // Auto-confirm on selection
+                                    }
+                                }}
+                                max={formatDateForInput(new Date())}
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    fontSize: '16px',
+                                    borderRadius: '12px',
+                                    border: `1px solid ${designSystem.colors.neutral[200]}`,
+                                    backgroundColor: '#fff',
+                                    cursor: 'pointer',
+                                }}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        );
+    }
+
+    // iOS implementation
     return (
         <Modal
             visible={visible}
@@ -117,5 +176,12 @@ const styles = StyleSheet.create({
         backgroundColor: designSystem.colors.background.primary,
         height: 250,
         justifyContent: 'center',
-    }
+    },
+    modalButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import DatePickerWeb from '@/components/ui/DatePickerWeb';
 import { Pet } from '@/types/index';
 
 interface EditPetBasicInfoProps {
@@ -115,18 +116,41 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
                 </View>
             </View>
 
-            <View style={styles.formGroup}>
-                <Text style={styles.label}>Date of Birth</Text>
-                <TouchableOpacity
-                    style={styles.dateInput}
-                    onPress={() => setShowDatePicker(true)}
-                >
-                    <Text style={data.date_of_birth ? styles.inputText : styles.placeholderText}>
-                        {data.date_of_birth ? new Date(data.date_of_birth).toLocaleDateString() : 'Select Date'}
-                    </Text>
-                    <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                </TouchableOpacity>
-            </View>
+            {/* Date of Birth - Platform specific */}
+            {Platform.OS === 'web' ? (
+                <DatePickerWeb
+                    label="Date of Birth"
+                    value={data.date_of_birth || ''}
+                    onChange={(v) => onChange('date_of_birth', v)}
+                    placeholder="Select date"
+                />
+            ) : (
+                <>
+                    <View style={styles.formGroup}>
+                        <Text style={styles.label}>Date of Birth</Text>
+                        <TouchableOpacity
+                            style={styles.dateInput}
+                            onPress={() => setShowDatePicker(true)}
+                        >
+                            <Text style={data.date_of_birth ? styles.inputText : styles.placeholderText}>
+                                {data.date_of_birth ? new Date(data.date_of_birth).toLocaleDateString() : 'Select Date'}
+                            </Text>
+                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <CustomDatePicker
+                        visible={showDatePicker}
+                        date={data.date_of_birth ? new Date(data.date_of_birth) : new Date()}
+                        onClose={() => setShowDatePicker(false)}
+                        onConfirm={(date) => {
+                            onChange('date_of_birth', date.toISOString().split('T')[0]);
+                            setShowDatePicker(false);
+                        }}
+                        title="Date of Birth"
+                    />
+                </>
+            )}
 
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Color & Markings</Text>

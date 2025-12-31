@@ -10,6 +10,7 @@ interface PetKeyInfoWidgetProps {
 }
 
 export default function PetKeyInfoWidget({ pet, onEdit }: PetKeyInfoWidgetProps) {
+    console.log('PetKeyInfoWidget pet:', JSON.stringify(pet, null, 2));
     return (
         <Card variant="elevated">
             <YStack gap="$4">
@@ -49,7 +50,7 @@ export default function PetKeyInfoWidget({ pet, onEdit }: PetKeyInfoWidgetProps)
                                 MICROCHIP ID
                             </Text>
                             <Text fontSize="$sm" fontWeight="500" fontFamily="monospace" color="$textPrimary" marginTop={2}>
-                                {pet.chip_number || '—'}
+                                {pet.microchip_number || '—'}
                             </Text>
                         </YStack>
                     </XStack>

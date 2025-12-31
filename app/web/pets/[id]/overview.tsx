@@ -135,7 +135,7 @@ export default function OverviewTab() {
                     </View>
                     <View>
                       <Text style={styles.infoLabel}>MICROCHIP ID</Text>
-                      <Text style={styles.infoValueMono}>{pet.chip_number || '—'}</Text>
+                      <Text style={styles.infoValueMono}>{pet.microchip_number || '—'}</Text>
                     </View>
                   </View>
                   <TouchableOpacity>
@@ -170,7 +170,7 @@ export default function OverviewTab() {
                   <View style={styles.infoBox}>
                     <Text style={[styles.infoLabel, { marginBottom: 4 }]}>DATE OF BIRTH</Text>
                     <Text style={styles.infoValue}>
-                      {pet.birth_date ? new Date(pet.birth_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                      {pet.date_of_birth ? new Date(pet.date_of_birth).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                     </Text>
                   </View>
                 </View>
