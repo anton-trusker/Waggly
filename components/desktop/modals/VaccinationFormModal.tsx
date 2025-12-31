@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { designSystem } from '@/constants/designSystem'; // Force Light Theme
-import { RefVaccine, calculateNextDueDate } from '@/hooks/useReferenceData';
+import { useVaccines, RefVaccine, calculateNextDueDate } from '@/hooks/useReferenceData';
 import { Vaccination } from '@/types';
 import VaccineSelector from './shared/VaccineSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
