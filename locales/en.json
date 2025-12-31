@@ -311,6 +311,7 @@
       "message_title": "Pet Profile"
     },
     "history_timeline": "History & Timeline",
+    "no_history_yet": "No history recorded yet.",
     "view_full_timeline": "View Full Timeline",
     "loading": "Loading pet overview...",
     "table_headers": {

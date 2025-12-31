@@ -18,6 +18,7 @@ import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
 import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
 import { useLocale } from '@/hooks/useLocale';
+import { useActivityFeed } from '@/hooks/useActivityFeed';
 
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
@@ -51,6 +52,7 @@ export default function OverviewTab() {
   const { allergies } = useAllergies(petId);
   const { treatments, refreshTreatments } = useTreatments(petId);
   const { conditions } = useConditions(petId);
+  const { activities, loading: activitiesLoading } = useActivityFeed(5, petId);
 
   const recentConditions = conditions.slice(0, 2); // Show top 2
 
@@ -389,76 +391,94 @@ export default function OverviewTab() {
             <View style={styles.card}>
               <Text style={[styles.cardTitle, { marginBottom: 24 }]}>{t('pet_profile.history_timeline')}</Text>
               <View style={styles.timelineList}>
-                {/* Item 1 */}
-                <View style={styles.timelineItem}>
-                  <View style={styles.timelineLine} />
-                  <View style={styles.timelineDotPrimary}>
-                    <View style={styles.timelineDotInner} />
-                  </View>
-                  <View style={styles.timelineContentBox}>
-                    <View style={styles.timelineHeaderRow}>
-                      <View style={styles.timelineTitleGroup}>
-                        <View style={[styles.timelineIconSmall, { backgroundColor: '#DBEAFE' }]}>
-                          <IconSymbol android_material_icon_name="medical-services" size={14} color="#2563EB" />
-                        </View>
-                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.dental_title')}</Text>
-                      </View>
-                      <Text style={styles.timelineDateText}>12 Oct</Text>
-                    </View>
-                    <Text style={styles.timelineSubtitle}>{t('pet_profile.mock_timeline.dental_subtitle')}</Text>
-                    <View style={styles.timelineNoteBox}>
-                      <Text style={styles.timelineNoteText}>{t('pet_profile.mock_timeline.dental_note')}</Text>
-                    </View>
-                  </View>
-                </View>
+                {activitiesLoading ? (
+                  <Text style={{ color: '#6B7280', padding: 8 }}>{t('pet_profile.loading') || 'Loading...'}</Text>
+                ) : activities.length > 0 ? (
+                  activities.map((item, index) => {
+                    // Map activity types to design styles
+                    let iconName = 'ellipse';
+                    let iconColor = '#6B7280';
+                    let iconBg = '#F3F4F6';
+                    let dotColor = '#9CA3AF'; // Gray default
 
-                {/* Item 2 */}
-                <View style={styles.timelineItem}>
-                  <View style={styles.timelineLine} />
-                  <View style={styles.timelineDotGray}>
-                    <View style={styles.timelineDotInnerGray} />
-                  </View>
-                  <View style={styles.timelineContentBox}>
-                    <View style={styles.timelineHeaderRow}>
-                      <View style={styles.timelineTitleGroup}>
-                        <View style={[styles.timelineIconSmall, { backgroundColor: '#D1FAE5' }]}>
-                          <IconSymbol android_material_icon_name="monitor-weight" size={14} color="#059669" />
-                        </View>
-                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.weight_title')}</Text>
-                      </View>
-                      <Text style={styles.timelineDateText}>01 Oct</Text>
-                    </View>
-                    <View style={styles.weightRow}>
-                      <Text style={styles.weightValue}>{t('pet_profile.mock_timeline.weight_val')}</Text>
-                      <Text style={styles.weightChange}>{t('pet_profile.mock_timeline.weight_change')}</Text>
-                    </View>
-                  </View>
-                </View>
+                    switch (item.type) {
+                      case 'visit':
+                        iconName = 'medical-services';
+                        iconColor = '#2563EB'; // Blue
+                        iconBg = '#DBEAFE';
+                        dotColor = '#3B82F6';
+                        break;
+                      case 'vaccination':
+                        iconName = 'vaccines';
+                        iconColor = '#7C3AED'; // Violet
+                        iconBg = '#EDE9FE';
+                        dotColor = '#8B5CF6';
+                        break;
+                      case 'weight':
+                        iconName = 'monitor-weight';
+                        iconColor = '#059669'; // Green
+                        iconBg = '#D1FAE5';
+                        dotColor = '#10B981';
+                        break;
+                      case 'treatment':
+                      case 'medication':
+                        iconName = 'healing';
+                        iconColor = '#0D9488'; // Teal
+                        iconBg = '#CCFBF1';
+                        dotColor = '#14B8A6';
+                        break;
+                      case 'document':
+                        iconName = 'description';
+                        iconColor = '#EA580C'; // Orange
+                        iconBg = '#FFEDD5';
+                        dotColor = '#F97316';
+                        break;
+                      default:
+                        iconName = 'pets';
+                        iconColor = '#6B7280';
+                        iconBg = '#F3F4F6';
+                    }
 
-                {/* Item 3 */}
-                <View style={styles.timelineItem}>
-                  <View style={styles.timelineDotGray}>
-                    <View style={styles.timelineDotInnerGray} />
-                  </View>
-                  <View style={styles.timelineContentBox}>
-                    <View style={styles.timelineHeaderRow}>
-                      <View style={styles.timelineTitleGroup}>
-                        <View style={[styles.timelineIconSmall, { backgroundColor: '#CCFBF1' }]}>
-                          <IconSymbol android_material_icon_name="healing" size={14} color="#0D9488" />
-                        </View>
-                        <Text style={styles.timelineItemTitle}>{t('pet_profile.mock_timeline.dewclaw_title')}</Text>
-                      </View>
-                      <Text style={styles.timelineDateText}>28 Aug</Text>
-                    </View>
-                    <Text style={styles.timelineSubtitle}>{t('pet_profile.mock_timeline.dewclaw_subtitle')}</Text>
-                    <View style={styles.timelineNoteBox}>
-                      <Text style={styles.timelineNoteText}>{t('pet_profile.mock_timeline.dewclaw_note')}</Text>
-                    </View>
-                  </View>
-                </View>
+                    const isFirst = index === 0;
 
+                    return (
+                      <View key={item.id} style={styles.timelineItem}>
+                        {/* Line connecting items, hide for last item if we knew length, but css trickery usually needed. 
+                             Here we just let it overflow or handle it. The original design draws a full line. */}
+                        {index !== activities.length - 1 && <View style={styles.timelineLine} />}
+
+                        {/* Dot */}
+                        <View style={isFirst ? styles.timelineDotPrimary : styles.timelineDotGray}>
+                          <View style={isFirst ? styles.timelineDotInner : styles.timelineDotInnerGray} />
+                        </View>
+
+                        <View style={styles.timelineContentBox}>
+                          <View style={styles.timelineHeaderRow}>
+                            <View style={styles.timelineTitleGroup}>
+                              <View style={[styles.timelineIconSmall, { backgroundColor: iconBg }]}>
+                                <IconSymbol android_material_icon_name={iconName as any} size={14} color={iconColor} />
+                              </View>
+                              <Text style={styles.timelineItemTitle}>{item.title}</Text>
+                            </View>
+                            <Text style={styles.timelineDateText}>
+                              {new Date(item.timestamp).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' })}
+                            </Text>
+                          </View>
+                          <Text style={styles.timelineSubtitle}>{item.description}</Text>
+                          {item.data?.notes && (
+                            <View style={styles.timelineNoteBox}>
+                              <Text style={styles.timelineNoteText} numberOfLines={2}>{item.data.notes}</Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    );
+                  })
+                ) : (
+                  <Text style={{ color: '#9CA3AF', fontStyle: 'italic', marginLeft: 8 }}>{t('pet_profile.no_history_yet') || 'No recent history recorded.'}</Text>
+                )}
               </View>
-              <TouchableOpacity style={styles.viewTimelineBtn}>
+              <TouchableOpacity style={styles.viewTimelineBtn} onPress={() => router.push(`/(tabs)/pets/${petId}/history` as any)}>
                 <Text style={styles.viewTimelineText}>{t('pet_profile.view_full_timeline')}</Text>
               </TouchableOpacity>
             </View>
