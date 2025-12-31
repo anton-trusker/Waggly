@@ -1,141 +1,156 @@
-
-import { useState, useEffect, useRef } from 'react';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { Platform } from 'react-native';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-
-import { loadNotificationPrefs, saveNotificationPrefs } from '@/utils/notificationsPrefs';
+import { Notification } from '@/types';
 
 export function useNotifications() {
-  const [expoPushToken, setExpoPushToken] = useState<string>('');
-  const [notification, setNotification] = useState<Notifications.Notification | null>(null);
-  const notificationListener = useRef<Notifications.Subscription | null>(null);
-  const responseListener = useRef<Notifications.Subscription | null>(null);
   const { user } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchNotifications = useCallback(async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (err: any) {
+      console.error('Error fetching notifications:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
-    loadNotificationPrefs();
-    registerForPushNotificationsAsync().then(token => {
-      if (token) {
-        setExpoPushToken(token);
-      }
-    });
+    fetchNotifications();
 
-    (async () => {
-      if (!user) return;
-      const { data } = await supabase
-        .from('profiles')
-        .select('notification_prefs')
-        .eq('user_id', user.id)
-        .single();
-      const prefs = (data as any)?.notification_prefs;
-      if (prefs && typeof prefs === 'object') {
-        await saveNotificationPrefs({
-          alert: !!prefs.alert,
-          sound: !!prefs.sound,
-          badge: !!prefs.badge,
-        });
-      }
-    })();
+    if (!user) return;
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification received:', notification);
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification response:', response);
-    });
+    // Realtime subscription
+    const subscription = supabase
+      .channel('notifications_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setNotifications((prev) => [payload.new as Notification, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setNotifications((prev) =>
+              prev.map((n) => (n.id === payload.new.id ? (payload.new as Notification) : n))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setNotifications((prev) => prev.filter((n) => n.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (notificationListener.current) {
-        notificationListener.current.remove();
-      }
-      if (responseListener.current) {
-        responseListener.current.remove();
-      }
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [user, fetchNotifications]);
 
-  const scheduleNotification = async (
-    title: string,
-    body: string,
-    trigger: Notifications.NotificationTriggerInput
-  ) => {
+  const markAsRead = async (id: string) => {
     try {
-      const id = await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          sound: true,
-        },
-        trigger,
-      });
-      console.log('Notification scheduled:', id);
-      return id;
-    } catch (error) {
-      console.error('Error scheduling notification:', error);
-      return null;
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Optimistic update
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+    } catch (err) {
+      console.error('Error marking as read:', err);
     }
   };
 
-  const cancelNotification = async (notificationId: string) => {
+  const markAllAsRead = async () => {
     try {
-      await Notifications.cancelScheduledNotificationAsync(notificationId);
-      console.log('Notification cancelled:', notificationId);
-    } catch (error) {
-      console.error('Error cancelling notification:', error);
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user?.id)
+        .eq('is_read', false); // Only update unread ones
+
+      if (error) throw error;
+
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+    } catch (err) {
+      console.error('Error marking all as read:', err);
     }
   };
 
-  const cancelAllNotifications = async () => {
+  const deleteNotification = async (id: string) => {
     try {
-      await Notifications.cancelAllScheduledNotificationsAsync();
-      console.log('All notifications cancelled');
-    } catch (error) {
-      console.error('Error cancelling all notifications:', error);
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    } catch (err) {
+      console.error('Error deleting notification:', err);
     }
   };
+
+  const clearAll = async () => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      setNotifications([]);
+    } catch (err) {
+      console.error('Error clearing notifications:', err);
+    }
+  };
+
+  // Helper for testing
+  const sendTestNotification = async (title: string, message: string, type: string = 'system') => {
+    if (!user) return;
+    await supabase.from('notifications').insert({
+      user_id: user.id,
+      title,
+      message,
+      type,
+      is_read: false,
+      created_at: new Date().toISOString()
+    });
+  };
+
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return {
-    expoPushToken,
-    notification,
-    scheduleNotification,
-    cancelNotification,
-    cancelAllNotifications,
+    notifications,
+    loading,
+    error,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    clearAll,
+    refreshNotifications: fetchNotifications,
+    sendTestNotification,
   };
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      console.log('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log('Expo push token:', token);
-  } else {
-    console.log('Must use physical device for Push Notifications');
-  }
-
-  return token;
 }

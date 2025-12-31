@@ -14,6 +14,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Href } from 'expo-router';
 import { designSystem } from '@/constants/designSystem';
 import { useLocale } from '@/hooks/useLocale';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export interface TabBarItem {
   name: string;
@@ -40,6 +41,7 @@ export default function FloatingTabBarWithPlus({
   const pathname = usePathname();
   const theme = useTheme();
   const { t } = useLocale();
+  const { unreadCount } = useNotifications();
 
   // Improved active tab detection with better path matching
   const activeTabIndex = React.useMemo(() => {
@@ -82,8 +84,8 @@ export default function FloatingTabBarWithPlus({
 
   const handleTabPress = (route: Href) => {
     if (onTabPressOverride && typeof route === 'string') {
-        const handled = onTabPressOverride(route);
-        if (handled) return;
+      const handled = onTabPressOverride(route);
+      if (handled) return;
     }
     router.push(route);
   };
@@ -101,94 +103,100 @@ export default function FloatingTabBarWithPlus({
 
   return (
     <View style={styles.wrapper}>
-        <View style={[styles.container, dynamicStyles.containerSolid]}>
-            <SafeAreaView edges={['bottom']}>
-                <View style={styles.tabsContainer}>
-                    {/* Left tabs */}
-                    <View style={styles.tabsSection}>
-                    {leftTabs.map((tab, index) => {
-                        const isActive = activeTabIndex === index;
-                        return (
-                        <TouchableOpacity
-                            key={tab.name}
-                            style={styles.tab}
-                            onPress={() => handleTabPress(tab.route)}
-                            activeOpacity={0.7}
-                        >
-                            <View style={styles.tabContent}>
-                            <IconSymbol
-                                android_material_icon_name={tab.icon}
-                                ios_icon_name={tab.icon}
-                                size={24}
-                                color={isActive ? theme.colors.primary : (theme.dark ? '#98989D' : '#8E8E93')}
-                            />
-                            <Text
-                                style={[
-                                styles.tabLabel,
-                                { color: theme.dark ? '#98989D' : '#8E8E93' },
-                                isActive && { color: theme.colors.primary, fontWeight: '600' },
-                                ]}
-                            >
-                                {t(tab.label, { defaultValue: tab.label })}
-                            </Text>
-                            </View>
-                        </TouchableOpacity>
-                        );
-                    })}
+      <View style={[styles.container, dynamicStyles.containerSolid]}>
+        <SafeAreaView edges={['bottom']}>
+          <View style={styles.tabsContainer}>
+            {/* Left tabs */}
+            <View style={styles.tabsSection}>
+              {leftTabs.map((tab, index) => {
+                const isActive = activeTabIndex === index;
+                return (
+                  <TouchableOpacity
+                    key={tab.name}
+                    style={styles.tab}
+                    onPress={() => handleTabPress(tab.route)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.tabContent}>
+                      <IconSymbol
+                        android_material_icon_name={tab.icon}
+                        ios_icon_name={tab.icon}
+                        size={24}
+                        color={isActive ? theme.colors.primary : (theme.dark ? '#98989D' : '#8E8E93')}
+                      />
+                      {tab.name === 'notifications' && unreadCount > 0 && (
+                        <View style={styles.badge} />
+                      )}
+                      <Text
+                        style={[
+                          styles.tabLabel,
+                          { color: theme.dark ? '#98989D' : '#8E8E93' },
+                          isActive && { color: theme.colors.primary, fontWeight: '600' },
+                        ]}
+                      >
+                        {t(tab.label, { defaultValue: tab.label })}
+                      </Text>
                     </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
 
-                    {/* Plus Button - Raised slightly */}
-                    <View style={styles.plusButtonContainer}>
-                        <TouchableOpacity
-                            style={styles.plusButton}
-                            onPress={onPlusPress}
-                            activeOpacity={0.9}
-                        >
-                            <IconSymbol
-                                android_material_icon_name="add"
-                                ios_icon_name="plus"
-                                size={32}
-                                color="#FFFFFF"
-                            />
-                        </TouchableOpacity>
-                    </View>
+            {/* Plus Button - Raised slightly */}
+            <View style={styles.plusButtonContainer}>
+              <TouchableOpacity
+                style={styles.plusButton}
+                onPress={onPlusPress}
+                activeOpacity={0.9}
+              >
+                <IconSymbol
+                  android_material_icon_name="add"
+                  ios_icon_name="plus"
+                  size={32}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            </View>
 
-                    {/* Right tabs */}
-                    <View style={styles.tabsSection}>
-                    {rightTabs.map((tab, index) => {
-                        const actualIndex = index + 2;
-                        const isActive = activeTabIndex === actualIndex;
-                        return (
-                        <TouchableOpacity
-                            key={tab.name}
-                            style={styles.tab}
-                            onPress={() => handleTabPress(tab.route)}
-                            activeOpacity={0.7}
-                        >
-                            <View style={styles.tabContent}>
-                            <IconSymbol
-                                android_material_icon_name={tab.icon}
-                                ios_icon_name={tab.icon}
-                                size={24}
-                                color={isActive ? theme.colors.primary : (theme.dark ? '#98989D' : '#8E8E93')}
-                            />
-                            <Text
-                                style={[
-                                styles.tabLabel,
-                                { color: theme.dark ? '#98989D' : '#8E8E93' },
-                                isActive && { color: theme.colors.primary, fontWeight: '600' },
-                                ]}
-                            >
-                                {t(tab.label, { defaultValue: tab.label })}
-                            </Text>
-                            </View>
-                        </TouchableOpacity>
-                        );
-                    })}
+            {/* Right tabs */}
+            <View style={styles.tabsSection}>
+              {rightTabs.map((tab, index) => {
+                const actualIndex = index + 2;
+                const isActive = activeTabIndex === actualIndex;
+                return (
+                  <TouchableOpacity
+                    key={tab.name}
+                    style={styles.tab}
+                    onPress={() => handleTabPress(tab.route)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.tabContent}>
+                      <IconSymbol
+                        android_material_icon_name={tab.icon}
+                        ios_icon_name={tab.icon}
+                        size={24}
+                        color={isActive ? theme.colors.primary : (theme.dark ? '#98989D' : '#8E8E93')}
+                      />
+                      {tab.name === 'notifications' && unreadCount > 0 && (
+                        <View style={styles.badge} />
+                      )}
+                      <Text
+                        style={[
+                          styles.tabLabel,
+                          { color: theme.dark ? '#98989D' : '#8E8E93' },
+                          isActive && { color: theme.colors.primary, fontWeight: '600' },
+                        ]}
+                      >
+                        {t(tab.label, { defaultValue: tab.label })}
+                      </Text>
                     </View>
-                </View>
-            </SafeAreaView>
-        </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -231,10 +239,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
+    position: 'relative',
   },
   tabLabel: {
     fontSize: 10,
     fontWeight: '500',
+  },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#EF4444',
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    zIndex: 10,
   },
   plusButtonContainer: {
     width: 70,

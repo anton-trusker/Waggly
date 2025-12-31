@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useNotifications } from '@/hooks/useNotifications';
 import { LanguageSelector } from './LanguageSelector';
 
 const SidebarNav: React.FC = () => {
@@ -11,6 +12,7 @@ const SidebarNav: React.FC = () => {
     const pathname = usePathname();
     const { user } = useAuth();
     const { profile } = useProfile();
+    const { unreadCount } = useNotifications();
 
     const navItems = [
         { label: 'Dashboard', icon: 'grid-outline', path: '/(tabs)/(home)' },
@@ -61,9 +63,12 @@ const SidebarNav: React.FC = () => {
                         <Ionicons name="moon-outline" size={20} color="#6B7280" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => router.push('/(tabs)/notifications')}
+                    >
                         <Ionicons name="notifications-outline" size={20} color="#6B7280" />
-                        <View style={styles.notificationBadge} />
+                        {unreadCount > 0 && <View style={styles.notificationBadge} />}
                     </TouchableOpacity>
                 </View>
 

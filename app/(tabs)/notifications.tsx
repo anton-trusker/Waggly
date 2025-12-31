@@ -1,75 +1,76 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNotifications } from '@/hooks/useNotifications';
+import { Notification } from '@/types';
 
 const NOTIFICATION_TYPES = ['All', 'Health', 'Events', 'Social', 'System'];
 
-const MOCK_NOTIFICATIONS = [
-    {
-        id: '1',
-        type: 'health',
-        icon: 'medical',
-        iconColor: '#EF4444',
-        title: 'Vaccination Due',
-        message: 'Max is due for Rabies vaccination',
-        time: '2 hours ago',
-        read: false,
-    },
-    {
-        id: '2',
-        type: 'events',
-        icon: 'calendar',
-        iconColor: '#6366F1',
-        title: 'Upcoming Appointment',
-        message: 'Vet visit tomorrow at 10:00 AM',
-        time: '5 hours ago',
-        read: false,
-    },
-    {
-        id: '3',
-        type: 'social',
-        icon: 'people',
-        iconColor: '#10B981',
-        title: 'New Co-Owner Added',
-        message: 'Sarah joined as co-owner for Luna',
-        time: '1 day ago',
-        read: true,
-    },
-    {
-        id: '4',
-        type: 'system',
-        icon: 'information-circle',
-        iconColor: '#8B5CF6',
-        title: 'Account Updated',
-        message: 'Your profile information has been updated',
-        time: '2 days ago',
-        read: true,
-    },
-];
-
 export default function NotificationsPage() {
+    const {
+        notifications,
+        loading,
+        unreadCount,
+        markAsRead,
+        markAllAsRead,
+        clearAll,
+        deleteNotification,
+        sendTestNotification // For testing
+    } = useNotifications();
+
     const [selectedFilter, setSelectedFilter] = useState('All');
-    const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
 
     const filteredNotifications = notifications.filter(notif => {
         if (selectedFilter === 'All') return true;
-        return notif.type === selectedFilter.toLowerCase();
+        return (notif.type || 'system').toLowerCase() === selectedFilter.toLowerCase();
     });
 
-    const unreadCount = notifications.filter(n => !n.read).length;
-
-    const handleMarkAllRead = () => {
-        setNotifications(notifications.map(n => ({ ...n, read: true })));
+    const getIconInfo = (type: string) => {
+        const t = (type || 'system').toLowerCase();
+        switch (t) {
+            case 'health': return { icon: 'medical', color: '#EF4444' };
+            case 'vaccination': return { icon: 'medical', color: '#EF4444' };
+            case 'medication': return { icon: 'bandage', color: '#EF4444' }; // Fallback for health subtypes
+            case 'events': return { icon: 'calendar', color: '#6366F1' };
+            case 'visit': return { icon: 'fitness', color: '#6366F1' };
+            case 'social': return { icon: 'people', color: '#10B981' };
+            case 'system': return { icon: 'information-circle', color: '#8B5CF6' };
+            default: return { icon: 'notifications', color: '#6B7280' };
+        }
     };
 
-    const handleClearAll = () => {
-        setNotifications([]);
+    const formatTime = (dateString: string | null) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = (now.getTime() - date.getTime()) / 1000; // seconds
+
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+        return date.toLocaleDateString();
     };
 
-    const handleMarkRead = (id: string) => {
-        setNotifications(notifications.map(n =>
-            n.id === id ? { ...n, read: true } : n
-        ));
+    const handleTestNotification = () => {
+        const types = ['health', 'events', 'social', 'system'];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        sendTestNotification(
+            `New ${randomType} alert`,
+            `This is a test notification generated at ${new Date().toLocaleTimeString()}`,
+            randomType
+        );
+    };
+
+    const confirmClearAll = () => {
+        Alert.alert(
+            "Clear All",
+            "Are you sure you want to delete all notifications?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Clear", style: "destructive", onPress: clearAll }
+            ]
+        );
     };
 
     return (
@@ -83,14 +84,18 @@ export default function NotificationsPage() {
                     </Text>
                 </View>
                 <View style={styles.headerActions}>
+                    <TouchableOpacity style={styles.testButton} onPress={handleTestNotification}>
+                        <Ionicons name="add-circle-outline" size={20} color="#6B7280" />
+                    </TouchableOpacity>
+
                     {unreadCount > 0 && (
-                        <TouchableOpacity style={styles.markAllButton} onPress={handleMarkAllRead}>
+                        <TouchableOpacity style={styles.markAllButton} onPress={() => markAllAsRead()}>
                             <Ionicons name="checkmark-done" size={20} color="#6366F1" />
                             <Text style={styles.markAllButtonText}>Mark all read</Text>
                         </TouchableOpacity>
                     )}
                     {notifications.length > 0 && (
-                        <TouchableOpacity style={styles.clearAllButton} onPress={handleClearAll}>
+                        <TouchableOpacity style={styles.clearAllButton} onPress={confirmClearAll}>
                             <Ionicons name="trash-outline" size={20} color="#9CA3AF" />
                         </TouchableOpacity>
                     )}
@@ -121,40 +126,52 @@ export default function NotificationsPage() {
             </View>
 
             {/* Notifications List */}
-            <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-                {filteredNotifications.length === 0 ? (
-                    <View style={styles.emptyState}>
-                        <Ionicons name="notifications-off-outline" size={64} color="#D1D5DB" />
-                        <Text style={styles.emptyStateText}>No notifications</Text>
-                        <Text style={styles.emptyStateSubtext}>
-                            You're all caught up!
-                        </Text>
-                    </View>
-                ) : (
-                    filteredNotifications.map((notif) => (
-                        <TouchableOpacity
-                            key={notif.id}
-                            style={[
-                                styles.notificationCard,
-                                !notif.read && styles.notificationCardUnread,
-                            ]}
-                            onPress={() => handleMarkRead(notif.id)}
-                        >
-                            <View style={[styles.iconContainer, { backgroundColor: notif.iconColor + '20' }]}>
-                                <Ionicons name={notif.icon as any} size={24} color={notif.iconColor} />
-                            </View>
-                            <View style={styles.notificationContent}>
-                                <View style={styles.notificationHeader}>
-                                    <Text style={styles.notificationTitle}>{notif.title}</Text>
-                                    {!notif.read && <View style={styles.unreadDot} />}
-                                </View>
-                                <Text style={styles.notificationMessage}>{notif.message}</Text>
-                                <Text style={styles.notificationTime}>{notif.time}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))
-                )}
-            </ScrollView>
+            {loading && notifications.length === 0 ? (
+                <View style={styles.centerContainer}>
+                    <ActivityIndicator size="large" color="#6366F1" />
+                </View>
+            ) : (
+                <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+                    {filteredNotifications.length === 0 ? (
+                        <View style={styles.emptyState}>
+                            <Ionicons name="notifications-off-outline" size={64} color="#D1D5DB" />
+                            <Text style={styles.emptyStateText}>No notifications</Text>
+                            <Text style={styles.emptyStateSubtext}>
+                                {notifications.length === 0 ? "You're all caught up!" : "No notifications match this filter."}
+                            </Text>
+                        </View>
+                    ) : (
+                        filteredNotifications.map((notif) => {
+                            const { icon, color } = getIconInfo(notif.type);
+                            return (
+                                <TouchableOpacity
+                                    key={notif.id}
+                                    style={[
+                                        styles.notificationCard,
+                                        !notif.is_read && styles.notificationCardUnread,
+                                    ]}
+                                    onPress={() => !notif.is_read && markAsRead(notif.id)}
+                                    // Optional: Long press to delete single notification?
+                                    onLongPress={() => Alert.alert("Delete", "Delete this notification?", [{ text: "Cancel" }, { text: "Delete", onPress: () => deleteNotification(notif.id) }])}
+                                >
+                                    <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
+                                        <Ionicons name={icon as any} size={24} color={color} />
+                                    </View>
+                                    <View style={styles.notificationContent}>
+                                        <View style={styles.notificationHeader}>
+                                            <Text style={styles.notificationTitle}>{notif.title}</Text>
+                                            {!notif.is_read && <View style={styles.unreadDot} />}
+                                        </View>
+                                        <Text style={styles.notificationMessage}>{notif.message}</Text>
+                                        <Text style={styles.notificationTime}>{formatTime(notif.created_at)}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })
+                    )}
+                    <View style={{ height: 40 }} />
+                </ScrollView>
+            )}
         </View>
     );
 }
@@ -187,6 +204,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#6B7280',
         marginTop: 4,
+    },
+    testButton: {
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: '#F3F4F6',
     },
     markAllButton: {
         flexDirection: 'row',
@@ -238,6 +260,11 @@ const styles = StyleSheet.create({
     list: {
         flex: 1,
         padding: 32,
+    },
+    centerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     notificationCard: {
         flexDirection: 'row',
