@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -148,70 +148,70 @@ export default function SettingsTab() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 32,
-    },
-    section: {
-        marginBottom: 32,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 16,
-        letterSpacing: 0.5,
-    },
-    settingItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    settingIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#F3F4F6',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12,
-    },
-    settingContent: {
-        flex: 1,
-    },
-    settingTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1F2937',
-        marginBottom: 2,
-    },
-    settingDescription: {
-        fontSize: 12,
-        color: '#6B7280',
-    },
-    dangerItem: {
-        borderColor: '#FEE2E2',
-    },
-    dangerIcon: {
-        backgroundColor: '#FEE2E2',
-    },
-    dangerText: {
-        color: '#EF4444',
-    },
-    infoSection: {
-        marginTop: 32,
-        padding: 16,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 8,
-    },
-    infoText: {
-        fontSize: 12,
-        color: '#6B7280',
-        marginBottom: 4,
-    },
+  container: {
+    flex: 1,
+    padding: 32,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 16,
+    letterSpacing: 0.5,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  settingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  settingContent: {
+    flex: 1,
+  },
+  settingTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  dangerItem: {
+    borderColor: '#FEE2E2',
+  },
+  dangerIcon: {
+    backgroundColor: '#FEE2E2',
+  },
+  dangerText: {
+    color: '#EF4444',
+  },
+  infoSection: {
+    marginTop: 32,
+    padding: 16,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+  },
+  infoText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 4,
+  },
 });
