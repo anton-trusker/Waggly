@@ -3,13 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, StyleSheet 
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { designSystem } from '@/constants/designSystem'; // Force Light Theme
 import { Place } from '@/components/ui/PlacesAutocomplete';
 import PetSelector from './shared/PetSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
 import PlacesAutocomplete from '@/components/ui/PlacesAutocomplete';
 import FormModal, { FormState } from '@/components/ui/FormModal';
+import BottomSheetSelect from '@/components/ui/BottomSheetSelect';
 
 interface VisitFormModalProps {
     visible: boolean;
@@ -19,16 +20,16 @@ interface VisitFormModalProps {
 }
 
 const PROVIDER_TYPES = [
-    { type: 'veterinary', label: 'Veterinary', icon: 'medical', color: '#EF4444' },
-    { type: 'groomer', label: 'Grooming', icon: 'cut', color: '#06B6D4' },
-    { type: 'trainer', label: 'Training', icon: 'school', color: '#8B5CF6' },
-    { type: 'boarder', label: 'Boarding', icon: 'bed', color: '#F59E0B' },
-    { type: 'daycare', label: 'Daycare', icon: 'home', color: '#10B981' },
-    { type: 'walker', label: 'Walker', icon: 'walk', color: '#3B82F6' },
-    { type: 'sitter', label: 'Sitter', icon: 'person', color: '#EC4899' },
-    { type: 'behaviorist', label: 'Behaviorist', icon: 'fitness', color: '#6366F1' },
-    { type: 'nutritionist', label: 'Nutritionist', icon: 'restaurant', color: '#14B8A6' },
-] as const;
+    { type: 'veterinary', label: 'Veterinary', icon: 'medical' as const },
+    { type: 'groomer', label: 'Grooming', icon: 'cut' as const },
+    { type: 'trainer', label: 'Training', icon: 'school' as const },
+    { type: 'boarder', label: 'Boarding', icon: 'bed' as const },
+    { type: 'daycare', label: 'Daycare', icon: 'home' as const },
+    { type: 'walker', label: 'Walker', icon: 'walk' as const },
+    { type: 'sitter', label: 'Sitter', icon: 'person' as const },
+    { type: 'behaviorist', label: 'Behaviorist', icon: 'fitness' as const },
+    { type: 'nutritionist', label: 'Nutritionist', icon: 'restaurant' as const },
+];
 
 const SERVICE_CATEGORIES: Record<string, string[]> = {
     veterinary: ['Routine Check-up', 'Emergency', 'Vaccination', 'Specialist', 'Dental', 'Surgery', 'Lab Work', 'Follow-up'],
@@ -48,7 +49,13 @@ const URGENCY_LEVELS = [
     { label: 'Emergency', value: 'emergency', color: '#EF4444' },
 ];
 
-const COMMON_SYMPTOMS = ['Vomiting', 'Diarrhea', 'Limping', 'Ear Infection', 'Eye Discharge', 'Fever', 'Loss of Appetite', 'Coughing'];
+const CURRENCIES = [
+    { label: 'EUR', value: 'EUR' },
+    { label: 'USD', value: 'USD' },
+    { label: 'GBP', value: 'GBP' },
+    { label: 'CAD', value: 'CAD' },
+    { label: 'AUD', value: 'AUD' },
+];
 
 interface VisitFormData {
     provider_type: 'veterinary' | 'groomer' | 'trainer' | 'boarder' | 'daycare' | 'walker' | 'sitter' | 'behaviorist' | 'nutritionist';
@@ -76,7 +83,9 @@ interface VisitFormData {
 
 export default function VisitFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VisitFormModalProps) {
     const { pets } = usePets();
-    const { theme } = useAppTheme();
+    // Force Light Theme
+    const theme = designSystem;
+
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
 
     useEffect(() => {
@@ -113,37 +122,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         reminder_enabled: false,
     };
 
-    const handleRepeatLast = async (formState: FormState<VisitFormData>) => {
-        if (!selectedPetId) return;
-
-        try {
-            const { data } = await supabase
-                .from('medical_visits')
-                .select('*')
-                .eq('pet_id', selectedPetId)
-                .order('date', { ascending: false })
-                .limit(1)
-                .single();
-
-            if (data) {
-                formState.updateField('provider_type', (data.provider_type as any) || 'veterinary');
-                formState.updateField('service_category', data.service_category || 'Routine Check-up');
-                formState.updateField('business_name', data.business_name || '');
-                formState.updateField('provider_name', data.provider_name || '');
-                // Address not currently stored in DB column
-                // formState.updateField('business_address', data.business_address || ''); 
-                formState.updateField('business_phone', data.business_phone || '');
-                formState.updateField('currency', data.currency || 'EUR');
-
-                Alert.alert('Auto-Filled', 'Details from the last visit have been applied.');
-            } else {
-                Alert.alert('Info', 'No previous visits found for this pet.');
-            }
-        } catch (err) {
-            console.log('Error fetching last visit:', err);
-        }
-    };
-
     const handleSubmit = async (data: VisitFormData) => {
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
@@ -154,7 +132,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             return;
         }
 
-        // Append address to notes since there is no column for it
         let finalNotes = data.notes || '';
         if (data.business_address) {
             finalNotes = `Address: ${data.business_address}\n\n${finalNotes}`;
@@ -171,7 +148,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             business_name: data.business_name,
             provider_name: data.provider_name || null,
             business_place_id: data.business_place_id || null,
-            // business_address: data.business_address || null, // Column missing
             business_phone: data.business_phone || null,
             business_website: data.business_website || null,
             reason: data.reason || data.service_category,
@@ -191,7 +167,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
         if (error) throw error;
 
-        // Log the activity
         const userId = (await supabase.auth.getUser()).data.user?.id;
         if (userId) {
             await supabase.from('activity_logs').insert({
@@ -217,15 +192,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         return errors;
     };
 
-    const toggleSymptom = (symptom: string, formState: FormState<VisitFormData>) => {
-        const currentSymptoms = formState.data.symptoms || [];
-        if (currentSymptoms.includes(symptom)) {
-            formState.updateField('symptoms', currentSymptoms.filter(s => s !== symptom));
-        } else {
-            formState.updateField('symptoms', [...currentSymptoms, symptom]);
-        }
-    };
-
     const handlePlaceSelect = (place: Place, formState: FormState<VisitFormData>) => {
         formState.updateField('business_address', place.formatted_address);
         formState.updateField('business_place_id', place.place_id);
@@ -240,6 +206,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             onSubmit={handleSubmit}
             validate={validate}
             submitLabel="Save Visit"
+            forceLight // Force White Modal Background
         >
             {(formState: FormState<VisitFormData>) => {
                 const selectedProvider = PROVIDER_TYPES.find(p => p.type === formState.data.provider_type);
@@ -248,14 +215,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                 return (
                     <View style={styles.formContent}>
                         <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
-
-                        <TouchableOpacity
-                            onPress={() => handleRepeatLast(formState)}
-                            style={[styles.repeatButton, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}
-                        >
-                            <Ionicons name="reload" size={16} color={theme.colors.primary[500]} />
-                            <Text style={[styles.repeatButtonText, { color: theme.colors.primary[500] }]}>Repeat Last Visit Details</Text>
-                        </TouchableOpacity>
 
                         {/* Provider Type Selector */}
                         <View style={styles.section}>
@@ -272,21 +231,21 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                 style={[
                                                     styles.providerIcon,
                                                     {
-                                                        backgroundColor: formState.data.provider_type === provider.type ? provider.color : '#2C2C2E',
-                                                        borderColor: formState.data.provider_type === provider.type ? provider.color : '#374151'
+                                                        backgroundColor: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.background.tertiary,
+                                                        borderColor: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.border.primary
                                                     }
                                                 ]}
                                             >
                                                 <Ionicons
                                                     name={provider.icon as any}
-                                                    size={28}
-                                                    color={formState.data.provider_type === provider.type ? '#FFFFFF' : '#9CA3AF'}
+                                                    size={24}
+                                                    color={formState.data.provider_type === provider.type ? '#FFFFFF' : theme.colors.text.tertiary}
                                                 />
                                             </View>
                                             <Text
                                                 style={[
                                                     styles.providerLabel,
-                                                    { color: formState.data.provider_type === provider.type ? provider.color : '#9CA3AF' }
+                                                    { color: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.text.secondary }
                                                 ]}
                                             >
                                                 {provider.label}
@@ -297,274 +256,127 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                             </ScrollView>
                         </View>
 
-                        {/* Visit Details */}
-                        <View style={styles.section}>
-                            <View style={styles.sectionHeader}>
-                                <Ionicons name="calendar" size={20} color={selectedProvider?.color} />
-                                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Add Visit Record</Text>
-                            </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.secondary, borderWidth: 1 }]}>
 
-                            <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
-                                {/* Urgency */}
-                                <View style={styles.buttonRow}>
-                                    {URGENCY_LEVELS.map((level) => (
-                                        <TouchableOpacity
-                                            key={level.value}
-                                            onPress={() => formState.updateField('urgency', level.value)}
-                                            style={[
-                                                styles.urgencyButton,
-                                                {
-                                                    backgroundColor: formState.data.urgency === level.value ? `${level.color}20` : 'transparent',
-                                                    borderColor: formState.data.urgency === level.value ? level.color : theme.colors.border.primary
-                                                }
-                                            ]}
-                                        >
-                                            <Text style={[styles.urgencyText, { color: formState.data.urgency === level.value ? level.color : theme.colors.text.secondary }]}>
-                                                {level.label}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-
-                                {/* Service Category */}
-                                <View style={styles.fieldGroup}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Service Type</Text>
-                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                        <View style={styles.chipRow}>
-                                            {availableCategories.map(category => (
-                                                <TouchableOpacity
-                                                    key={category}
-                                                    onPress={() => formState.updateField('service_category', category)}
-                                                    style={[
-                                                        styles.categoryChip,
-                                                        { borderColor: theme.colors.border.primary },
-                                                        formState.data.service_category === category && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
-                                                    ]}
-                                                >
-                                                    <Text style={[
-                                                        styles.categoryChipText,
-                                                        { color: theme.colors.text.secondary },
-                                                        formState.data.service_category === category && { color: '#FFFFFF' }
-                                                    ]}>
-                                                        {category}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    </ScrollView>
-                                </View>
-
-                                <UniversalDatePicker
-                                    label="Date"
-                                    value={formState.data.date}
-                                    onChange={(text) => formState.updateField('date', text)}
-                                />
-
-                                <View style={styles.row}>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Time (Optional)</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            placeholder="HH:MM"
-                                            placeholderTextColor={theme.colors.text.tertiary}
-                                            value={formState.data.visit_time}
-                                            onChangeText={(text) => formState.updateField('visit_time', text)}
-                                        />
-                                    </View>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Duration (min)</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            placeholder="30"
-                                            placeholderTextColor={theme.colors.text.tertiary}
-                                            keyboardType="numeric"
-                                            value={formState.data.duration_minutes}
-                                            onChangeText={(text) => formState.updateField('duration_minutes', text)}
-                                        />
-                                    </View>
-                                </View>
-
-                                <RichTextInput
-                                    label="Reason for Visit"
-                                    placeholder="e.g. Annual check-up, bath and nail trim..."
-                                    value={formState.data.reason}
-                                    onChangeText={(text) => formState.updateField('reason', text)}
-                                    minHeight={60}
-                                />
-                            </View>
-                        </View>
-
-                        {/* Medical Fields (Veterinary Only) */}
-                        {formState.data.provider_type === 'veterinary' && (
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="pulse" size={20} color="#EF4444" />
-                                    <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Medical Details</Text>
-                                </View>
-
-                                <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
-                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                        <View style={styles.chipRow}>
-                                            {COMMON_SYMPTOMS.map(symptom => (
-                                                <TouchableOpacity
-                                                    key={symptom}
-                                                    onPress={() => toggleSymptom(symptom, formState)}
-                                                    style={[
-                                                        styles.chip,
-                                                        { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
-                                                        formState.data.symptoms.includes(symptom) && styles.chipDanger
-                                                    ]}
-                                                >
-                                                    <Text style={[
-                                                        styles.chipText,
-                                                        { color: theme.colors.text.secondary },
-                                                        formState.data.symptoms.includes(symptom) && styles.chipTextDanger
-                                                    ]}>
-                                                        {symptom}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    </ScrollView>
-
-                                    <RichTextInput
-                                        label="Diagnosis / Assessment"
-                                        placeholder="What did the vet say?"
-                                        value={formState.data.diagnosis}
-                                        onChangeText={(text) => formState.updateField('diagnosis', text)}
-                                    />
-                                </View>
-                            </View>
-                        )}
-
-                        {/* Provider & Location */}
-                        <View style={styles.section}>
-                            <View style={styles.sectionHeader}>
-                                <Ionicons name="location" size={20} color="#EC4899" />
-                                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Provider & Location</Text>
-                            </View>
-
-                            <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
-                                <View style={styles.fieldGroup}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Business Name *</Text>
-                                    <TextInput
+                            {/* Urgency */}
+                            <View style={styles.buttonRow}>
+                                {URGENCY_LEVELS.map((level) => (
+                                    <TouchableOpacity
+                                        key={level.value}
+                                        onPress={() => formState.updateField('urgency', level.value)}
                                         style={[
-                                            styles.input,
+                                            styles.urgencyButton,
                                             {
-                                                backgroundColor: theme.colors.background.secondary,
-                                                color: theme.colors.text.primary,
-                                                borderColor: formState.errors.business_name ? theme.colors.status.error[500] : theme.colors.border.primary
+                                                backgroundColor: formState.data.urgency === level.value ? `${level.color}20` : 'transparent',
+                                                borderColor: formState.data.urgency === level.value ? level.color : theme.colors.border.primary
                                             }
                                         ]}
-                                        placeholder={`Enter ${selectedProvider?.label.toLowerCase()} name...`}
-                                        placeholderTextColor={theme.colors.text.tertiary}
-                                        value={formState.data.business_name}
-                                        onChangeText={(text) => formState.updateField('business_name', text)}
-                                    />
-                                    {formState.errors.business_name && (
-                                        <Text style={{ color: theme.colors.status.error[500], fontSize: 12, marginTop: -8 }}>
-                                            {formState.errors.business_name}
+                                    >
+                                        <Text style={[styles.urgencyText, { color: formState.data.urgency === level.value ? level.color : theme.colors.text.secondary }]}>
+                                            {level.label}
                                         </Text>
-                                    )}
-                                </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
 
-                                <View style={styles.fieldGroup}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Provider Name (Optional)</Text>
-                                    <TextInput
-                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                        placeholder="Dr. Smith, Jane Doe, etc."
-                                        placeholderTextColor={theme.colors.text.tertiary}
-                                        value={formState.data.provider_name}
-                                        onChangeText={(text) => formState.updateField('provider_name', text)}
-                                    />
-                                </View>
+                            {/* Service Category */}
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Service Type</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.chipRow}>
+                                        {availableCategories.map(category => (
+                                            <TouchableOpacity
+                                                key={category}
+                                                onPress={() => formState.updateField('service_category', category)}
+                                                style={[
+                                                    styles.categoryChip,
+                                                    { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.tertiary },
+                                                    formState.data.service_category === category && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    styles.categoryChipText,
+                                                    { color: theme.colors.text.secondary },
+                                                    formState.data.service_category === category && { color: '#FFFFFF' }
+                                                ]}>
+                                                    {category}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
 
-                                <PlacesAutocomplete
-                                    value={formState.data.business_address}
-                                    onSelect={(place) => handlePlaceSelect(place, formState)}
-                                    placeholder="Search for clinic, groomer, or business..."
-                                    types={['veterinary_care', 'establishment']}
-                                    label="Business Address (Optional)"
+                            <UniversalDatePicker
+                                label="Date"
+                                value={formState.data.date}
+                                onChange={(text) => formState.updateField('date', text)}
+                            />
+
+                            {/* Business Name */}
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Business Name *</Text>
+                                <TextInput
+                                    style={[
+                                        styles.input,
+                                        {
+                                            backgroundColor: theme.colors.background.tertiary,
+                                            color: theme.colors.text.primary,
+                                            borderColor: formState.errors.business_name ? theme.colors.status.error[500] : theme.colors.border.primary
+                                        }
+                                    ]}
+                                    placeholder={`Enter ${selectedProvider?.label.toLowerCase()} name...`}
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.business_name}
+                                    onChangeText={(text) => formState.updateField('business_name', text)}
                                 />
-
-                                <View style={styles.row}>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Phone</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            placeholder="(555) 123-4567"
-                                            placeholderTextColor={theme.colors.text.tertiary}
-                                            value={formState.data.business_phone}
-                                            onChangeText={(text) => formState.updateField('business_phone', text)}
-                                            keyboardType="phone-pad"
-                                        />
-                                    </View>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Website</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            placeholder="www.example.com"
-                                            placeholderTextColor={theme.colors.text.tertiary}
-                                            value={formState.data.business_website}
-                                            onChangeText={(text) => formState.updateField('business_website', text)}
-                                            keyboardType="url"
-                                        />
-                                    </View>
-                                </View>
+                                {formState.errors.business_name && (
+                                    <Text style={{ color: theme.colors.status.error[500], fontSize: 12, marginTop: -8 }}>
+                                        {formState.errors.business_name}
+                                    </Text>
+                                )}
                             </View>
-                        </View>
 
-                        {/* Cost */}
-                        <View style={styles.section}>
-                            <View style={styles.sectionHeader}>
-                                <Ionicons name="cash" size={20} color="#10B981" />
-                                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Cost</Text>
-                            </View>
-                            <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
-                                <View style={styles.row}>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Total Cost</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            placeholder="0.00"
-                                            placeholderTextColor={theme.colors.text.tertiary}
-                                            keyboardType="numeric"
-                                            value={formState.data.cost}
-                                            onChangeText={(text) => formState.updateField('cost', text)}
-                                        />
-                                    </View>
-                                    <View style={styles.halfWidth}>
-                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Currency</Text>
-                                        <TextInput
-                                            style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                            value={formState.data.currency}
-                                            onChangeText={(text) => formState.updateField('currency', text)}
-                                        />
-                                    </View>
-                                </View>
+                            <PlacesAutocomplete
+                                value={formState.data.business_address}
+                                onSelect={(place) => handlePlaceSelect(place, formState)}
+                                placeholder="Search address..."
+                                types={['veterinary_care', 'establishment']}
+                                label="Business Address (Optional)"
+                            />
 
-                                <View style={styles.fieldGroup}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Payment Method (Optional)</Text>
+                            <View style={styles.row}>
+                                <View style={styles.flex1}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Total Cost</Text>
                                     <TextInput
-                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
-                                        placeholder="Cash, Card, Insurance..."
+                                        style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="0.00"
                                         placeholderTextColor={theme.colors.text.tertiary}
-                                        value={formState.data.payment_method}
-                                        onChangeText={(text) => formState.updateField('payment_method', text)}
+                                        keyboardType="numeric"
+                                        value={formState.data.cost}
+                                        onChangeText={(text) => formState.updateField('cost', text)}
+                                    />
+                                </View>
+                                <View style={[styles.flex1, { flex: 0.8 }]}>
+                                    <BottomSheetSelect
+                                        label="Currency"
+                                        value={formState.data.currency}
+                                        onChange={(val) => formState.updateField('currency', val)}
+                                        options={CURRENCIES}
+                                        placeholder="EUR"
                                     />
                                 </View>
                             </View>
+
+                            <RichTextInput
+                                label="Reason / Notes"
+                                placeholder="Details about this visit..."
+                                value={formState.data.notes}
+                                onChangeText={(text) => formState.updateField('notes', text)}
+                                minHeight={80}
+                            />
                         </View>
-
-                        <RichTextInput
-                            label="Additional Notes"
-                            placeholder="Any other details about this visit..."
-                            value={formState.data.notes}
-                            onChangeText={(text) => formState.updateField('notes', text)}
-                            minHeight={80}
-                        />
-
-                        <View style={{ height: 40 }} />
+                        <View style={{ height: 20 }} />
                     </View>
                 );
             }}
@@ -574,37 +386,17 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
 const styles = StyleSheet.create({
     formContent: {
-        gap: 24,
-    },
-    repeatButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        paddingVertical: 12,
-        borderRadius: 12,
-        borderWidth: 1,
-    },
-    repeatButtonText: {
-        fontWeight: '500',
+        gap: 16,
     },
     section: {
-        gap: 12,
-    },
-    sectionLabel: {
-        fontSize: 12,
-        fontWeight: '700',
-        letterSpacing: 1,
-        marginBottom: 12,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
         gap: 8,
     },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
+    sectionLabel: {
+        fontSize: 11,
+        fontWeight: '600',
+        letterSpacing: 0.5,
+        marginBottom: 4,
+        textTransform: 'uppercase',
     },
     providerRow: {
         flexDirection: 'row',
@@ -612,47 +404,50 @@ const styles = StyleSheet.create({
     },
     providerItem: {
         alignItems: 'center',
-        minWidth: 80,
+        minWidth: 64,
     },
     providerIcon: {
-        width: 64,
-        height: 64,
-        borderRadius: 16,
+        width: 48,
+        height: 48,
+        borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 8,
-        borderWidth: 2,
+        marginBottom: 6,
+        borderWidth: 1,
     },
     providerLabel: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '500',
         textAlign: 'center',
     },
     card: {
         borderRadius: 16,
         padding: 16,
-        gap: 16,
+        gap: 12,
     },
     fieldGroup: {
-        gap: 8,
+        gap: 4,
     },
     label: {
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: '500',
-        marginBottom: 8,
+        marginBottom: 4,
+        fontFamily: 'Plus Jakarta Sans',
     },
     input: {
         borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
         fontSize: 16,
         borderWidth: 1,
+        fontFamily: 'Plus Jakarta Sans',
     },
     row: {
         flexDirection: 'row',
-        gap: 16,
+        gap: 12,
+        alignItems: 'flex-start',
     },
-    halfWidth: {
+    flex1: {
         flex: 1,
     },
     buttonRow: {
@@ -663,43 +458,29 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 10,
         alignItems: 'center',
-        borderRadius: 8,
+        borderRadius: 10,
         borderWidth: 1,
     },
     urgencyText: {
         fontSize: 12,
-        fontWeight: '700',
+        fontWeight: '600',
         textTransform: 'uppercase',
+        fontFamily: 'Plus Jakarta Sans',
     },
     chipRow: {
         flexDirection: 'row',
         gap: 8,
-    },
-    chip: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        borderWidth: 1,
-    },
-    chipText: {
-        fontSize: 12,
-    },
-    chipDanger: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderColor: '#EF4444',
-    },
-    chipTextDanger: {
-        color: '#EF4444',
+        flexWrap: 'wrap',
     },
     categoryChip: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,
         borderWidth: 1,
-        marginRight: 8,
     },
     categoryChipText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500',
+        fontFamily: 'Plus Jakarta Sans',
     },
 });

@@ -11,6 +11,7 @@ import {
     useWindowDimensions,
 } from 'react-native';
 import { colors } from '@/styles/commonStyles';
+import { designSystem } from '@/constants/designSystem'; // Added
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import BottomCTA from '@/components/ui/BottomCTA';
@@ -30,6 +31,7 @@ export interface FormModalProps<T = any> {
     submitLabel?: string;
     showBackButton?: boolean;
     headerIcon?: string;
+    forceLight?: boolean; // Added
 }
 
 export interface FormState<T> {
@@ -57,8 +59,19 @@ export default function FormModal<T = any>({
     submitLabel = 'Save',
     showBackButton = true,
     headerIcon,
+    forceLight = false,
 }: FormModalProps<T>) {
     const { width } = useWindowDimensions();
+
+    // Determine effective colors
+    const effectiveColors = forceLight ? {
+        background: designSystem.colors.background.primary,
+        text: designSystem.colors.text.primary,
+        textSecondary: designSystem.colors.text.secondary,
+        border: designSystem.colors.border.secondary,
+        primary: designSystem.colors.primary[500],
+    } : colors;
+
     const [formData, setFormData] = useState<T>((initialData || {}) as T);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
@@ -178,25 +191,25 @@ export default function FormModal<T = any>({
                 style={styles.keyboardAvoid}
             >
                 <View style={styles.overlay}>
-                    <View style={[styles.modalContainer, { width: getModalWidth(), maxWidth: getModalWidth() }]}>
+                    <View style={[styles.modalContainer, { width: getModalWidth(), maxWidth: getModalWidth(), backgroundColor: effectiveColors.background }]}>
                         {/* Header */}
-                        <View style={[styles.header, { paddingHorizontal: getContentPadding(), paddingVertical: width < 640 ? 16 : 20 }]}>
+                        <View style={[styles.header, { paddingHorizontal: getContentPadding(), paddingVertical: width < 640 ? 16 : 20, borderBottomColor: effectiveColors.border }]}>
                             <View style={styles.headerContent}>
                                 {headerIcon && (
                                     <IconSymbol
                                         ios_icon_name={headerIcon}
                                         android_material_icon_name={headerIcon}
                                         size={24}
-                                        color={colors.primary}
+                                        color={effectiveColors.primary}
                                         style={styles.headerIcon}
                                     />
                                 )}
                                 <View style={styles.headerText}>
-                                    <Text style={styles.title} className="text-base sm:text-lg">
+                                    <Text style={[styles.title, { color: effectiveColors.text }]} className="text-base sm:text-lg">
                                         {title}
                                     </Text>
                                     {subtitle && (
-                                        <Text style={styles.subtitle}>{subtitle}</Text>
+                                        <Text style={[styles.subtitle, { color: effectiveColors.textSecondary }]}>{subtitle}</Text>
                                     )}
                                 </View>
                             </View>
@@ -211,7 +224,7 @@ export default function FormModal<T = any>({
                                     ios_icon_name="xmark"
                                     android_material_icon_name="close"
                                     size={24}
-                                    color={colors.text}
+                                    color={effectiveColors.text}
                                 />
                             </TouchableOpacity>
                         </View>

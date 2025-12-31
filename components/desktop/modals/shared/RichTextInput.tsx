@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { formColors } from '@/styles/formStyles';
 
 interface RichTextInputProps {
   label: string;
@@ -17,23 +17,13 @@ export default function RichTextInput({
   placeholder,
   minHeight = 100
 }: RichTextInputProps) {
-  const { theme } = useAppTheme();
-
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{label}</Text>
+      <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[
-          styles.input,
-          {
-            backgroundColor: theme.colors.background.secondary,
-            color: theme.colors.text.primary,
-            borderColor: theme.colors.border.primary,
-            minHeight
-          }
-        ]}
+        style={[styles.input, { minHeight }]}
         placeholder={placeholder}
-        placeholderTextColor={theme.colors.text.tertiary}
+        placeholderTextColor={formColors.inputPlaceholder}
         multiline
         textAlignVertical="top"
         value={value}
@@ -48,17 +38,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 6,
+    color: formColors.labelText,
   },
   input: {
     width: '100%',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 15,
     borderWidth: 1,
+    backgroundColor: formColors.inputBackground,
+    color: formColors.inputText,
+    borderColor: formColors.inputBorder,
   }
 });

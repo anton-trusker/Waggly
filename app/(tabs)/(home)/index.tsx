@@ -55,7 +55,7 @@ export default function DashboardPage() {
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary[500]]} />
             }
         >
-            <View style={[styles.content, isMobile && styles.contentMobile]}>
+            <View style={[styles.content, !isLargeScreen && styles.contentMobile]}>
 
                 {/* Header (Greeting) */}
                 <View style={styles.header}>

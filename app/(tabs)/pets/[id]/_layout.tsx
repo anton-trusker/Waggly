@@ -13,7 +13,6 @@ export default function PetDetailLayout() {
             <Stack.Screen name="index" />
             <Stack.Screen name="overview" />
             <Stack.Screen name="health" />
-            <Stack.Screen name="passport" />
             <Stack.Screen name="documents" />
             <Stack.Screen name="album" />
             <Stack.Screen name="history" />

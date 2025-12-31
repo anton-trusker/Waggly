@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
 import OverviewTab from './overview';
-import PassportTab from './passport';
 import DocumentsTab from './documents';
 import HistoryTab from './history';
 import SettingsTab from './settings';
@@ -22,7 +21,7 @@ export default function PetDetailsPage() {
     const { pets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
-    const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'documents' | 'share' | 'history' | 'settings'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'share' | 'history' | 'settings'>('overview');
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
     const [editProfileModalVisible, setEditProfileModalVisible] = useState(false);
@@ -82,7 +81,7 @@ export default function PetDetailsPage() {
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
                         {/* Sticky Tabs Header (simulated placement) */}
                         <View style={styles.mobileTabs}>
-                            {['Overview', 'Passport', 'Documents', 'Share', 'History', 'Settings'].map((tab) => {
+                            {['Overview', 'Documents', 'Share', 'History', 'Settings'].map((tab) => {
                                 const key = tab.toLowerCase() as any;
                                 const isActive = activeTab === key;
                                 return (
@@ -117,7 +116,6 @@ export default function PetDetailsPage() {
                         {/* Tab Content */}
                         <View style={{ paddingBottom: 100 }}>
                             {activeTab === 'overview' && <OverviewTab />}
-                            {activeTab === 'passport' && <PassportTab />}
                             {activeTab === 'documents' && <DocumentsTab />}
                             {activeTab === 'history' && <HistoryTab />}
                             {activeTab === 'settings' && <SettingsTab />}
@@ -172,14 +170,6 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'passport' && styles.tabActive]}
-                            onPress={() => setActiveTab('passport')}
-                        >
-                            <Text style={[styles.tabText, activeTab === 'passport' && styles.tabTextActive]}>
-                                Passport
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
                             style={[styles.tab, activeTab === 'documents' && styles.tabActive]}
                             onPress={() => setActiveTab('documents')}
                         >
@@ -216,7 +206,6 @@ export default function PetDetailsPage() {
                     {/* Desktop Tab Content */}
                     <ScrollView style={styles.tabContent}>
                         {activeTab === 'overview' && <OverviewTab />}
-                        {activeTab === 'passport' && <PassportTab />}
                         {activeTab === 'documents' && <DocumentsTab />}
                         {activeTab === 'share' && (
                             <View style={{ padding: 32 }}>

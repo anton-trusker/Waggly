@@ -9,7 +9,7 @@ import PetSelectorModal from '@/components/desktop/modals/PetSelectorModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
-import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
+
 import WeightModal from '@/components/desktop/modals/WeightModal';
 
 export default function HealthDashboard() {
@@ -64,7 +64,6 @@ export default function HealthDashboard() {
         vaccination: false,
         visit: false,
         treatment: false,
-        medication: false,
         weight: false,
     });
 
@@ -83,6 +82,14 @@ export default function HealthDashboard() {
     };
 
     const handleEventSelect = (type: 'vaccination' | 'visit' | 'treatment' | 'weight' | 'medication') => {
+        if (type === 'medication') {
+            setModals({
+                ...modals,
+                eventSelector: false,
+                treatment: true,
+            });
+            return;
+        }
         setModals({
             ...modals,
             eventSelector: false,
@@ -101,7 +108,6 @@ export default function HealthDashboard() {
             vaccination: false,
             visit: false,
             treatment: false,
-            medication: false,
             weight: false,
         });
         // Don't reset targetPetId immediately to avoid UI flicker slightly, or do it
@@ -267,12 +273,7 @@ export default function HealthDashboard() {
                         petId={targetPetId}
                         onSuccess={handleSuccess}
                     />
-                    <MedicationFormModal
-                        visible={modals.medication}
-                        onClose={closeAllModals}
-                        petId={targetPetId}
-                        onSuccess={handleSuccess}
-                    />
+
                     <WeightModal
                         visible={modals.weight}
                         onClose={closeAllModals}

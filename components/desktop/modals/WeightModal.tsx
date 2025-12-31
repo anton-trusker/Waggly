@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
 import { usePets } from '@/hooks/usePets';
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { designSystem } from '@/constants/designSystem'; // Use static designSystem for consistent light theme
 import { WeightEntry } from '@/types';
 import FormModal, { FormState } from '@/components/ui/FormModal';
 import PetSelector from './shared/PetSelector';
@@ -28,7 +28,8 @@ interface WeightFormData {
 
 export default function WeightModal({ visible, onClose, petId: initialPetId, existingEntry, onSuccess }: WeightModalProps) {
     const { pets } = usePets();
-    const { theme } = useAppTheme();
+    // Force light theme usage to match FormModal's white background and ensure premium look
+    const theme = designSystem;
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
     const { addWeightEntry, updateWeightEntry } = useWeightEntries(selectedPetId);
 
@@ -41,7 +42,7 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
 
     const initialData: WeightFormData = existingEntry ? {
         weight: String(existingEntry.weight),
-        unit: 'kg', // Default to kg as database stores in kg (assumed, as no unit column)
+        unit: 'kg', // Default to kg as database stores in kg
         date: existingEntry.date.split('T')[0],
         time: '',
         notes: existingEntry.notes || '',
@@ -68,28 +69,15 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
         }
 
         const numericWeight = parseFloat(data.weight);
-
-        // If user selected lbs, we might want to convert to kg if our DB is standardized, 
-        // OR if the DB is just a number we trust the user context. 
-        // Based on previous code, it seemed to just save the number. 
-        // However, standardizing on KG is better for analytics.
-        // For now, to preserve behavior match the original: just save the number and unit (if we could).
-        // BUT the DB has NO unit column. So we must decide.
-        // I will assume the DB stores KG for consistency.
-        // If user enters LBS, convert to KG? 
-        // Previous code: `const entryData = { weight: numericWeight, unit, date, notes };` 
-        // But `addWeightEntry` takes `Omit<WeightEntry, 'id' ...>`. `WeightEntry` type DOES NOT have `unit`.
-        // So the previous code was probably failing silently or passing extra props that supabase ignored.
-        // I will just save the weight. I will assume the user enters KG or if they toggle LBS, I'll convert.
-
         let finalWeight = numericWeight;
+
+        // Convert lbs to kg if selected
         if (data.unit === 'lbs') {
             finalWeight = numericWeight * 0.453592;
         }
 
         const entryData = {
             weight: finalWeight,
-            // unit: data.unit, // Cannot save unit as it doesn't exist on type
             date: data.date,
             notes: data.notes
         };
@@ -106,6 +94,8 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
         }
     };
 
+    const showPetSelector = !existingEntry && pets.length > 1;
+
     return (
         <FormModal
             visible={visible}
@@ -115,44 +105,49 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
             onSubmit={handleSubmit}
             validate={validate}
             submitLabel="Save Weight"
+            forceLight
         >
             {(formState: FormState<WeightFormData>) => (
                 <View style={styles.formContent}>
-                    {!existingEntry && (
+                    {showPetSelector && (
                         <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
                     )}
 
                     <View style={styles.section}>
-                        <View style={styles.sectionHeader}>
-                            <Ionicons name="scale" size={20} color={theme.colors.primary[500]} />
-                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Weight Details</Text>
-                        </View>
+                        {!showPetSelector && (
+                            <View style={styles.sectionHeader}>
+                                <View style={[styles.iconContainer, { backgroundColor: theme.colors.success[50] }]}>
+                                    <Ionicons name="scale" size={20} color={theme.colors.secondary.leaf} />
+                                </View>
+                                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
+                                    Measurement
+                                </Text>
+                            </View>
+                        )}
 
-                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
-                            <View style={styles.row}>
-                                <View style={styles.flex1}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Weight</Text>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary, borderWidth: 1 }]}>
+                            <View style={styles.inputGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Weight</Text>
+                                <View style={[styles.weightInputContainer, { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary }]}>
                                     <TextInput
-                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        style={[styles.weightInput, { color: theme.colors.text.primary }]}
                                         placeholder="0.00"
                                         placeholderTextColor={theme.colors.text.tertiary}
                                         keyboardType="decimal-pad"
                                         value={formState.data.weight}
                                         onChangeText={(text) => formState.updateField('weight', text)}
                                     />
-                                </View>
-                                <View style={styles.unitContainer}>
-                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Unit</Text>
-                                    <View style={[styles.unitToggle, { backgroundColor: theme.colors.background.secondary }]}>
+                                    <View style={[styles.unitToggle, { backgroundColor: theme.colors.border.primary }]}>
+                                        {/* Using border.primary (darker than tertiary) for track to show contrast with white button */}
                                         <TouchableOpacity
                                             onPress={() => formState.updateField('unit', 'kg')}
-                                            style={[styles.unitButton, formState.data.unit === 'kg' && { backgroundColor: theme.colors.background.tertiary }]}
+                                            style={[styles.unitButton, formState.data.unit === 'kg' && [styles.activeUnitButton, { backgroundColor: theme.colors.background.secondary, shadowColor: theme.shadows.sm.shadowColor || '#000' }]]}
                                         >
                                             <Text style={[styles.unitText, { color: formState.data.unit === 'kg' ? theme.colors.text.primary : theme.colors.text.tertiary }]}>kg</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={() => formState.updateField('unit', 'lbs')}
-                                            style={[styles.unitButton, formState.data.unit === 'lbs' && { backgroundColor: theme.colors.background.tertiary }]}
+                                            style={[styles.unitButton, formState.data.unit === 'lbs' && [styles.activeUnitButton, { backgroundColor: theme.colors.background.secondary, shadowColor: theme.shadows.sm.shadowColor || '#000' }]]}
                                         >
                                             <Text style={[styles.unitText, { color: formState.data.unit === 'lbs' ? theme.colors.text.primary : theme.colors.text.tertiary }]}>lbs</Text>
                                         </TouchableOpacity>
@@ -171,7 +166,7 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
                                 <View style={styles.flex1}>
                                     <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Time (Optional)</Text>
                                     <TextInput
-                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
                                         placeholder="HH:MM"
                                         placeholderTextColor={theme.colors.text.tertiary}
                                         value={formState.data.time}
@@ -182,15 +177,13 @@ export default function WeightModal({ visible, onClose, petId: initialPetId, exi
 
                             <RichTextInput
                                 label="Notes"
-                                placeholder="Additional notes..."
+                                placeholder="Add any details about this weight measurement..."
                                 value={formState.data.notes}
                                 onChangeText={(text) => formState.updateField('notes', text)}
-                                minHeight={80}
+                                minHeight={100}
                             />
                         </View>
                     </View>
-
-                    <View style={{ height: 40 }} />
                 </View>
             )}
         </FormModal>
@@ -202,26 +195,39 @@ const styles = StyleSheet.create({
         gap: 24,
     },
     section: {
-        gap: 12,
+        gap: 16,
     },
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 12,
+        marginBottom: 4,
+    },
+    iconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 16,
+        fontWeight: '600',
+        fontFamily: 'Plus Jakarta Sans',
     },
     card: {
         borderRadius: 16,
-        padding: 16,
-        gap: 16,
+        padding: 20,
+        gap: 20,
+    },
+    inputGroup: {
+        gap: 8,
     },
     label: {
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: '500',
         marginBottom: 8,
+        fontFamily: 'Plus Jakarta Sans',
     },
     input: {
         borderRadius: 12,
@@ -230,6 +236,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderWidth: 1,
     },
+    weightInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 6,
+    },
+    weightInput: {
+        flex: 1,
+        fontSize: 24,
+        fontWeight: '600',
+        paddingHorizontal: 12,
+        fontFamily: 'Plus Jakarta Sans',
+    },
     row: {
         flexDirection: 'row',
         gap: 16,
@@ -237,21 +257,28 @@ const styles = StyleSheet.create({
     flex1: {
         flex: 1,
     },
-    unitContainer: {
-        width: 100,
-    },
     unitToggle: {
         flexDirection: 'row',
-        borderRadius: 12,
+        borderRadius: 10,
         padding: 4,
+        height: 44,
     },
     unitButton: {
-        flex: 1,
-        paddingVertical: 8,
+        paddingHorizontal: 16,
         borderRadius: 8,
         alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 48,
+    },
+    activeUnitButton: {
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     unitText: {
-        fontWeight: '700',
+        fontWeight: '600',
+        fontSize: 14,
+        fontFamily: 'Plus Jakarta Sans',
     },
 });

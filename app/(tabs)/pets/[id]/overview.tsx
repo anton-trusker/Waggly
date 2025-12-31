@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Ionicons } from '@expo/vector-icons'; // Added
+import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
-import { useEvents } from '@/hooks/useEvents';
 import { useVaccinations } from '@/hooks/useVaccinations';
 import { useAllergies } from '@/hooks/useAllergies';
-import { useMedications } from '@/hooks/useMedications';
-import { useConditions } from '@/hooks/useConditions'; // Added
+import { useTreatments } from '@/hooks/useTreatments';
+import { useConditions } from '@/hooks/useConditions';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { Pet, Allergy, Vaccination, Medication, Condition } from '@/types';
+import { Pet, Allergy, Vaccination, Treatment, Condition } from '@/types';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
@@ -20,7 +18,6 @@ import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
 import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal'; // Added
 
-import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
 
@@ -43,33 +40,16 @@ export default function OverviewTab() {
   const [allergyModalOpen, setAllergyModalOpen] = useState(false); // Added
   const [selectedAllergy, setSelectedAllergy] = useState<Allergy | null>(null); // Added
   const [selectedVaccination, setSelectedVaccination] = useState<Vaccination | null>(null);
-  const [selectedMedication, setSelectedMedication] = useState<Medication | null>(null); // Added
+  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null); // Added
   const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null); // Added
   const [conditionModalOpen, setConditionModalOpen] = useState(false); // Added
-  const [medicationOpen, setMedicationOpen] = useState(false);
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
-  const { events } = useEvents({ petIds: pet ? [pet.id] : [], startDate: new Date().toISOString().slice(0, 10) });
   const { vaccinations } = useVaccinations(petId);
   const { allergies } = useAllergies(petId);
-  const { medications } = useMedications(petId);
-  const { conditions } = useConditions(petId); // Added
+  const { treatments, refreshTreatments } = useTreatments(petId);
+  const { conditions } = useConditions(petId);
 
-  // Filter for upcoming events
-  const upcomingEvents = events.slice(0, 2);
-
-  // Filter for active vaccines (next due date in future or not set)
-  const activeVaccines = vaccinations.filter(v => {
-    if (!v.next_due_date) return true;
-    return new Date(v.next_due_date) >= new Date();
-  }).slice(0, 2); // Show top 2
-
-  // Get next vaccine due date for status card
-  const nextVaccineDue = vaccinations
-    .filter(v => v.next_due_date && new Date(v.next_due_date) >= new Date())
-    .sort((a, b) => new Date(a.next_due_date!).getTime() - new Date(b.next_due_date!).getTime())[0];
-
-  const activeMedications = medications.slice(0, 2); // Show top 2
   const recentConditions = conditions.slice(0, 2); // Show top 2
 
   if (!pet) {
@@ -104,9 +84,6 @@ export default function OverviewTab() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
 
-        {/* Quick Actions - Hidden on mobile */}
-        {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
-
         {/* Main Grid Content */}
         <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
 
@@ -117,6 +94,9 @@ export default function OverviewTab() {
             <TouchableOpacity onPress={() => setEditKeyInfoModalVisible(true)}>
               <PetPassportCard pet={pet} />
             </TouchableOpacity>
+
+            {/* Quick Actions - Under Passport Card */}
+            {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
 
             {/* Allergies Card */}
             <View style={styles.card}>
@@ -206,215 +186,201 @@ export default function OverviewTab() {
           {/* Right Column (2/3) */}
           <View style={styles.rightColumn}>
 
-            {/* Health Status Gradient Card */}
-            <LinearGradient
-              colors={['#6366F1', '#9333EA']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.gradientCard}
-            >
-              <View style={styles.gradientCardContent}>
-                <View>
-                  <Text style={styles.gradientCardLabel}>HEALTH STATUS</Text>
-                  <Text style={styles.gradientCardTitle}>Vaccines Up to Date</Text>
-                  {nextVaccineDue && (
-                    <View style={styles.gradientCardSubtitleRow}>
-                      <IconSymbol android_material_icon_name="event" size={16} color="#E0E7FF" />
-                      <Text style={styles.gradientCardSubtitle}>
-                        Next Due: {new Date(nextVaccineDue.next_due_date!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </Text>
-                    </View>
-                  )}
-                  <TouchableOpacity
-                    style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 4 }}
-                    onPress={() => setHealthMetricsOpen(true)}
-                  >
-                    <Text style={{ color: '#fff', fontSize: 13, fontWeight: '600' }}>Update Status</Text>
-                    <IconSymbol android_material_icon_name="arrow-forward" size={14} color="#fff" />
-                  </TouchableOpacity>
+            {/* Vaccinations Table Card */}
+            <View style={styles.card}>
+              <View style={styles.vaccHeader}>
+                <View style={styles.vaccHeaderLeft}>
+                  <Ionicons name="medical" size={20} color="#fff" />
+                  <View>
+                    <Text style={styles.vaccTitle}>Vaccinations</Text>
+                    <Text style={styles.vaccSubtitle}>Official immunization records</Text>
+                  </View>
                 </View>
-                <View style={styles.verifiedIconBox}>
-                  <IconSymbol android_material_icon_name="verified-user" size={24} color="#6366F1" />
-                </View>
-              </View>
-            </LinearGradient>
-
-            {/* Grid for Meds and Vaccines */}
-            <View style={[styles.subGrid, isLargeScreen && styles.subGridLarge]}>
-
-              {/* Current Medications */}
-              <View style={[styles.card, styles.flex1]}>
-                <View style={styles.listHeader}>
-                  <Text style={styles.listTitle}>Current Medications</Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedMedication(null);
-                      setMedicationOpen(true);
-                    }}
-                    style={styles.addButton}
-                  >
-                    <Ionicons name="add" size={16} color="#ffffff" />
-                    <Text style={styles.addButtonText}>Add</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.listContainer}>
-                  {activeMedications.length > 0 ? activeMedications.map(med => (
-                    <TouchableOpacity
-                      key={med.id}
-                      style={styles.listItem}
-                      onPress={() => {
-                        setSelectedMedication(med);
-                        setMedicationOpen(true);
-                      }}
-                    >
-                      <View style={[styles.listIconBox, { backgroundColor: '#DBEAFE' }]}>
-                        <Ionicons name="medkit" size={18} color="#2563EB" />
-                      </View>
-                      <View style={styles.listItemContent}>
-                        <Text style={styles.listItemTitle}>{med.medication_name}</Text>
-                        <Text style={styles.listItemSubtitle}>{med.dosage_value}{med.dosage_unit} • {med.frequency}</Text>
-                      </View>
-                      <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-                    </TouchableOpacity>
-                  )) : (
-                    <Text style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No active medications.</Text>
-                  )}
-                </View>
+                <TouchableOpacity
+                  style={styles.addEntryBtn}
+                  onPress={() => setVaccinationOpen(true)}
+                >
+                  <Ionicons name="add" size={16} color="#fff" />
+                  <Text style={styles.addEntryText}>Add Entry</Text>
+                </TouchableOpacity>
               </View>
 
-              {/* Vaccinations */}
-              <View style={[styles.card, styles.flex1]}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>Vaccinations</Text>
-                  <TouchableOpacity onPress={() => router.push(`/(tabs)/pets/${petId}/passport` as any)}>
-                    <Text style={styles.editLink}>See All</Text>
-                  </TouchableOpacity>
+              <View style={styles.vaccinationsTable}>
+                {/* Rabies Section */}
+                <Text style={styles.vaccSectionTitle}>V. VACCINATION AGAINST RABIES</Text>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Date</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Manufacturer / Batch</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Valid From</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Valid Until</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Veterinarian</Text>
                 </View>
-                <View style={styles.listContainer}>
-                  {activeVaccines.length > 0 ? activeVaccines.map(vac => (
+                {vaccinations.filter(v => v.vaccine_name?.toLowerCase().includes('rabies')).length > 0 ? (
+                  vaccinations.filter(v => v.vaccine_name?.toLowerCase().includes('rabies')).map((vacc) => (
                     <TouchableOpacity
-                      key={vac.id}
-                      style={styles.listItem}
+                      key={vacc.id}
+                      style={styles.tableRow}
                       onPress={() => {
-                        setSelectedVaccination(vac);
+                        setSelectedVaccination(vacc);
                         setVaccinationOpen(true);
                       }}
                     >
-                      <View style={[styles.listIconBox, { backgroundColor: '#F3E8FF' }]}>
-                        <IconSymbol android_material_icon_name="vaccines" size={20} color="#9333EA" />
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <View style={{ flex: 2 }}>
+                        <Text style={styles.vaccName}>{vacc.vaccine_name}</Text>
+                        <Text style={styles.vaccBatch}>Batch: {vacc.batch_number || 'N/A'}</Text>
                       </View>
-                      <View style={styles.listItemContent}>
-                        <Text style={styles.listItemTitle}>{vac.vaccine_name}</Text>
-                        <Text style={styles.listItemSubtitle}>Valid until {vac.next_due_date ? new Date(vac.next_due_date).getFullYear() : 'N/A'}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <View style={{ flex: 1 }}>
+                        {vacc.next_due_date && new Date(vacc.next_due_date) > new Date() ? (
+                          <View style={styles.validBadge}>
+                            <Text style={styles.validBadgeText}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                            <Ionicons name="checkmark-circle" size={14} color="#059669" />
+                          </View>
+                        ) : (
+                          <Text style={styles.expiredText}>{vacc.next_due_date ? new Date(vacc.next_due_date).toLocaleDateString('en-GB') : 'N/A'}</Text>
+                        )}
                       </View>
-                      <View style={[styles.statusBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                        <Text style={[styles.statusBadgeText, { color: '#10B981' }]}>ACTIVE</Text>
-                      </View>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || 'N/A'}</Text>
                     </TouchableOpacity>
-                  )) : (
-                    <Text style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No active vaccinations.</Text>
+                  ))
+                ) : (
+                  <View style={styles.emptyTableRow}>
+                    <Text style={styles.emptyTableText}>No rabies vaccinations recorded</Text>
+                  </View>
+                )}
+
+                {/* Other Vaccinations */}
+                <Text style={[styles.vaccSectionTitle, { marginTop: 24 }]}>VI. OTHER VACCINATIONS (DHPP / LEPTO)</Text>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Date</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Vaccine Type</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Batch</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Next Due</Text>
+                  <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Clinic</Text>
+                </View>
+                {vaccinations.filter(v => !v.vaccine_name?.toLowerCase().includes('rabies')).length > 0 ? (
+                  vaccinations.filter(v => !v.vaccine_name?.toLowerCase().includes('rabies')).map((vacc) => (
+                    <TouchableOpacity
+                      key={vacc.id}
+                      style={styles.tableRow}
+                      onPress={() => {
+                        setSelectedVaccination(vacc);
+                        setVaccinationOpen(true);
+                      }}
+                    >
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString('en-GB')}</Text>
+                      <Text style={[styles.vaccName, { flex: 2 }]}>{vacc.vaccine_name}</Text>
+                      <Text style={[styles.vaccBatch, { flex: 1 }]}>#{vacc.batch_number || 'N/A'}</Text>
+                      <View style={{ flex: 1 }}>
+                        {vacc.next_due_date && (
+                          new Date(vacc.next_due_date) < new Date() ? (
+                            <View style={styles.warningBadge}>
+                              <Text style={styles.warningText}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                              <Ionicons name="warning" size={12} color="#EA580C" />
+                            </View>
+                          ) : (
+                            <Text style={styles.tableCell}>{new Date(vacc.next_due_date).toLocaleDateString('en-GB')}</Text>
+                          )
+                        )}
+                      </View>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || 'N/A'}</Text>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <View style={styles.emptyTableRow}>
+                    <Text style={styles.emptyTableText}>No other vaccinations recorded</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Treatments & Medications Card */}
+            <View style={styles.card}>
+              <View style={styles.treatmentsHeader}>
+                <View style={styles.treatmentsHeaderLeft}>
+                  <Ionicons name="medical" size={20} color="#4F46E5" />
+                  <Text style={styles.treatmentsTitle}>Treatments & Medications</Text>
+                </View>
+                <TouchableOpacity onPress={() => {
+                  setSelectedTreatment(null);
+                  setTreatmentOpen(true);
+                }}>
+                  <Text style={styles.viewHistoryLink}>+ Add New</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.treatmentsGrid}>
+                {/* Current Prescriptions (Active Medications) */}
+                <View style={styles.treatmentsColumn}>
+                  <Text style={styles.treatmentsSectionTitle}>CURRENT PRESCRIPTIONS</Text>
+                  {treatments.filter(t => t.is_active && t.category === 'Medication').length > 0 ? (
+                    treatments.filter(t => t.is_active && t.category === 'Medication').slice(0, 3).map((treatment) => (
+                      <TouchableOpacity
+                        key={treatment.id}
+                        style={[styles.medCard, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }]}
+                        onPress={() => {
+                          setSelectedTreatment(treatment);
+                          setTreatmentOpen(true);
+                        }}
+                      >
+                        <View style={styles.medIcon}>
+                          <Ionicons name="medical" size={20} color="#4F46E5" />
+                        </View>
+                        <View style={styles.medInfo}>
+                          <Text style={styles.medName}>{treatment.treatment_name}</Text>
+                          <Text style={styles.medDosage}>{treatment.dosage_value ? `${treatment.dosage_value} ${treatment.dosage_unit || ''}` : treatment.dosage || 'No dosage'} • {treatment.frequency}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <View style={[styles.medCard, { backgroundColor: '#F9FAFB', borderColor: '#E5E7EB' }]}>
+                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>No active medications</Text>
+                    </View>
                   )}
+                </View>
+
+                {/* Recent Treatments (All types, simplified view) */}
+                <View style={styles.treatmentsColumn}>
+                  <Text style={styles.treatmentsSectionTitle}>RECENT TREATMENTS</Text>
+                  <View style={styles.treatmentTimeline}>
+                    {treatments.length > 0 ? (
+                      treatments.slice(0, 3).map((treatment) => (
+                        <TouchableOpacity
+                          key={treatment.id}
+                          style={styles.treatmentTimelineItem}
+                          onPress={() => {
+                            setSelectedTreatment(treatment);
+                            setTreatmentOpen(true);
+                          }}
+                        >
+                          <View style={styles.treatmentTimelineDot} />
+                          <View style={styles.treatmentTimelineContent}>
+                            <Text style={styles.treatmentTimelineTitle}>{treatment.treatment_name}</Text>
+                            <Text style={styles.treatmentTimelineDesc}>{treatment.notes || treatment.category || 'Treatment'}</Text>
+                          </View>
+                          <Text style={styles.treatmentTimelineDate}>
+                            {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'N/A'}
+                          </Text>
+                        </TouchableOpacity>
+                      ))
+                    ) : (
+                      <Text style={{ color: '#6B7280', fontStyle: 'italic' }}>No recent treatments</Text>
+                    )}
+                  </View>
                 </View>
               </View>
             </View>
 
-            {/* Upcoming */}
-            <View style={styles.card}>
-              <View style={[styles.cardHeader, { justifyContent: 'flex-start', gap: 8 }]}>
-                <View style={styles.orangeDot} />
-                <Text style={styles.cardTitle}>Upcoming</Text>
-                <View style={{ flex: 1 }} />
-                <TouchableOpacity onPress={() => router.push('/(tabs)/calendar')}>
-                  <Text style={styles.editLink}>See All</Text>
-                </TouchableOpacity>
+            {/* Important Notes Card */}
+            <View style={styles.notesCard}>
+              <View style={styles.notesHeader}>
+                <Ionicons name="document-text" size={20} color="#CA8A04" />
+                <Text style={styles.notesTitle}>Important Notes</Text>
               </View>
-              {/* Note: Upcoming Body Render Left Unchanged as logic is complex for mobile, but 'See All' is connected in header */}
-
-
-              {isMobile ? (
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.mobileUpcomingContainer}
-                  style={{ marginHorizontal: -24, paddingHorizontal: 24 }} // Offset card padding
-                >
-                  {upcomingEvents.length > 0 ? (
-                    upcomingEvents.map((event) => {
-                      const days = Math.floor((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                      const isUrgent = days < 3;
-                      const dateObj = new Date(event.dueDate);
-
-                      return (
-                        <View key={event.id} style={styles.mobileUpcomingCard}>
-                          <View style={styles.upcomingHeader}>
-                            <View style={[styles.upcomingIconBox, { backgroundColor: event.color + '20' }]}>
-                              {/* Simple mapping for icon based on type, or default */}
-                              <IconSymbol android_material_icon_name={event.type === 'vet' ? 'healing' : 'event'} size={20} color={event.color} />
-                            </View>
-                            <View style={[styles.upcomingBadge, { backgroundColor: isUrgent ? '#FEE2E2' : '#DBEAFE' }]}>
-                              <Text style={[styles.upcomingBadgeText, { color: isUrgent ? '#DC2626' : '#2563EB' }]}>
-                                {days < 0 ? 'OVERDUE' : days === 0 ? 'TODAY' : `${days} DAYS`}
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={{ marginBottom: 12 }}>
-                            <Text style={styles.upcomingTitle} numberOfLines={1}>{event.title}</Text>
-                            <Text style={styles.upcomingSubtitle} numberOfLines={1}>{event.notes || event.type}</Text>
-                          </View>
-                          <View style={styles.upcomingFooter}>
-                            <Text style={styles.upcomingDate}>
-                              {dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                              {', '}
-                              {dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                            </Text>
-                          </View>
-                        </View>
-                      )
-                    })
-                  ) : (
-                    <View style={[styles.mobileUpcomingCard, { alignItems: 'center', justifyContent: 'center', width: '100%' }]}>
-                      <Text style={{ color: '#9CA3AF' }}>No upcoming events.</Text>
-                    </View>
-                  )}
-                </ScrollView>
-              ) : (
-                <View style={[styles.subGrid, isLargeScreen && styles.subGridLarge]}>
-                  <View style={[styles.upcomingCard, styles.flex1]}>
-                    <View style={styles.upcomingHeader}>
-                      <View style={[styles.upcomingIconBox, { backgroundColor: '#FEE2E2' }]}>
-                        <IconSymbol android_material_icon_name="healing" size={20} color="#DC2626" />
-                      </View>
-                      <View style={[styles.upcomingBadge, { backgroundColor: '#FEE2E2' }]}>
-                        <Text style={[styles.upcomingBadgeText, { color: '#DC2626' }]}>3 DAYS</Text>
-                      </View>
-                    </View>
-                    <View style={{ marginBottom: 12 }}>
-                      <Text style={styles.upcomingTitle}>Rabies Booster</Text>
-                      <Text style={styles.upcomingSubtitle}>Downtown Vet Clinic</Text>
-                    </View>
-                    <View style={styles.upcomingFooter}>
-                      <Text style={styles.upcomingDate}>Oct 15, 09:00 AM</Text>
-                      <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
-                    </View>
-                  </View>
-
-                  <View style={[styles.upcomingCard, styles.flex1]}>
-                    <View style={styles.upcomingHeader}>
-                      <View style={[styles.upcomingIconBox, { backgroundColor: '#DBEAFE' }]}>
-                        <IconSymbol android_material_icon_name="content-cut" size={20} color="#2563EB" />
-                      </View>
-                    </View>
-                    <View style={{ marginBottom: 12 }}>
-                      <Text style={styles.upcomingTitle}>Grooming</Text>
-                      <Text style={styles.upcomingSubtitle}>Paw Spa & Resort</Text>
-                    </View>
-                    <View style={styles.upcomingFooter}>
-                      <Text style={styles.upcomingDate}>Oct 20, 02:00 PM</Text>
-                      <IconSymbol android_material_icon_name="chevron-right" size={20} color="#9CA3AF" />
-                    </View>
-                  </View>
-                </View>
-              )}
+              <Text style={styles.notesText}>
+                {(pet as any).notes || 'No important notes added yet. Add notes about travel requirements, dietary restrictions, or other important information.'}
+              </Text>
             </View>
 
             {/* History Timeline */}
@@ -519,23 +485,14 @@ export default function OverviewTab() {
           setVaccinationOpen(false);
         }}
       />
-      <TreatmentFormModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
-
-      <HealthMetricsModal
-        visible={healthMetricsOpen}
+      <TreatmentFormModal
+        visible={treatmentOpen}
         petId={pet.id}
-        onClose={() => setHealthMetricsOpen(false)}
-        initialTab="weight"
-      />
-
-      <MedicationFormModal
-        visible={medicationOpen}
-        petId={pet.id}
-        existingMedication={selectedMedication}
-        onClose={() => setMedicationOpen(false)}
+        existingTreatment={selectedTreatment}
+        onClose={() => setTreatmentOpen(false)}
         onSuccess={() => {
-          setMedicationOpen(false);
-          // Refresh logic handled by hook subscription ideally
+          setTreatmentOpen(false);
+          refreshTreatments();
         }}
       />
       <EditKeyInfoModal
@@ -1110,5 +1067,246 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  // Vaccinations Table Styles
+  vaccHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#4F46E5',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  vaccHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  vaccTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  vaccSubtitle: {
+    fontSize: 12,
+    color: '#E0E7FF',
+  },
+  addEntryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  addEntryText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  vaccinationsTable: {
+    gap: 8,
+  },
+  vaccSectionTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+    letterSpacing: 0.5,
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  tableHeaderCell: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    alignItems: 'center',
+  },
+  tableCell: {
+    fontSize: 13,
+    color: '#374151',
+  },
+  vaccName: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  vaccBatch: {
+    fontSize: 11,
+    color: '#6B7280',
+  },
+  validBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  validBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#059669',
+  },
+  expiredText: {
+    fontSize: 12,
+    color: '#DC2626',
+  },
+  warningBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  warningText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#EA580C',
+  },
+  emptyTableRow: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  emptyTableText: {
+    fontSize: 13,
+    color: '#9CA3AF',
+    fontStyle: 'italic',
+  },
+  // Treatments & Medications Styles
+  treatmentsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  treatmentsHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  treatmentsTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  viewHistoryLink: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4F46E5',
+  },
+  treatmentsGrid: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  treatmentsColumn: {
+    flex: 1,
+    gap: 12,
+  },
+  treatmentsSectionTitle: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  medCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 12,
+  },
+  medIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  medInfo: {
+    flex: 1,
+  },
+  medName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  medDosage: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  treatmentTimeline: {
+    gap: 12,
+  },
+  treatmentTimelineItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  treatmentTimelineDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#4F46E5',
+    marginTop: 4,
+  },
+  treatmentTimelineContent: {
+    flex: 1,
+  },
+  treatmentTimelineTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  treatmentTimelineDesc: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  treatmentTimelineDate: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#9CA3AF',
+  },
+  // Important Notes Card
+  notesCard: {
+    backgroundColor: '#FFFBEB',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  notesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+  },
+  notesTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#92400E',
+  },
+  notesText: {
+    fontSize: 14,
+    color: '#78350F',
+    lineHeight: 22,
   },
 });
