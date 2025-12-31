@@ -7,11 +7,12 @@ import { format, isToday, isTomorrow, isThisWeek, isPast } from 'date-fns';
 interface Event {
     id: string;
     title: string;
-    type: 'vaccination' | 'vet_visit' | 'medication' | 'grooming' | 'other';
-    date: Date;
+    type: 'vaccination' | 'treatment' | 'vet' | 'grooming' | 'walking' | 'other';
+    dueDate: string;
     time?: string;
     petId?: string;
     petName?: string;
+    notes?: string;
     description?: string;
 }
 
@@ -20,19 +21,20 @@ interface UpcomingEventsListProps {
     onEventClick?: (event: Event) => void;
 }
 
-const EVENT_TYPE_CONFIG = {
+const EVENT_TYPE_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
     vaccination: { icon: 'syringe', color: designSystem.colors.success[500], label: 'Vaccination' },
-    vet_visit: { icon: 'medical-bag', color: designSystem.colors.primary[500], label: 'Vet Visit' },
-    medication: { icon: 'pill', color: designSystem.colors.warning[500], label: 'Medication' },
-    grooming: { icon: 'cut', color: designSystem.colors.secondary[500], label: 'Grooming' },
+    treatment: { icon: 'pill', color: designSystem.colors.warning[500], label: 'Treatment' },
+    vet: { icon: 'medical-bag', color: designSystem.colors.primary[500], label: 'Vet Visit' },
+    grooming: { icon: 'cut', color: designSystem.colors.secondary.leaf, label: 'Grooming' },
+    walking: { icon: 'walk', color: designSystem.colors.primary[400], label: 'Walking' },
     other: { icon: 'calendar', color: designSystem.colors.neutral[500], label: 'Event' },
 };
 
 export default function UpcomingEventsList({ events, onEventClick }: UpcomingEventsListProps) {
-    // Ensure dates are Date objects before sorting
+    // Normalize events - convert dueDate string to Date object for sorting/filtering
     const normalizedEvents = events.map(e => ({
         ...e,
-        date: e.date instanceof Date ? e.date : new Date(e.date)
+        date: new Date(e.dueDate)
     })).filter(e => !isNaN(e.date.getTime()));
 
     const sortedEvents = [...normalizedEvents].sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -47,7 +49,7 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
         return format(date, 'MMM dd, yyyy');
     };
 
-    const renderEvent = (event: Event) => {
+    const renderEvent = (event: Event & { date: Date }) => {
         const config = EVENT_TYPE_CONFIG[event.type] || EVENT_TYPE_CONFIG.other;
         const isPastEvent = isPast(event.date) && !isToday(event.date);
 
@@ -109,9 +111,9 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
                         )}
                     </View>
 
-                    {event.description && (
+                    {(event.notes || event.description) && (
                         <Text style={[styles.eventDescription, isPastEvent && styles.textMuted]} numberOfLines={2}>
-                            {event.description}
+                            {event.notes || event.description}
                         </Text>
                     )}
                 </View>

@@ -43,7 +43,6 @@ export default function TabLayout() {
         <Stack.Screen name="notifications" />
         <Stack.Screen name="profile" />
       </Stack>
-    </Stack>
-    </ResponsiveShell >
+    </ResponsiveShell>
   );
 }

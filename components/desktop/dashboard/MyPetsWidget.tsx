@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
-import PetCardCompact from '@/components/dashboard/PetCardCompact';
+import { PetPassportCard } from '@/components/pet/PetPassportCard';
 
 export default function MyPetsWidget() {
     const router = useRouter();
@@ -14,15 +14,40 @@ export default function MyPetsWidget() {
     const { width } = useWindowDimensions();
     const isLargeScreen = width >= 1024;
 
-    // Cyclic pastel colors for cards
-    const cardColors = [
-        '#EEF2FF', // Indigo 50
-        '#F0FDF4', // Emerald 50
-        '#FEF2F2', // Red 50
-        '#FFF7ED', // Orange 50
-        '#F5F3FF', // Violet 50
-        '#ECFEFF', // Cyan 50
-    ];
+    const hasPets = pets.length > 0;
+
+    // Empty State Banner
+    if (!hasPets && !loading) {
+        return (
+            <View style={styles.container}>
+                <LinearGradient
+                    colors={['#6366F1', '#8B5CF6']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.emptyBanner}
+                >
+                    <View style={styles.emptyContent}>
+                        <View style={styles.emptyIconContainer}>
+                            <Text style={styles.emptyIcon}>🐾</Text>
+                        </View>
+                        <View style={styles.emptyTextContainer}>
+                            <Text style={styles.emptyTitle}>Add Your First Pet</Text>
+                            <Text style={styles.emptySubtitle}>
+                                Start tracking your pet's health, vaccinations, and more
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                            style={styles.emptyButton}
+                            onPress={() => router.push('/(tabs)/pets/new' as any)}
+                        >
+                            <Ionicons name="add" size={20} color="#6366F1" />
+                            <Text style={styles.emptyButtonText}>Add Pet</Text>
+                        </TouchableOpacity>
+                    </View>
+                </LinearGradient>
+            </View>
+        );
+    }
 
     return (
         <View style={[styles.container, {
@@ -42,54 +67,31 @@ export default function MyPetsWidget() {
             </View>
 
             {isLargeScreen ? (
-                // Desktop: Vertical Stack of Large Cards
+                // Desktop: Vertical Stack of Cards (no add button if pets exist)
                 <View style={styles.desktopStack}>
-                    {pets.map((pet, index) => (
-                        <PetCardCompact
+                    {pets.map((pet) => (
+                        <PetPassportCard
                             key={pet.id}
                             pet={pet}
-                            variant="large"
-                            themeColor={cardColors[index % cardColors.length]}
-                            onQuickAdd={() => { }}
+                            onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
                         />
                     ))}
-
-                    <TouchableOpacity
-                        style={[styles.desktopAddButton, { borderColor: theme.colors.border.secondary }]}
-                        onPress={() => router.push('/(tabs)/pets/add' as any)}
-                    >
-                        <Ionicons name="add" size={24} color={theme.colors.text.secondary} />
-                        <Text style={[styles.desktopAddText, { color: theme.colors.text.secondary }]}>Add Another Pet</Text>
-                    </TouchableOpacity>
                 </View>
             ) : (
-                // Mobile: Horizontal Scroll
+                // Mobile: Horizontal Scroll (no add button if pets exist)
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.scrollContent}
                 >
-                    {pets.map((pet, index) => (
+                    {pets.map((pet) => (
                         <View key={pet.id} style={styles.cardWrapper}>
-                            <PetCardCompact
+                            <PetPassportCard
                                 pet={pet}
-                                variant="horizontal"
-                                themeColor={cardColors[index % cardColors.length]}
-                                onQuickAdd={() => { }}
+                                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
                             />
                         </View>
                     ))}
-
-                    {/* Compact Add Button */}
-                    <TouchableOpacity
-                        style={[styles.addCard, { borderColor: theme.colors.border.secondary, backgroundColor: theme.colors.background.secondary }]}
-                        onPress={() => router.push('/(tabs)/pets/add' as any)}
-                    >
-                        <View style={styles.addIconContainer}>
-                            <Ionicons name="add" size={20} color={theme.colors.text.secondary} />
-                        </View>
-                        <Text style={[styles.addText, { color: theme.colors.text.secondary }]}>Add Pet</Text>
-                    </TouchableOpacity>
                 </ScrollView>
             )}
         </View>
@@ -98,7 +100,7 @@ export default function MyPetsWidget() {
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 24,
+        // No marginBottom - grid gap handles spacing
     },
     header: {
         flexDirection: 'row',
@@ -179,5 +181,59 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
-    }
+    },
+    // Empty State Styles
+    emptyBanner: {
+        borderRadius: 20,
+        padding: 24,
+        overflow: 'hidden',
+    },
+    emptyContent: {
+        alignItems: 'center',
+        gap: 16,
+    },
+    emptyIconContainer: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    emptyIcon: {
+        fontSize: 32,
+    },
+    emptyTextContainer: {
+        alignItems: 'center',
+    },
+    emptyTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#fff',
+        marginBottom: 8,
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    emptySubtitle: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.8)',
+        textAlign: 'center',
+        maxWidth: 280,
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    emptyButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#fff',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 12,
+        marginTop: 8,
+    },
+    emptyButtonText: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#6366F1',
+        fontFamily: 'Plus Jakarta Sans',
+    },
 });

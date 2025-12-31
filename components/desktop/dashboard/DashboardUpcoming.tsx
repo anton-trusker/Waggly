@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -10,11 +10,13 @@ export default function DashboardUpcoming() {
     const router = useRouter();
     const { theme } = useAppTheme();
     const { events } = useEvents();
+    const [showCount, setShowCount] = useState<3 | 5 | 'all'>(3);
 
-    const upcomingEvents = events
+    const allUpcoming = events
         .filter(event => new Date(event.dueDate) > new Date())
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-        .slice(0, 3); // Show top 3
+        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+    const upcomingEvents = showCount === 'all' ? allUpcoming : allUpcoming.slice(0, showCount);
 
     const getEventIcon = (type?: string) => {
         if (['vet', 'vaccination', 'medication'].includes(type || '')) return 'medical-services';
@@ -54,6 +56,28 @@ export default function DashboardUpcoming() {
                 </TouchableOpacity>
             </View>
 
+            {/* Count Selector */}
+            <View style={styles.countSelector}>
+                <TouchableOpacity
+                    style={[styles.countBtn, showCount === 3 && styles.countBtnActive]}
+                    onPress={() => setShowCount(3)}
+                >
+                    <Text style={[styles.countBtnText, showCount === 3 && styles.countBtnTextActive]}>3</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.countBtn, showCount === 5 && styles.countBtnActive]}
+                    onPress={() => setShowCount(5)}
+                >
+                    <Text style={[styles.countBtnText, showCount === 5 && styles.countBtnTextActive]}>5</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.countBtn, showCount === 'all' && styles.countBtnActive]}
+                    onPress={() => setShowCount('all')}
+                >
+                    <Text style={[styles.countBtnText, showCount === 'all' && styles.countBtnTextActive]}>All</Text>
+                </TouchableOpacity>
+            </View>
+
             <View style={styles.list}>
                 {upcomingEvents.length === 0 ? (
                     <Text style={styles.emptyText}>No upcoming events scheduled.</Text>
@@ -84,12 +108,12 @@ export default function DashboardUpcoming() {
 
                                 <View style={styles.cardContent}>
                                     <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
-                                    <Text style={styles.subtitle} numberOfLines={1}>{event.location || 'No location set'}</Text>
+                                    <Text style={styles.subtitle} numberOfLines={1}>{event.petName || 'No pet assigned'}</Text>
                                 </View>
 
                                 <View style={styles.cardFooter}>
                                     <Text style={styles.dateText}>
-                                        {new Date(event.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                                        {new Date(event.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                     </Text>
                                     <IconSymbol android_material_icon_name="chevron-right" ios_icon_name="chevron.right" size={16} color="#9CA3AF" />
                                 </View>
@@ -105,10 +129,9 @@ export default function DashboardUpcoming() {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 16,
-        padding: 24,
+        padding: 16,
         borderWidth: 1,
-        marginBottom: 24,
-        flex: 1,
+        overflow: 'hidden',
     },
     header: {
         flexDirection: 'row',
@@ -138,8 +161,39 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
     },
+    countSelector: {
+        flexDirection: 'row',
+        gap: 8,
+        marginBottom: 16,
+        backgroundColor: '#F3F4F6',
+        padding: 4,
+        borderRadius: 10,
+        alignSelf: 'flex-start',
+    },
+    countBtn: {
+        paddingVertical: 6,
+        paddingHorizontal: 14,
+        borderRadius: 8,
+    },
+    countBtnActive: {
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    countBtnText: {
+        fontSize: 13,
+        fontWeight: '500',
+        color: '#6B7280',
+    },
+    countBtnTextActive: {
+        color: '#111827',
+        fontWeight: '600',
+    },
     list: {
-        gap: 16,
+        gap: 12,
     },
     emptyText: {
         fontSize: 14,

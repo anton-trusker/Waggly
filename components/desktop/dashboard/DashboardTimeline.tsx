@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 24,
         borderWidth: 1,
-        marginBottom: 24,
         flex: 1,
     },
     headerTitle: {

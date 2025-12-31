@@ -40,85 +40,111 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
                         <Text style={styles.passportLabel}>PASSPORT</Text>
                     </View>
 
-                    {pet.microchip_number && (
-                        <View style={styles.microchipContainer}>
-                            <IconSymbol
-                                ios_icon_name="memorychip"
-                                android_material_icon_name="memory"
-                                size={12}
-                                color="rgba(255,255,255,0.8)"
-                            />
-                            <Text style={styles.microchipText}>
-                                {pet.microchip_number}
-                            </Text>
-                        </View>
-                    )}
-                </View>
-
-                {/* Main Content */}
-                <View style={styles.contentContainer}>
-                    {/* Photo */}
-                    <View style={styles.photoContainer}>
-                        {pet.photo_url ? (
-                            <Image source={{ uri: pet.photo_url }} style={styles.photo} />
-                        ) : (
-                            <View style={styles.photoPlaceholder}>
+                    <View style={styles.headerRight}>
+                        {pet.microchip_number && (
+                            <View style={styles.microchipContainer}>
                                 <IconSymbol
-                                    ios_icon_name="pawprint.fill"
-                                    android_material_icon_name="pets"
-                                    size={32}
-                                    color="#C7D2FE"
+                                    ios_icon_name="memorychip"
+                                    android_material_icon_name="memory"
+                                    size={14}
+                                    color="rgba(255,255,255,0.9)"
                                 />
+                                <Text style={styles.microchipText}>
+                                    {pet.microchip_number}
+                                </Text>
                             </View>
                         )}
-                        <View style={styles.verifiedBadge}>
+                        <TouchableOpacity style={styles.qrButton}>
                             <IconSymbol
-                                ios_icon_name="checkmark.circle.fill"
-                                android_material_icon_name="verified"
-                                size={16}
-                                color="#10B981"
+                                ios_icon_name="qrcode"
+                                android_material_icon_name="qr_code"
+                                size={20}
+                                color="#fff"
                             />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Main Content - New Layout */}
+                <View style={styles.contentContainer}>
+                    {/* Top Row: Photo + Name/Breed */}
+                    <View style={styles.topRow}>
+                        {/* Photo */}
+                        <View style={styles.photoContainer}>
+                            {pet.photo_url ? (
+                                <Image source={{ uri: pet.photo_url }} style={styles.photo} />
+                            ) : (
+                                <View style={styles.photoPlaceholder}>
+                                    <IconSymbol
+                                        ios_icon_name="pawprint.fill"
+                                        android_material_icon_name="pets"
+                                        size={32}
+                                        color="#C7D2FE"
+                                    />
+                                </View>
+                            )}
+                            <View style={styles.verifiedBadge}>
+                                <IconSymbol
+                                    ios_icon_name="checkmark.circle.fill"
+                                    android_material_icon_name="verified"
+                                    size={16}
+                                    color="#10B981"
+                                />
+                            </View>
+                        </View>
+
+                        {/* Name & Breed */}
+                        <View style={styles.nameSection}>
+                            <View style={styles.nameRow}>
+                                <Text style={styles.nameText}>{pet.name}</Text>
+                                <View style={styles.genderBadge}>
+                                    <IconSymbol
+                                        ios_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                        android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                        size={14}
+                                        color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
+                                    />
+                                </View>
+                            </View>
+                            <Text style={styles.breedText}>{pet.breed || pet.species || 'Unknown Breed'}</Text>
+                            {pet.registration_id && (
+                                <Text style={styles.regText}>Reg: {pet.registration_id}</Text>
+                            )}
                         </View>
                     </View>
 
-                    {/* Basic Info */}
-                    <View style={styles.infoContainer}>
-                        <View style={styles.nameRow}>
-                            <Text style={styles.nameText}>{pet.name}</Text>
-                            <View style={styles.genderBadge}>
-                                <IconSymbol
-                                    ios_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                    android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                    size={14}
-                                    color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
-                                />
-                            </View>
-                        </View>
-                        <Text style={styles.breedText}>{pet.breed || pet.species || 'Unknown Breed'}</Text>
-                        {pet.registration_id && (
-                            <Text style={styles.regText}>Reg ID: {pet.registration_id}</Text>
-                        )}
-
-                        {/* Stats Grid */}
-                        <View style={styles.statsGrid}>
-                            <View style={styles.statItem}>
-                                <Text style={styles.statLabel}>AGE</Text>
-                                <Text style={styles.statValue}>
-                                    {pet.date_of_birth ? formatAge(new Date(pet.date_of_birth), true) : '--'}
+                    {/* Details Table */}
+                    <View style={styles.detailsTable}>
+                        <View style={styles.tableRow}>
+                            <View style={styles.tableCell}>
+                                <Text style={styles.tableCellLabel}>DATE OF BIRTH</Text>
+                                <Text style={styles.tableCellValue}>
+                                    {pet.date_of_birth
+                                        ? new Date(pet.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        : '--'}
                                 </Text>
                             </View>
-                            <View style={styles.divider} />
-                            <View style={styles.statItem}>
-                                <Text style={styles.statLabel}>WEIGHT</Text>
-                                <Text style={styles.statValue}>
+                            <View style={styles.tableCellDivider} />
+                            <View style={styles.tableCell}>
+                                <Text style={styles.tableCellLabel}>WEIGHT</Text>
+                                <Text style={styles.tableCellValue}>
                                     {pet.weight ? `${pet.weight} kg` : '--'}
                                 </Text>
                             </View>
-                            <View style={styles.divider} />
-                            <View style={styles.statItem}>
-                                <Text style={styles.statLabel}>HEIGHT</Text>
-                                <Text style={styles.statValue}>
-                                    {pet.height ? `${pet.height} cm` : '--'}
+                        </View>
+                        <View style={styles.tableRowDivider} />
+                        <View style={styles.tableRow}>
+                            <View style={styles.tableCell}>
+                                <Text style={styles.tableCellLabel}>COLOR</Text>
+                                <Text style={styles.tableCellValue} numberOfLines={1}>
+                                    {pet.color || '--'}
+                                </Text>
+                            </View>
+                            <View style={styles.tableCellDivider} />
+                            <View style={styles.tableCell}>
+                                <Text style={styles.tableCellLabel}>BLOOD TYPE</Text>
+                                <Text style={styles.tableCellValue}>
+                                    {pet.blood_type || '--'}
                                 </Text>
                             </View>
                         </View>
@@ -153,13 +179,13 @@ const styles = StyleSheet.create({
     },
     gradientBackground: {
         padding: 20,
-        minHeight: 180,
+        minHeight: 220,
     },
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 16,
     },
     passportLabelContainer: {
         flexDirection: 'row',
@@ -184,30 +210,48 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     microchipText: {
-        color: 'rgba(255,255,255,0.9)',
+        color: '#fff',
         fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-        fontSize: 11,
-        fontWeight: '600',
+        fontSize: 14,
+        fontWeight: '700',
+    },
+    headerRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    qrButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
     contentContainer: {
-        flexDirection: 'row',
-        gap: 20,
-        alignItems: 'flex-start',
         zIndex: 10,
+    },
+    topRow: {
+        flexDirection: 'row',
+        gap: 16,
+        alignItems: 'center',
+        marginBottom: 16,
     },
     photoContainer: {
         position: 'relative',
     },
     photo: {
-        width: 80,
-        height: 80,
+        width: 72,
+        height: 72,
         borderRadius: 12,
         borderWidth: 2,
         borderColor: 'rgba(255,255,255,0.5)',
     },
     photoPlaceholder: {
-        width: 80,
-        height: 80,
+        width: 72,
+        height: 72,
         borderRadius: 12,
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderWidth: 2,
@@ -217,15 +261,14 @@ const styles = StyleSheet.create({
     },
     verifiedBadge: {
         position: 'absolute',
-        bottom: -6,
-        right: -6,
+        bottom: -4,
+        right: -4,
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 2,
     },
-    infoContainer: {
+    nameSection: {
         flex: 1,
-        paddingTop: 4,
     },
     nameRow: {
         flexDirection: 'row',
@@ -250,41 +293,46 @@ const styles = StyleSheet.create({
     breedText: {
         fontSize: 13,
         color: 'rgba(255,255,255,0.8)',
-        marginBottom: 8, // Reduced from 16
         fontWeight: '500',
     },
     regText: {
         fontSize: 11,
         color: 'rgba(255,255,255,0.6)',
-        marginBottom: 16,
+        marginTop: 4,
         fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     },
-    statsGrid: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    detailsTable: {
         backgroundColor: 'rgba(0,0,0,0.15)',
         borderRadius: 12,
-        padding: 10,
-        gap: 12,
+        overflow: 'hidden',
     },
-    statItem: {
+    tableRow: {
+        flexDirection: 'row',
+    },
+    tableRowDivider: {
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+    },
+    tableCell: {
         flex: 1,
+        paddingVertical: 10,
+        paddingHorizontal: 14,
     },
-    statLabel: {
+    tableCellDivider: {
+        width: 1,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+    },
+    tableCellLabel: {
         fontSize: 9,
-        color: 'rgba(255,255,255,0.6)',
+        color: 'rgba(255,255,255,0.5)',
         fontWeight: '700',
-        marginBottom: 2,
+        letterSpacing: 0.5,
+        marginBottom: 4,
     },
-    statValue: {
-        fontSize: 12,
+    tableCellValue: {
+        fontSize: 13,
         color: '#fff',
         fontWeight: '600',
-    },
-    divider: {
-        width: 1,
-        height: 24,
-        backgroundColor: 'rgba(255,255,255,0.15)',
     },
     watermarkContainer: {
         position: 'absolute',

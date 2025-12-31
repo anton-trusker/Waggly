@@ -22,7 +22,7 @@ import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
 
 import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
-import PetProfileCardWidget from '@/components/features/pets/profile/PetProfileCardWidget';
+import { PetPassportCard } from '@/components/pet/PetPassportCard';
 
 export default function OverviewTab() {
   const router = useRouter();
@@ -104,8 +104,8 @@ export default function OverviewTab() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
 
-        {/* Quick Actions (Replaced with Shared Component) */}
-        <QuickActionsGrid onActionPress={handleQuickAction} />
+        {/* Quick Actions - Hidden on mobile */}
+        {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
 
         {/* Main Grid Content */}
         <View style={[styles.mainGrid, isLargeScreen && styles.mainGridLarge]}>
@@ -113,9 +113,9 @@ export default function OverviewTab() {
           {/* Left Column (1/3) */}
           <View style={styles.leftColumn}>
 
-            {/* Pet Profile Card Widget */}
+            {/* Pet Passport Card */}
             <TouchableOpacity onPress={() => setEditKeyInfoModalVisible(true)}>
-              <PetProfileCardWidget pet={pet} />
+              <PetPassportCard pet={pet} />
             </TouchableOpacity>
 
             {/* Allergies Card */}

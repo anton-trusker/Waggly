@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Pet } from '@/types';
 import { format } from 'date-fns';
-import { getAge } from '@/lib/age';
+import { formatAge } from '@/lib/age';
 
 interface PetProfileCardWidgetProps {
     pet: Pet;
@@ -27,7 +27,7 @@ export default function PetProfileCardWidget({ pet }: PetProfileCardWidgetProps)
 
     const formatPetAge = () => {
         if (!pet.date_of_birth) return 'Unknown';
-        return getAge(pet.date_of_birth); // Use existing helper if available, or calc logic
+        return formatAge(new Date(pet.date_of_birth));
     };
 
     return (

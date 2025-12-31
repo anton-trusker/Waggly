@@ -14,7 +14,6 @@ import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
 // Widgets
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
 import MyPetsWidget from '@/components/desktop/dashboard/MyPetsWidget';
-import DashboardHealthStatus from '@/components/desktop/dashboard/DashboardHealthStatus';
 import DashboardUpcoming from '@/components/desktop/dashboard/DashboardUpcoming';
 import DashboardTimeline from '@/components/desktop/dashboard/DashboardTimeline';
 
@@ -22,7 +21,6 @@ export default function DashboardPage() {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const isLargeScreen = width >= 1024;
-    const isMobile = width < 768;
     const { theme } = useAppTheme();
     const { refreshPets } = usePets();
 
@@ -72,29 +70,33 @@ export default function DashboardPage() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Health Status Hero */}
-                <DashboardHealthStatus />
-
-                {/* Quick Actions */}
-                <QuickActionsGrid onActionPress={handleQuickAction} />
-
-                {/* Layout Grid */}
-                <View style={[styles.grid, isLargeScreen && styles.gridLarge]}>
-
-                    {/* Left Column (Main) */}
-                    <View style={styles.colMain}>
+                {/* Mobile Layout - Direct vertical stack */}
+                {!isLargeScreen && (
+                    <View style={styles.mobileStack}>
                         <MyPetsWidget />
+                        <DashboardUpcoming />
+                        <DashboardTimeline />
                     </View>
+                )}
 
-                    {/* Right Column (Sidebar/Widgets) */}
-                    <View style={styles.colSide}>
-                        {/* Split widgets or stack them depending on preference */}
-                        <View style={{ gap: 24 }}>
-                            <DashboardUpcoming />
-                            <DashboardTimeline />
+                {/* Desktop Layout - Two columns */}
+                {isLargeScreen && (
+                    <View style={styles.gridLarge}>
+                        {/* Left Column (Main) */}
+                        <View style={styles.colMain}>
+                            <MyPetsWidget />
+                            <QuickActionsGrid onActionPress={handleQuickAction} />
+                        </View>
+
+                        {/* Right Column (Sidebar/Widgets) */}
+                        <View style={styles.colSide}>
+                            <View style={{ gap: 24 }}>
+                                <DashboardUpcoming />
+                                <DashboardTimeline />
+                            </View>
                         </View>
                     </View>
-                </View>
+                )}
 
             </View>
 
@@ -145,25 +147,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    grid: {
-        flexDirection: 'column',
-        gap: 24,
+    mobileStack: {
+        gap: 16,
     },
     gridLarge: {
         flexDirection: 'row',
         alignItems: 'flex-start',
+        gap: 24,
     },
     colMain: {
-        flex: 1, // On large screens, this could be 1 part
-        // Actually, user wants MyPets on Desktop to be bigger.
-        // It might be better if MyPets is in a sidebar or 50/50?
-        // Let's stick to standard layout logic
-        // 1.5 flex for main content?
+        flex: 1,
         flexGrow: 1.5,
-        minWidth: 300,
     },
     colSide: {
         flex: 1,
-        minWidth: 300,
     },
 });
