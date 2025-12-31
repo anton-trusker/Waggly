@@ -190,6 +190,24 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             .insert(visitData as any);
 
         if (error) throw error;
+
+        // Log the activity
+        const userId = (await supabase.auth.getUser()).data.user?.id;
+        if (userId) {
+            await supabase.from('activity_logs').insert({
+                actor_id: userId,
+                owner_id: userId,
+                pet_id: selectedPetId,
+                action_type: 'visit_added',
+                details: {
+                    provider_type: data.provider_type,
+                    service_category: data.service_category,
+                    date: data.date,
+                    business_name: data.business_name
+                },
+            });
+        }
+
         onSuccess?.();
     };
 

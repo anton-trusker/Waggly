@@ -69,6 +69,38 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport }: Ove
                 <IconSymbol ios_icon_name="arrow.right" android_material_icon_name="arrow-forward" size={20} color="rgba(255,255,255,0.8)" />
             </TouchableOpacity>
 
+            {/* Quick Actions Row */}
+            <View style={styles.quickActionsRow}>
+                {[
+                    { id: 'visit', label: 'Book Visit', icon: 'calendar_today', iosIcon: 'calendar', colors: ['#3B82F6', '#60A5FA'] },
+                    { id: 'vaccine', label: 'Add Vaccine', icon: 'vaccines', iosIcon: 'syringe', colors: ['#EC4899', '#F472B6'] },
+                    { id: 'meds', label: 'Add Meds', icon: 'medication', iosIcon: 'pills', colors: ['#8B5CF6', '#A78BFA'] },
+                    { id: 'vet', label: 'Add Vet', icon: 'medical_services', iosIcon: 'cross', colors: ['#F97316', '#FB923C'], onPress: onAddVet },
+                ].map((action) => (
+                    <TouchableOpacity
+                        key={action.id}
+                        style={styles.quickActionCard}
+                        onPress={action.onPress} // For now only vet works, others can be linked later
+                        activeOpacity={0.8}
+                    >
+                        <LinearGradient
+                            colors={action.colors}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.quickActionGradient}
+                        >
+                            <IconSymbol
+                                android_material_icon_name={action.icon as any}
+                                ios_icon_name={action.iosIcon as any}
+                                size={28}
+                                color="#fff"
+                            />
+                        </LinearGradient>
+                        <Text style={styles.quickActionLabel}>{action.label}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
             {/* Vitals Grid */}
             <View style={styles.sectionHeaderRow}>
                 <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Vitals</Text>
@@ -278,32 +310,39 @@ const styles = StyleSheet.create({
     gridContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 12,
+        gap: 16, // Increased gap
     },
     gridItem: {
-        width: '48%',
-        padding: 16,
-        borderRadius: 20,
+        width: '47%', // Adjusted for gap
+        padding: 24, // Increased padding
+        borderRadius: 12, // Audit spec
         borderWidth: 1,
-        minHeight: 110,
+        borderColor: '#E5E7EB',
+        backgroundColor: '#F9FAFB', // Audit spec
+        minHeight: 120,
     },
     iconBox: {
         width: 32,
         height: 32,
-        borderRadius: 10,
+        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 12,
+        marginBottom: 16,
     },
     gridValue: {
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 16, // Audit spec (was 18)
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 4,
+        fontFamily: 'Plus Jakarta Sans',
     },
     gridLabel: {
-        fontSize: 11,
+        fontSize: 12, // Audit spec
         fontWeight: '600',
         letterSpacing: 0.5,
+        color: '#6B7280',
+        textTransform: 'uppercase',
+        fontFamily: 'Plus Jakarta Sans',
     },
     identityList: {
         gap: 12,
@@ -395,5 +434,43 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 12,
         borderRadius: 14,
+    },
+    // Quick Actions
+    quickActionsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12,
+    },
+    quickActionCard: {
+        flex: 1, // Distribute equal width
+        alignItems: 'center',
+        gap: 8,
+    },
+    quickActionGradient: {
+        width: 64, // Slightly smaller than audit (100px) due to mobile constraints, or scale up for desktop? 
+        // Audit asked for 100x100 cards, which fits 4 in a row on desktop but maybe not mobile.
+        // Let's stick to a compact icon circle for now as this is a mobile-focused tab component.
+        // Wait, audit Section 3 says "Top Action Cards... Size 100px x 100px". 
+        // If this file is shared for mobile, 4x100px = 400px + gaps > mobile width.
+        // So we should adapt. Mobile: Circle icons. Desktop: 100px cards.
+        // Since this `OverviewTab` is shared, let's keep it responsive. 
+        // Actually, let's make them look like "Apps" - rounded rectangles.
+        width: '100%',
+        aspectRatio: 1, // Square
+        maxHeight: 80, // Cap height
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    quickActionLabel: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#4B5563',
+        textAlign: 'center',
     },
 });

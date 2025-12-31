@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface RichTextInputProps {
   label: string;
@@ -16,19 +17,48 @@ export default function RichTextInput({
   placeholder,
   minHeight = 100
 }: RichTextInputProps) {
+  const { theme } = useAppTheme();
+
   return (
-    <View>
-      <Text className="text-[#9CA3AF] text-xs font-medium mb-2">{label}</Text>
+    <View style={styles.container}>
+      <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{label}</Text>
       <TextInput
-        className="w-full bg-[#1C1C1E] rounded-xl p-4 text-white text-base"
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.background.secondary,
+            color: theme.colors.text.primary,
+            borderColor: theme.colors.border.primary,
+            minHeight
+          }
+        ]}
         placeholder={placeholder}
-        placeholderTextColor="#4B5563"
+        placeholderTextColor={theme.colors.text.tertiary}
         multiline
         textAlignVertical="top"
-        style={{ minHeight }}
         value={value}
         onChangeText={onChangeText}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  input: {
+    width: '100%',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    borderWidth: 1,
+  }
+});

@@ -19,10 +19,8 @@ export default function EventsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background.primary }}>
-      <DesktopShell>
-        <PetProfileHeader pet={pet} />
-        <EventsTab petId={id} />
-      </DesktopShell>
+      <MobileHeader title="Events" showBack />
+      <EventsTab petId={id} />
     </View>
   );
 }

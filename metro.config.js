@@ -1,9 +1,5 @@
-// Polyfill for Array.prototype.toReversed (Node < 20)
-if (!Array.prototype.toReversed) {
-  Array.prototype.toReversed = function() {
-    return this.slice().reverse();
-  };
-}
+// Load polyfills first, before any Metro imports
+require('./metro-polyfills');
 
 const { getDefaultConfig } = require('expo/metro-config');
 const { FileStore } = require('metro-cache');

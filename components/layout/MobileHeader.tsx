@@ -57,9 +57,7 @@ export default function MobileHeader({
                     </TouchableOpacity>
                 ) : showLogo ? (
                     <View style={styles.logoContainer}>
-                        <View style={styles.logoCircle}>
-                            <Ionicons name="paw" size={20} color="#fff" />
-                        </View>
+                        <Image source={{ uri: '/favicon.ico' }} style={styles.logoIcon} />
                         <Text style={styles.logoText}>Pawzly</Text>
                     </View>
                 ) : null}
@@ -138,13 +136,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 8,
     },
-    logoCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: designSystem.colors.primary[500],
-        alignItems: 'center',
-        justifyContent: 'center',
+    logoIcon: {
+        width: 24,
+        height: 24,
+        borderRadius: 4,
     },
     logoText: {
         fontSize: 20,

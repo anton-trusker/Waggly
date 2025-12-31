@@ -83,67 +83,80 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     logoContainer: {
-        height: 80,
+        height: 100, // Increased height for better spacing
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 24,
-        gap: 12,
+        gap: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6', // Subtle separator
     },
     logoIcon: {
-        width: 40,
-        height: 40,
+        width: 48, // Increased from 40
+        height: 48, // Increased from 40
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#6366F1',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
         elevation: 4,
     },
     logoText: {
         fontSize: 24,
-        fontWeight: '700',
+        fontWeight: '800', // Bold
         color: '#111827',
+        letterSpacing: -0.5,
     },
     navContainer: {
         flex: 1,
         paddingHorizontal: 16,
-        paddingTop: 16,
+        paddingTop: 24,
     },
     navItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 16,
+        gap: 14,
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: 12, // Increased spacing
         borderRadius: 12,
-        marginBottom: 8,
+        marginBottom: 4, // 4px gap
+        borderLeftWidth: 3,
+        borderLeftColor: 'transparent',
     },
     navItemActive: {
-        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        backgroundColor: '#EEF2FF', // Primary-50
+        borderLeftColor: '#6366F1', // Primary-600
     },
     navLabel: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '500',
-        color: '#6B7280',
+        color: '#4B5563', // Gray-600
     },
     navLabelActive: {
-        color: '#6366F1',
+        color: '#4F46E5', // Primary-600
         fontWeight: '600',
     },
     userCardContainer: {
-        padding: 16,
+        padding: 24,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: '#F3F4F6',
     },
     userCard: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
         padding: 12,
-        borderRadius: 12,
-        backgroundColor: '#F9FAFB',
+        borderRadius: 16,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        elevation: 1,
     },
     avatar: {
         width: 40,
@@ -168,7 +181,7 @@ const styles = StyleSheet.create({
     },
     userName: {
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#111827',
     },
     userRole: {

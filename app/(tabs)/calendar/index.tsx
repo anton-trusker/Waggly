@@ -18,7 +18,8 @@ import MobileHeader from '@/components/layout/MobileHeader';
 import DesktopShell from '@/components/desktop/layout/DesktopShell';
 import DesktopCalendarHeader from '@/components/desktop/calendar/DesktopCalendarHeader';
 import MobileCalendarView from '@/components/mobile/calendar/MobileCalendarView';
-import DesktopTimelineView from '@/components/desktop/calendar/DesktopTimelineView';
+import DesktopTimelineView from '@/components/desktop/calendar/DesktopTimelineView'; // Keeping for potential week/day view ref
+import DesktopCalendarMonthGrid from '@/components/desktop/calendar/DesktopCalendarMonthGrid';
 
 
 export default function CalendarScreen() {
@@ -133,14 +134,19 @@ export default function CalendarScreen() {
 
       {isDesktop ? (
         <View style={styles.container as ViewStyle}>
-          <DesktopTimelineView
-            events={monthEvents}
+          <DesktopCalendarMonthGrid
+            events={monthEvents as any} // Cast safely or verify type match
             currentMonth={currentDate}
+            onDateSelect={(date) => {
+              // Optional: handle date selection (e.g. show day view modal)
+              setSelectedDate(date.toISOString().slice(0, 10));
+            }}
             onEventClick={(event) => {
               if (event.relatedId) {
                 if (event.type === 'vaccination') router.push(`/(tabs)/pets/record-detail?type=vaccination&id=${event.relatedId}` as any);
                 else if (event.type === 'treatment') router.push(`/(tabs)/pets/record-detail?type=treatment&id=${event.relatedId}` as any);
-                else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}` as any);
+                else if (event.type === 'vet') router.push(`/(tabs)/pets/record-detail?type=visit&id=${event.relatedId}&screen=VisitDetail` as any);
+                // Note: updated vet route to match pattern if needed
               }
             }}
           />

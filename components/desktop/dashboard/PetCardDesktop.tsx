@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Image, useWindowDimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pet } from '@/types';
@@ -34,20 +34,27 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
     };
 
     return (
-        <TouchableOpacity style={[styles.card, isMobile && styles.cardMobile]} onPress={handlePress}>
+        <Pressable
+            onPress={handlePress}
+            style={({ hovered }: any) => [
+                styles.card,
+                isMobile && styles.cardMobile,
+                hovered && styles.cardHover
+            ]}
+        >
             {/* Pet Photo */}
             <View style={[styles.photoContainer, isMobile && styles.photoContainerMobile]}>
                 {pet.photo_url ? (
                     <Image source={{ uri: pet.photo_url }} style={[styles.photo, isMobile && styles.photoMobile]} />
                 ) : (
                     <View style={[styles.photoPlaceholder, isMobile && styles.photoPlaceholderMobile]}>
-                         <Text style={{ fontSize: isMobile ? 24 : 32 }}>
-                            {pet.species === 'dog' ? '🐕' : 
-                             pet.species === 'cat' ? '🐈' : 
-                             pet.species === 'bird' ? '🦜' : 
-                             pet.species === 'rabbit' ? '🐰' : 
-                             pet.species === 'reptile' ? '🦎' : 
-                             '🐾'}
+                        <Text style={{ fontSize: isMobile ? 24 : 40 }}>
+                            {pet.species === 'dog' ? '🐕' :
+                                pet.species === 'cat' ? '🐈' :
+                                    pet.species === 'bird' ? '🦜' :
+                                        pet.species === 'rabbit' ? '🐰' :
+                                            pet.species === 'reptile' ? '🦎' :
+                                                '🐾'}
                         </Text>
                     </View>
                 )}
@@ -89,30 +96,31 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
 
             {/* Chevron */}
             {!isMobile && (
-                <Ionicons
-                    name="chevron-forward"
-                    size={20}
-                    color="#9CA3AF"
-                    style={styles.chevron}
-                />
+                <View style={styles.chevron}>
+                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                </View>
             )}
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 20,
+        borderRadius: 24,
+        padding: 24,
         borderWidth: 1,
         borderColor: '#E5E7EB',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
-        shadowRadius: 8,
+        shadowRadius: 12,
         elevation: 2,
         position: 'relative',
+        alignItems: 'center',
+        // Smooth transition for transform/shadow if supported by web engine, 
+        // RN web doesn't support 'transition' property directly in StyleSheet without workaround,
+        // but often renders well enough.
     },
     cardMobile: {
         padding: 16,
@@ -120,63 +128,78 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         alignItems: 'center',
         gap: 12,
+        borderRadius: 16,
+    },
+    cardHover: {
+        transform: Platform.select({ web: [{ scale: 1.02 }] as any, default: [] }),
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        borderColor: '#C7D2FE',
+        zIndex: 10,
     },
     photoContainer: {
         alignSelf: 'center',
-        marginBottom: 16,
+        marginBottom: 20,
         position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        elevation: 4,
     },
     photoContainerMobile: {
         alignSelf: 'auto',
         marginBottom: 0,
+        shadowOpacity: 0,
+        elevation: 0,
     },
     roleBadge: {
         position: 'absolute',
         bottom: -8,
         alignSelf: 'center',
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: '#fff',
     },
     roleBadgeCoOwner: {
-        backgroundColor: '#F59E0B', // Amber
+        backgroundColor: '#F59E0B',
     },
     roleBadgeViewer: {
-        backgroundColor: '#6B7280', // Gray
+        backgroundColor: '#6B7280',
     },
     roleBadgeText: {
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: '700',
         color: '#fff',
     },
     photo: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
     },
     photoMobile: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
     },
     photoPlaceholder: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
         backgroundColor: '#EEF2FF',
         alignItems: 'center',
         justifyContent: 'center',
     },
     photoPlaceholderMobile: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
     },
     info: {
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 24,
     },
     infoMobile: {
         alignItems: 'flex-start',
@@ -184,40 +207,49 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     name: {
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 20,
+        fontWeight: '700', // Bold
         color: '#111827',
         marginBottom: 4,
+        fontFamily: 'Plus Jakarta Sans',
     },
     breed: {
         fontSize: 14,
         color: '#6B7280',
+        fontFamily: 'Plus Jakarta Sans',
     },
     detailsGrid: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingTop: 16,
+        justifyContent: 'space-between',
+        paddingTop: 20,
         borderTopWidth: 1,
         borderTopColor: '#F3F4F6',
         width: '100%',
+        gap: 8,
     },
     detailItem: {
         alignItems: 'center',
+        flex: 1,
     },
     detailLabel: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#9CA3AF',
         marginBottom: 4,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        fontFamily: 'Plus Jakarta Sans',
     },
     detailValue: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#111827',
+        color: '#374151',
+        fontFamily: 'Plus Jakarta Sans',
     },
     chevron: {
         position: 'absolute',
-        top: 20,
-        right: 20,
+        top: 24,
+        right: 24,
+        opacity: 0.5,
     },
 });
 

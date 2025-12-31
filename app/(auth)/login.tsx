@@ -6,26 +6,27 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image,
   TouchableOpacity,
-  Alert
+  Alert,
+  useWindowDimensions
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { designSystem } from '@/constants/designSystem';
 import Input from '@/components/ui/Input';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
+import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, session } = useAuth();
-  const { colors, isDark } = useAppTheme();
+  const { signIn } = useAuth();
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 768;
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -51,7 +52,7 @@ export default function LoginScreen() {
           skipBrowserRedirect: false
         }
       });
-      
+
       if (error) {
         console.error('Google login error:', error);
         Alert.alert('Login Failed', 'Google authentication failed. Please try again.');
@@ -71,7 +72,7 @@ export default function LoginScreen() {
           skipBrowserRedirect: false
         }
       });
-      
+
       if (error) {
         console.error('Apple login error:', error);
         Alert.alert('Login Failed', 'Apple authentication failed. Please try again.');
@@ -82,108 +83,108 @@ export default function LoginScreen() {
     }
   };
 
+  const renderForm = () => (
+    <View style={[styles.formContainer, isDesktop && styles.formContainerDesktop]}>
+      <Text style={styles.title}>Welcome back</Text>
+      <Text style={styles.subtitle}>Sign in to continue to Pawzly</Text>
+
+      <View style={styles.inputs}>
+        <Input
+          label="Email Address"
+          placeholder="name@example.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <View>
+          <Input
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            isPassword
+          />
+          <TouchableOpacity
+            style={styles.forgotPassword}
+            onPress={() => router.push('/(auth)/forgot-password')}
+          >
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <EnhancedButton
+        title="Sign In"
+        onPress={handleLogin}
+        loading={loading}
+        fullWidth
+      />
+
+      <View style={styles.divider}>
+        <View style={styles.line} />
+        <Text style={styles.orText}>Or continue with</Text>
+        <View style={styles.line} />
+      </View>
+
+      <View style={styles.socialButtons}>
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={handleGoogleLogin}
+        >
+          <View style={styles.googleIcon}>
+            <Text style={styles.googleIconText}>G</Text>
+          </View>
+          <Text style={styles.socialButtonText}>Google</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={handleAppleLogin}
+        >
+          <IconSymbol android_material_icon_name="apple" size={20} color={designSystem.colors.text.primary} />
+          <Text style={styles.socialButtonText}>Apple</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
+          <Text style={styles.signUpLink}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  if (isDesktop) {
+    return (
+      <View style={styles.desktopContainer}>
+        <AuthHeroPanel
+          title="Welcome back to Pawzly"
+          subtitle="Your pet's health and happiness, all in one place. Sign in to access your dashboard and manage your furry friends."
+        />
+        <View style={styles.desktopFormPanel}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+            <ScrollView
+              contentContainerStyle={styles.desktopScrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              {renderForm()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+        <LoadingOverlay visible={loading} />
+      </View>
+    );
+  }
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+    <View style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-          <View style={styles.imageContainer}>
-            {/* Using the image from design or placeholder */}
-            <Image
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuTVMEMHuEIPq00WTY1X1jvzd7VG7GPA2j34f2PJi_t_6NmJj8BTT8xijkJE8p2OOjlaYhGmgYK7UyUV4Erb_KO8JnD5zBo3-pP2HWjbLVhiWGeeiAK2pGvv8xUzk4-qFO4ObBgm3GdJajlYIhLI4wdV3_QodWslo1e3XH8lYiSroWAYvE95-h3QFMGzBZLXpXCgkmscbPfjfssYS8CB3ziFhWBJl6VRKjPbZfFdEnaeuEPmjzhogs1WzdYc7E7X_afbGbdQaGBA9K' }}
-              style={styles.headerImage}
-              resizeMode="cover"
-            />
-            <LinearGradient
-              colors={['transparent', colors.background.primary]}
-              start={{ x: 0.5, y: 0.6 }}
-              end={{ x: 0.5, y: 1 }}
-              style={styles.imageGradient}
-            />
-          </View>
-
-          <View style={styles.formContainer}>
-            <Text style={[styles.title, { color: colors.text.primary }]}>Welcome back to Pawzly</Text>
-            <Text style={[styles.subtitle, { color: colors.text.secondary }]}>Manage your pet's health and happiness.</Text>
-
-            <View style={styles.inputs}>
-              <Input
-                label="Email Address"
-                placeholder="name@example.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-
-              <View>
-                <Input
-                  label="Password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  isPassword
-                />
-                <TouchableOpacity
-                  style={styles.forgotPassword}
-                  onPress={() => router.push('/(auth)/forgot-password')}
-                >
-                  <Text style={[styles.forgotPasswordText, { color: colors.primary[500] }]}>Forgot Password?</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.actions}>
-              <EnhancedButton
-                title="Log In"
-                onPress={handleLogin}
-                loading={loading}
-                fullWidth
-              />
-
-              <TouchableOpacity style={[styles.faceIdButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}>
-                <IconSymbol android_material_icon_name="face" size={24} color={colors.text.primary} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.socialSection}>
-              <View style={styles.divider}>
-                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
-                <Text style={[styles.orText, { color: colors.text.secondary, backgroundColor: colors.background.primary }]}>Or continue with</Text>
-                <View style={[styles.line, { backgroundColor: colors.border.primary }]} />
-              </View>
-
-              <View style={styles.socialButtons}>
-                <TouchableOpacity 
-                  style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}
-                  onPress={handleAppleLogin}
-                >
-                  <IconSymbol android_material_icon_name="apple" size={24} color={colors.text.primary} />
-                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Apple</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                  style={[styles.socialButton, { borderColor: colors.border.primary, backgroundColor: colors.background.secondary }]}
-                  onPress={handleGoogleLogin}
-                >
-                  {/* Google Icon SVG or Placeholder - utilizing a simple text or icon for now */}
-                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', marginRight: 8, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>G</Text>
-                  </View>
-                  <Text style={[styles.socialButtonText, { color: colors.text.primary }]}>Continue with Google</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.footer}>
-              <Text style={[styles.footerText, { color: colors.text.secondary }]}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-                <Text style={[styles.signUpLink, { color: colors.primary[500] }]}>Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-
-          </View>
+          {renderForm()}
         </ScrollView>
       </KeyboardAvoidingView>
       <LoadingOverlay visible={loading} />
@@ -191,49 +192,60 @@ export default function LoginScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
+  // Desktop Layout
+  desktopContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: designSystem.colors.background.primary,
+  },
+  desktopFormPanel: {
+    flex: 1,
+    backgroundColor: designSystem.colors.background.primary,
+  },
+  desktopScrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 64,
+    paddingVertical: 48,
+  },
+
+  // Mobile Layout
   container: {
     flex: 1,
+    backgroundColor: designSystem.colors.background.primary,
   },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 40,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 300,
-    position: 'relative',
-  },
-  headerImage: {
-    width: '100%',
-    height: '100%',
-  },
-  imageGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 100,
-  },
-  formContainer: {
     paddingHorizontal: 20,
-    marginTop: -20, // Overlap slightly or just sit below
+    paddingTop: 60,
   },
+
+  // Form Container
+  formContainer: {
+    width: '100%',
+  },
+  formContainerDesktop: {
+    maxWidth: 480,
+  },
+
+  // Typography
   title: {
-    fontSize: 28, // 32px in design, scaled down slightly for mobile or use 32
-    fontWeight: '800',
-    textAlign: 'center',
+    ...designSystem.typography.headline.medium,
+    color: designSystem.colors.text.primary,
     marginBottom: 8,
-    fontFamily: Platform.select({ ios: 'Manrope-Bold', android: 'sans-serif-bold' }), // Fallback
   },
   subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+    ...designSystem.typography.body.large,
+    color: designSystem.colors.text.secondary,
     marginBottom: 32,
-    fontFamily: Platform.select({ ios: 'Manrope-Regular', android: 'sans-serif' }),
   },
+
+  // Inputs
   inputs: {
-    gap: 16,
+    gap: 20,
     marginBottom: 24,
   },
   forgotPassword: {
@@ -241,70 +253,77 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   forgotPasswordText: {
-    fontSize: 14,
-    fontWeight: '600',
+    ...designSystem.typography.label.medium,
+    color: designSystem.colors.primary[500],
   },
-  actions: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'center',
-  },
-  faceIdButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  socialSection: {
-    marginTop: 24,
-  },
+
+  // Divider
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    position: 'relative',
-    height: 20,
+    marginVertical: 24,
   },
   line: {
     flex: 1,
     height: 1,
+    backgroundColor: designSystem.colors.border.primary,
   },
   orText: {
-    paddingHorizontal: 12,
-    fontSize: 14,
-    position: 'absolute',
-    // centering handled by flex container if we remove absolute, but absolute helps with background covering the line
-    zIndex: 1,
+    ...designSystem.typography.body.small,
+    color: designSystem.colors.text.tertiary,
+    paddingHorizontal: 16,
   },
+
+  // Social Buttons
   socialButtons: {
+    flexDirection: 'row',
     gap: 12,
   },
   socialButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     height: 48,
-    borderRadius: 12,
+    borderRadius: designSystem.borderRadius.md,
     borderWidth: 1,
+    borderColor: designSystem.colors.border.primary,
+    backgroundColor: designSystem.colors.background.secondary,
     gap: 8,
   },
   socialButtonText: {
-    fontSize: 16,
+    ...designSystem.typography.body.medium,
+    color: designSystem.colors.text.primary,
     fontWeight: '600',
   },
+  googleIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#DB4437',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleIconText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
+  // Footer
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
   footerText: {
-    fontSize: 14,
+    ...designSystem.typography.body.medium,
+    color: designSystem.colors.text.secondary,
   },
   signUpLink: {
-    fontSize: 14,
+    ...designSystem.typography.body.medium,
+    color: designSystem.colors.primary[500],
     fontWeight: 'bold',
   },
 });
+

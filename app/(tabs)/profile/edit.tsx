@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     // ^ simplified check, in reality DesktopShell handles layout
   },
   headerTitle: {
-    ...designSystem.typography.heading.h2,
+    ...designSystem.typography.headline.medium,
     color: designSystem.colors.text.primary,
   },
   saveButton: {

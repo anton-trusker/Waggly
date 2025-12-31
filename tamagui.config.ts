@@ -43,9 +43,30 @@ const interFont = createInterFont({
 // Create tokens from our design system
 const tokens = createTokens({
     color: colors,
-    space: spacing,
-    size: spacing, // Use spacing for sizes too
-    radius: radii,
+    space: {
+        ...spacing,
+        true: spacing[4], // Default space value required by Tamagui
+    },
+    size: {
+        ...spacing, // Use spacing for sizes too
+        true: spacing[4], // Default size value required by Tamagui
+    },
+    radius: {
+        // Numeric keys required by Tamagui
+        0: radii.none,
+        1: radii.sm,
+        2: radii.base,
+        3: radii.md,
+        4: radii.lg,
+        5: radii.xl,
+        6: radii['2xl'],
+        7: radii['3xl'],
+        8: radii.full,
+        9: radii.full,
+        // Keep descriptive keys for backward compatibility
+        ...radii,
+        true: radii.base, // Default radius value
+    },
     zIndex: {
         0: 0,
         1: 100,
@@ -164,4 +185,5 @@ declare module 'tamagui' {
     interface TamaguiCustomConfig extends Conf { }
 }
 
+export { config };
 export default config;

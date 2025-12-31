@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
         paddingBottom: getSpacing(2),
     },
     title: {
-        ...designSystem.typography.heading.h2,
+        ...designSystem.typography.headline.medium,
         color: designSystem.colors.text.primary,
         marginBottom: getSpacing(1),
     },
@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
         ...designSystem.shadows.lg,
     },
     detailsTitle: {
-        ...designSystem.typography.heading.h3,
+        ...designSystem.typography.headline.small,
         marginBottom: 16,
         textAlign: 'center',
     },

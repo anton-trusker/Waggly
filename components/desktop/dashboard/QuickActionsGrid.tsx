@@ -3,46 +3,56 @@ import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView } fr
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { designSystem } from '@/constants/designSystem';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 interface QuickAction {
     id: string;
     label: string;
     icon: string;
+    iosIcon: string;
     colors: string[];
-    route?: string; // Optional now, as we might use ID
+    route?: string;
 }
 
-const QUICK_ACTIONS: QuickAction[] = [
+// Using designSystem constants directly for the static definition, 
+// but we could also memoize this inside the component if we needed dynamic theme switching for these colors 
+// (though gradients are usually distinct).
+const getQuickActions = (theme: typeof designSystem): QuickAction[] => [
     {
         id: 'visit',
         label: 'Book Visit',
         icon: 'calendar_today',
-        colors: ['#6366F1', '#818CF8'],
+        iosIcon: 'calendar',
+        colors: [theme.colors.primary[500], theme.colors.primary[400]],
     },
     {
         id: 'vaccine',
         label: 'Add Vaccine',
         icon: 'vaccines',
-        colors: ['#0EA5E9', '#38BDF8'],
+        iosIcon: 'syringe', // or cross.vial
+        colors: [theme.colors.secondary.leaf, theme.colors.secondary.leafLight], // Cyan/Teal-ish
     },
     {
         id: 'meds',
         label: 'Add Meds',
         icon: 'medication',
-        colors: ['#10B981', '#34D399'],
+        iosIcon: 'pills',
+        colors: [theme.colors.status.success[500], theme.colors.status.success[400]],
     },
     {
         id: 'weight',
         label: 'Add Weight',
         icon: 'monitor_weight',
-        colors: ['#F59E0B', '#FBBF24'],
+        iosIcon: 'scalemass',
+        colors: [theme.colors.status.warning[500], theme.colors.status.warning[400]],
     },
     {
         id: 'photo',
         label: 'Add Photo',
         icon: 'add_a_photo',
-        colors: ['#EC4899', '#F472B6'],
-        route: '/web/pets/photos/add', // Keep route for non-modal actions if any
+        iosIcon: 'camera',
+        colors: [theme.colors.secondary.paw, theme.colors.secondary.pawLight], // Pink/Red-ish
     },
 ];
 
@@ -53,7 +63,10 @@ interface QuickActionsGridProps {
 const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) => {
     const router = useRouter();
     const { width } = useWindowDimensions();
-    const isMobile = width < 768;
+    const { theme } = useAppTheme();
+    const isMobile = width < 768; // Tablet breakdown
+
+    const actions = getQuickActions(theme);
 
     const handleAction = (action: QuickAction) => {
         if (onActionPress) {
@@ -84,30 +97,33 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ onActionPress }) =>
             >
                 <IconSymbol
                     android_material_icon_name={action.icon as any}
-                    size={isMobile ? 20 : 24}
+                    ios_icon_name={action.iosIcon as any}
+                    size={isMobile ? 22 : 28}
                     color="#fff"
                 />
             </LinearGradient>
-            <Text style={[styles.label, isMobile && styles.labelMobile]}>{action.label}</Text>
+            <Text style={[styles.label, { color: theme.colors.text.primary }, isMobile && styles.labelMobile]}>
+                {action.label}
+            </Text>
         </Pressable>
     );
 
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Quick Actions</Text>
+            <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Quick Actions</Text>
             {isMobile ? (
-                <ScrollView 
-                    horizontal 
-                    showsHorizontalScrollIndicator={false} 
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.scrollContent}
                 >
-                    {QUICK_ACTIONS.map((action) => (
+                    {actions.map((action) => (
                         <ActionItem key={action.id} action={action} />
                     ))}
                 </ScrollView>
             ) : (
                 <View style={styles.grid}>
-                    {QUICK_ACTIONS.map((action) => (
+                    {actions.map((action) => (
                         <ActionItem key={action.id} action={action} />
                     ))}
                 </View>
@@ -123,13 +139,12 @@ const styles = StyleSheet.create({
     heading: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#111827',
         marginBottom: 16,
         fontFamily: 'Plus Jakarta Sans',
     },
     grid: {
         flexDirection: 'row',
-        gap: 16,
+        gap: 24, // Increased gap for desktop
         flexWrap: 'wrap',
     },
     scrollContent: {
@@ -139,48 +154,47 @@ const styles = StyleSheet.create({
     actionCard: {
         alignItems: 'center',
         minWidth: 100,
-        paddingVertical: 6,
+        paddingVertical: 8,
         paddingHorizontal: 4,
-        borderRadius: 12,
+        borderRadius: 16,
     },
     actionCardMobile: {
         minWidth: 80,
         paddingVertical: 0,
     },
     actionCardHover: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 6,
+        transform: [{ scale: 1.05 }],
+        shadowColor: '#6366F1',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 16,
+        elevation: 8,
     },
     actionCardFocus: {
-        borderWidth: 2,
-        borderColor: '#6366F1',
+        // focus styles
     },
     iconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 16,
+        width: 96,
+        height: 96,
+        borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        marginBottom: 16,
+        shadowColor: '#6366F1', // Indigo shadow
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
     },
     iconContainerMobile: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        marginBottom: 4,
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        marginBottom: 8,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
         textAlign: 'center',
         fontFamily: 'Plus Jakarta Sans',
     },

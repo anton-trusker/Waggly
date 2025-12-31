@@ -7,9 +7,10 @@ import { useVaccinations } from '@/hooks/useVaccinations';
 import { useMedications } from '@/hooks/useMedications';
 import { useMedicalVisits } from '@/hooks/useMedicalVisits';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
+import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { format } from 'date-fns';
 
-type EventType = 'all' | 'vaccination' | 'visit' | 'medication' | 'weight';
+type EventType = 'all' | 'vaccination' | 'visit' | 'medication' | 'weight' | 'document' | 'update' | 'other';
 
 interface TimelineEvent {
     id: string;
@@ -35,6 +36,7 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
     const { medications } = useMedications(petId);
     const { visits, fetchVisits } = useMedicalVisits(petId);
     const { weightEntries } = useWeightEntries(petId);
+    const { activities } = useActivityFeed(50, petId);
 
     const [filter, setFilter] = useState<EventType>('all');
 
@@ -109,8 +111,32 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
             });
         });
 
+        // Activity Logs (Filtered to avoid duplicates for types already handled)
+        // We include 'document', 'photo', 'update', 'treatment', 'other'
+        // We skip 'vaccination', 'medication', 'visit', 'weight' as they are handled by specific hooks
+        activities.forEach(a => {
+            if (['vaccination', 'medication', 'visit', 'weight'].includes(a.type)) return;
+
+            // Map activity type to EventType
+            let type: EventType = 'other';
+            if (a.type === 'document' || a.type === 'photo') type = 'document';
+            if (a.type === 'update') type = 'update';
+
+            events.push({
+                id: `act-${a.id}`,
+                type: type,
+                title: a.title,
+                description: a.description,
+                date: new Date(a.timestamp),
+                icon: a.icon || 'star', // fallback
+                materialIcon: 'star',
+                color: theme.colors.text.secondary,
+                bgColor: theme.colors.background.secondary,
+            });
+        });
+
         return events.sort((a, b) => b.date.getTime() - a.date.getTime());
-    }, [vaccinations, medications, visits, weightEntries]);
+    }, [vaccinations, medications, visits, weightEntries, activities, theme]);
 
     const filteredEvents = filter === 'all'
         ? allEvents
@@ -122,6 +148,8 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
         { key: 'visit', label: 'Visits', icon: 'stethoscope', materialIcon: 'medical-services' },
         { key: 'medication', label: 'Meds', icon: 'pills.fill', materialIcon: 'medication' },
         { key: 'weight', label: 'Weight', icon: 'scalemass', materialIcon: 'monitor-weight' },
+        { key: 'document', label: 'Docs', icon: 'doc.text', materialIcon: 'description' },
+        { key: 'update', label: 'Updates', icon: 'pencil', materialIcon: 'edit' },
     ];
 
     return (

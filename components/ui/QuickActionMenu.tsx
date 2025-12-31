@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, Href } from 'expo-router';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { IconSymbol } from './IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -26,7 +26,7 @@ export interface QuickAction {
   title: string;
   icon: keyof typeof MaterialIcons.glyphMap;
   color: string;
-  route: string;
+  route: Href<string>;
   description?: string;
 }
 
@@ -153,7 +153,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
   const handlePetSelection = (pet: Pet) => {
     if (pendingAction) {
       router.push({
-        pathname: pendingAction.route as any,
+        pathname: pendingAction.route as any, // Cast to any to avoid complex Href union issues temporarily
         params: { petId: pet.id },
       });
     }
@@ -177,7 +177,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
               />
             </TouchableOpacity>
           </View>
-          
+
           <ScrollView style={styles.petSelectionList}>
             {pets.map((pet) => (
               <TouchableOpacity
@@ -218,9 +218,9 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
             />
           </TouchableOpacity>
         </View>
-        
+
         <Text style={styles.subtitle}>Choose an action to add for your pet</Text>
-        
+
         <ScrollView style={styles.actionsList} showsVerticalScrollIndicator={false}>
           {quickActions.map((action, index) => (
             <TouchableOpacity
@@ -240,12 +240,12 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
                   color={action.color}
                 />
               </View>
-              
+
               <View style={styles.actionContent}>
                 <Text style={styles.actionTitle}>{action.title}</Text>
                 <Text style={styles.actionDescription}>{action.description}</Text>
               </View>
-              
+
               <IconSymbol
                 android_material_icon_name="chevron-right"
                 ios_icon_name="chevron.right"

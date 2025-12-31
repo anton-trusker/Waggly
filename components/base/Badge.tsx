@@ -72,3 +72,5 @@ export const Badge = styled(Text, {
 });
 
 export type BadgeProps = React.ComponentProps<typeof Badge>;
+
+export default Badge;

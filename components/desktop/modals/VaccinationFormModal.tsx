@@ -112,11 +112,32 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             .insert(vaccinationData as any);
 
         if (error) throw error;
+
+        // Log the activity
+        const userId = (await supabase.auth.getUser()).data.user?.id;
+        await supabase.from('activity_logs').insert({
+            actor_id: userId,
+            owner_id: userId,
+            pet_id: selectedPetId,
+            action_type: 'vaccination_added',
+            details: {
+                vaccine_name: vaccineName,
+                date_given: data.dateGiven,
+            },
+        });
+
         onSuccess?.();
     };
 
     const validate = (data: VaccinationFormData) => {
-        return null;
+        const errors: Record<string, string> = {};
+
+        // Vaccine is required - either from dropdown or custom
+        if (!selectedVaccine && !data.customVaccineName) {
+            errors.vaccine = 'Please select a vaccine';
+        }
+
+        return Object.keys(errors).length > 0 ? errors : null;
     };
 
     return (
@@ -154,6 +175,8 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                     selectedVaccine={selectedVaccine}
                                     onSelect={(vaccine) => {
                                         setSelectedVaccine(vaccine);
+                                        // Clear validation error when vaccine is selected
+                                        formState.clearError?.('vaccine');
                                         // Auto calculate due date if vaccine selected
                                         if (vaccine && formState.data.dateGiven) {
                                             const calc = calculateNextDueDate(formState.data.dateGiven, vaccine.booster_interval);
@@ -161,7 +184,12 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                         }
                                     }}
                                     customName={formState.data.customVaccineName}
-                                    onCustomNameChange={(text) => formState.updateField('customVaccineName', text)}
+                                    onCustomNameChange={(name) => {
+                                        formState.updateField('customVaccineName', name);
+                                        // Clear validation error when custom name is entered
+                                        if (name) formState.clearError('vaccine');
+                                    }}
+                                    error={formState.errors.vaccine}
                                 />
 
                                 {/* Type Badge */}

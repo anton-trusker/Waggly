@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal, Switch, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import PetSelector from './shared/PetSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
+import FormModal, { FormState } from '@/components/ui/FormModal';
 
 interface MedicationFormModalProps {
     visible: boolean;
@@ -22,13 +24,64 @@ const ROUTE_OF_ADMIN = ['Oral', 'Topical', 'Injection (SubQ)', 'Injection (IM)',
 const SIDE_EFFECT_SEVERITIES = ['None', 'Mild', 'Moderate', 'Severe'];
 const COMMON_SIDE_EFFECTS = ['Vomiting', 'Diarrhea', 'Lethargy', 'Loss of Appetite', 'Increased Thirst', 'Increased Urination', 'Itching', 'Behavioral Changes'];
 
+interface MedicationFormData {
+    medication_name: string;
+    treatment_type: string;
+    dosage_value: string;
+    dosage_unit: string;
+    strength: string;
+    form: string;
+    route_of_administration: string;
+    frequency: string;
+    administration_times: string[];
+    administration_instructions: string;
+    best_time_to_give: string[];
+    start_date: string;
+    end_date: string;
+    duration_value: string;
+    duration_unit: string;
+    is_ongoing: boolean;
+    prescribed_by: string;
+    prescription_number: string;
+    pharmacy_name: string;
+    pharmacy_phone: string;
+    auto_refill: boolean;
+    refill_every: string;
+    refill_quantity: string;
+    refills_remaining: string;
+    unit_price: string;
+    quantity: string;
+    total_cost: string;
+    currency: string;
+    insurance_coverage_percent: string;
+    side_effects: string[];
+    severity_rating: string;
+    side_effect_notes: string;
+    contraindications: string;
+    interactions: string;
+    storage_instructions: string;
+    reason_for_treatment: string;
+    condition_being_treated: string;
+    monitor_for: string;
+    notes: string;
+}
+
 export default function MedicationFormModal({ visible, onClose, petId: initialPetId, onSuccess }: MedicationFormModalProps) {
     const { pets } = usePets();
+    const { theme } = useAppTheme();
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
-    const [loading, setLoading] = useState(false);
-    const [interactionWarnings, setInteractionWarnings] = useState<string[]>([]);
 
-    const [formData, setFormData] = useState({
+    useEffect(() => {
+        if (visible) {
+            if (initialPetId) {
+                setSelectedPetId(initialPetId);
+            } else if (pets.length > 0 && !selectedPetId) {
+                setSelectedPetId(pets[0].id);
+            }
+        }
+    }, [visible, initialPetId, pets]);
+
+    const initialData: MedicationFormData = {
         medication_name: '',
         treatment_type: 'Medication',
         dosage_value: '',
@@ -37,9 +90,9 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         form: '',
         route_of_administration: 'Oral',
         frequency: 'Once daily',
-        administration_times: [] as string[],
+        administration_times: [],
         administration_instructions: '',
-        best_time_to_give: [] as string[],
+        best_time_to_give: [],
         start_date: new Date().toISOString().split('T')[0],
         end_date: '',
         duration_value: '',
@@ -53,12 +106,12 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         refill_every: '',
         refill_quantity: '',
         refills_remaining: '',
-        unit_price: 0,
+        unit_price: '',
         quantity: '',
-        total_cost: 0,
+        total_cost: '',
         currency: 'EUR',
-        insurance_coverage_percent: 0,
-        side_effects: [] as string[],
+        insurance_coverage_percent: '',
+        side_effects: [],
         severity_rating: 'None',
         side_effect_notes: '',
         contraindications: '',
@@ -68,41 +121,27 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         condition_being_treated: '',
         monitor_for: '',
         notes: '',
-    });
+    };
 
-    useEffect(() => {
-        if (initialPetId) {
-            setSelectedPetId(initialPetId);
-        } else if (pets.length > 0 && !selectedPetId) {
-            setSelectedPetId(pets[0].id);
-        }
-    }, [initialPetId, pets, selectedPetId]);
-
-    useEffect(() => {
-        if (formData.medication_name && selectedPetId) {
-            checkInteractions();
-        }
-    }, [formData.medication_name, selectedPetId]);
-
-    const checkInteractions = async () => {
-        if (!formData.medication_name || !selectedPetId) return;
+    const checkInteractions = async (medName: string, petId: string): Promise<string[]> => {
+        if (!medName || !petId) return [];
         const warnings: string[] = [];
         try {
             const { data: activeMeds } = await supabase
                 .from('medications')
                 .select('medication_name, treatment_type')
-                .eq('pet_id', selectedPetId)
+                .eq('pet_id', petId)
                 .or('end_date.is.null,end_date.gt.' + new Date().toISOString());
 
             const { data: allergies } = await supabase
                 .from('allergies')
                 .select('allergen, allergy_type, severity_level')
-                .eq('pet_id', selectedPetId)
+                .eq('pet_id', petId)
                 .eq('allergy_type', 'medication');
 
             if (allergies && allergies.length > 0) {
                 allergies.forEach(allergy => {
-                    if (formData.medication_name.toLowerCase().includes(allergy.allergen.toLowerCase())) {
+                    if (medName.toLowerCase().includes(allergy.allergen.toLowerCase())) {
                         warnings.push(`⚠️ ALLERGY WARNING: Pet has documented ${allergy.severity_level} allergy to ${allergy.allergen}`);
                     }
                 });
@@ -111,594 +150,511 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             if (activeMeds && activeMeds.length >= 3) {
                 warnings.push(`ℹ️ INFO: Pet is currently on ${activeMeds.length} medications. Consider monitoring for polypharmacy effects.`);
             }
-
-            setInteractionWarnings(warnings);
         } catch (error) {
             console.error('Error checking interactions:', error);
         }
+        return warnings;
     };
 
-    const toggleSideEffect = (effect: string) => {
-        if (formData.side_effects.includes(effect)) {
-            setFormData({ ...formData, side_effects: formData.side_effects.filter(e => e !== effect) });
-        } else {
-            setFormData({ ...formData, side_effects: [...formData.side_effects, effect] });
+    const insertToDb = async (data: MedicationFormData) => {
+        const { error } = await supabase
+            .from('medications')
+            .insert({
+                pet_id: selectedPetId,
+                medication_name: data.medication_name,
+                treatment_type: data.treatment_type,
+                dosage_value: data.dosage_value ? parseFloat(data.dosage_value) : null,
+                dosage_unit: data.dosage_unit,
+                strength: data.strength || null,
+                form: data.form || null,
+                route_of_administration: data.route_of_administration,
+                frequency: data.frequency,
+                administration_times: data.administration_times.length > 0 ? data.administration_times : null,
+                administration_instructions: data.administration_instructions || null,
+                best_time_to_give: data.best_time_to_give.length > 0 ? data.best_time_to_give : null,
+                start_date: data.start_date,
+                end_date: data.end_date || null,
+                duration_value: data.duration_value ? parseInt(data.duration_value) : null,
+                duration_unit: data.duration_unit,
+                is_ongoing: data.is_ongoing,
+                prescribed_by: data.prescribed_by || null,
+                prescription_number: data.prescription_number || null,
+                pharmacy_name: data.pharmacy_name || null,
+                pharmacy_phone: data.pharmacy_phone || null,
+                auto_refill: data.auto_refill,
+                refill_schedule: data.auto_refill ? {
+                    every: data.refill_every,
+                    quantity: data.refill_quantity,
+                } : null,
+                refills_remaining: data.refills_remaining ? parseInt(data.refills_remaining) : null,
+                unit_price: data.unit_price ? parseFloat(data.unit_price) : null,
+                quantity: data.quantity ? parseInt(data.quantity) : null,
+                total_cost: data.total_cost ? parseFloat(data.total_cost) : null,
+                currency: data.currency,
+                insurance_coverage_percent: data.insurance_coverage_percent ? parseFloat(data.insurance_coverage_percent) : null,
+                side_effects: data.side_effects.length > 0 ? data.side_effects : null,
+                severity_rating: data.severity_rating,
+                side_effect_notes: data.side_effect_notes || null,
+                contraindications: data.contraindications || null,
+                interactions: data.interactions || null,
+                storage_instructions: data.storage_instructions || null,
+                reason_for_treatment: data.reason_for_treatment || null,
+                condition_being_treated: data.condition_being_treated || null,
+                monitor_for: data.monitor_for || null,
+                notes: data.notes || null,
+            } as any);
+
+        if (error) throw error;
+
+        // Log activity
+        const userId = (await supabase.auth.getUser()).data.user?.id;
+        if (userId) {
+            await supabase.from('activity_logs').insert({
+                actor_id: userId,
+                owner_id: userId,
+                pet_id: selectedPetId,
+                action_type: 'medication_added',
+                details: {
+                    medication_name: data.medication_name,
+                    start_date: data.start_date,
+                    treatment_type: data.treatment_type
+                },
+            });
         }
     };
 
-    const resetForm = () => {
-        setFormData({
-            medication_name: '',
-            treatment_type: 'Medication',
-            dosage_value: '',
-            dosage_unit: 'mg',
-            strength: '',
-            form: '',
-            route_of_administration: 'Oral',
-            frequency: 'Once daily',
-            administration_times: [],
-            administration_instructions: '',
-            best_time_to_give: [],
-            start_date: new Date().toISOString().split('T')[0],
-            end_date: '',
-            duration_value: '',
-            duration_unit: 'Days',
-            is_ongoing: false,
-            prescribed_by: '',
-            prescription_number: '',
-            pharmacy_name: '',
-            pharmacy_phone: '',
-            auto_refill: false,
-            refill_every: '',
-            refill_quantity: '',
-            refills_remaining: '',
-            unit_price: 0,
-            quantity: '',
-            total_cost: 0,
-            currency: 'EUR',
-            insurance_coverage_percent: 0,
-            side_effects: [],
-            severity_rating: 'None',
-            side_effect_notes: '',
-            contraindications: '',
-            interactions: '',
-            storage_instructions: '',
-            reason_for_treatment: '',
-            condition_being_treated: '',
-            monitor_for: '',
-            notes: '',
-        });
-        setInteractionWarnings([]);
-        if (!initialPetId && pets.length > 0) {
-            setSelectedPetId(pets[0].id);
-        }
-    };
-
-    const handleSubmit = async () => {
+    const handleSubmit = async (data: MedicationFormData) => {
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
             return;
         }
-        if (!formData.medication_name) {
-            Alert.alert('Error', 'Please enter medication name');
-            return;
-        }
 
-        if (interactionWarnings.length > 0) {
-            Alert.alert(
-                'Interaction Warnings',
-                interactionWarnings.join('\n\n') + '\n\nDo you want to proceed?',
-                [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Proceed Anyway', onPress: submitToDatabase }
-                ]
-            );
+        const warnings = await checkInteractions(data.medication_name, selectedPetId);
+
+        if (warnings.length > 0) {
+            return new Promise<void>((resolve, reject) => {
+                Alert.alert(
+                    'Interaction Warnings',
+                    warnings.join('\n\n') + '\n\nDo you want to proceed?',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                            onPress: () => reject(new Error('User cancelled due to warnings'))
+                        },
+                        {
+                            text: 'Proceed Anyway',
+                            onPress: async () => {
+                                try {
+                                    await insertToDb(data);
+                                    onSuccess?.();
+                                    resolve();
+                                } catch (err) {
+                                    reject(err);
+                                }
+                            }
+                        }
+                    ]
+                );
+            });
         } else {
-            submitToDatabase();
-        }
-    };
-
-    const submitToDatabase = async () => {
-        setLoading(true);
-        try {
-            const { error } = await supabase
-                .from('medications')
-                .insert({
-                    pet_id: selectedPetId,
-                    medication_name: formData.medication_name,
-                    treatment_type: formData.treatment_type,
-                    dosage_value: formData.dosage_value ? parseFloat(formData.dosage_value) : null,
-                    dosage_unit: formData.dosage_unit,
-                    strength: formData.strength || null,
-                    form: formData.form || null,
-                    route_of_administration: formData.route_of_administration,
-                    frequency: formData.frequency,
-                    administration_times: formData.administration_times.length > 0 ? formData.administration_times : null,
-                    administration_instructions: formData.administration_instructions || null,
-                    best_time_to_give: formData.best_time_to_give.length > 0 ? formData.best_time_to_give : null,
-                    start_date: formData.start_date,
-                    end_date: formData.end_date || null,
-                    duration_value: formData.duration_value ? parseInt(formData.duration_value) : null,
-                    duration_unit: formData.duration_unit,
-                    is_ongoing: formData.is_ongoing,
-                    prescribed_by: formData.prescribed_by || null,
-                    prescription_number: formData.prescription_number || null,
-                    pharmacy_name: formData.pharmacy_name || null,
-                    pharmacy_phone: formData.pharmacy_phone || null,
-                    auto_refill: formData.auto_refill,
-                    refill_schedule: formData.auto_refill ? {
-                        every: formData.refill_every,
-                        quantity: formData.refill_quantity,
-                    } : null,
-                    refills_remaining: formData.refills_remaining ? parseInt(formData.refills_remaining) : null,
-                    unit_price: formData.unit_price || null,
-                    quantity: formData.quantity ? parseInt(formData.quantity) : null,
-                    total_cost: formData.total_cost || null,
-                    currency: formData.currency,
-                    insurance_coverage_percent: formData.insurance_coverage_percent || null,
-                    side_effects: formData.side_effects.length > 0 ? formData.side_effects : null,
-                    severity_rating: formData.severity_rating,
-                    side_effect_notes: formData.side_effect_notes || null,
-                    contraindications: formData.contraindications || null,
-                    interactions: formData.interactions || null,
-                    storage_instructions: formData.storage_instructions || null,
-                    reason_for_treatment: formData.reason_for_treatment || null,
-                    condition_being_treated: formData.condition_being_treated || null,
-                    monitor_for: formData.monitor_for || null,
-                    notes: formData.notes || null,
-                } as any);
-
-            if (error) throw error;
-
-            Alert.alert('Success', 'Medication added successfully');
-            resetForm();
+            await insertToDb(data);
             onSuccess?.();
-            onClose();
-        } catch (error: any) {
-            Alert.alert('Error', error.message);
-        } finally {
-            setLoading(false);
         }
     };
 
-    if (!visible) return null;
+    const validate = (data: MedicationFormData) => {
+        const errors: Record<string, string> = {};
+        if (!data.medication_name) errors.medication_name = 'Medication name is required';
+        return errors;
+    };
+
+    const toggleSideEffect = (effect: string, formState: FormState<MedicationFormData>) => {
+        const current = formState.data.side_effects || [];
+        if (current.includes(effect)) {
+            formState.updateField('side_effects', current.filter(e => e !== effect));
+        } else {
+            formState.updateField('side_effects', [...current, effect]);
+        }
+    };
 
     return (
-        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
-                    {/* Header */}
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.cancelText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Add Medication</Text>
-                        <TouchableOpacity onPress={handleSubmit} disabled={loading}>
-                            <Text style={styles.saveText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
+        <FormModal
+            visible={visible}
+            onClose={onClose}
+            title="Add Medication"
+            initialData={initialData}
+            onSubmit={handleSubmit}
+            validate={validate}
+            submitLabel="Save Medication"
+        >
+            {(formState: FormState<MedicationFormData>) => (
+                <View style={styles.formContent}>
+                    <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
 
-                    {/* Form Content */}
-                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                        <View style={styles.formContent}>
+                    {/* Medication Details */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="medkit" size={20} color={theme.colors.primary[500]} />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Medication Details</Text>
+                        </View>
 
-                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
-
-                            {/* Interaction Warnings */}
-                            {interactionWarnings.length > 0 && (
-                                <View style={styles.warningBox}>
-                                    <View style={styles.warningHeader}>
-                                        <Ionicons name="warning" size={20} color="#EF4444" />
-                                        <Text style={styles.warningTitle}>Warnings Detected</Text>
-                                    </View>
-                                    {interactionWarnings.map((warning, index) => (
-                                        <Text key={index} style={styles.warningText}>• {warning}</Text>
-                                    ))}
-                                </View>
-                            )}
-
-                            {/* Medication Details */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="medkit" size={20} color="#0A84FF" />
-                                    <Text style={styles.sectionTitle}>Medication Details</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Medication Name *</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="e.g. Apoquel, Prednisone"
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.medication_name}
-                                            onChangeText={(text) => setFormData({ ...formData, medication_name: text })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Treatment Type</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            <View style={styles.chipRow}>
-                                                {TREATMENT_TYPES.map(type => (
-                                                    <TouchableOpacity
-                                                        key={type}
-                                                        onPress={() => setFormData({ ...formData, treatment_type: type })}
-                                                        style={[styles.chip, formData.treatment_type === type && styles.chipSelected]}
-                                                    >
-                                                        <Text style={[styles.chipText, formData.treatment_type === type && styles.chipTextSelected]}>{type}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        </ScrollView>
-                                    </View>
-
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Dosage</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="16"
-                                                keyboardType="numeric"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.dosage_value}
-                                                onChangeText={(text) => setFormData({ ...formData, dosage_value: text })}
-                                            />
-                                        </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Unit</Text>
-                                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                <View style={styles.chipRow}>
-                                                    {DOSAGE_UNITS.map(unit => (
-                                                        <TouchableOpacity
-                                                            key={unit}
-                                                            onPress={() => setFormData({ ...formData, dosage_unit: unit })}
-                                                            style={[styles.unitChip, formData.dosage_unit === unit && styles.unitChipSelected]}
-                                                        >
-                                                            <Text style={[styles.unitChipText, formData.dosage_unit === unit && styles.unitChipTextSelected]}>{unit}</Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </ScrollView>
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Frequency</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            <View style={styles.chipRow}>
-                                                {FREQUENCIES.map(freq => (
-                                                    <TouchableOpacity
-                                                        key={freq}
-                                                        onPress={() => setFormData({ ...formData, frequency: freq })}
-                                                        style={[styles.chip, formData.frequency === freq && styles.chipSelected]}
-                                                    >
-                                                        <Text style={[styles.chipText, formData.frequency === freq && styles.chipTextSelected]}>{freq}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        </ScrollView>
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Route of Administration</Text>
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                            <View style={styles.chipRow}>
-                                                {ROUTE_OF_ADMIN.map(route => (
-                                                    <TouchableOpacity
-                                                        key={route}
-                                                        onPress={() => setFormData({ ...formData, route_of_administration: route })}
-                                                        style={[styles.chip, formData.route_of_administration === route && styles.chipSelected]}
-                                                    >
-                                                        <Text style={[styles.chipText, formData.route_of_administration === route && styles.chipTextSelected]}>{route}</Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        </ScrollView>
-                                    </View>
-                                </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Medication Name *</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: formState.errors.medication_name ? theme.colors.status.error[500] : theme.colors.border.primary }]}
+                                    placeholder="e.g. Apoquel, Prednisone"
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.medication_name}
+                                    onChangeText={(text) => formState.updateField('medication_name', text)}
+                                />
+                                {formState.errors.medication_name && (
+                                    <Text style={{ color: theme.colors.status.error[500], fontSize: 12 }}>
+                                        {formState.errors.medication_name}
+                                    </Text>
+                                )}
                             </View>
 
-                            {/* Duration & Schedule */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="calendar" size={20} color="#F59E0B" />
-                                    <Text style={styles.sectionTitle}>Duration & Schedule</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <UniversalDatePicker
-                                                label="Start Date"
-                                                value={formData.start_date}
-                                                onChange={(text) => setFormData({ ...formData, start_date: text })}
-                                                mode="date"
-                                            />
-                                        </View>
-                                        <View style={styles.halfWidth}>
-                                            <UniversalDatePicker
-                                                label="End Date (Optional)"
-                                                value={formData.end_date}
-                                                onChange={(text) => setFormData({ ...formData, end_date: text })}
-                                                mode="date"
-                                                minDate={new Date(formData.start_date)}
-                                            />
-                                        </View>
-                                    </View>
-
-                                    <View style={styles.switchRow}>
-                                        <Text style={styles.switchLabel}>Ongoing Medication</Text>
-                                        <Switch
-                                            value={formData.is_ongoing}
-                                            onValueChange={(val) => setFormData({ ...formData, is_ongoing: val })}
-                                            trackColor={{ false: '#3F3F46', true: '#0A84FF' }}
-                                        />
-                                    </View>
-
-                                    {!formData.is_ongoing && (
-                                        <View style={styles.row}>
-                                            <View style={styles.halfWidth}>
-                                                <Text style={styles.label}>Duration</Text>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="7"
-                                                    keyboardType="numeric"
-                                                    placeholderTextColor="#4B5563"
-                                                    value={formData.duration_value}
-                                                    onChangeText={(text) => setFormData({ ...formData, duration_value: text })}
-                                                />
-                                            </View>
-                                            <View style={styles.halfWidth}>
-                                                <Text style={styles.label}>Unit</Text>
-                                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                                    <View style={styles.chipRow}>
-                                                        {DURATION_UNITS.map(unit => (
-                                                            <TouchableOpacity
-                                                                key={unit}
-                                                                onPress={() => setFormData({ ...formData, duration_unit: unit })}
-                                                                style={[styles.unitChip, formData.duration_unit === unit && styles.unitChipSelected]}
-                                                            >
-                                                                <Text style={[styles.unitChipText, formData.duration_unit === unit && styles.unitChipTextSelected]}>{unit}</Text>
-                                                            </TouchableOpacity>
-                                                        ))}
-                                                    </View>
-                                                </ScrollView>
-                                            </View>
-                                        </View>
-                                    )}
-
-                                    <RichTextInput
-                                        label="Administration Instructions"
-                                        placeholder="Give with food, wait 30 minutes before eating..."
-                                        value={formData.administration_instructions}
-                                        onChangeText={(text) => setFormData({ ...formData, administration_instructions: text })}
-                                        minHeight={60}
-                                    />
-                                </View>
-                            </View>
-
-                            {/* Side Effects */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="warning" size={20} color="#EF4444" />
-                                    <Text style={styles.sectionTitle}>Side Effects</Text>
-                                </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.buttonRow}>
-                                        {SIDE_EFFECT_SEVERITIES.map(severity => (
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Treatment Type</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.chipRow}>
+                                        {TREATMENT_TYPES.map(type => (
                                             <TouchableOpacity
-                                                key={severity}
-                                                onPress={() => setFormData({ ...formData, severity_rating: severity })}
+                                                key={type}
+                                                onPress={() => formState.updateField('treatment_type', type)}
                                                 style={[
-                                                    styles.severityButton,
-                                                    formData.severity_rating === severity && (severity === 'None' ? styles.severityNone : styles.severityDanger)
+                                                    styles.chip,
+                                                    { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary },
+                                                    formState.data.treatment_type === type && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
                                                 ]}
                                             >
                                                 <Text style={[
-                                                    styles.severityText,
-                                                    formData.severity_rating === severity && (severity === 'None' ? styles.severityTextNone : styles.severityTextDanger)
+                                                    styles.chipText,
+                                                    { color: theme.colors.text.secondary },
+                                                    formState.data.treatment_type === type && { color: '#FFFFFF' }
                                                 ]}>
-                                                    {severity}
+                                                    {type}
                                                 </Text>
                                             </TouchableOpacity>
                                         ))}
                                     </View>
-
-                                    {formData.severity_rating !== 'None' && (
-                                        <>
-                                            <View style={styles.fieldGroup}>
-                                                <Text style={styles.label}>Symptoms Observed</Text>
-                                                <View style={styles.chipWrap}>
-                                                    {COMMON_SIDE_EFFECTS.map(effect => (
-                                                        <TouchableOpacity
-                                                            key={effect}
-                                                            onPress={() => toggleSideEffect(effect)}
-                                                            style={[styles.chip, formData.side_effects.includes(effect) && styles.chipDanger]}
-                                                        >
-                                                            <Text style={[styles.chipText, formData.side_effects.includes(effect) && styles.chipTextDanger]}>
-                                                                {effect}
-                                                            </Text>
-                                                        </TouchableOpacity>
-                                                    ))}
-                                                </View>
-                                            </View>
-
-                                            <RichTextInput
-                                                label="Side Effect Notes"
-                                                placeholder="Describe side effects..."
-                                                value={formData.side_effect_notes}
-                                                onChangeText={(text) => setFormData({ ...formData, side_effect_notes: text })}
-                                                minHeight={60}
-                                            />
-                                        </>
-                                    )}
-                                </View>
+                                </ScrollView>
                             </View>
 
-                            {/* Medical Context */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="document-text" size={20} color="#8B5CF6" />
-                                    <Text style={styles.sectionTitle}>Medical Context</Text>
+                            <View style={styles.row}>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Dosage</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="16"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        value={formState.data.dosage_value}
+                                        onChangeText={(text) => formState.updateField('dosage_value', text)}
+                                    />
                                 </View>
-
-                                <View style={styles.card}>
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Reason for Treatment</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Allergies, infection, pain management..."
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.reason_for_treatment}
-                                            onChangeText={(text) => setFormData({ ...formData, reason_for_treatment: text })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Condition Being Treated</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Atopic dermatitis, UTI, arthritis..."
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.condition_being_treated}
-                                            onChangeText={(text) => setFormData({ ...formData, condition_being_treated: text })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.fieldGroup}>
-                                        <Text style={styles.label}>Prescribed By</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Dr. Smith, ABC Veterinary Clinic"
-                                            placeholderTextColor="#4B5563"
-                                            value={formData.prescribed_by}
-                                            onChangeText={(text) => setFormData({ ...formData, prescribed_by: text })}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* Cost */}
-                            <View style={styles.section}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="cash" size={20} color="#10B981" />
-                                    <Text style={styles.sectionTitle}>Cost Information</Text>
-                                </View>
-                                <View style={styles.card}>
-                                    <View style={styles.row}>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Total Cost</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="45.50"
-                                                keyboardType="numeric"
-                                                placeholderTextColor="#4B5563"
-                                                value={formData.total_cost.toString()}
-                                                onChangeText={(text) => setFormData({ ...formData, total_cost: parseFloat(text) || 0 })}
-                                            />
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Unit</Text>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                        <View style={styles.chipRow}>
+                                            {DOSAGE_UNITS.map(unit => (
+                                                <TouchableOpacity
+                                                    key={unit}
+                                                    onPress={() => formState.updateField('dosage_unit', unit)}
+                                                    style={[
+                                                        styles.chip,
+                                                        { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary },
+                                                        formState.data.dosage_unit === unit && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                    ]}
+                                                >
+                                                    <Text style={[
+                                                        styles.chipText,
+                                                        { color: theme.colors.text.secondary },
+                                                        formState.data.dosage_unit === unit && { color: '#FFFFFF' }
+                                                    ]}>{unit}</Text>
+                                                </TouchableOpacity>
+                                            ))}
                                         </View>
-                                        <View style={styles.halfWidth}>
-                                            <Text style={styles.label}>Currency</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                value={formData.currency}
-                                                onChangeText={(text) => setFormData({ ...formData, currency: text })}
-                                            />
-                                        </View>
-                                    </View>
+                                    </ScrollView>
                                 </View>
                             </View>
 
-                            {/* Notes */}
-                            <RichTextInput
-                                label="Additional Notes"
-                                placeholder="Any other important information..."
-                                value={formData.notes}
-                                onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                                minHeight={80}
-                            />
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Route of Administration</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.chipRow}>
+                                        {ROUTE_OF_ADMIN.map(route => (
+                                            <TouchableOpacity
+                                                key={route}
+                                                onPress={() => formState.updateField('route_of_administration', route)}
+                                                style={[
+                                                    styles.chip,
+                                                    { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary },
+                                                    formState.data.route_of_administration === route && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    styles.chipText,
+                                                    { color: theme.colors.text.secondary },
+                                                    formState.data.route_of_administration === route && { color: '#FFFFFF' }
+                                                ]}>{route}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
 
-                            <View style={{ height: 40 }} />
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Frequency</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.chipRow}>
+                                        {FREQUENCIES.map(freq => (
+                                            <TouchableOpacity
+                                                key={freq}
+                                                onPress={() => formState.updateField('frequency', freq)}
+                                                style={[
+                                                    styles.chip,
+                                                    { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary },
+                                                    formState.data.frequency === freq && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    styles.chipText,
+                                                    { color: theme.colors.text.secondary },
+                                                    formState.data.frequency === freq && { color: '#FFFFFF' }
+                                                ]}>{freq}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                            </View>
                         </View>
-                    </ScrollView>
+                    </View>
+
+                    {/* Duration & Schedule */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="calendar" size={20} color="#F59E0B" />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Duration & Schedule</Text>
+                        </View>
+
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.row}>
+                                <View style={styles.halfWidth}>
+                                    <UniversalDatePicker
+                                        label="Start Date"
+                                        value={formState.data.start_date}
+                                        onChange={(text) => formState.updateField('start_date', text)}
+                                        mode="date"
+                                    />
+                                </View>
+                                <View style={styles.halfWidth}>
+                                    <UniversalDatePicker
+                                        label="End Date (Optional)"
+                                        value={formState.data.end_date}
+                                        onChange={(text) => formState.updateField('end_date', text)}
+                                        mode="date"
+                                        minDate={new Date(formState.data.start_date)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={[styles.reminderRow, { backgroundColor: theme.colors.background.secondary }]}>
+                                <Text style={[styles.reminderText, { color: theme.colors.text.primary }]}>Ongoing Medication</Text>
+                                <Switch
+                                    value={formState.data.is_ongoing}
+                                    onValueChange={(val) => formState.updateField('is_ongoing', val)}
+                                    trackColor={{ false: theme.colors.border.primary, true: theme.colors.primary[500] }}
+                                    thumbColor={theme.colors.text.inverse}
+                                />
+                            </View>
+
+                            <RichTextInput
+                                label="Administration Instructions"
+                                placeholder="Give with food, wait 30 minutes before eating..."
+                                value={formState.data.administration_instructions}
+                                onChangeText={(text) => formState.updateField('administration_instructions', text)}
+                                minHeight={60}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Medical Context */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="document-text" size={20} color="#8B5CF6" />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Medical Context</Text>
+                        </View>
+
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Reason for Treatment</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                    placeholder="Allergies, infection, pain management..."
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.reason_for_treatment}
+                                    onChangeText={(text) => formState.updateField('reason_for_treatment', text)}
+                                />
+                            </View>
+
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Condition Being Treated</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                    placeholder="Atopic dermatitis, UTI, arthritis..."
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.condition_being_treated}
+                                    onChangeText={(text) => formState.updateField('condition_being_treated', text)}
+                                />
+                            </View>
+
+                            <View style={styles.fieldGroup}>
+                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Prescribed By</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                    placeholder="Dr. Smith, ABC Veterinary Clinic"
+                                    placeholderTextColor={theme.colors.text.tertiary}
+                                    value={formState.data.prescribed_by}
+                                    onChangeText={(text) => formState.updateField('prescribed_by', text)}
+                                />
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Cost */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="cash" size={20} color="#10B981" />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Cost Information</Text>
+                        </View>
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.row}>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Total Cost</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        placeholder="0.00"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={theme.colors.text.tertiary}
+                                        value={formState.data.total_cost}
+                                        onChangeText={(text) => formState.updateField('total_cost', text)}
+                                    />
+                                </View>
+                                <View style={styles.halfWidth}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Currency</Text>
+                                    <TextInput
+                                        style={[styles.input, { backgroundColor: theme.colors.background.secondary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        value={formState.data.currency}
+                                        onChangeText={(text) => formState.updateField('currency', text)}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Side Effects */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Ionicons name="warning" size={20} color="#EF4444" />
+                            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Side Effects</Text>
+                        </View>
+
+                        <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
+                            <View style={styles.buttonRow}>
+                                {SIDE_EFFECT_SEVERITIES.map(severity => {
+                                    const isSelected = formState.data.severity_rating === severity;
+                                    const isNone = severity === 'None';
+                                    return (
+                                        <TouchableOpacity
+                                            key={severity}
+                                            onPress={() => formState.updateField('severity_rating', severity)}
+                                            style={[
+                                                styles.severityButton,
+                                                { borderWidth: 1, borderColor: theme.colors.border.primary },
+                                                isSelected && (
+                                                    isNone
+                                                        ? { backgroundColor: theme.colors.status.success + '20', borderColor: theme.colors.status.success }
+                                                        : { backgroundColor: theme.colors.status.error['500'] + '20', borderColor: theme.colors.status.error['500'] }
+                                                )
+                                            ]}
+                                        >
+                                            <Text style={[
+                                                styles.severityText,
+                                                { color: theme.colors.text.secondary },
+                                                isSelected && (
+                                                    isNone
+                                                        ? { color: theme.colors.status.success }
+                                                        : { color: theme.colors.status.error['500'] }
+                                                )
+                                            ]}>
+                                                {severity}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </View>
+
+                            {formState.data.severity_rating !== 'None' && (
+                                <>
+                                    <View style={styles.fieldGroup}>
+                                        <Text style={[styles.label, { color: theme.colors.text.secondary }]}>Symptoms Observed</Text>
+                                        <View style={styles.chipWrap}>
+                                            {COMMON_SIDE_EFFECTS.map(effect => (
+                                                <TouchableOpacity
+                                                    key={effect}
+                                                    onPress={() => toggleSideEffect(effect, formState)}
+                                                    style={[
+                                                        styles.chip,
+                                                        { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary },
+                                                        formState.data.side_effects.includes(effect) && { backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: '#EF4444' }
+                                                    ]}
+                                                >
+                                                    <Text style={[
+                                                        styles.chipText,
+                                                        { color: theme.colors.text.secondary },
+                                                        formState.data.side_effects.includes(effect) && { color: '#EF4444' }
+                                                    ]}>
+                                                        {effect}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+                                    </View>
+
+                                    <RichTextInput
+                                        label="Side Effect Notes"
+                                        placeholder="Describe side effects..."
+                                        value={formState.data.side_effect_notes}
+                                        onChangeText={(text) => formState.updateField('side_effect_notes', text)}
+                                        minHeight={60}
+                                    />
+                                </>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Notes */}
+                    <RichTextInput
+                        label="Additional Notes"
+                        placeholder="Any other important information..."
+                        value={formState.data.notes}
+                        onChangeText={(text) => formState.updateField('notes', text)}
+                        minHeight={80}
+                    />
+
+                    <View style={{ height: 40 }} />
                 </View>
-            </View>
-        </Modal>
+            )}
+        </FormModal>
     );
 }
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-    },
-    modalContainer: {
-        width: '100%',
-        maxWidth: 700,
-        backgroundColor: '#0F0F10',
-        borderRadius: 24,
-        maxHeight: '90%',
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: '#2C2C2E',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#2C2C2E',
-    },
-    cancelText: {
-        color: '#9CA3AF',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-    headerTitle: {
-        color: '#FFFFFF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    saveText: {
-        color: '#0A84FF',
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    scrollView: {
-        flex: 1,
-    },
     formContent: {
-        padding: 20,
         gap: 24,
-    },
-    warningBox: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderWidth: 1,
-        borderColor: '#EF4444',
-        borderRadius: 12,
-        padding: 16,
-    },
-    warningHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 8,
-    },
-    warningTitle: {
-        color: '#EF4444',
-        fontWeight: '700',
-    },
-    warningText: {
-        color: '#EF4444',
-        fontSize: 14,
-        marginBottom: 4,
     },
     section: {
         gap: 12,
@@ -706,34 +662,32 @@ const styles = StyleSheet.create({
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
     },
     sectionTitle: {
-        color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
     },
     card: {
-        backgroundColor: '#2C2C2E',
         borderRadius: 16,
-        padding: 16,
-        gap: 16,
+        padding: 20,
+        gap: 20,
     },
     fieldGroup: {
         gap: 8,
     },
     label: {
-        color: '#9CA3AF',
         fontSize: 12,
-        fontWeight: '500',
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     input: {
-        backgroundColor: '#1C1C1E',
         borderRadius: 12,
         paddingHorizontal: 16,
-        paddingVertical: 12,
-        color: '#FFFFFF',
+        paddingVertical: 14,
         fontSize: 16,
+        borderWidth: 1,
     },
     row: {
         flexDirection: 'row',
@@ -756,42 +710,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#374151',
-        backgroundColor: '#1C1C1E',
-    },
-    chipSelected: {
-        backgroundColor: '#0A84FF',
-        borderColor: '#0A84FF',
     },
     chipText: {
-        color: '#9CA3AF',
         fontSize: 12,
-    },
-    chipTextSelected: {
-        color: '#FFFFFF',
-    },
-    chipDanger: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderColor: '#EF4444',
-    },
-    chipTextDanger: {
-        color: '#EF4444',
-    },
-    unitChip: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 8,
-        backgroundColor: '#1C1C1E',
-        marginRight: 8,
-    },
-    unitChipSelected: {
-        backgroundColor: '#0A84FF',
-    },
-    unitChipText: {
-        color: '#9CA3AF',
-    },
-    unitChipTextSelected: {
-        color: '#FFFFFF',
     },
     buttonRow: {
         flexDirection: 'row',
@@ -800,37 +721,23 @@ const styles = StyleSheet.create({
     severityButton: {
         flex: 1,
         paddingVertical: 10,
-        alignItems: 'center',
         borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#374151',
-    },
-    severityNone: {
-        backgroundColor: '#10B981',
-        borderColor: '#10B981',
-    },
-    severityDanger: {
-        backgroundColor: 'rgba(239, 68, 68, 0.2)',
-        borderColor: '#EF4444',
+        alignItems: 'center',
     },
     severityText: {
-        color: '#9CA3AF',
-        fontSize: 12,
-        fontWeight: '500',
+        fontSize: 13,
+        fontWeight: '700',
     },
-    severityTextNone: {
-        color: '#FFFFFF',
-    },
-    severityTextDanger: {
-        color: '#EF4444',
-    },
-    switchRow: {
+    reminderRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        borderRadius: 14,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
     },
-    switchLabel: {
-        color: '#FFFFFF',
+    reminderText: {
+        fontSize: 15,
         fontWeight: '500',
     },
 });

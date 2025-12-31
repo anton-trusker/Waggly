@@ -103,18 +103,30 @@ export default function DashboardPage() {
                         {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
                     </View>
 
-                    {/* Sidebar Column */}
-                    <View style={[styles.sidebarColumn, isMobile && styles.sidebarColumnMobile]}>
-                        {/* Upcoming Care */}
+                    {/* Sidebar Column - Desktop only */}
+                    {!isMobile && (
+                        <View style={styles.sidebarColumn}>
+                            {/* Upcoming Care */}
+                            <UpcomingCarePanel />
+
+                            {/* Priority Alerts */}
+                            <PriorityAlertsPanel />
+
+                            {/* Activity Feed */}
+                            <ActivityFeedTimeline />
+                        </View>
+                    )}
+                </View>
+
+                {/* Mobile: Show sidebar panels below main content */}
+                {isMobile && (
+                    <View style={styles.mobileSidebar}>
                         <UpcomingCarePanel />
-
-                        {/* Priority Alerts */}
                         <PriorityAlertsPanel />
-
-                        {/* Activity Feed */}
                         <ActivityFeedTimeline />
                     </View>
-                </View>
+                )}
+
                 {/* Add padding bottom for mobile nav */}
                 {isMobile && <View style={{ height: 80 }} />}
 
@@ -127,7 +139,7 @@ export default function DashboardPage() {
                     onClose={() => setHealthMetricsOpen(false)}
                 />
             </ScrollView>
-        </DesktopShell>
+        </DesktopShell >
     );
 }
 
@@ -138,9 +150,9 @@ const styles = StyleSheet.create({
     },
     content: {
         flexDirection: 'row',
-        gap: 32,
-        padding: 32,
-        maxWidth: 1440,
+        gap: 40, // Increased gap
+        padding: 40, // Increased padding as per audit
+        maxWidth: 1400, // Audit spec
         alignSelf: 'center',
         width: '100%',
     },
@@ -150,12 +162,12 @@ const styles = StyleSheet.create({
         gap: 24,
     },
     mainColumn: {
-        flex: 2,
-        gap: 24,
+        flex: 1, // Fluid width
+        gap: 32, // Consistent vertical rhythm
     },
     sidebarColumn: {
-        flex: 1,
-        minWidth: 320,
+        width: 360, // Fixed width, slightly wider for better card fit
+        minWidth: 360,
     },
     section: {
         marginBottom: 32,
@@ -361,10 +373,9 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 20,
     },
-    sidebarColumnMobile: {
-        display: 'none', // Hide sidebar on mobile/tablet or stack it differently?
-        // If the design intends to stack it, we just remove the width constraint or similar
+    mobileSidebar: {
         width: '100%',
-        minWidth: 0,
+        gap: 24,
+        marginTop: 24,
     },
 });

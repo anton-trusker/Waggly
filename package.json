@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 expo start --tunnel",
-    "android": "EXPO_NO_TELEMETRY=1 expo start --android",
-    "ios": "EXPO_NO_TELEMETRY=1 expo start --ios",
-    "web": "EXPO_NO_TELEMETRY=1 expo start --web",
-    "build:web": "expo export -p web && npx workbox generateSW workbox-config.js",
-    "build:android": "expo prebuild -p android",
+    "dev": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" EXPO_NO_TELEMETRY=1 expo start --tunnel",
+    "android": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" EXPO_NO_TELEMETRY=1 expo start --android",
+    "ios": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" EXPO_NO_TELEMETRY=1 expo start --ios",
+    "web": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" EXPO_NO_TELEMETRY=1 expo start --web",
+    "build:web": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" expo export -p web && npx workbox generateSW workbox-config.js",
+    "build:android": "NODE_OPTIONS=\"--require ./metro-polyfills.js\" expo prebuild -p android",
     "lint": "eslint .",
     "test": "jest"
   },
@@ -125,7 +125,7 @@
     "typescript": "~5.9.2",
     "update-notifier": "^6.0.2",
     "webpack-cli": "^6.0.1",
-    "workbox-cli": "^6.6.1"
+    "workbox-cli": "^7.4.0"
   },
   "resolutions": {
     "@expo/prebuild-config": "latest",

@@ -76,6 +76,7 @@ export default function PetHealthScreen() {
     );
   }
 
+  // Content is Mobile Only because _layout handles desktop separate route
   const content = (
     <HealthTab
       pet={pet}
@@ -83,21 +84,10 @@ export default function PetHealthScreen() {
       treatments={treatments}
       conditions={conditions}
       allergies={allergies}
-      visits={events} // Events serve as visits
+      visits={events}
       onAddRecord={handleAddRecord}
     />
   );
-
-  if (isDesktop) {
-    return (
-      <DesktopShell>
-        <PetProfileHeader pet={pet} />
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-          {content}
-        </ScrollView>
-      </DesktopShell>
-    );
-  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background.primary }}>

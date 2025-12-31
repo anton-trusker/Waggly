@@ -37,10 +37,8 @@ export default function AlbumScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background.primary }}>
-      <DesktopShell>
-        <PetProfileHeader pet={pet} />
-        {content}
-      </DesktopShell>
+      <MobileHeader title="Gallery" showBack />
+      {content}
     </View>
   );
 }

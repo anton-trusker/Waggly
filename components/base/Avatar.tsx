@@ -96,3 +96,5 @@ export function Avatar({ src, alt, fallback, size = 'medium', ...props }: Avatar
 }
 
 export type { AvatarProps };
+
+export default Avatar;
