@@ -4,7 +4,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
 import { useCoOwners } from '@/hooks/useCoOwners';
-import { BlurView } from 'expo-blur';
+import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
 
 interface ManageAccessModalProps {
     visible: boolean;
@@ -84,107 +84,71 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
     );
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
-            <BlurView intensity={20} style={StyleSheet.absoluteFill} tint="dark" />
-            <View style={styles.overlay}>
-                <View style={[styles.container, { backgroundColor: theme.colors.background.default }]}>
+        <GenericFormModal
+            visible={visible}
+            onClose={onClose}
+            title="Manage Access"
+            secondaryActionLabel="Close"
+            width={600}
+        >
+            <View style={styles.content}>
+                <Text style={[styles.subtitle, { color: theme.colors.text.secondary }]}>
+                    Invite people to help manage {petName || 'your pet'}.
+                </Text>
 
-                    <View style={styles.header}>
-                        <Text style={[styles.title, { color: theme.colors.text.primary }]}>Manage Access</Text>
-                        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <IconSymbol android_material_icon_name="close" size={24} color={theme.colors.text.primary} />
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.content}>
-                        <Text style={[styles.subtitle, { color: theme.colors.text.secondary }]}>
-                            Invite people to help manage {petName || 'your pet'}.
-                        </Text>
-
-                        <View style={styles.inviteRow}>
-                            <TextInput
-                                style={[styles.input, {
-                                    backgroundColor: theme.colors.background.card,
-                                    color: theme.colors.text.primary,
-                                    borderColor: theme.colors.border.primary
-                                }]}
-                                placeholder="Enter email address"
-                                placeholderTextColor={theme.colors.text.tertiary}
-                                value={email}
-                                onChangeText={setEmail}
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                            />
-                            <TouchableOpacity
-                                style={[styles.inviteBtn, { backgroundColor: theme.colors.primary[500], opacity: inviting ? 0.7 : 1 }]}
-                                onPress={handleInvite}
-                                disabled={inviting}
-                            >
-                                {inviting ? (
-                                    <ActivityIndicator color="#fff" size="small" />
-                                ) : (
-                                    <Text style={styles.inviteBtnText}>Invite</Text>
-                                )}
-                            </TouchableOpacity>
-                        </View>
-
-                        <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>People with access</Text>
-                        {loading && coOwners.length === 0 ? (
-                            <ActivityIndicator style={{ marginTop: 20 }} color={theme.colors.primary[500]} />
+                <View style={styles.inviteRow}>
+                    <TextInput
+                        style={[styles.input, {
+                            backgroundColor: theme.colors.background.card,
+                            color: theme.colors.text.primary,
+                            borderColor: theme.colors.border.primary
+                        }]}
+                        placeholder="Enter email address"
+                        placeholderTextColor={theme.colors.text.tertiary}
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                    />
+                    <TouchableOpacity
+                        style={[styles.inviteBtn, { backgroundColor: theme.colors.primary[500], opacity: inviting ? 0.7 : 1 }]}
+                        onPress={handleInvite}
+                        disabled={inviting}
+                    >
+                        {inviting ? (
+                            <ActivityIndicator color="#fff" size="small" />
                         ) : (
-                            <FlatList
-                                data={coOwners}
-                                keyExtractor={(item) => item.id}
-                                renderItem={renderItem}
-                                ListEmptyComponent={
-                                    <Text style={[styles.emptyText, { color: theme.colors.text.tertiary }]}>
-                                        No one else has access yet.
-                                    </Text>
-                                }
-                                contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
-                            />
+                            <Text style={styles.inviteBtnText}>Invite</Text>
                         )}
-
-                    </View>
+                    </TouchableOpacity>
                 </View>
+
+                <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>People with access</Text>
+                {loading && coOwners.length === 0 ? (
+                    <ActivityIndicator style={{ marginTop: 20 }} color={theme.colors.primary[500]} />
+                ) : (
+                    <FlatList
+                        data={coOwners}
+                        keyExtractor={(item) => item.id}
+                        renderItem={renderItem}
+                        scrollEnabled={false} // Allow GenericFormModal ScrollView to handle scrolling
+                        ListEmptyComponent={
+                            <Text style={[styles.emptyText, { color: theme.colors.text.tertiary }]}>
+                                No one else has access yet.
+                            </Text>
+                        }
+                        contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
+                    />
+                )}
+
             </View>
-        </Modal>
+        </GenericFormModal>
     );
 }
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        justifyContent: 'center',
-        padding: 24,
-    },
-    container: {
-        borderRadius: 24,
-        padding: 24,
-        maxHeight: '80%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 5,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '700',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    closeBtn: {
-        padding: 4,
-    },
     content: {
-        marginTop: 16,
+        marginTop: 0,
     },
     subtitle: {
         fontSize: 14,

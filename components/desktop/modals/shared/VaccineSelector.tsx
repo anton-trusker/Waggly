@@ -98,7 +98,7 @@ export default function VaccineSelector({
                 style={[styles.selectorButton, error && styles.selectorButtonError]}
                 onPress={() => setShowDropdown(!showDropdown)}
             >
-                <Ionicons name="search" size={18} color="#9CA3AF" />
+                <Ionicons name="search" size={18} color="#6B7280" />
                 {selectedVaccine ? (
                     <View style={styles.selectedRow}>
                         <Text style={styles.selectedText}>{selectedVaccine.vaccine_name}</Text>
@@ -113,17 +113,17 @@ export default function VaccineSelector({
                 ) : (
                     <Text style={styles.placeholderText}>Search vaccines...</Text>
                 )}
-                <Ionicons name={showDropdown ? "chevron-up" : "chevron-down"} size={18} color="#9CA3AF" />
+                <Ionicons name={showDropdown ? "chevron-up" : "chevron-down"} size={18} color="#6B7280" />
             </TouchableOpacity>
 
             {showDropdown && (
                 <View style={styles.dropdown}>
                     <View style={styles.searchInputContainer}>
-                        <Ionicons name="search" size={16} color="#9CA3AF" />
+                        <Ionicons name="search" size={16} color="#6B7280" />
                         <TextInput
                             style={styles.searchInput}
                             placeholder="Type to search..."
-                            placeholderTextColor="#4B5563"
+                            placeholderTextColor="#9CA3AF"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                             autoFocus
@@ -166,7 +166,7 @@ export default function VaccineSelector({
                                             )}
                                         </View>
                                     </View>
-                                    <Ionicons name="chevron-forward" size={16} color="#6B7280" />
+                                    <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
                                 </TouchableOpacity>
                             )}
                         />
@@ -177,7 +177,7 @@ export default function VaccineSelector({
                     )}
 
                     <TouchableOpacity style={styles.customButton} onPress={handleCustom}>
-                        <Ionicons name="add-circle-outline" size={18} color="#0A84FF" />
+                        <Ionicons name="add-circle-outline" size={18} color="#2563EB" />
                         <Text style={styles.customButtonText}>Enter custom vaccine name</Text>
                     </TouchableOpacity>
                 </View>
@@ -195,202 +195,206 @@ export default function VaccineSelector({
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        marginBottom: 16,
+container: {
+    marginBottom: 16,
         zIndex: 100,
     },
-    label: {
-        fontSize: 12,
+label: {
+    fontSize: 12,
         fontWeight: '600',
-        color: '#9CA3AF',
-        marginBottom: 8,
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
+            color: '#6B7280',
+                marginBottom: 8,
+                    textTransform: 'uppercase',
+                        letterSpacing: 0.5,
     },
-    selectorButton: {
-        flexDirection: 'row',
+selectorButton: {
+    flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#1C1C1E',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        gap: 12,
-        borderWidth: 1,
-        borderColor: '#2C2C2E',
+            backgroundColor: '#FFFFFF',
+                borderRadius: 12,
+                    paddingHorizontal: 16,
+                        paddingVertical: 14,
+                            gap: 12,
+                                borderWidth: 1,
+                                    borderColor: '#E5E7EB',
     },
-    selectorButtonError: {
-        borderColor: '#EF4444',
+selectorButtonError: {
+    borderColor: '#EF4444',
     },
-    selectedRow: {
-        flex: 1,
+selectedRow: {
+    flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
+            alignItems: 'center',
+                gap: 8,
     },
-    selectedText: {
-        color: '#FFFFFF',
+selectedText: {
+    color: '#111827',
         fontSize: 16,
     },
-    placeholderText: {
-        flex: 1,
-        color: '#4B5563',
-        fontSize: 16,
+placeholderText: {
+    flex: 1,
+        color: '#6B7280',
+            fontSize: 16,
     },
-    typeBadge: {
-        paddingHorizontal: 8,
+typeBadge: {
+    paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 6,
+            borderRadius: 6,
     },
-    typeBadgeText: {
-        fontSize: 10,
+typeBadgeText: {
+    fontSize: 10,
         fontWeight: '700',
     },
-    dropdown: {
-        marginTop: 8,
-        backgroundColor: '#2C2C2E',
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#3C3C3E',
-        overflow: 'hidden',
-        maxHeight: 350,
+dropdown: {
+    marginTop: 8,
+        backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+                borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                        overflow: 'hidden',
+                            maxHeight: 350,
+                                shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+        shadowRadius: 12,
+            elevation: 5,
     },
-    searchInputContainer: {
-        flexDirection: 'row',
+searchInputContainer: {
+    flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#1C1C1E',
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        gap: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: '#3C3C3E',
+            backgroundColor: '#F9FAFB',
+                paddingHorizontal: 12,
+                    paddingVertical: 10,
+                        gap: 8,
+                            borderBottomWidth: 1,
+                                borderBottomColor: '#E5E7EB',
     },
-    searchInput: {
-        flex: 1,
-        color: '#FFFFFF',
-        fontSize: 15,
+searchInput: {
+    flex: 1,
+        color: '#111827',
+            fontSize: 15,
     },
-    loadingContainer: {
-        padding: 24,
+loadingContainer: {
+    padding: 24,
         alignItems: 'center',
     },
-    list: {
-        maxHeight: 220,
+list: {
+    maxHeight: 220,
     },
-    listItem: {
-        flexDirection: 'row',
+listItem: {
+    flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#3C3C3E',
+            paddingHorizontal: 16,
+                paddingVertical: 12,
+                    borderBottomWidth: 1,
+                        borderBottomColor: '#F3F4F6',
     },
-    itemContent: {
-        flex: 1,
+itemContent: {
+    flex: 1,
     },
-    itemHeader: {
-        flexDirection: 'row',
+itemHeader: {
+    flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+            gap: 6,
     },
-    itemName: {
-        fontSize: 15,
+itemName: {
+    fontSize: 15,
         fontWeight: '600',
-        color: '#FFFFFF',
+            color: '#111827',
     },
-    itemAbbr: {
-        fontSize: 13,
-        color: '#9CA3AF',
+itemAbbr: {
+    fontSize: 13,
+        color: '#6B7280',
     },
-    itemMeta: {
-        flexDirection: 'row',
+itemMeta: {
+    flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-        marginTop: 4,
+            gap: 8,
+                marginTop: 4,
     },
-    typeBadgeSmall: {
-        paddingHorizontal: 6,
+typeBadgeSmall: {
+    paddingHorizontal: 6,
         paddingVertical: 2,
-        borderRadius: 4,
+            borderRadius: 4,
     },
-    typeBadgeTextSmall: {
-        fontSize: 9,
+typeBadgeTextSmall: {
+    fontSize: 9,
         fontWeight: '700',
     },
-    itemInterval: {
-        fontSize: 12,
+itemInterval: {
+    fontSize: 12,
         color: '#6B7280',
     },
-    emptyContainer: {
-        padding: 24,
+emptyContainer: {
+    padding: 24,
         alignItems: 'center',
     },
-    emptyText: {
-        fontSize: 14,
+emptyText: {
+    fontSize: 14,
         color: '#6B7280',
     },
-    customButton: {
-        flexDirection: 'row',
+customButton: {
+    flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        paddingVertical: 14,
-        borderTopWidth: 1,
-        borderTopColor: '#3C3C3E',
-        backgroundColor: '#262628',
+            justifyContent: 'center',
+                gap: 8,
+                    paddingVertical: 14,
+                        borderTopWidth: 1,
+                            borderTopColor: '#E5E7EB',
+                                backgroundColor: '#F9FAFB',
     },
-    customButtonText: {
-        fontSize: 14,
+customButtonText: {
+    fontSize: 14,
         fontWeight: '600',
-        color: '#0A84FF',
+            color: '#2563EB',
     },
-    descriptionBox: {
-        flexDirection: 'row',
+descriptionBox: {
+    flexDirection: 'row',
         alignItems: 'flex-start',
-        gap: 8,
-        marginTop: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        backgroundColor: '#1C1C1E',
-        borderRadius: 8,
-        borderLeftWidth: 3,
-        borderLeftColor: '#0A84FF',
+            gap: 8,
+                marginTop: 10,
+                    paddingHorizontal: 12,
+                        paddingVertical: 10,
+                            backgroundColor: '#EFF6FF',
+                                borderRadius: 8,
+                                    borderLeftWidth: 3,
+                                        borderLeftColor: '#3B82F6',
     },
-    descriptionText: {
-        flex: 1,
+descriptionText: {
+    flex: 1,
         fontSize: 13,
-        color: '#9CA3AF',
-        lineHeight: 18,
+            color: '#4B5563',
+                lineHeight: 18,
     },
-    inputWrapper: {
-        flexDirection: 'row',
+inputWrapper: {
+    flexDirection: 'row',
         gap: 8,
     },
-    input: {
-        flex: 1,
-        backgroundColor: '#1C1C1E',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        color: '#FFFFFF',
-        fontSize: 16,
-        borderWidth: 1,
-        borderColor: '#2C2C2E',
+input: {
+    flex: 1,
+        backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+                paddingHorizontal: 16,
+                    paddingVertical: 14,
+                        color: '#111827',
+                            fontSize: 16,
+                                borderWidth: 1,
+                                    borderColor: '#E5E7EB',
     },
-    switchButton: {
-        backgroundColor: '#2C2C2E',
+switchButton: {
+    backgroundColor: '#F3F4F6',
         borderRadius: 12,
-        paddingHorizontal: 16,
-        justifyContent: 'center',
+            paddingHorizontal: 16,
+                justifyContent: 'center',
     },
-    switchButtonText: {
-        color: '#0A84FF',
+switchButtonText: {
+    color: '#2563EB',
         fontSize: 14,
-        fontWeight: '600',
+            fontWeight: '600',
     },
-    errorText: {
-        fontSize: 12,
+errorText: {
+    fontSize: 12,
         color: '#EF4444',
-        marginTop: 6,
+            marginTop: 6,
     },
 });

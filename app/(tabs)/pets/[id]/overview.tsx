@@ -17,6 +17,7 @@ import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
 import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
 import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
+import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import { useLocale } from '@/hooks/useLocale';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
 
@@ -46,6 +47,7 @@ export default function OverviewTab() {
   const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null); // Added
   const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null); // Added
   const [conditionModalOpen, setConditionModalOpen] = useState(false); // Added
+  const [documentModalOpen, setDocumentModalOpen] = useState(false); // Added
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
   const { vaccinations } = useVaccinations(petId);
@@ -79,7 +81,7 @@ export default function OverviewTab() {
         setHealthMetricsOpen(true);
         break;
       case 'doc':
-        router.push(`/(tabs)/pets/documents/add?petId=${pet.id}` as any);
+        setDocumentModalOpen(true);
         break;
     }
   };
@@ -376,16 +378,7 @@ export default function OverviewTab() {
               </View>
             </View>
 
-            {/* Important Notes Card */}
-            <View style={styles.notesCard}>
-              <View style={styles.notesHeader}>
-                <Ionicons name="document-text" size={20} color="#CA8A04" />
-                <Text style={styles.notesTitle}>{t('pet_profile.important_notes')}</Text>
-              </View>
-              <Text style={styles.notesText}>
-                {(pet as any).notes || t('pet_profile.no_notes_placeholder')}
-              </Text>
-            </View>
+
 
             {/* History Timeline */}
             <View style={styles.card}>
@@ -537,6 +530,11 @@ export default function OverviewTab() {
         onClose={() => setAllergyModalOpen(false)}
         petId={pet.id}
         existingAllergy={selectedAllergy}
+      />
+      <DocumentUploadModal
+        visible={documentModalOpen}
+        onClose={() => setDocumentModalOpen(false)}
+        petId={petId}
       />
     </ScrollView>
   );

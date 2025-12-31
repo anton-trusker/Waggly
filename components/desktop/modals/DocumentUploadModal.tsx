@@ -156,7 +156,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
             </View>
 
             {/* Pet Selector if not pre-defined */}
-            {!petId && (
+            {!petId && pets.length > 1 && (
                 <View style={styles.formGroup}>
                     <Text style={styles.label}>Pet</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>

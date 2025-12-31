@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Switch } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { BlurView } from 'expo-blur';
+import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
 
 interface NotificationSettingsModalProps {
     visible: boolean;
@@ -18,76 +18,70 @@ export default function NotificationSettingsModal({ visible, onClose }: Notifica
     const [weightReminders, setWeightReminders] = useState(false);
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
-            <BlurView intensity={20} style={StyleSheet.absoluteFill} tint="dark" />
-            <View style={styles.overlay}>
-                <View style={[styles.container, { backgroundColor: theme.colors.background.default }]}>
+        <GenericFormModal
+            visible={visible}
+            onClose={onClose}
+            title="Notifications"
+            onPrimaryAction={onClose}
+            primaryActionLabel="Done"
+            width={500}
+        >
+            <View style={styles.content}>
 
-                    <View style={styles.header}>
-                        <Text style={[styles.title, { color: theme.colors.text.primary }]}>Notifications</Text>
-                        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <IconSymbol android_material_icon_name="close" size={24} color={theme.colors.text.primary} />
-                        </TouchableOpacity>
+                <Text style={[styles.sectionHeader, { color: theme.colors.text.secondary }]}>General</Text>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Email Notifications</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Receive summaries and important alerts</Text>
                     </View>
-
-                    <View style={styles.content}>
-
-                        <Text style={[styles.sectionHeader, { color: theme.colors.text.secondary }]}>General</Text>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Email Notifications</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Receive summaries and important alerts</Text>
-                            </View>
-                            <Switch
-                                value={emailNotifs}
-                                onValueChange={setEmailNotifs}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Push Notifications</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Receive instant alerts on this device</Text>
-                            </View>
-                            <Switch
-                                value={pushNotifs}
-                                onValueChange={setPushNotifs}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                        <Text style={[styles.sectionHeader, { color: theme.colors.text.secondary, marginTop: 16 }]}>Reminders</Text>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Vaccinations</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Alerts when vaccinations are due soon</Text>
-                            </View>
-                            <Switch
-                                value={vaccineReminders}
-                                onValueChange={setVaccineReminders}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Weight Log</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Monthly reminder to log weight</Text>
-                            </View>
-                            <Switch
-                                value={weightReminders}
-                                onValueChange={setWeightReminders}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                    </View>
+                    <Switch
+                        value={emailNotifs}
+                        onValueChange={setEmailNotifs}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
                 </View>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Push Notifications</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Receive instant alerts on this device</Text>
+                    </View>
+                    <Switch
+                        value={pushNotifs}
+                        onValueChange={setPushNotifs}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
+                </View>
+
+                <Text style={[styles.sectionHeader, { color: theme.colors.text.secondary, marginTop: 16 }]}>Reminders</Text>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Vaccinations</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Alerts when vaccinations are due soon</Text>
+                    </View>
+                    <Switch
+                        value={vaccineReminders}
+                        onValueChange={setVaccineReminders}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
+                </View>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Weight Log</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Monthly reminder to log weight</Text>
+                    </View>
+                    <Switch
+                        value={weightReminders}
+                        onValueChange={setWeightReminders}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
+                </View>
+
             </View>
-        </Modal>
+        </GenericFormModal>
     );
 }
 

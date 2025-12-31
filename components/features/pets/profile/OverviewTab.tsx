@@ -14,9 +14,10 @@ interface OverviewTabProps {
     vets: Veterinarian[];
     onAddVet: () => void;
     onViewPassport: () => void;
+    onAddDocument?: () => void;
 }
 
-export default function OverviewTab({ pet, vets, onAddVet, onViewPassport }: OverviewTabProps) {
+export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAddDocument }: OverviewTabProps) {
     const { theme, isDark } = useAppTheme();
 
     const handleCopy = async (text: string, label: string) => {
@@ -74,7 +75,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport }: Ove
                 {[
                     { id: 'visit', label: 'Book Visit', icon: 'event', iosIcon: 'calendar', colors: ['#3B82F6', '#60A5FA'] },
                     { id: 'vaccine', label: 'Add Vaccine', icon: 'vaccines', iosIcon: 'syringe', colors: ['#EC4899', '#F472B6'] },
-                    { id: 'meds', label: 'Add Meds', icon: 'medication', iosIcon: 'pills', colors: ['#8B5CF6', '#A78BFA'] },
+                    { id: 'doc', label: 'Add Doc', icon: 'description', iosIcon: 'doc.text', colors: ['#F59E0B', '#FCD34D'], onPress: onAddDocument },
                     { id: 'vet', label: 'Add Vet', icon: 'medical_services', iosIcon: 'cross', colors: ['#F97316', '#FB923C'], onPress: onAddVet },
                 ].map((action) => (
                     <TouchableOpacity

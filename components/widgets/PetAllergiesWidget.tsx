@@ -47,7 +47,7 @@ export default function PetAllergiesWidget({ allergies, onAdd, onRemove }: PetAl
                                 borderColor="$error100"
                             >
                                 <Text fontSize={11} fontWeight="600" color="$error500" letterSpacing={0.5}>
-                                    {a.name?.toUpperCase() || ''}
+                                    {a.allergen?.toUpperCase() || ''}
                                 </Text>
                                 <TouchableOpacity onPress={() => onRemove?.(a.id)}>
                                     <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />

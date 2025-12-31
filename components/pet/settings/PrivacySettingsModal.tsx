@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Switch } from 'react-n
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
-import { BlurView } from 'expo-blur';
+import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
 
 interface PrivacySettingsModalProps {
     visible: boolean;
@@ -12,67 +12,60 @@ interface PrivacySettingsModalProps {
 
 export default function PrivacySettingsModal({ visible, onClose }: PrivacySettingsModalProps) {
     const { theme } = useAppTheme();
-    // const { t } = useLocale(); // Use localization if available for internal content
 
     const [isPublic, setIsPublic] = useState(false);
     const [allowVetAccess, setAllowVetAccess] = useState(true);
     const [showAge, setShowAge] = useState(true);
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
-            <BlurView intensity={20} style={StyleSheet.absoluteFill} tint="dark" />
-            <View style={styles.overlay}>
-                <View style={[styles.container, { backgroundColor: theme.colors.background.default }]}>
+        <GenericFormModal
+            visible={visible}
+            onClose={onClose}
+            title="Privacy Settings"
+            onPrimaryAction={onClose}
+            primaryActionLabel="Done"
+            width={500}
+        >
+            <View style={styles.content}>
 
-                    <View style={styles.header}>
-                        <Text style={[styles.title, { color: theme.colors.text.primary }]}>Privacy Settings</Text>
-                        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <IconSymbol android_material_icon_name="close" size={24} color={theme.colors.text.primary} />
-                        </TouchableOpacity>
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Public Profile</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Allow others to find this pet by search</Text>
                     </View>
-
-                    <View style={styles.content}>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Public Profile</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Allow others to find this pet by search</Text>
-                            </View>
-                            <Switch
-                                value={isPublic}
-                                onValueChange={setIsPublic}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Vet Access</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Allow verified veterinarians to view medical records</Text>
-                            </View>
-                            <Switch
-                                value={allowVetAccess}
-                                onValueChange={setAllowVetAccess}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                        <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Show Age</Text>
-                                <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Display pet's age on public profile</Text>
-                            </View>
-                            <Switch
-                                value={showAge}
-                                onValueChange={setShowAge}
-                                trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
-                            />
-                        </View>
-
-                    </View>
+                    <Switch
+                        value={isPublic}
+                        onValueChange={setIsPublic}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
                 </View>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Vet Access</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Allow verified veterinarians to view medical records</Text>
+                    </View>
+                    <Switch
+                        value={allowVetAccess}
+                        onValueChange={setAllowVetAccess}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
+                </View>
+
+                <View style={[styles.settingItem, { borderColor: theme.colors.border.primary }]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text.primary }]}>Show Age</Text>
+                        <Text style={[styles.settingDesc, { color: theme.colors.text.secondary }]}>Display pet's age on public profile</Text>
+                    </View>
+                    <Switch
+                        value={showAge}
+                        onValueChange={setShowAge}
+                        trackColor={{ false: theme.colors.background.tertiary, true: theme.colors.primary[500] }}
+                    />
+                </View>
+
             </View>
-        </Modal>
+        </GenericFormModal>
     );
 }
 

@@ -216,7 +216,9 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
 
                 return (
                     <View style={styles.formContent}>
-                        <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                        {pets.length > 1 && (
+                            <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                        )}
 
                         {/* Provider Type Selector */}
                         <View style={styles.section}>

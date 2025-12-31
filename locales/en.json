@@ -15,15 +15,6 @@
       "year_other": "{{count}} years",
       "year_month": "{{years}} {{years_label}} {{months}} {{months_label}}"
     },
-    "passport": {
-      "label": "PASSPORT",
-      "unknown_breed": "Unknown Breed",
-      "reg": "REG",
-      "dob": "DOB",
-      "weight": "Weight",
-      "color": "Color",
-      "blood_type": "Blood Type"
-    },
     "save": "Save",
     "required": "Required",
     "phone_input": {
@@ -77,7 +68,17 @@
     "delete_title": "Delete",
     "delete_message": "Delete this notification?"
   },
+  "passport": {
+    "label": "PASSPORT",
+    "unknown_breed": "Unknown Breed",
+    "reg": "REG",
+    "dob": "DOB",
+    "weight": "Weight",
+    "color": "Color",
+    "blood_type": "Blood Type"
+  },
   "pet_profile": {
+    "na": "-",
     "treatments_medications": "Treatments & Medications",
     "add_new": "+ Add New",
     "current_prescriptions": "CURRENT PRESCRIPTIONS",

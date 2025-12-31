@@ -55,6 +55,10 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || existingVaccination?.pet_id || '');
     const [selectedVaccine, setSelectedVaccine] = useState<RefVaccine | null>(null);
 
+    const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
+    const petSpecies = selectedPet?.species || 'dog';
+    const { vaccines } = useVaccines(petSpecies);
+
     useEffect(() => {
         if (visible) {
             if (existingVaccination?.pet_id) {
@@ -64,11 +68,23 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             } else if (pets.length > 0 && !selectedPetId) {
                 setSelectedPetId(pets[0].id);
             }
-            if (!existingVaccination) {
+
+            if (existingVaccination) {
+                // Try to find matching vaccine
+                if (vaccines.length > 0) {
+                    const match = vaccines.find(v => v.vaccine_name === existingVaccination.vaccine_name);
+                    if (match) {
+                        setSelectedVaccine(match);
+                    } else {
+                        // If custom or not found in list, implicit handling via customName
+                        setSelectedVaccine(null);
+                    }
+                }
+            } else {
                 setSelectedVaccine(null);
             }
         }
-    }, [visible, initialPetId, pets, existingVaccination]);
+    }, [visible, initialPetId, pets, existingVaccination, vaccines]);
 
     const initialData: VaccinationFormData = useMemo(() => {
         if (existingVaccination) {
@@ -99,8 +115,7 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         };
     }, [existingVaccination]);
 
-    const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
-    const petSpecies = selectedPet?.species || 'dog';
+
 
     const getTypeBadgeColor = (type: string | null) => {
         if (type === 'core') return theme.colors.status.success;

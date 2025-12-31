@@ -579,49 +579,49 @@ export default function ProfilePage() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={styles.profileView}>
-                  <View style={styles.infoSection}>
+                <View style={[styles.profileView, !isMobile && styles.profileGrid]}>
+                  <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                     <Text style={styles.infoLabel}>{t('profile.label_first_name')} / {t('profile.label_last_name')}</Text>
                     <Text style={styles.infoValue}>{firstName} {lastName}</Text>
                   </View>
 
-                  {dateOfBirth && (
-                    <View style={styles.infoSection}>
+                  {dateOfBirth ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_dob')}</Text>
                       <Text style={styles.infoValue}>{dateOfBirth}</Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {gender && (
-                    <View style={styles.infoSection}>
+                  {gender ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_gender')}</Text>
                       <Text style={styles.infoValue}>{gender}</Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {phone && (
-                    <View style={styles.infoSection}>
+                  {phone ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_phone')}</Text>
                       <Text style={styles.infoValue}>{phone}</Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {website && (
-                    <View style={styles.infoSection}>
+                  {website ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_website')}</Text>
                       <Text style={[styles.infoValue, styles.link]}>{website}</Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {address && (
-                    <View style={styles.infoSection}>
+                  {address ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_address')}</Text>
                       <Text style={styles.infoValue}>{address}</Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {countryCode && (
-                    <View style={styles.infoSection}>
+                  {countryCode ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_country')}</Text>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <Text style={{ fontSize: 20 }}>
@@ -632,10 +632,10 @@ export default function ProfilePage() {
                         </Text>
                       </View>
                     </View>
-                  )}
+                  ) : null}
 
-                  {languageCode && (
-                    <View style={styles.infoSection}>
+                  {languageCode ? (
+                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
                       <Text style={styles.infoLabel}>{t('profile.label_language')}</Text>
                       <Text style={styles.infoValue}>
                         {languageCode === 'en' ? 'English' :
@@ -644,14 +644,14 @@ export default function ProfilePage() {
                               languageCode === 'ru' ? 'Русский' : languageCode}
                       </Text>
                     </View>
-                  )}
+                  ) : null}
 
-                  {bio && (
-                    <View style={styles.infoSection}>
+                  {bio ? (
+                    <View style={[styles.infoSection, styles.infoSectionFull]}>
                       <Text style={styles.infoLabel}>{t('profile.label_bio')}</Text>
                       <Text style={styles.infoValue}>{bio}</Text>
                     </View>
-                  )}
+                  ) : null}
                 </View>
               )}
 
@@ -1162,19 +1162,23 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     gap: 32,
+    paddingHorizontal: 20,
+    marginTop: 24,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: '#111827',
     marginBottom: 16,
+    fontFamily: 'Plus Jakarta Sans',
   },
   subsectionTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#6B7280',
-    marginBottom: 12,
+    marginBottom: 16,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   section: {
     backgroundColor: '#fff',
@@ -1184,79 +1188,83 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   inputGroup: {
-    marginBottom: 20,
+    gap: 8,
+    marginBottom: 16,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
     color: '#374151',
-    marginBottom: 8,
   },
   input: {
+    height: 48,
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 14,
+    fontSize: 16,
     color: '#111827',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#fff',
   },
   row: {
     flexDirection: 'row',
     gap: 16,
+    marginBottom: 16,
   },
   rowMobile: {
     flexDirection: 'column',
-    gap: 20,
   },
   flex1: {
     flex: 1,
   },
   saveButton: {
+    height: 48,
     backgroundColor: '#6366F1',
-    paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 4,
+    justifyContent: 'center',
+    marginTop: 24,
   },
   saveButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
     color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
   changePasswordButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 12,
+    padding: 16,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    gap: 12,
   },
   changePasswordText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    color: '#6366F1',
+    color: '#111827',
   },
   settingRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
+    justifyContent: 'space-between',
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
   settingInfo: {
     flex: 1,
-    marginRight: 16,
+    paddingRight: 16,
   },
   settingLabel: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '500',
     color: '#111827',
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 13,
     color: '#6B7280',
+    lineHeight: 18,
   },
   privacyItem: {
     flexDirection: 'row',
@@ -1292,23 +1300,23 @@ const styles = StyleSheet.create({
   },
   languageRow: {
     flexDirection: 'row',
-    gap: 12,
+    flexWrap: 'wrap',
+    gap: 8,
   },
   langChip: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
+    backgroundColor: '#F3F4F6',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#fff',
+    borderColor: 'transparent',
   },
   langChipActive: {
     backgroundColor: '#EEF2FF',
     borderColor: '#6366F1',
   },
   langText: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
     color: '#6B7280',
   },
   langTextActive: {
@@ -1321,11 +1329,11 @@ const styles = StyleSheet.create({
   },
   genderChip: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 20,
+    backgroundColor: '#F3F4F6',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#fff',
+    borderColor: 'transparent',
   },
   genderChipActive: {
     backgroundColor: '#EEF2FF',
@@ -1333,7 +1341,6 @@ const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: 14,
-    fontWeight: '500',
     color: '#6B7280',
   },
   genderTextActive: {
@@ -1345,36 +1352,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 48,
     paddingHorizontal: 16,
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    backgroundColor: '#F3F4F6',
     borderRadius: 12,
   },
   emailText: {
-    fontSize: 16,
     color: '#6B7280',
+    fontSize: 16,
   },
   cityAutocomplete: {
-    position: 'relative',
+    zIndex: 10,
   },
   cityInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 48,
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#fff',
   },
   cityInput: {
     flex: 1,
+    height: '100%',
     fontSize: 16,
     color: '#111827',
   },
   cityDropdown: {
     position: 'absolute',
-    top: 52,
+    top: 56,
     left: 0,
     right: 0,
     backgroundColor: '#fff',
@@ -1384,15 +1390,15 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: 12,
+    elevation: 8,
+    maxHeight: 200,
     zIndex: 1000,
   },
   cityDropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
@@ -1404,11 +1410,10 @@ const styles = StyleSheet.create({
   citySecondaryText: {
     fontSize: 12,
     color: '#6B7280',
-    marginTop: 2,
   },
   phoneRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
   },
   phoneCountryButton: {
     flexDirection: 'row',
