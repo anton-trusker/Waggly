@@ -71,10 +71,9 @@ export default function EventsTab({ petId }: EventsTabProps) {
                         <Text style={[styles.subtitle, { color: theme.colors.text.secondary }]}>Manage appointments and activities.</Text>
                     </View>
                     <TouchableOpacity
-                        onPress={() => router.push(`/web/pets/events/new?petId=${petId}` as any)}
-                        style={[styles.addButton, { backgroundColor: theme.colors.primary[500] }]}
+                        onPress={() => router.push(`/(tabs)/pets/events/new?petId=${petId}` as any)}
                     >
-                        <IconSymbol name="plus" android_material_icon_name="add" size={20} color="#fff" />
+                        <Ionicons name="add-circle-outline" size={24} color="#6366F1" />
                         <Text style={styles.addButtonText}>Add Event</Text>
                     </TouchableOpacity>
                 </View>
@@ -197,7 +196,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                         <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>No events yet</Text>
                         <Text style={[styles.emptyDesc, { color: theme.colors.text.secondary }]}>Add events to track your pet's care schedule</Text>
                         <TouchableOpacity
-                            onPress={() => router.push(`/web/pets/events/new?petId=${petId}` as any)}
+                            onPress={() => router.push(`/(tabs)/pets/events/new?petId=${petId}` as any)}
                             style={[styles.addButton, { backgroundColor: theme.colors.primary[500], marginTop: 16 }]}
                         >
                             <IconSymbol name="plus" android_material_icon_name="add" size={16} color="#fff" />

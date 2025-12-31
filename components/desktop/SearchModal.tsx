@@ -9,11 +9,11 @@ interface SearchModalProps {
 }
 
 const MOCK_RESULTS = [
-    { id: '1', type: 'pet', title: 'Max', subtitle: 'Dog • Golden Retriever', route: '/web/pets/1' },
-    { id: '2', type: 'pet', title: 'Luna', subtitle: 'Cat • Siamese', route: '/web/pets/2' },
-    { id: '3', type: 'vaccination', title: 'Rabies Vaccination', subtitle: 'Max • Due in 2 weeks', route: '/web/pets/1' },
-    { id: '4', type: 'document', title: 'Insurance Policy.pdf', subtitle: 'Luna • Added yesterday', route: '/web/documents' },
-    { id: '5', type: 'page', title: 'Settings', subtitle: 'Preferences & Account', route: '/web/settings' },
+    { id: '1', type: 'pet', title: 'Max', subtitle: 'Dog • Golden Retriever', route: '/(tabs)/pets/1' },
+    { id: '2', type: 'pet', title: 'Luna', subtitle: 'Cat • Siamese', route: '/(tabs)/pets/2' },
+    { id: '3', type: 'vaccination', title: 'Rabies Vaccination', subtitle: 'Max • Due in 2 weeks', route: '/(tabs)/pets/1' },
+    { id: '4', type: 'document', title: 'Insurance Policy.pdf', subtitle: 'Luna • Added yesterday', route: '/(tabs)/documents' },
+    { id: '5', type: 'page', title: 'Settings', subtitle: 'Preferences & Account', route: '/(tabs)/profile' },
 ];
 
 export default function SearchModal({ visible, onClose }: SearchModalProps) {

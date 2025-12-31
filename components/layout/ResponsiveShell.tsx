@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter, usePathname } from 'expo-router';
+import { usePathname } from 'expo-router';
 import SidebarNav from '@/components/desktop/layout/SidebarNav';
 import Topbar from '@/components/desktop/layout/Topbar';
-import FloatingTabBar, { TabBarItem } from '@/components/layout/FloatingTabBar';
+import FloatingTabBarWithPlus, { TabBarItem } from '@/components/layout/FloatingTabBarWithPlus';
 import KeyboardShortcutsModal from '@/components/desktop/KeyboardShortcutsModal';
 import { useKeyboardShortcuts, KEYBOARD_SHORTCUTS } from '@/hooks/useKeyboardShortcuts';
+import { useRouter } from 'expo-router';
 
 interface ResponsiveShellProps {
     children: React.ReactNode;
@@ -32,7 +33,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     });
 
     // Don't show shell on auth/onboarding pages
-    const isAuthPage = pathname?.startsWith('/web/auth') || pathname?.startsWith('/web/onboarding');
+    const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');
     const showShell = session && !isAuthPage;
 
     if (!showShell) {
@@ -50,25 +51,25 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
             name: 'calendar',
             label: 'Calendar',
             icon: 'event' as any,
-            route: '/web/calendar',
+            route: '/(tabs)/calendar',
         },
         {
             name: 'pets',
             label: 'Pets',
             icon: 'pets' as any,
-            route: '/web/pets',
+            route: '/(tabs)/pets',
         },
         {
             name: 'notifications',
             label: 'Alerts',
             icon: 'notifications' as any,
-            route: '/web/notifications',
+            route: '/(tabs)/notifications',
         },
         {
             name: 'menu',
             label: 'Menu',
             icon: 'menu' as any,
-            route: '/web/settings',
+            route: '/(tabs)/profile',
         },
     ];
 
@@ -84,10 +85,9 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
                 </View>
 
                 {!isDesktop && (
-                    <FloatingTabBar
+                    <FloatingTabBarWithPlus
                         tabs={mobileTabs}
-                        containerWidth={Math.min(width - 32, 400)}
-                        borderRadius={24}
+                        onPlusPress={() => router.push('/(tabs)/pets/new' as any)}
                     />
                 )}
             </View>

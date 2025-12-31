@@ -18,7 +18,7 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
         if (onPress) {
             onPress();
         } else {
-            router.push(`/web/pets/${pet.id}` as any);
+            router.push(`/(tabs)/pets/${pet.id}` as any);
         }
     };
 

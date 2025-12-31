@@ -11,7 +11,7 @@ interface PetCardCompactProps {
 
 export default function PetCardCompact({ pet }: PetCardCompactProps) {
     const handlePress = () => {
-        router.push(`/(tabs)/pets/${pet.id}/overview` as any);
+        router.push(`/(tabs)/pets/${pet.id}` as any);
     };
 
     return (

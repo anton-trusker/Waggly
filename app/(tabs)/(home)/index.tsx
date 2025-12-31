@@ -8,8 +8,6 @@ import UpcomingCarePanel from '@/components/desktop/dashboard/UpcomingCarePanel'
 import PriorityAlertsPanel from '@/components/desktop/dashboard/PriorityAlertsPanel';
 import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
 import { usePets } from '@/hooks/usePets';
-import DesktopShell from '@/components/desktop/layout/DesktopShell';
-import MobileHeader from '@/components/layout/MobileHeader';
 
 // New Modal Imports
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
@@ -52,94 +50,88 @@ export default function DashboardPage() {
     };
 
     return (
-        <DesktopShell>
-            <MobileHeader showLogo={true} showNotifications={true} />
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-                {/* Header removed (use global Topbar) */}
-                <View style={[styles.content, isMobile && styles.contentMobile]}>
-                    {/* Main Column */}
-                    <View style={styles.mainColumn}>
-                        {/* Your Pets Section */}
-                        <View style={styles.section}>
-                            <View style={styles.sectionHeader}>
-                                <View style={styles.titleRow}>
-                                    <Text style={styles.sectionTitle}>Your Pets</Text>
-                                    <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>{pets.length}</Text>
-                                    </View>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* Header removed (use global Topbar) */}
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
+                {/* Main Column */}
+                <View style={styles.mainColumn}>
+                    {/* Your Pets Section */}
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <View style={styles.titleRow}>
+                                <Text style={styles.sectionTitle}>Your Pets</Text>
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>{pets.length}</Text>
                                 </View>
-                                <TouchableOpacity onPress={() => router.push('/(tabs)/pets' as any)}>
-                                    <Text style={styles.viewAllLink}>View All Pets</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => router.push('/(tabs)/pets' as any)}>
+                                <Text style={styles.viewAllLink}>View All Pets</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {loading ? (
+                            <Text style={styles.loadingText}>Loading pets...</Text>
+                        ) : pets.length === 0 ? (
+                            <View style={styles.emptyState}>
+                                <Text style={styles.emptyIcon}>🐾</Text>
+                                <Text style={styles.emptyTitle}>No Pets Yet</Text>
+                                <Text style={styles.emptyText}>
+                                    Add your first pet to start managing their health and care
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.addFirstPetButton}
+                                    onPress={() => router.push('/(tabs)/pets/add' as any)}
+                                >
+                                    <Ionicons name="add" size={20} color="#fff" />
+                                    <Text style={styles.addFirstPetText}>Add Your First Pet</Text>
                                 </TouchableOpacity>
                             </View>
-
-                            {loading ? (
-                                <Text style={styles.loadingText}>Loading pets...</Text>
-                            ) : pets.length === 0 ? (
-                                <View style={styles.emptyState}>
-                                    <Text style={styles.emptyIcon}>🐾</Text>
-                                    <Text style={styles.emptyTitle}>No Pets Yet</Text>
-                                    <Text style={styles.emptyText}>
-                                        Add your first pet to start managing their health and care
-                                    </Text>
-                                    <TouchableOpacity
-                                        style={styles.addFirstPetButton}
-                                        onPress={() => router.push('/(tabs)/pets/add' as any)}
-                                    >
-                                        <Ionicons name="add" size={20} color="#fff" />
-                                        <Text style={styles.addFirstPetText}>Add Your First Pet</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ) : (
-                                <View style={styles.petsGrid}>
-                                    {pets.map((pet) => (
-                                        <PetCardCompact key={pet.id} pet={pet} />
-                                    ))}
-                                </View>
-                            )}
-                        </View>
-
-                        {/* Quick Actions - Desktop only, mobile uses plus button */}
-                        {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
+                        ) : (
+                            <View style={styles.petsGrid}>
+                                {pets.map((pet) => (
+                                    <PetCardCompact key={pet.id} pet={pet} />
+                                ))}
+                            </View>
+                        )}
                     </View>
 
-                    {/* Sidebar Column - Desktop only */}
-                    {!isMobile && (
-                        <View style={styles.sidebarColumn}>
-                            {/* Upcoming Care */}
-                            <UpcomingCarePanel />
-
-                            {/* Priority Alerts */}
-                            <PriorityAlertsPanel />
-
-                            {/* Activity Feed */}
-                            <ActivityFeedTimeline />
-                        </View>
-                    )}
+                    {/* Quick Actions - Desktop only, mobile uses plus button */}
+                    {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
                 </View>
 
-                {/* Mobile: Show sidebar panels below main content */}
-                {isMobile && (
-                    <View style={styles.mobileSidebar}>
+                {/* Sidebar Column - Desktop only */}
+                {!isMobile && (
+                    <View style={styles.sidebarColumn}>
+                        {/* Upcoming Care */}
                         <UpcomingCarePanel />
+
+                        {/* Priority Alerts */}
                         <PriorityAlertsPanel />
+
+                        {/* Activity Feed */}
                         <ActivityFeedTimeline />
                     </View>
                 )}
+            </View>
 
-                {/* Add padding bottom for mobile nav */}
-                {isMobile && <View style={{ height: 80 }} />}
+            {/* Mobile: Show sidebar panels below main content */}
+            {isMobile && (
+                <View style={styles.mobileSidebar}>
+                    <UpcomingCarePanel />
+                    <PriorityAlertsPanel />
+                    <ActivityFeedTimeline />
+                </View>
+            )}
 
-                {/* Modals */}
-                <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
-                <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
-                <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
-                <HealthMetricsModal
-                    visible={healthMetricsOpen}
-                    onClose={() => setHealthMetricsOpen(false)}
-                />
-            </ScrollView>
-        </DesktopShell >
+            {/* Modals */}
+            <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
+            <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
+            <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
+            <HealthMetricsModal
+                visible={healthMetricsOpen}
+                onClose={() => setHealthMetricsOpen(false)}
+            />
+        </ScrollView>
     );
 }
 

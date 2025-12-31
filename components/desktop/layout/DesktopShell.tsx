@@ -30,7 +30,7 @@ const DesktopShell: React.FC<DesktopShellProps> = ({ children }) => {
     });
 
     // Don't show shell on auth/onboarding pages or on mobile/tablet
-    const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/web/auth') || pathname?.startsWith('/web/onboarding');
+    const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');
     const showShell = session && !isAuthPage && width >= 1024;
 
     // Always render children, but only add shell UI on desktop

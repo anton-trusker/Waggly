@@ -21,15 +21,15 @@ export default function SettingsTabDesktop({ petId, onEdit }: SettingsTabProps) 
             "Are you sure you want to delete this pet? This action cannot be undone and all data will be lost.",
             [
                 { text: "Cancel", style: "cancel" },
-                { 
-                    text: "Delete", 
+                {
+                    text: "Delete",
                     style: "destructive",
                     onPress: async () => {
                         const { error } = await deletePet(petId);
                         if (error) {
                             Alert.alert("Error", "Failed to delete pet");
                         } else {
-                            router.replace((pathname?.startsWith('/web') ? '/web/pets' : '/(tabs)/pets') as any);
+                            router.replace('/(tabs)/pets' as any);
                         }
                     }
                 }
@@ -41,7 +41,7 @@ export default function SettingsTabDesktop({ petId, onEdit }: SettingsTabProps) 
         <View style={styles.container}>
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>General Settings</Text>
-                
+
                 <View style={styles.settingItem}>
                     <View style={styles.settingInfo}>
                         <Text style={styles.settingLabel}>Edit Profile</Text>
@@ -57,8 +57,8 @@ export default function SettingsTabDesktop({ petId, onEdit }: SettingsTabProps) 
                         <Text style={styles.settingLabel}>Notifications</Text>
                         <Text style={styles.settingDescription}>Receive alerts for upcoming vaccinations and appointments</Text>
                     </View>
-                    <Switch 
-                        value={notificationsEnabled} 
+                    <Switch
+                        value={notificationsEnabled}
                         onValueChange={setNotificationsEnabled}
                         trackColor={{ false: '#E5E7EB', true: '#6366F1' }}
                     />
@@ -67,7 +67,7 @@ export default function SettingsTabDesktop({ petId, onEdit }: SettingsTabProps) 
 
             <View style={[styles.section, styles.dangerZone]}>
                 <Text style={[styles.sectionTitle, styles.dangerTitle]}>Danger Zone</Text>
-                
+
                 <View style={styles.settingItem}>
                     <View style={styles.settingInfo}>
                         <Text style={styles.settingLabel}>Delete Pet</Text>

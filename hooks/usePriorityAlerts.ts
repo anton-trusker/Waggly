@@ -74,7 +74,7 @@ export const usePriorityAlerts = (daysThreshold: number = 30) => {
                             daysRemaining,
                             severity: daysRemaining <= 7 ? 'high' : daysRemaining <= 14 ? 'medium' : 'low',
                             actionLabel: 'Book',
-                            actionUrl: `/web/pets/${pet.id}/health/vaccination`,
+                            actionUrl: `/(tabs)/pets/${pet.id}/health/vaccination`,
                         });
                     });
                 }

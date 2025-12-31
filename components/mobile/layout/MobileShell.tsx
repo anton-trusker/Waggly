@@ -14,7 +14,7 @@ const MobileShell: React.FC<MobileShellProps> = ({ children }) => {
     const { width } = useWindowDimensions();
 
     // Don't show shell on auth/onboarding pages
-    const isAuthPage = pathname?.startsWith('/web/auth') || pathname?.startsWith('/web/onboarding');
+    const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');
     const showShell = session && !isAuthPage;
 
     if (!showShell) {
@@ -32,25 +32,25 @@ const MobileShell: React.FC<MobileShellProps> = ({ children }) => {
             name: 'calendar',
             label: 'Calendar',
             icon: 'event' as any,
-            route: '/web/calendar',
+            route: '/(tabs)/calendar',
         },
         {
             name: 'pets',
             label: 'Pets',
             icon: 'pets' as any,
-            route: '/web/pets',
+            route: '/(tabs)/pets',
         },
         {
             name: 'notifications',
             label: 'Alerts',
             icon: 'notifications' as any,
-            route: '/web/notifications',
+            route: '/(tabs)/notifications',
         },
         {
             name: 'menu',
             label: 'Menu',
             icon: 'menu' as any,
-            route: '/web/settings',
+            route: '/(tabs)/profile',
         },
     ];
 
