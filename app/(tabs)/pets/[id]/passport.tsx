@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
@@ -12,6 +12,9 @@ export default function PassportTab() {
     const params = useLocalSearchParams();
     const router = useRouter();
     const petId = params.id as string;
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
+
     const { pets } = usePets();
     const { vaccinations } = useVaccinations(petId);
     const { medications } = useMedications(petId);
@@ -38,9 +41,9 @@ export default function PassportTab() {
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={styles.content}>
+            <View style={[styles.content, isMobile && styles.contentMobile]}>
                 {/* Left Column */}
-                <View style={styles.leftColumn}>
+                <View style={[styles.leftColumn, isMobile && styles.leftColumnMobile]}>
                     {/* Identity Card */}
                     <View style={styles.card}>
                         <View style={styles.identityHeader}>
@@ -322,30 +325,46 @@ const styles = StyleSheet.create({
     },
     content: {
         flexDirection: 'row',
-        padding: 32,
-        gap: 32,
+        padding: 24, // Reduced from 32
+        gap: 16,     // Reduced from 32
+        maxWidth: 1280,
+        alignSelf: 'center',
+        width: '100%',
+        paddingBottom: 40,
+    },
+    contentMobile: {
+        flexDirection: 'column',
+        padding: 16,
+        gap: 16,
     },
     leftColumn: {
-        width: 360,
-        gap: 24,
+        width: 320, // Reduced from 360
+        gap: 16,    // Reduced from 24
+    },
+    leftColumnMobile: {
+        width: '100%',
     },
     rightColumn: {
         flex: 1,
-        gap: 24,
+        gap: 16,    // Reduced from 24
     },
     card: {
         backgroundColor: '#fff',
-        borderRadius: 16,
+        borderRadius: 12, // Reduced from 16
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: '#E5E7EB',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.03, // Reduced shadow
+        shadowRadius: 2,
     },
     // Identity Card
     identityHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16,
+        padding: 12, // Reduced from 16
         backgroundColor: '#EEF2FF',
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
@@ -356,39 +375,40 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     identityTitle: {
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         fontWeight: '700',
         color: '#4F46E5',
+        fontFamily: 'Plus Jakarta Sans',
     },
     idBadge: {
         backgroundColor: '#fff',
-        paddingHorizontal: 12,
-        paddingVertical: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
         borderRadius: 6,
         borderWidth: 1,
         borderColor: '#E5E7EB',
     },
     idBadgeText: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontFamily: 'monospace',
         color: '#374151',
     },
     passportPattern: {
-        padding: 24,
+        padding: 16, // Reduced from 24
     },
     photoSection: {
         alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 16, // Reduced from 24
     },
     photoFrame: {
-        width: 128,
-        height: 128,
+        width: 100, // Reduced from 128
+        height: 100,
         borderRadius: 8,
         borderWidth: 2,
         borderStyle: 'dashed',
         borderColor: '#9CA3AF',
         overflow: 'hidden',
-        marginBottom: 12,
+        marginBottom: 8,
     },
     passportPhoto: {
         width: '100%',
@@ -404,14 +424,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 6,
         backgroundColor: '#EFF6FF',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#BFDBFE',
     },
     petkeyText: {
-        fontSize: 11,
+        fontSize: 10, // Reduced from 11
         fontWeight: '700',
         color: '#1D4ED8',
         letterSpacing: 0.5,
@@ -419,7 +439,7 @@ const styles = StyleSheet.create({
     detailsGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16,
+        gap: 12, // Reduced from 16
     },
     detailItem: {
         width: '45%',
@@ -428,64 +448,69 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: '#6B7280',
         letterSpacing: 0.5,
-        marginBottom: 4,
+        marginBottom: 2,
+        fontFamily: 'Plus Jakarta Sans',
     },
     detailValue: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '500',
         color: '#111827',
+        fontFamily: 'Plus Jakarta Sans',
     },
     microchipSection: {
-        marginTop: 24,
-        paddingTop: 16,
+        marginTop: 16, // Reduced from 24
+        paddingTop: 12, // Reduced from 16
         borderTopWidth: 1,
         borderStyle: 'dashed',
         borderTopColor: '#E5E7EB',
     },
     microchipNumber: {
-        fontSize: 20,
+        fontSize: 16, // Reduced from 20
         fontWeight: '700',
         fontFamily: 'monospace',
         color: '#111827',
-        letterSpacing: 2,
-        marginTop: 4,
+        letterSpacing: 1, // Reduced from 2
+        marginTop: 2,
     },
     microchipMeta: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         color: '#6B7280',
-        marginTop: 8,
+        marginTop: 4,
     },
     // Owner Card
     ownerHeader: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        padding: 16,
+        padding: 12, // Reduced from 16
         backgroundColor: '#F9FAFB',
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
     },
     ownerTitle: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontWeight: '700',
         color: '#374151',
         letterSpacing: 0.5,
+        fontFamily: 'Plus Jakarta Sans',
     },
     ownerContent: {
-        padding: 20,
-        gap: 16,
+        padding: 16, // Reduced from 20
+        gap: 12, // Reduced from 16
     },
     ownerField: {},
     ownerLabel: {
         fontSize: 10,
         color: '#6B7280',
         letterSpacing: 0.5,
-        marginBottom: 4,
+        marginBottom: 2,
+        fontFamily: 'Plus Jakarta Sans',
     },
     ownerValue: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '500',
         color: '#111827',
+        fontFamily: 'Plus Jakarta Sans',
     },
     phoneLink: {
         color: '#4F46E5',
@@ -493,7 +518,7 @@ const styles = StyleSheet.create({
     // Medical Alerts
     alertsCard: {
         backgroundColor: '#FEF2F2',
-        borderRadius: 16,
+        borderRadius: 12, // Reduced from 16
         borderWidth: 1,
         borderColor: '#FECACA',
         overflow: 'hidden',
@@ -502,27 +527,27 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        padding: 16,
+        padding: 12, // Reduced from 16
         borderBottomWidth: 1,
         borderBottomColor: '#FECACA',
     },
     alertsTitle: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontWeight: '700',
         color: '#DC2626',
         letterSpacing: 0.5,
     },
     alertsContent: {
-        padding: 20,
+        padding: 16, // Reduced from 20
         gap: 12,
     },
     alertItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        gap: 12,
+        gap: 8, // Reduced from 12
     },
     alertName: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '700',
         color: '#991B1B',
     },
@@ -536,7 +561,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 24,
+        padding: 16, // Reduced from 24
         backgroundColor: '#4F46E5',
         backgroundImage: 'linear-gradient(to right, #4F46E5, #6366F1)',
     },
@@ -546,12 +571,13 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     vaccTitle: {
-        fontSize: 18,
+        fontSize: 16, // Reduced from 18
         fontWeight: '700',
         color: '#fff',
+        fontFamily: 'Plus Jakarta Sans',
     },
     vaccSubtitle: {
-        fontSize: 13,
+        fontSize: 12,
         color: '#C7D2FE',
     },
     addEntryBtn: {
@@ -559,58 +585,59 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 6,
         backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
+        paddingHorizontal: 12, // Reduced from 16
+        paddingVertical: 6, // Reduced from 8
+        borderRadius: 6,
     },
     addEntryText: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '500',
         color: '#fff',
     },
     vaccinationsTable: {
-        padding: 24,
+        padding: 16, // Reduced from 24
     },
     vaccSectionTitle: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontWeight: '700',
         color: '#6B7280',
         letterSpacing: 0.5,
-        marginBottom: 16,
-        paddingBottom: 8,
+        marginBottom: 12,
+        paddingBottom: 6,
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
+        fontFamily: 'Plus Jakarta Sans',
     },
     tableHeader: {
         flexDirection: 'row',
         backgroundColor: '#F9FAFB',
         borderRadius: 8,
-        padding: 12,
+        padding: 10,
         marginBottom: 8,
     },
     tableHeaderCell: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontWeight: '500',
         color: '#6B7280',
     },
     tableRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 12,
+        paddingVertical: 10, // Reduced from 12
         borderBottomWidth: 1,
         borderBottomColor: '#F3F4F6',
     },
     tableCell: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         color: '#374151',
     },
     vaccName: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '600',
         color: '#4F46E5',
     },
     vaccBatch: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontFamily: 'monospace',
         color: '#6B7280',
         marginTop: 2,
@@ -620,17 +647,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 4,
         backgroundColor: '#ECFDF5',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 6,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
     },
     validBadgeText: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '700',
         color: '#059669',
     },
     expiredText: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#6B7280',
     },
     warningBadge: {
@@ -639,7 +666,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     warningText: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '500',
         color: '#EA580C',
     },
@@ -648,7 +675,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        padding: 16, // Reduced from 20
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
     },
@@ -658,42 +685,46 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     treatmentsTitle: {
-        fontSize: 16,
+        fontSize: 15, // Reduced from 16
         fontWeight: '700',
         color: '#111827',
+        fontFamily: 'Plus Jakarta Sans',
     },
     viewHistoryLink: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '500',
         color: '#4F46E5',
     },
     treatmentsGrid: {
         flexDirection: 'row',
-        padding: 24,
-        gap: 24,
+        flexWrap: 'wrap', // Added wrap for mobile
+        padding: 16, // Reduced from 24
+        gap: 16, // Reduced from 24
     },
     treatmentsColumn: {
         flex: 1,
+        minWidth: 280, // Allow wrap
     },
     treatmentsSectionTitle: {
-        fontSize: 11,
+        fontSize: 10, // Reduced from 11
         fontWeight: '700',
         color: '#6B7280',
         letterSpacing: 0.5,
-        marginBottom: 12,
+        marginBottom: 8,
+        fontFamily: 'Plus Jakarta Sans',
     },
     medCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 12,
-        borderRadius: 12,
+        padding: 10, // Reduced from 12
+        borderRadius: 10, // Reduced from 12
         borderWidth: 1,
-        marginBottom: 12,
+        marginBottom: 8, // Reduced from 12
     },
     medIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 32, // Reduced from 40
+        height: 32,
+        borderRadius: 8,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
@@ -703,12 +734,12 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     medName: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '600',
         color: '#312E81',
     },
     medDosage: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         color: '#6366F1',
         marginTop: 2,
     },
@@ -720,16 +751,16 @@ const styles = StyleSheet.create({
     timelineItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: 16,
+        marginBottom: 12, // Reduced from 16
         position: 'relative',
     },
     timelineDot: {
         position: 'absolute',
-        left: -17,
+        left: -15, // Center align with border (12px padding - 15 + 4px radius = 1px center)
         top: 6,
-        width: 10,
-        height: 10,
-        borderRadius: 5,
+        width: 8, // Reduced from 10
+        height: 8,
+        borderRadius: 4,
         backgroundColor: '#D1D5DB',
     },
     timelineContent: {
@@ -737,25 +768,25 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     timelineTitle: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         fontWeight: '500',
         color: '#111827',
     },
     timelineDesc: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         color: '#6B7280',
         marginTop: 2,
     },
     timelineDate: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         fontFamily: 'monospace',
         color: '#6B7280',
     },
     // Notes
     notesCard: {
         backgroundColor: '#FFFBEB',
-        borderRadius: 16,
-        padding: 24,
+        borderRadius: 12, // Reduced from 16
+        padding: 16, // Reduced from 24
         borderWidth: 1,
         borderColor: '#FDE68A',
     },
@@ -763,16 +794,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        marginBottom: 12,
+        marginBottom: 8,
     },
     notesTitle: {
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         fontWeight: '700',
         color: '#92400E',
+        fontFamily: 'Plus Jakarta Sans',
     },
     notesText: {
-        fontSize: 14,
+        fontSize: 13, // Reduced from 14
         color: '#78350F',
-        lineHeight: 22,
+        lineHeight: 20, // Reduced from 22
     },
 });

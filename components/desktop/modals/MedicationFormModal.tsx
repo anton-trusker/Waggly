@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Medication } from '@/types';
 import PetSelector from './shared/PetSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import RichTextInput from './shared/RichTextInput';
@@ -13,6 +14,7 @@ interface MedicationFormModalProps {
     visible: boolean;
     onClose: () => void;
     petId?: string;
+    existingMedication?: Medication | null; // Added
     onSuccess?: () => void;
 }
 
@@ -66,62 +68,109 @@ interface MedicationFormData {
     notes: string;
 }
 
-export default function MedicationFormModal({ visible, onClose, petId: initialPetId, onSuccess }: MedicationFormModalProps) {
+export default function MedicationFormModal({ visible, onClose, petId: initialPetId, existingMedication, onSuccess }: MedicationFormModalProps) {
     const { pets } = usePets();
     const { theme } = useAppTheme();
-    const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
+    const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || existingMedication?.pet_id || '');
 
     useEffect(() => {
         if (visible) {
-            if (initialPetId) {
+            if (existingMedication?.pet_id) {
+                setSelectedPetId(existingMedication.pet_id);
+            } else if (initialPetId) {
                 setSelectedPetId(initialPetId);
             } else if (pets.length > 0 && !selectedPetId) {
                 setSelectedPetId(pets[0].id);
             }
         }
-    }, [visible, initialPetId, pets]);
+    }, [visible, initialPetId, pets, existingMedication]);
 
-    const initialData: MedicationFormData = {
-        medication_name: '',
-        treatment_type: 'Medication',
-        dosage_value: '',
-        dosage_unit: 'mg',
-        strength: '',
-        form: '',
-        route_of_administration: 'Oral',
-        frequency: 'Once daily',
-        administration_times: [],
-        administration_instructions: '',
-        best_time_to_give: [],
-        start_date: new Date().toISOString().split('T')[0],
-        end_date: '',
-        duration_value: '',
-        duration_unit: 'Days',
-        is_ongoing: false,
-        prescribed_by: '',
-        prescription_number: '',
-        pharmacy_name: '',
-        pharmacy_phone: '',
-        auto_refill: false,
-        refill_every: '',
-        refill_quantity: '',
-        refills_remaining: '',
-        unit_price: '',
-        quantity: '',
-        total_cost: '',
-        currency: 'EUR',
-        insurance_coverage_percent: '',
-        side_effects: [],
-        severity_rating: 'None',
-        side_effect_notes: '',
-        contraindications: '',
-        interactions: '',
-        storage_instructions: '',
-        reason_for_treatment: '',
-        condition_being_treated: '',
-        monitor_for: '',
-        notes: '',
-    };
+    const initialData: MedicationFormData = useMemo(() => {
+        if (existingMedication) {
+            return {
+                medication_name: existingMedication.medication_name,
+                treatment_type: existingMedication.treatment_type || 'Medication',
+                dosage_value: existingMedication.dosage_value ? existingMedication.dosage_value.toString() : '',
+                dosage_unit: existingMedication.dosage_unit || 'mg',
+                strength: existingMedication.strength || '',
+                form: existingMedication.form || '',
+                route_of_administration: existingMedication.route_of_administration || 'Oral',
+                frequency: existingMedication.frequency || 'Once daily',
+                administration_times: existingMedication.administration_times || [],
+                administration_instructions: existingMedication.administration_instructions || '',
+                best_time_to_give: existingMedication.best_time_to_give || [],
+                start_date: existingMedication.start_date || new Date().toISOString().split('T')[0],
+                end_date: existingMedication.end_date || '',
+                duration_value: existingMedication.duration_value ? existingMedication.duration_value.toString() : '',
+                duration_unit: existingMedication.duration_unit || 'Days',
+                is_ongoing: existingMedication.is_ongoing || false,
+                prescribed_by: existingMedication.prescribed_by || '',
+                prescription_number: existingMedication.prescription_number || '',
+                pharmacy_name: existingMedication.pharmacy_name || '',
+                pharmacy_phone: existingMedication.pharmacy_phone || '',
+                auto_refill: existingMedication.auto_refill || false,
+                refill_every: existingMedication.refill_schedule?.every || '',
+                refill_quantity: existingMedication.refill_schedule?.quantity || '',
+                refills_remaining: existingMedication.refills_remaining ? existingMedication.refills_remaining.toString() : '',
+                unit_price: existingMedication.unit_price ? existingMedication.unit_price.toString() : '',
+                quantity: existingMedication.quantity ? existingMedication.quantity.toString() : '',
+                total_cost: existingMedication.total_cost ? existingMedication.total_cost.toString() : '',
+                currency: existingMedication.currency || 'EUR',
+                insurance_coverage_percent: existingMedication.insurance_coverage_percent ? existingMedication.insurance_coverage_percent.toString() : '',
+                side_effects: existingMedication.side_effects || [],
+                severity_rating: existingMedication.severity_rating || 'None',
+                side_effect_notes: existingMedication.side_effect_notes || '',
+                contraindications: existingMedication.contraindications || '',
+                interactions: existingMedication.interactions || '',
+                storage_instructions: existingMedication.storage_instructions || '',
+                reason_for_treatment: existingMedication.reason_for_treatment || '',
+                condition_being_treated: existingMedication.condition_being_treated || '',
+                monitor_for: existingMedication.monitor_for || '',
+                notes: existingMedication.notes || '',
+            };
+        }
+        return {
+            medication_name: '',
+            treatment_type: 'Medication',
+            dosage_value: '',
+            dosage_unit: 'mg',
+            strength: '',
+            form: '',
+            route_of_administration: 'Oral',
+            frequency: 'Once daily',
+            administration_times: [],
+            administration_instructions: '',
+            best_time_to_give: [],
+            start_date: new Date().toISOString().split('T')[0],
+            end_date: '',
+            duration_value: '',
+            duration_unit: 'Days',
+            is_ongoing: false,
+            prescribed_by: '',
+            prescription_number: '',
+            pharmacy_name: '',
+            pharmacy_phone: '',
+            auto_refill: false,
+            refill_every: '',
+            refill_quantity: '',
+            refills_remaining: '',
+            unit_price: '',
+            quantity: '',
+            total_cost: '',
+            currency: 'EUR',
+            insurance_coverage_percent: '',
+            side_effects: [],
+            severity_rating: 'None',
+            side_effect_notes: '',
+            contraindications: '',
+            interactions: '',
+            storage_instructions: '',
+            reason_for_treatment: '',
+            condition_being_treated: '',
+            monitor_for: '',
+            notes: '',
+        };
+    }, [existingMedication]);
 
     const checkInteractions = async (medName: string, petId: string): Promise<string[]> => {
         if (!medName || !petId) return [];
@@ -131,6 +180,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                 .from('medications')
                 .select('medication_name, treatment_type')
                 .eq('pet_id', petId)
+                .neq('medication_name', medName) // Don't match against self
                 .or('end_date.is.null,end_date.gt.' + new Date().toISOString());
 
             const { data: allergies } = await supabase
@@ -148,7 +198,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             }
 
             if (activeMeds && activeMeds.length >= 3) {
-                warnings.push(`ℹ️ INFO: Pet is currently on ${activeMeds.length} medications. Consider monitoring for polypharmacy effects.`);
+                warnings.push(`ℹ️ INFO: Pet is currently on ${activeMeds.length} other medications. Consider monitoring for polypharmacy effects.`);
             }
         } catch (error) {
             console.error('Error checking interactions:', error);
@@ -157,54 +207,64 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
     };
 
     const insertToDb = async (data: MedicationFormData) => {
-        const { error } = await supabase
-            .from('medications')
-            .insert({
-                pet_id: selectedPetId,
-                medication_name: data.medication_name,
-                treatment_type: data.treatment_type,
-                dosage_value: data.dosage_value ? parseFloat(data.dosage_value) : null,
-                dosage_unit: data.dosage_unit,
-                strength: data.strength || null,
-                form: data.form || null,
-                route_of_administration: data.route_of_administration,
-                frequency: data.frequency,
-                administration_times: data.administration_times.length > 0 ? data.administration_times : null,
-                administration_instructions: data.administration_instructions || null,
-                best_time_to_give: data.best_time_to_give.length > 0 ? data.best_time_to_give : null,
-                start_date: data.start_date,
-                end_date: data.end_date || null,
-                duration_value: data.duration_value ? parseInt(data.duration_value) : null,
-                duration_unit: data.duration_unit,
-                is_ongoing: data.is_ongoing,
-                prescribed_by: data.prescribed_by || null,
-                prescription_number: data.prescription_number || null,
-                pharmacy_name: data.pharmacy_name || null,
-                pharmacy_phone: data.pharmacy_phone || null,
-                auto_refill: data.auto_refill,
-                refill_schedule: data.auto_refill ? {
-                    every: data.refill_every,
-                    quantity: data.refill_quantity,
-                } : null,
-                refills_remaining: data.refills_remaining ? parseInt(data.refills_remaining) : null,
-                unit_price: data.unit_price ? parseFloat(data.unit_price) : null,
-                quantity: data.quantity ? parseInt(data.quantity) : null,
-                total_cost: data.total_cost ? parseFloat(data.total_cost) : null,
-                currency: data.currency,
-                insurance_coverage_percent: data.insurance_coverage_percent ? parseFloat(data.insurance_coverage_percent) : null,
-                side_effects: data.side_effects.length > 0 ? data.side_effects : null,
-                severity_rating: data.severity_rating,
-                side_effect_notes: data.side_effect_notes || null,
-                contraindications: data.contraindications || null,
-                interactions: data.interactions || null,
-                storage_instructions: data.storage_instructions || null,
-                reason_for_treatment: data.reason_for_treatment || null,
-                condition_being_treated: data.condition_being_treated || null,
-                monitor_for: data.monitor_for || null,
-                notes: data.notes || null,
-            } as any);
+        const payload = {
+            pet_id: selectedPetId,
+            medication_name: data.medication_name,
+            treatment_type: data.treatment_type,
+            dosage_value: data.dosage_value ? parseFloat(data.dosage_value) : null,
+            dosage_unit: data.dosage_unit,
+            strength: data.strength || null,
+            form: data.form || null,
+            route_of_administration: data.route_of_administration,
+            frequency: data.frequency,
+            administration_times: data.administration_times.length > 0 ? data.administration_times : null,
+            administration_instructions: data.administration_instructions || null,
+            best_time_to_give: data.best_time_to_give.length > 0 ? data.best_time_to_give : null,
+            start_date: data.start_date,
+            end_date: data.end_date || null,
+            duration_value: data.duration_value ? parseInt(data.duration_value) : null,
+            duration_unit: data.duration_unit,
+            is_ongoing: data.is_ongoing,
+            prescribed_by: data.prescribed_by || null,
+            prescription_number: data.prescription_number || null,
+            pharmacy_name: data.pharmacy_name || null,
+            pharmacy_phone: data.pharmacy_phone || null,
+            auto_refill: data.auto_refill,
+            refill_schedule: data.auto_refill ? {
+                every: data.refill_every,
+                quantity: data.refill_quantity,
+            } : null,
+            refills_remaining: data.refills_remaining ? parseInt(data.refills_remaining) : null,
+            unit_price: data.unit_price ? parseFloat(data.unit_price) : null,
+            quantity: data.quantity ? parseInt(data.quantity) : null,
+            total_cost: data.total_cost ? parseFloat(data.total_cost) : null,
+            currency: data.currency,
+            insurance_coverage_percent: data.insurance_coverage_percent ? parseFloat(data.insurance_coverage_percent) : null,
+            side_effects: data.side_effects.length > 0 ? data.side_effects : null,
+            severity_rating: data.severity_rating,
+            side_effect_notes: data.side_effect_notes || null,
+            contraindications: data.contraindications || null,
+            interactions: data.interactions || null,
+            storage_instructions: data.storage_instructions || null,
+            reason_for_treatment: data.reason_for_treatment || null,
+            condition_being_treated: data.condition_being_treated || null,
+            monitor_for: data.monitor_for || null,
+            notes: data.notes || null,
+        };
 
-        if (error) throw error;
+        let result;
+        if (existingMedication) {
+            const { error } = await supabase
+                .from('medications')
+                .update(payload as any)
+                .eq('id', existingMedication.id);
+            if (error) throw error;
+        } else {
+            const { error } = await supabase
+                .from('medications')
+                .insert(payload as any);
+            if (error) throw error;
+        }
 
         // Log activity
         const userId = (await supabase.auth.getUser()).data.user?.id;
@@ -213,7 +273,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                 actor_id: userId,
                 owner_id: userId,
                 pet_id: selectedPetId,
-                action_type: 'medication_added',
+                action_type: existingMedication ? 'medication_updated' : 'medication_added',
                 details: {
                     medication_name: data.medication_name,
                     start_date: data.start_date,
@@ -282,15 +342,17 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         <FormModal
             visible={visible}
             onClose={onClose}
-            title="Add Medication"
+            title={existingMedication ? "Edit Medication" : "Add Medication"}
             initialData={initialData}
             onSubmit={handleSubmit}
             validate={validate}
-            submitLabel="Save Medication"
+            submitLabel={existingMedication ? "Update Medication" : "Save Medication"}
         >
             {(formState: FormState<MedicationFormData>) => (
                 <View style={styles.formContent}>
-                    <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                    {!existingMedication && (
+                        <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
+                    )}
 
                     {/* Medication Details */}
                     <View style={styles.section}>

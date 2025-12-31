@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { RefVaccine, calculateNextDueDate } from '@/hooks/useReferenceData';
+import { Vaccination } from '@/types';
 import VaccineSelector from './shared/VaccineSelector';
 import UniversalDatePicker from './shared/UniversalDatePicker';
 import PetSelector from './shared/PetSelector';
@@ -14,6 +15,7 @@ interface VaccinationFormModalProps {
     visible: boolean;
     onClose: () => void;
     petId?: string;
+    existingVaccination?: Vaccination | null; // Added
     onSuccess?: () => void;
 }
 
@@ -36,40 +38,62 @@ interface VaccinationFormData {
     notes: string;
 }
 
-export default function VaccinationFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VaccinationFormModalProps) {
+export default function VaccinationFormModal({ visible, onClose, petId: initialPetId, existingVaccination, onSuccess }: VaccinationFormModalProps) {
     const { pets } = usePets();
     const { theme } = useAppTheme();
 
     // State managed outside form
-    const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
+    const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || existingVaccination?.pet_id || '');
     const [selectedVaccine, setSelectedVaccine] = useState<RefVaccine | null>(null);
-
-    // Initial Data
-    const initialData: VaccinationFormData = {
-        dateGiven: new Date().toISOString().split('T')[0],
-        nextDueDate: '',
-        customVaccineName: '',
-        clinicName: '',
-        clinicAddress: '',
-        vetName: '',
-        batchNumber: '',
-        cost: '',
-        currency: 'EUR',
-        reminderEnabled: true,
-        notes: '',
-    };
 
     useEffect(() => {
         if (visible) {
-            if (initialPetId) {
+            if (existingVaccination?.pet_id) {
+                setSelectedPetId(existingVaccination.pet_id);
+            } else if (initialPetId) {
                 setSelectedPetId(initialPetId);
             } else if (pets.length > 0 && !selectedPetId) {
                 setSelectedPetId(pets[0].id);
             }
-            // Reset vaccine selection when opening
-            setSelectedVaccine(null);
+            // Reset vaccine selection when opening unless editing
+            if (!existingVaccination) {
+                setSelectedVaccine(null);
+            }
         }
-    }, [visible, initialPetId, pets]);
+    }, [visible, initialPetId, pets, existingVaccination]);
+
+    // Initial Data
+    const initialData: VaccinationFormData = useMemo(() => {
+        if (existingVaccination) {
+            return {
+                dateGiven: existingVaccination.date_given,
+                nextDueDate: existingVaccination.next_due_date || '',
+                customVaccineName: existingVaccination.vaccine_name, // Use custom name initially, selector logic will check if it matches ref
+                clinicName: existingVaccination.provider || '',
+                clinicAddress: '', // Not in DB currently
+                vetName: '', // Stored in provider often
+                batchNumber: existingVaccination.batch_number || '',
+                cost: existingVaccination.cost ? existingVaccination.cost.toString() : '',
+                currency: existingVaccination.currency || 'EUR',
+                reminderEnabled: !!existingVaccination.next_due_date,
+                notes: existingVaccination.notes || '',
+            };
+        }
+        return {
+            dateGiven: new Date().toISOString().split('T')[0],
+            nextDueDate: '',
+            customVaccineName: '',
+            clinicName: '',
+            clinicAddress: '',
+            vetName: '',
+            batchNumber: '',
+            cost: '',
+            currency: 'EUR',
+            reminderEnabled: true,
+            notes: '',
+        };
+    }, [existingVaccination]);
+
 
     // Get species of selected pet for filtering vaccines
     const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
@@ -82,6 +106,7 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
     };
 
     const handleSubmit = async (data: VaccinationFormData) => {
+        // Prefer selected vaccine name, otherwise use custom input (or existing editing name)
         const vaccineName = selectedVaccine?.vaccine_name || data.customVaccineName;
 
         if (!selectedPetId) {
@@ -93,33 +118,41 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
             return;
         }
 
-        const vaccinationData = {
+        const vaccinationPayload = {
             pet_id: selectedPetId,
             vaccine_name: vaccineName,
             date_given: data.dateGiven,
-            category: selectedVaccine?.vaccine_type || 'Other',
+            category: selectedVaccine?.vaccine_type || existingVaccination?.category || 'Other',
             next_due_date: data.reminderEnabled ? (data.nextDueDate || null) : null,
             provider: data.vetName || data.clinicName || null,
             batch_number: data.batchNumber || null,
             cost: data.cost ? parseFloat(data.cost) : null,
             currency: data.currency,
             notes: data.notes || null,
-            created_at: new Date().toISOString()
+            // Only update created_at if new? No, usually updated_at. Supabase might handle updated_at triggers.
         };
 
-        const { error } = await supabase
-            .from('vaccinations')
-            .insert(vaccinationData as any);
+        let result;
+        if (existingVaccination) {
+            const { error } = await supabase
+                .from('vaccinations')
+                .update(vaccinationPayload)
+                .eq('id', existingVaccination.id);
+            if (error) throw error;
+        } else {
+            const { error } = await supabase
+                .from('vaccinations')
+                .insert({ ...vaccinationPayload, created_at: new Date().toISOString() });
+            if (error) throw error;
+        }
 
-        if (error) throw error;
-
-        // Log the activity
+        // Log the activity (only for new?) - User might want edit logs too, but typically 'added' or 'updated'
         const userId = (await supabase.auth.getUser()).data.user?.id;
         await supabase.from('activity_logs').insert({
             actor_id: userId,
             owner_id: userId,
             pet_id: selectedPetId,
-            action_type: 'vaccination_added',
+            action_type: existingVaccination ? 'vaccination_updated' : 'vaccination_added',
             details: {
                 vaccine_name: vaccineName,
                 date_given: data.dateGiven,
@@ -133,6 +166,7 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         const errors: Record<string, string> = {};
 
         // Vaccine is required - either from dropdown or custom
+        // If editing and we have a custom name (loaded from DB), valid.
         if (!selectedVaccine && !data.customVaccineName) {
             errors.vaccine = 'Please select a vaccine';
         }
@@ -144,23 +178,25 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         <FormModal
             visible={visible}
             onClose={onClose}
-            title="Add Vaccination"
+            title={existingVaccination ? "Edit Vaccination" : "Add Vaccination"}
             initialData={initialData}
             onSubmit={handleSubmit}
-            successMessage="Vaccination added successfully"
-            submitLabel="Save Vaccination"
+            successMessage={existingVaccination ? "Vaccination updated successfully" : "Vaccination added successfully"}
+            submitLabel={existingVaccination ? "Update Vaccination" : "Save Vaccination"}
         >
             {(formState: FormState<VaccinationFormData>) => {
                 return (
                     <View style={styles.formContent}>
-                        {/* Pet Selector */}
-                        <PetSelector
-                            selectedPetId={selectedPetId}
-                            onSelectPet={(id) => {
-                                setSelectedPetId(id);
-                                setSelectedVaccine(null); // Reset when pet changes
-                            }}
-                        />
+                        {/* Pet Selector (Only for new) */}
+                        {!existingVaccination && (
+                            <PetSelector
+                                selectedPetId={selectedPetId}
+                                onSelectPet={(id) => {
+                                    setSelectedPetId(id);
+                                    setSelectedVaccine(null); // Reset when pet changes
+                                }}
+                            />
+                        )}
 
                         {/* Vaccine Details */}
                         <View style={styles.section}>
@@ -169,16 +205,18 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                 <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Vaccine Details</Text>
                             </View>
 
+                            {/* ... Rest of UI ... */}
                             <View style={[styles.card, { backgroundColor: theme.colors.background.primary }]}>
                                 <VaccineSelector
                                     species={petSpecies}
                                     selectedVaccine={selectedVaccine}
+                                    initialValue={existingVaccination?.vaccine_name} // Pass initial value for auto-match
                                     onSelect={(vaccine) => {
                                         setSelectedVaccine(vaccine);
-                                        // Clear validation error when vaccine is selected
                                         formState.clearError?.('vaccine');
-                                        // Auto calculate due date if vaccine selected
-                                        if (vaccine && formState.data.dateGiven) {
+                                        if (vaccine && formState.data.dateGiven && !existingVaccination) {
+                                            // Only auto-calc on new or explicit change, avoid overwriting existing custom date?
+                                            // Actually, if user picks a vaccine from list, we might want to suggest due date.
                                             const calc = calculateNextDueDate(formState.data.dateGiven, vaccine.booster_interval);
                                             if (calc) formState.updateField('nextDueDate', calc);
                                         }
@@ -186,21 +224,20 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                     customName={formState.data.customVaccineName}
                                     onCustomNameChange={(name) => {
                                         formState.updateField('customVaccineName', name);
-                                        // Clear validation error when custom name is entered
                                         if (name) formState.clearError('vaccine');
                                     }}
                                     error={formState.errors.vaccine}
                                 />
 
                                 {/* Type Badge */}
-                                {selectedVaccine?.vaccine_type && (
+                                {(selectedVaccine?.vaccine_type || (existingVaccination?.category && existingVaccination.category !== 'Other')) && (
                                     <View style={styles.vaccineMeta}>
-                                        <View style={[styles.typeBadge, { backgroundColor: getTypeBadgeColor(selectedVaccine.vaccine_type) + '20' }]}>
-                                            <Text style={[styles.typeBadgeText, { color: getTypeBadgeColor(selectedVaccine.vaccine_type) }]}>
-                                                {selectedVaccine.vaccine_type.toUpperCase()}
+                                        <View style={[styles.typeBadge, { backgroundColor: getTypeBadgeColor(selectedVaccine?.vaccine_type || existingVaccination?.category || null) + '20' }]}>
+                                            <Text style={[styles.typeBadgeText, { color: getTypeBadgeColor(selectedVaccine?.vaccine_type || existingVaccination?.category || null) }]}>
+                                                {(selectedVaccine?.vaccine_type || existingVaccination?.category || '').toUpperCase()}
                                             </Text>
                                         </View>
-                                        {selectedVaccine.booster_interval && (
+                                        {selectedVaccine?.booster_interval && (
                                             <Text style={[styles.boosterText, { color: theme.colors.text.secondary }]}>
                                                 Booster every {selectedVaccine.booster_interval}
                                             </Text>
@@ -215,7 +252,6 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                                             value={formState.data.dateGiven}
                                             onChange={(date) => {
                                                 formState.updateField('dateGiven', date);
-                                                // Recalculate due date
                                                 if (selectedVaccine) {
                                                     const calc = calculateNextDueDate(date, selectedVaccine.booster_interval);
                                                     if (calc) formState.updateField('nextDueDate', calc);

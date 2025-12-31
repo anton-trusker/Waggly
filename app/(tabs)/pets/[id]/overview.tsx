@@ -3,18 +3,22 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensio
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons'; // Added
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
 import { useVaccinations } from '@/hooks/useVaccinations';
 import { useAllergies } from '@/hooks/useAllergies';
 import { useMedications } from '@/hooks/useMedications';
+import { useConditions } from '@/hooks/useConditions'; // Added
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { Pet } from '@/types';
+import { Pet, Allergy, Vaccination, Medication, Condition } from '@/types';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal'; // Added
+import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
+import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal'; // Added
 
 import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
@@ -35,6 +39,12 @@ export default function OverviewTab() {
   const [vaccinationOpen, setVaccinationOpen] = useState(false);
   const [treatmentOpen, setTreatmentOpen] = useState(false);
   const [healthMetricsOpen, setHealthMetricsOpen] = useState(false); // Added
+  const [allergyModalOpen, setAllergyModalOpen] = useState(false); // Added
+  const [selectedAllergy, setSelectedAllergy] = useState<Allergy | null>(null); // Added
+  const [selectedVaccination, setSelectedVaccination] = useState<Vaccination | null>(null);
+  const [selectedMedication, setSelectedMedication] = useState<Medication | null>(null); // Added
+  const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null); // Added
+  const [conditionModalOpen, setConditionModalOpen] = useState(false); // Added
   const [medicationOpen, setMedicationOpen] = useState(false);
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
@@ -42,6 +52,7 @@ export default function OverviewTab() {
   const { vaccinations } = useVaccinations(petId);
   const { allergies } = useAllergies(petId);
   const { medications } = useMedications(petId);
+  const { conditions } = useConditions(petId); // Added
 
   // Filter for upcoming events
   const upcomingEvents = events.slice(0, 2);
@@ -58,6 +69,7 @@ export default function OverviewTab() {
     .sort((a, b) => new Date(a.next_due_date!).getTime() - new Date(b.next_due_date!).getTime())[0];
 
   const activeMedications = medications.slice(0, 2); // Show top 2
+  const recentConditions = conditions.slice(0, 2); // Show top 2
 
   if (!pet) {
     return (
@@ -164,70 +176,82 @@ export default function OverviewTab() {
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardTitle}>Allergies</Text>
-                <TouchableOpacity style={styles.addButtonSmall}>
+                <TouchableOpacity
+                  style={styles.addButtonSmall}
+                  onPress={() => {
+                    setSelectedAllergy(null);
+                    setAllergyModalOpen(true);
+                  }}
+                >
                   <IconSymbol android_material_icon_name="add" size={16} color="#6366F1" />
                 </TouchableOpacity>
               </View>
               <View style={styles.tagsContainer}>
                 {allergies.length > 0 ? (
                   allergies.map(a => (
-                    <View key={a.id} style={styles.allergyTag}>
+                    <TouchableOpacity
+                      key={a.id}
+                      style={styles.allergyTag}
+                      onPress={() => {
+                        setSelectedAllergy(a);
+                        setAllergyModalOpen(true);
+                      }}
+                    >
                       <Text style={styles.allergyTagText}>{a.name.toUpperCase()}</Text>
-                      <TouchableOpacity>
-                        <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
-                      </TouchableOpacity>
-                    </View>
+                      <IconSymbol android_material_icon_name="edit" size={12} color="#EF4444" />
+                    </TouchableOpacity>
                   ))
                 ) : (
                   <View style={[styles.allergyTag, { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' }]}>
                     <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>NO ALLERGIES</Text>
                   </View>
                 )}
-                {/* Example Mock Tags if empty to match design */}
-                {allergies.length === 0 && (
-                  <>
-                    <View style={[styles.allergyTag, { backgroundColor: '#FEF2F2', borderColor: '#FEE2E2' }]}>
-                      <Text style={[styles.allergyTagText, { color: '#EF4444' }]}>CHICKEN PROTOCOL</Text>
-                      <IconSymbol android_material_icon_name="close" size={14} color="#EF4444" />
-                    </View>
-                    <View style={[styles.allergyTag, { backgroundColor: '#FEFCE8', borderColor: '#FEF9C3' }]}>
-                      <Text style={[styles.allergyTagText, { color: '#CA8A04' }]}>POLLEN</Text>
-                      <IconSymbol android_material_icon_name="close" size={14} color="#CA8A04" />
-                    </View>
-                  </>
-                )}
               </View>
             </View>
 
-            {/* Past Conditions Card (Mock Data based on Design) */}
+            {/* Past Conditions Card */}
             <View style={styles.card}>
-              <Text style={[styles.cardTitle, { marginBottom: 16 }]}>Past Conditions</Text>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Past Conditions</Text>
+                <TouchableOpacity
+                  style={styles.addButtonSmall}
+                  onPress={() => {
+                    setSelectedCondition(null);
+                    setConditionModalOpen(true);
+                  }}
+                >
+                  <IconSymbol android_material_icon_name="add" size={16} color="#6366F1" />
+                </TouchableOpacity>
+              </View>
               <View style={styles.timelineList}>
-                <View style={styles.timelineItem}>
-                  <View style={styles.timelineLine} />
-                  <View style={styles.timelineDotGray} />
-                  <View style={styles.timelineContentBox}>
-                    <View style={styles.timelineHeaderRow}>
-                      <Text style={styles.timelineItemTitle}>Otitis Externa</Text>
-                      <View style={styles.timelineDateBadge}>
-                        <Text style={styles.timelineDateBadgeText}>Oct 2023</Text>
+                {recentConditions.length > 0 ? (
+                  recentConditions.map((cond, index) => (
+                    <TouchableOpacity
+                      key={cond.id || index}
+                      style={styles.timelineItem}
+                      onPress={() => {
+                        setSelectedCondition(cond);
+                        setConditionModalOpen(true);
+                      }}
+                    >
+                      <View style={styles.timelineLine} />
+                      <View style={styles.timelineDotGray} />
+                      <View style={styles.timelineContentBox}>
+                        <View style={styles.timelineHeaderRow}>
+                          <Text style={styles.timelineItemTitle}>{cond.name}</Text>
+                          <View style={styles.timelineDateBadge}>
+                            <Text style={styles.timelineDateBadgeText}>
+                              {cond.diagnosed_date ? new Date(cond.diagnosed_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown'}
+                            </Text>
+                          </View>
+                        </View>
+                        <Text style={styles.timelineItemDesc}>{cond.description || cond.treatment_plan || cond.notes || 'No details'}</Text>
                       </View>
-                    </View>
-                    <Text style={styles.timelineItemDesc}>Resolved with drops.</Text>
-                  </View>
-                </View>
-                <View style={styles.timelineItem}>
-                  <View style={styles.timelineDotGray} />
-                  <View style={styles.timelineContentBox}>
-                    <View style={styles.timelineHeaderRow}>
-                      <Text style={styles.timelineItemTitle}>Mild Gastroenteritis</Text>
-                      <View style={styles.timelineDateBadge}>
-                        <Text style={styles.timelineDateBadgeText}>Feb 2023</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.timelineItemDesc}>Dietary indiscretion.</Text>
-                  </View>
-                </View>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={{ color: '#9CA3AF', fontStyle: 'italic', marginLeft: 8 }}>No past conditions recorded.</Text>
+                )}
               </View>
             </View>
 
@@ -255,6 +279,13 @@ export default function OverviewTab() {
                       </Text>
                     </View>
                   )}
+                  <TouchableOpacity
+                    style={{ marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 4 }}
+                    onPress={() => setHealthMetricsOpen(true)}
+                  >
+                    <Text style={{ color: '#fff', fontSize: 13, fontWeight: '600' }}>Update Status</Text>
+                    <IconSymbol android_material_icon_name="arrow-forward" size={14} color="#fff" />
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.verifiedIconBox}>
                   <IconSymbol android_material_icon_name="verified-user" size={24} color="#6366F1" />
@@ -267,52 +298,40 @@ export default function OverviewTab() {
 
               {/* Current Medications */}
               <View style={[styles.card, styles.flex1]}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>Current Medications</Text>
-                  <TouchableOpacity><Text style={styles.editLink}>Manage</Text></TouchableOpacity>
+                <View style={styles.listHeader}>
+                  <Text style={styles.listTitle}>Current Medications</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedMedication(null);
+                      setMedicationOpen(true);
+                    }}
+                    style={styles.addButton}
+                  >
+                    <Ionicons name="add" size={16} color="#ffffff" />
+                    <Text style={styles.addButtonText}>Add</Text>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.listContainer}>
                   {activeMedications.length > 0 ? activeMedications.map(med => (
-                    <View key={med.id} style={styles.listItem}>
-                      <View style={[styles.listIconBox, { backgroundColor: '#E0E7FF', borderColor: 'transparent' }]}>
-                        <IconSymbol android_material_icon_name="medication" size={20} color="#4F46E5" />
+                    <TouchableOpacity
+                      key={med.id}
+                      style={styles.listItem}
+                      onPress={() => {
+                        setSelectedMedication(med);
+                        setMedicationOpen(true);
+                      }}
+                    >
+                      <View style={[styles.listIconBox, { backgroundColor: '#DBEAFE' }]}>
+                        <Ionicons name="medkit" size={18} color="#2563EB" />
                       </View>
                       <View style={styles.listItemContent}>
                         <Text style={styles.listItemTitle}>{med.medication_name}</Text>
                         <Text style={styles.listItemSubtitle}>{med.dosage_value}{med.dosage_unit} • {med.frequency}</Text>
                       </View>
-                      <View style={[styles.badgePill, { backgroundColor: '#6366F1' }]}>
-                        <Text style={styles.badgePillText}>DAILY</Text>
-                      </View>
-                    </View>
+                      <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+                    </TouchableOpacity>
                   )) : (
-                    // Mock data if empty to match design
-                    <>
-                      <View style={styles.listItem}>
-                        <View style={[styles.listIconBox, { backgroundColor: '#E0E7FF' }]}>
-                          <IconSymbol android_material_icon_name="medication" size={20} color="#4F46E5" />
-                        </View>
-                        <View style={styles.listItemContent}>
-                          <Text style={styles.listItemTitle}>Apoquel</Text>
-                          <Text style={styles.listItemSubtitle}>5mg • Twice Daily</Text>
-                        </View>
-                        <View style={[styles.badgePill, { backgroundColor: '#6366F1' }]}>
-                          <Text style={styles.badgePillText}>DAILY</Text>
-                        </View>
-                      </View>
-                      <View style={styles.listItem}>
-                        <View style={[styles.listIconBox, { backgroundColor: '#FFEDD5' }]}>
-                          <IconSymbol android_material_icon_name="medication" size={20} color="#EA580C" />
-                        </View>
-                        <View style={styles.listItemContent}>
-                          <Text style={styles.listItemTitle}>Heartgard Plus</Text>
-                          <Text style={styles.listItemSubtitle}>1 Chew • Day 15</Text>
-                        </View>
-                        <View style={[styles.badgePill, { backgroundColor: '#F97316' }]}>
-                          <Text style={styles.badgePillText}>MONTHLY</Text>
-                        </View>
-                      </View>
-                    </>
+                    <Text style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No active medications.</Text>
                   )}
                 </View>
               </View>
@@ -321,50 +340,33 @@ export default function OverviewTab() {
               <View style={[styles.card, styles.flex1]}>
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardTitle}>Vaccinations</Text>
-                  <TouchableOpacity><Text style={styles.editLink}>See All</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={() => router.push(`/(tabs)/pets/${petId}/passport` as any)}>
+                    <Text style={styles.editLink}>See All</Text>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.listContainer}>
                   {activeVaccines.length > 0 ? activeVaccines.map(vac => (
-                    <View key={vac.id} style={styles.listItem}>
+                    <TouchableOpacity
+                      key={vac.id}
+                      style={styles.listItem}
+                      onPress={() => {
+                        setSelectedVaccination(vac);
+                        setVaccinationOpen(true);
+                      }}
+                    >
                       <View style={[styles.listIconBox, { backgroundColor: '#F3E8FF' }]}>
                         <IconSymbol android_material_icon_name="vaccines" size={20} color="#9333EA" />
                       </View>
                       <View style={styles.listItemContent}>
-                        <Text style={styles.listItemTitle}>{vac.name}</Text>
+                        <Text style={styles.listItemTitle}>{vac.vaccine_name}</Text>
                         <Text style={styles.listItemSubtitle}>Valid until {vac.next_due_date ? new Date(vac.next_due_date).getFullYear() : 'N/A'}</Text>
                       </View>
                       <View style={[styles.statusBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
                         <Text style={[styles.statusBadgeText, { color: '#10B981' }]}>ACTIVE</Text>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   )) : (
-                    // Mock data
-                    <>
-                      <View style={styles.listItem}>
-                        <View style={[styles.listIconBox, { backgroundColor: '#F3E8FF' }]}>
-                          <IconSymbol android_material_icon_name="vaccines" size={20} color="#9333EA" />
-                        </View>
-                        <View style={styles.listItemContent}>
-                          <Text style={styles.listItemTitle}>Rabies</Text>
-                          <Text style={styles.listItemSubtitle}>Valid until 12 Oct 2025</Text>
-                        </View>
-                        <View style={[styles.statusBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                          <Text style={[styles.statusBadgeText, { color: '#10B981' }]}>ACTIVE</Text>
-                        </View>
-                      </View>
-                      <View style={styles.listItem}>
-                        <View style={[styles.listIconBox, { backgroundColor: '#F3E8FF' }]}>
-                          <IconSymbol android_material_icon_name="vaccines" size={20} color="#9333EA" />
-                        </View>
-                        <View style={styles.listItemContent}>
-                          <Text style={styles.listItemTitle}>DHPP</Text>
-                          <Text style={styles.listItemSubtitle}>Due in 2 weeks</Text>
-                        </View>
-                        <View style={[styles.statusBadge, { backgroundColor: '#FEFCE8', borderColor: '#FEF9C3' }]}>
-                          <Text style={[styles.statusBadgeText, { color: '#CA8A04' }]}>DUE SOON</Text>
-                        </View>
-                      </View>
-                    </>
+                    <Text style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No active vaccinations.</Text>
                   )}
                 </View>
               </View>
@@ -376,8 +378,12 @@ export default function OverviewTab() {
                 <View style={styles.orangeDot} />
                 <Text style={styles.cardTitle}>Upcoming</Text>
                 <View style={{ flex: 1 }} />
-                <TouchableOpacity><Text style={styles.editLink}>See All</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/calendar')}>
+                  <Text style={styles.editLink}>See All</Text>
+                </TouchableOpacity>
               </View>
+              {/* Note: Upcoming Body Render Left Unchanged as logic is complex for mobile, but 'See All' is connected in header */}
+
 
               {isMobile ? (
                 <ScrollView
@@ -554,7 +560,16 @@ export default function OverviewTab() {
 
       {/* Modals */}
       <VisitFormModal visible={visitOpen} petId={pet.id} onClose={() => setVisitOpen(false)} />
-      <VaccinationFormModal visible={vaccinationOpen} petId={pet.id} onClose={() => setVaccinationOpen(false)} />
+      <VaccinationFormModal
+        visible={vaccinationOpen}
+        petId={pet.id}
+        existingVaccination={selectedVaccination}
+        onClose={() => setVaccinationOpen(false)}
+        onSuccess={() => {
+          // Maybe refresh? Hook handles it typically
+          setVaccinationOpen(false);
+        }}
+      />
       <TreatmentFormModal visible={treatmentOpen} petId={pet.id} onClose={() => setTreatmentOpen(false)} />
 
       <HealthMetricsModal
@@ -564,11 +579,36 @@ export default function OverviewTab() {
         initialTab="weight"
       />
 
-      {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
+      <MedicationFormModal
+        visible={medicationOpen}
+        petId={pet.id}
+        existingMedication={selectedMedication}
+        onClose={() => setMedicationOpen(false)}
+        onSuccess={() => {
+          setMedicationOpen(false);
+          // Refresh logic handled by hook subscription ideally
+        }}
+      />
       <EditKeyInfoModal
         visible={editKeyInfoModalVisible}
         onClose={() => setEditKeyInfoModalVisible(false)}
         petId={pet.id}
+      />
+      <ConditionFormModal
+        visible={conditionModalOpen}
+        petId={pet.id}
+        existingCondition={selectedCondition}
+        onClose={() => setConditionModalOpen(false)}
+        onSuccess={() => {
+          setConditionModalOpen(false);
+          refreshConditions();
+        }}
+      />
+      <AllergyModal
+        visible={allergyModalOpen}
+        onClose={() => setAllergyModalOpen(false)}
+        petId={pet.id}
+        existingAllergy={selectedAllergy}
       />
     </ScrollView>
   );
@@ -582,22 +622,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F8',
   },
   content: {
-    gap: 24,
+    gap: 16, // Reduced from 24
     maxWidth: 1280,
     width: '100%',
     alignSelf: 'center',
+    paddingBottom: 40,
   },
   contentMobile: {
-    paddingHorizontal: 0, // Edge-to-edge for scrolling
+    paddingHorizontal: 16, // Added padding for mobile
     paddingVertical: 12,
+    gap: 16,
   },
+  // Mobile Quick Actions Styles - (Kept if needed, though replaced by component)
   mobileQuickActionsScroll: {
-    marginBottom: 24,
-    paddingLeft: 24,
+    marginBottom: 16, // Reduced
+    paddingLeft: 16, // Match content padding
   },
   mobileQuickActionsContainer: {
-    gap: 16,
-    paddingRight: 24, // End padding
+    gap: 12,
+    paddingRight: 16,
   },
   mobileQuickAction: {
     alignItems: 'center',
@@ -618,19 +661,19 @@ const styles = StyleSheet.create({
   quickActionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: 12, // Reduced
   },
   mobileUpcomingContainer: {
     gap: 12,
-    paddingRight: 24,
+    paddingRight: 16,
   },
   mobileUpcomingCard: {
-    width: 260, // Fixed width for horizontal items
-    backgroundColor: '#F9FAFB',
+    width: 240, // Reduced width
+    backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
+    padding: 12, // Reduced
     borderWidth: 1,
-    borderColor: '#F3F4F6',
+    borderColor: '#E5E7EB',
   },
   quickActionCard: {
     flex: 1,
@@ -662,117 +705,124 @@ const styles = StyleSheet.create({
   },
   mainGrid: {
     flexDirection: 'column',
-    gap: 24,
+    gap: 16, // Reduced
   },
   mainGridLarge: {
     flexDirection: 'row',
+    alignItems: 'flex-start', // Prevent stretching
   },
   leftColumn: {
-    flex: 1,
-    gap: 24,
+    flex: 1, // 1/3
+    gap: 16, // Reduced
+    minWidth: 300,
   },
   rightColumn: {
-    flex: 2,
-    gap: 24,
+    flex: 2, // 2/3
+    gap: 16, // Reduced
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 24,
+    borderRadius: 12, // Reduced radius
+    padding: 16, // Reduced from 24
     borderWidth: 1,
     borderColor: '#E5E7EB',
+    // Reduced shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 1,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12, // Reduced from 16
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16, // Reduced from 18
     fontWeight: '700',
     color: '#1F2937',
+    fontFamily: 'Plus Jakarta Sans',
   },
   editLink: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: '#6366F1',
+    fontFamily: 'Plus Jakarta Sans',
   },
   infoList: {
-    gap: 16,
+    gap: 12, // Reduced
   },
   infoItemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
-    padding: 12,
-    borderRadius: 12,
+    padding: 10, // Reduced from 12
+    borderRadius: 10,
   },
   infoItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
   infoIconBox: {
-    width: 36,
-    height: 36,
+    width: 32, // Reduced from 36
+    height: 32,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   infoLabel: {
-    fontSize: 11,
+    fontSize: 10, // Reduced
     fontWeight: '700',
     color: '#6B7280',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
+    fontFamily: 'Plus Jakarta Sans',
   },
   infoValueMono: {
-    fontSize: 16,
+    fontSize: 14, // Reduced
     fontWeight: '600',
     color: '#1F2937',
     fontFamily: 'monospace',
   },
   infoGrid2: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   infoBox: {
     flex: 1,
     backgroundColor: '#F9FAFB',
-    padding: 12,
-    borderRadius: 12,
+    padding: 10,
+    borderRadius: 10,
   },
   infoBoxHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   infoValue: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: '#1F2937',
+    fontFamily: 'Plus Jakarta Sans',
   },
   addButtonSmall: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 20,
+    height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    backgroundColor: '#EEF2FF',
+    borderRadius: 6,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -783,63 +833,65 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: '#FFF1F2',
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#FECDD3',
   },
   allergyTagText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
+    color: '#E11D48',
+    fontFamily: 'Plus Jakarta Sans',
   },
   gradientCard: {
-    borderRadius: 16,
-    padding: 24,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
+    borderRadius: 12,
+    padding: 1, // Border
   },
   gradientCardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)', // Transparent overlay
+    padding: 16,
+    borderRadius: 11,
   },
   gradientCardLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#E0E7FF',
-    letterSpacing: 1,
+    color: 'rgba(255,255,255,0.8)',
     marginBottom: 4,
   },
   gradientCardTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
     color: '#fff',
-    marginBottom: 8,
+    fontFamily: 'Plus Jakarta Sans',
   },
   gradientCardSubtitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
+    marginTop: 4,
   },
   gradientCardSubtitle: {
-    fontSize: 14,
-    color: '#E0E7FF',
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.9)',
+    fontFamily: 'Plus Jakarta Sans',
   },
   verifiedIconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   subGrid: {
     flexDirection: 'column',
-    gap: 24,
+    gap: 16,
   },
   subGridLarge: {
     flexDirection: 'row',
@@ -853,15 +905,15 @@ const styles = StyleSheet.create({
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 12,
+    padding: 10,
     backgroundColor: '#F9FAFB',
-    borderRadius: 12,
+    borderRadius: 10,
+    gap: 12,
   },
   listIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -871,16 +923,19 @@ const styles = StyleSheet.create({
   listItemTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1F2937',
+    color: '#374151',
+    fontFamily: 'Plus Jakarta Sans',
   },
   listItemSubtitle: {
     fontSize: 12,
     color: '#6B7280',
+    marginTop: 2,
+    fontFamily: 'Plus Jakarta Sans',
   },
   badgePill: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 6,
   },
   badgePillText: {
     fontSize: 10,
@@ -889,14 +944,13 @@ const styles = StyleSheet.create({
   },
   statusBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 1,
   },
   statusBadgeText: {
     fontSize: 10,
     fontWeight: '700',
-    textTransform: 'uppercase',
   },
   orangeDot: {
     width: 8,
@@ -907,99 +961,99 @@ const styles = StyleSheet.create({
   upcomingCard: {
     backgroundColor: '#F9FAFB',
     borderRadius: 12,
-    padding: 16,
+    padding: 12, // Compact
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: '#E5E7EB',
   },
   upcomingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   upcomingIconBox: {
-    width: 36,
-    height: 36,
+    width: 32,
+    height: 32,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   upcomingBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
   upcomingBadgeText: {
     fontSize: 10,
     fontWeight: '700',
   },
   upcomingTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
     color: '#1F2937',
+    fontFamily: 'Plus Jakarta Sans',
   },
   upcomingSubtitle: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#6B7280',
+    fontFamily: 'Plus Jakarta Sans',
   },
   upcomingFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
-    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
+    paddingTop: 8,
+    marginTop: 8,
   },
   upcomingDate: {
-    fontSize: 14,
-    color: '#6B7280',
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#4B5563',
   },
   timelineList: {
-    paddingLeft: 16,
+    paddingLeft: 8,
   },
   timelineItem: {
     flexDirection: 'row',
-    gap: 16,
+    paddingBottom: 20, // Reduced from default
     position: 'relative',
-    paddingBottom: 32,
   },
   timelineLine: {
     position: 'absolute',
-    left: 15,
-    top: 24,
+    left: 5, // Center of 10px dot
+    top: 10,
     bottom: 0,
     width: 2,
-    backgroundColor: '#E5E7EB',
-    zIndex: -1,
+    backgroundColor: '#F3F4F6',
+    zIndex: 0,
   },
   timelineDotPrimary: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#6366F1',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#DBEAFE',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 4,
     zIndex: 1,
+    marginRight: 12,
   },
   timelineDotInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#6366F1',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#2563EB',
   },
   timelineDotGray: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#D1D5DB',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#E5E7EB',
+    marginTop: 4,
     zIndex: 1,
+    marginRight: 12,
   },
   timelineDotInnerGray: {
     width: 10,
