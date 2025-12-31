@@ -13,7 +13,9 @@ import { Pet } from '@/types';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+
 import MedicationFormModal from '@/components/desktop/modals/MedicationFormModal';
+import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 
 export default function OverviewTab() {
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function OverviewTab() {
   const [vaccinationOpen, setVaccinationOpen] = useState(false);
   const [treatmentOpen, setTreatmentOpen] = useState(false);
   const [medicationOpen, setMedicationOpen] = useState(false);
+  const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
   const { events } = useEvents({ petIds: pet ? [pet.id] : [], startDate: new Date().toISOString().slice(0, 10) });
   const { vaccinations } = useVaccinations(petId);
@@ -121,7 +124,7 @@ export default function OverviewTab() {
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardTitle}>Key Info</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => setEditKeyInfoModalVisible(true)}>
                   <Text style={styles.editLink}>Edit</Text>
                 </TouchableOpacity>
               </View>
@@ -582,6 +585,11 @@ export default function OverviewTab() {
           that included 'Medication' as a type. 
       */}
       {/* <MedicationFormModal visible={medicationOpen} petId={pet.id} onClose={() => setMedicationOpen(false)} /> */}
+      <EditKeyInfoModal
+        visible={editKeyInfoModalVisible}
+        onClose={() => setEditKeyInfoModalVisible(false)}
+        petId={pet.id}
+      />
     </ScrollView>
   );
 }

@@ -18,13 +18,16 @@ import PetPastConditionsWidget from '@/components/widgets/PetPastConditionsWidge
 import PetHealthStatusWidget from '@/components/widgets/PetHealthStatusWidget';
 import PetMedicationsWidget from '@/components/widgets/PetMedicationsWidget';
 import PetVaccinationsWidget from '@/components/widgets/PetVaccinationsWidget';
+
 import PetUpcomingEventsWidget from '@/components/widgets/PetUpcomingEventsWidget';
+import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 
 export default function OverviewTab() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const petId = params.id as string;
   const { width } = useWindowDimensions();
+  const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
   const isLargeScreen = width >= 1024;
   const isMobile = width < 768; // Mobile breakpoint
 
@@ -108,13 +111,20 @@ export default function OverviewTab() {
                 <PetVaccinationsWidget vaccinations={activeVaccines} />
               </View>
 
-              <PetKeyInfoWidget pet={pet} />
-              <PetAllergiesWidget allergies={allergies} />
-              <PetPastConditionsWidget />
             </View>
+
+            <PetKeyInfoWidget pet={pet} onEdit={() => setEditKeyInfoModalVisible(true)} />
+            <PetAllergiesWidget allergies={allergies} />
+            <PetPastConditionsWidget />
           </ScrollView>
         </>
       )}
+
+      <EditKeyInfoModal
+        visible={editKeyInfoModalVisible}
+        onClose={() => setEditKeyInfoModalVisible(false)}
+        petId={pet.id}
+      />
     </>
   );
 }
