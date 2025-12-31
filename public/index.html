@@ -79,7 +79,7 @@
             await existingRegistration.unregister();
           }
 
-          const registration = await navigator.serviceWorker.register('./sw.js');
+          const registration = await navigator.serviceWorker.register('/sw.js');
           console.log('Service Worker registered with scope:', registration.scope);
 
           // Check for updates every 30 seconds

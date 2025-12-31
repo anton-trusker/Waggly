@@ -65,7 +65,7 @@ export default function PetDetailsPage() {
                         <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
                             <Ionicons name="chevron-back" size={24} color="#475569" />
                         </TouchableOpacity>
-                        <Text style={styles.mobileHeaderTitle}>{pet.name.toUpperCase()}</Text>
+                        <Text style={styles.mobileHeaderTitle}>{pet.name?.toUpperCase() || ''}</Text>
                         <View style={styles.mobileHeaderActions}>
                             <TouchableOpacity style={styles.iconBtn} onPress={() => setShareModalVisible(true)}>
                                 <Ionicons name="share-outline" size={20} color="#475569" />

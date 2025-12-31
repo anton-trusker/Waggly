@@ -15,6 +15,15 @@
       "year_other": "{{count}} years",
       "year_month": "{{years}} {{years_label}} {{months}} {{months_label}}"
     },
+    "passport": {
+      "label": "PASSPORT",
+      "unknown_breed": "Unknown Breed",
+      "reg": "REG",
+      "dob": "DOB",
+      "weight": "Weight",
+      "color": "Color",
+      "blood_type": "Blood Type"
+    },
     "save": "Save",
     "required": "Required",
     "phone_input": {
