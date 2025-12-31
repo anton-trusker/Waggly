@@ -659,7 +659,7 @@
     "color": "COLOR",
     "blood_type": "BLOOD TYPE",
     "reg": "Reg"
-  }
+  },
   "dashboard": {
     "welcome_back": "Welcome back,",
     "subtitle": "Here's what's happening today.",

@@ -581,33 +581,32 @@
       "message": "Schau dir dieses Haustierprofil auf Pawzly an! {{url}}",
       "message_title": "Haustierprofil"
     }
-  }
-},
-"quick_actions_menu": {
-  "title": "Schnellaktionen",
-  "subtitle": "Wählen Sie eine Aktion für Ihr Haustier",
-  "select_pet": "Haustier auswählen",
-  "actions": {
-    "visit": {
-      "title": "Besuch",
-      "desc": "Tierarztbesuch erfassen"
-    },
-    "photos": {
-      "title": "Fotos",
-      "desc": "Fotos hinzufügen"
-    },
-    "vaccine": {
-      "title": "Impfung",
-      "desc": "Impfung erfassen"
-    },
-    "documents": {
-      "title": "Dokumente",
-      "desc": "Dokumente hochladen"
-    },
-    "medication": {
-      "title": "Medikamente",
-      "desc": "Medikament hinzufügen"
+  },
+  "quick_actions_menu": {
+    "title": "Schnellaktionen",
+    "subtitle": "Wählen Sie eine Aktion für Ihr Haustier",
+    "select_pet": "Haustier auswählen",
+    "actions": {
+      "visit": {
+        "title": "Besuch",
+        "desc": "Tierarztbesuch erfassen"
+      },
+      "photos": {
+        "title": "Fotos",
+        "desc": "Fotos hinzufügen"
+      },
+      "vaccine": {
+        "title": "Impfung",
+        "desc": "Impfung erfassen"
+      },
+      "documents": {
+        "title": "Dokumente",
+        "desc": "Dokumente hochladen"
+      },
+      "medication": {
+        "title": "Medikamente",
+        "desc": "Medikament hinzufügen"
+      }
     }
   }
-}
 }

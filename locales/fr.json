@@ -581,33 +581,32 @@
       "message": "Découvrez ce profil d'animal sur Pawzly ! {{url}}",
       "message_title": "Profil Animal"
     }
-  }
-},
-"quick_actions_menu": {
-  "title": "Actions Rapides",
-  "subtitle": "Choisir une action pour votre animal",
-  "select_pet": "Sélectionner un animal",
-  "actions": {
-    "visit": {
-      "title": "Visite",
-      "desc": "Enregistrer une visite"
-    },
-    "photos": {
-      "title": "Photos",
-      "desc": "Ajouter des photos"
-    },
-    "vaccine": {
-      "title": "Vaccin",
-      "desc": "Enregistrer un vaccin"
-    },
-    "documents": {
-      "title": "Documents",
-      "desc": "Télécharger des documents"
-    },
-    "medication": {
-      "title": "Médicaments",
-      "desc": "Ajouter un médicament"
+  },
+  "quick_actions_menu": {
+    "title": "Actions Rapides",
+    "subtitle": "Choisir une action pour votre animal",
+    "select_pet": "Sélectionner un animal",
+    "actions": {
+      "visit": {
+        "title": "Visite",
+        "desc": "Enregistrer une visite"
+      },
+      "photos": {
+        "title": "Photos",
+        "desc": "Ajouter des photos"
+      },
+      "vaccine": {
+        "title": "Vaccin",
+        "desc": "Enregistrer un vaccin"
+      },
+      "documents": {
+        "title": "Documents",
+        "desc": "Télécharger des documents"
+      },
+      "medication": {
+        "title": "Médicaments",
+        "desc": "Ajouter un médicament"
+      }
     }
   }
-}
 }
