@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import { PetCardSkeleton } from '@/components/skeletons/PetCardSkeleton';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -31,7 +32,13 @@ export default function PetsListPage() {
       </View>
 
       {loading ? (
-        <Text style={styles.loadingText}>{t('my_pets_page.loading')}</Text>
+        <View style={[styles.grid, isMobile && styles.gridMobile]}>
+          {[1, 2, 3].map((i) => (
+            <View key={i} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
+              <PetCardSkeleton />
+            </View>
+          ))}
+        </View>
       ) : pets.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>🐾</Text>

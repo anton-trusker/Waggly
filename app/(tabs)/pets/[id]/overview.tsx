@@ -4,10 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
-import { useVaccinations } from '@/hooks/useVaccinations';
-import { useAllergies } from '@/hooks/useAllergies';
-import { useTreatments } from '@/hooks/useTreatments';
-import { useConditions } from '@/hooks/useConditions';
+import { usePetProfileData } from '@/hooks/usePetProfileData';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Pet, Allergy, Vaccination, Treatment, Condition } from '@/types';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
@@ -20,6 +17,7 @@ import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import { useLocale } from '@/hooks/useLocale';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
+import { PetProfileSkeleton } from '@/components/skeletons/PetProfileSkeleton';
 
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
@@ -50,20 +48,22 @@ export default function OverviewTab() {
   const [documentModalOpen, setDocumentModalOpen] = useState(false); // Added
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
 
-  const { vaccinations } = useVaccinations(petId);
-  const { allergies } = useAllergies(petId);
-  const { treatments, refreshTreatments } = useTreatments(petId);
-  const { conditions } = useConditions(petId);
-  const { activities, loading: activitiesLoading } = useActivityFeed(5, petId);
+  // Unified data fetching - replaces 5 individual hooks for better performance
+  const {
+    vaccinations,
+    allergies,
+    treatments,
+    conditions,
+    activities,
+    loading: dataLoading,
+    refetch: refetchAllData,
+  } = usePetProfileData(petId);
 
   const recentConditions = conditions.slice(0, 2); // Show top 2
 
+  // Show skeleton while pet data is loading
   if (!pet) {
-    return (
-      <View style={{ padding: 24 }}>
-        <Text style={{ fontSize: 16, color: '#6B7280' }}>{t('pet_profile.loading')}</Text>
-      </View>
-    );
+    return <PetProfileSkeleton />;
   }
 
   const handleQuickAction = (id: string) => {
@@ -384,7 +384,7 @@ export default function OverviewTab() {
             <View style={styles.card}>
               <Text style={[styles.cardTitle, { marginBottom: 24 }]}>{t('pet_profile.history_timeline')}</Text>
               <View style={styles.timelineList}>
-                {activitiesLoading ? (
+                {dataLoading ? (
                   <Text style={{ color: '#6B7280', padding: 8 }}>{t('pet_profile.loading') || 'Loading...'}</Text>
                 ) : activities.length > 0 ? (
                   activities.map((item, index) => {
@@ -502,12 +502,16 @@ export default function OverviewTab() {
       />
       <TreatmentFormModal
         visible={treatmentOpen}
-        petId={pet.id}
-        existingTreatment={selectedTreatment}
-        onClose={() => setTreatmentOpen(false)}
+        petId={petId}
+        treatment={selectedTreatment}
+        onClose={() => {
+          setTreatmentOpen(false);
+          setSelectedTreatment(null);
+        }}
         onSuccess={() => {
           setTreatmentOpen(false);
-          refreshTreatments();
+          setSelectedTreatment(null);
+          refetchAllData();
         }}
       />
       <EditKeyInfoModal
@@ -517,12 +521,16 @@ export default function OverviewTab() {
       />
       <ConditionFormModal
         visible={conditionModalOpen}
-        petId={pet.id}
-        existingCondition={selectedCondition}
-        onClose={() => setConditionModalOpen(false)}
+        petId={petId}
+        condition={selectedCondition}
+        onClose={() => {
+          setConditionModalOpen(false);
+          setSelectedCondition(null);
+        }}
         onSuccess={() => {
           setConditionModalOpen(false);
-          refreshConditions();
+          setSelectedCondition(null);
+          refetchAllData();
         }}
       />
       <AllergyModal
@@ -535,6 +543,14 @@ export default function OverviewTab() {
         visible={documentModalOpen}
         onClose={() => setDocumentModalOpen(false)}
         petId={petId}
+      />
+      <HealthMetricsModal
+        visible={healthMetricsOpen}
+        onClose={() => setHealthMetricsOpen(false)}
+        petId={petId}
+        onSuccess={() => {
+          setHealthMetricsOpen(false);
+        }}
       />
     </ScrollView>
   );

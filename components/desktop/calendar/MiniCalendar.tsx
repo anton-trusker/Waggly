@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useLocale } from '@/hooks/useLocale';
+import { Ionicons } from '@expo/vector-icons';
 
 interface MiniCalendarProps {
     selectedDate: Date;
@@ -10,6 +11,7 @@ interface MiniCalendarProps {
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect, events = [] }) => {
     const { locale } = useLocale();
+    const [currentMonth, setCurrentMonth] = useState(selectedDate);
 
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
@@ -24,8 +26,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
     };
 
     const generateDays = () => {
-        const daysInMonth = getDaysInMonth(selectedDate);
-        const firstDay = getFirstDayOfMonth(selectedDate);
+        const daysInMonth = getDaysInMonth(currentMonth);
+        const firstDay = getFirstDayOfMonth(currentMonth);
         const days: (number | null)[] = [];
 
         for (let i = 0; i < firstDay; i++) {
@@ -43,8 +45,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
         const today = new Date();
         return (
             day === today.getDate() &&
-            selectedDate.getMonth() === today.getMonth() &&
-            selectedDate.getFullYear() === today.getFullYear()
+            currentMonth.getMonth() === today.getMonth() &&
+            currentMonth.getFullYear() === today.getFullYear()
         );
     };
 
@@ -61,10 +63,20 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
             const eventDate = new Date(event.date);
             return (
                 eventDate.getDate() === day &&
-                eventDate.getMonth() === selectedDate.getMonth() &&
-                eventDate.getFullYear() === selectedDate.getFullYear()
+                eventDate.getMonth() === currentMonth.getMonth() &&
+                eventDate.getFullYear() === currentMonth.getFullYear()
             );
         });
+    };
+
+    const handlePreviousMonth = () => {
+        const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        setCurrentMonth(newDate);
+    };
+
+    const handleNextMonth = () => {
+        const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+        setCurrentMonth(newDate);
     };
 
     // Generate localized day names (S, M, T...)
@@ -79,14 +91,22 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
     }, [locale]);
 
     const monthYear = useMemo(() => {
-        return selectedDate.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
-    }, [selectedDate, locale]);
+        return currentMonth.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+    }, [currentMonth, locale]);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.monthText}>
-                {monthYear}
-            </Text>
+            <View style={styles.monthHeader}>
+                <TouchableOpacity onPress={handlePreviousMonth} style={styles.navButton}>
+                    <Ionicons name="chevron-back" size={20} color="#6366F1" />
+                </TouchableOpacity>
+                <Text style={styles.monthText}>
+                    {monthYear}
+                </Text>
+                <TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
+                    <Ionicons name="chevron-forward" size={20} color="#6366F1" />
+                </TouchableOpacity>
+            </View>
 
             <View style={styles.dayNames}>
                 {dayNames.map((name, idx) => (
@@ -108,8 +128,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
                         ]}
                         onPress={() => {
                             if (day) {
-                                const year = selectedDate.getFullYear();
-                                const month = selectedDate.getMonth();
+                                const year = currentMonth.getFullYear();
+                                const month = currentMonth.getMonth();
                                 onDateSelect(new Date(year, month, day));
                             }
                         }}
@@ -147,12 +167,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E5E7EB',
     },
+    monthHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 12,
+    },
+    navButton: {
+        padding: 4,
+    },
     monthText: {
         fontSize: 14,
         fontWeight: '700',
         color: '#111827',
-        marginBottom: 12,
-        textAlign: 'center',
     },
     dayNames: {
         flexDirection: 'row',

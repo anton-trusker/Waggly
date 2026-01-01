@@ -10,7 +10,8 @@ interface PetPassportCardProps {
     onPress?: () => void;
 }
 
-export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
+// Memoized for performance
+export const PetPassportCard = React.memo(({ pet, onPress }: PetPassportCardProps) => {
     const { t } = useLocale();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Mobile breakpoint
@@ -167,7 +168,8 @@ export function PetPassportCard({ pet, onPress }: PetPassportCardProps) {
             </LinearGradient>
         </TouchableOpacity>
     );
-}
+});
+
 
 const styles = StyleSheet.create({
     cardContainer: {

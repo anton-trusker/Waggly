@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, useWindowDimensions, Modal, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import CalendarGridDesktop from '@/components/desktop/calendar/CalendarGridDesktop';
 import CalendarFilters from '@/components/desktop/calendar/CalendarFilters';
 import MiniCalendar from '@/components/desktop/calendar/MiniCalendar';
@@ -10,11 +11,13 @@ import { designSystem } from '@/constants/designSystem';
 
 import { startOfDay, addMonths, endOfDay, isAfter, isBefore } from 'date-fns';
 import { useLocale } from '@/hooks/useLocale';
+import { useRouter } from 'expo-router';
 
 export default function CalendarPage() {
     const { width } = useWindowDimensions();
     const isMobile = width < 1024;
     const { t } = useLocale();
+    const router = useRouter();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedPets, setSelectedPets] = useState<string[]>([]);
@@ -173,6 +176,15 @@ export default function CalendarPage() {
                                 </TouchableOpacity>
                             </View>
 
+                            {/* Add Event Button */}
+                            <TouchableOpacity
+                                style={styles.addEventButton}
+                                onPress={() => router.push('/(tabs)/calendar/add-event')}
+                            >
+                                <Ionicons name="add" size={20} color="#fff" />
+                                <Text style={styles.addEventText}>{t('calendar.add_event')}</Text>
+                            </TouchableOpacity>
+
                             <UpcomingEventsList
                                 events={displayedEvents}
                                 onEventClick={handleEventClick}
@@ -232,6 +244,16 @@ export default function CalendarPage() {
             )}
 
             {isMobile && <View style={{ height: 80 }} />}
+
+            {/* Floating Action Button for Mobile */}
+            {isMobile && (
+                <TouchableOpacity
+                    style={styles.fab}
+                    onPress={() => router.push('/(tabs)/calendar/add-event')}
+                >
+                    <Ionicons name="add" size={28} color="#fff" />
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -325,5 +347,40 @@ const styles = StyleSheet.create({
     periodBtnTextActive: {
         color: '#111827',
         fontWeight: '600',
+    },
+    addEventButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#6366F1',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 12,
+        shadowColor: '#6366F1',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    addEventText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#fff',
+    },
+    fab: {
+        position: 'absolute',
+        bottom: 90,
+        right: 20,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#6366F1',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#6366F1',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
     },
 });

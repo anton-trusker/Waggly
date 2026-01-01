@@ -5,6 +5,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useLocale } from '@/hooks/useLocale';
+import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 
 export default function DocumentsTab() {
   const { t } = useLocale();
@@ -18,6 +19,7 @@ export default function DocumentsTab() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all_types');
   const [selectedTime, setSelectedTime] = useState('last_6_months');
+  const [documentModalOpen, setDocumentModalOpen] = useState(false);
 
   const pet = pets?.find(p => p.id === id);
 
@@ -76,14 +78,14 @@ export default function DocumentsTab() {
           <View style={styles.desktopActions}>
             <TouchableOpacity
               style={styles.desktopBtnSecondary}
-              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any)}
+              onPress={() => setDocumentModalOpen(true)}
             >
               <IconSymbol android_material_icon_name="document-scanner" size={20} color="#6366F1" />
               <Text style={styles.desktopBtnTextSecondary}>{t('pet_profile.documents.actions.scan')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.desktopBtnPrimary}
-              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
+              onPress={() => setDocumentModalOpen(true)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
               <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.actions.upload')}</Text>
@@ -95,8 +97,8 @@ export default function DocumentsTab() {
       {/* Mobile Actions */}
       {isMobile && (
         <View style={styles.mobileActionsContainer}>
-          {renderActionTile(t('pet_profile.documents.actions.scan'), 'document-scanner', '#6366F1', '#E0E7FF', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=scan` as any))}
-          {renderActionTile(t('pet_profile.documents.actions.upload'), 'upload-file', '#059669', '#D1FAE5', () => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any))}
+          {renderActionTile(t('pet_profile.documents.actions.scan'), 'document-scanner', '#6366F1', '#E0E7FF', () => setDocumentModalOpen(true))}
+          {renderActionTile(t('pet_profile.documents.actions.upload'), 'upload-file', '#059669', '#D1FAE5', () => setDocumentModalOpen(true))}
           {renderActionTile(t('pet_profile.documents.actions.autofill'), 'auto-fix-high', '#EA580C', '#FFEDD5', () => { })}
         </View>
       )}
@@ -187,7 +189,7 @@ export default function DocumentsTab() {
             <Text style={styles.emptyStateText}>{t('pet_profile.documents.no_documents')}</Text>
             <TouchableOpacity
               style={styles.desktopBtnPrimary}
-              onPress={() => router.push(`/(tabs)/pets/documents/add?petId=${id}&mode=upload` as any)}
+              onPress={() => setDocumentModalOpen(true)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
               <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.upload_cta')}</Text>
@@ -197,6 +199,12 @@ export default function DocumentsTab() {
       </View>
 
       {/* Mobile FAB (if needed, though designs say Action Tiles at top) */}
+
+      <DocumentUploadModal
+        visible={documentModalOpen}
+        onClose={() => setDocumentModalOpen(false)}
+        petId={id}
+      />
     </View>
   );
 }

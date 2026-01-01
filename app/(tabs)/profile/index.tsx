@@ -303,7 +303,12 @@ export default function ProfilePage() {
             {!isMobile && (
               <>
                 <View style={styles.sidebarDivider} />
-                <TouchableOpacity style={styles.sidebarItem} onPress={handleSignOut}>
+                <TouchableOpacity
+                  style={styles.sidebarItem}
+                  onPress={handleSignOut}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
                   <Ionicons name="log-out-outline" size={20} color="#EF4444" />
                   <Text style={[styles.sidebarText, { color: '#EF4444' }]}>{t('profile.sign_out')}</Text>
                 </TouchableOpacity>
