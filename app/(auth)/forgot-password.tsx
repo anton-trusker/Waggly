@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -47,7 +48,7 @@ export default function ForgotPasswordScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.logo}>🔑</Text>
+        <Image source={require('@/assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
         <Text style={styles.title}>{t('auth.reset_title')}</Text>
         <Text style={styles.subtitle}>
           {t('auth.reset_subtitle')}
@@ -108,8 +109,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 48,
   },
-  logo: {
-    fontSize: 64,
+  logoImage: {
+    width: 80,
+    height: 80,
     marginBottom: 16,
   },
   title: {

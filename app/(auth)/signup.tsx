@@ -8,7 +8,8 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
-  useWindowDimensions
+  useWindowDimensions,
+  Image
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -92,7 +93,7 @@ export default function SignupScreen() {
   const renderDesktopHeader = () => (
     <View style={styles.desktopHeader}>
       <View style={styles.desktopLogoContainer}>
-        <IconSymbol android_material_icon_name="pets" size={28} color={designSystem.colors.primary[600]} />
+        <Image source={require('@/assets/images/logo.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
       </View>
       <Text style={styles.desktopAppName}>Pawzly</Text>
     </View>
@@ -101,7 +102,7 @@ export default function SignupScreen() {
   const renderMobileHeader = () => (
     <View style={styles.mobileHeader}>
       <View style={styles.logoContainer}>
-        <IconSymbol android_material_icon_name="pets" size={40} color={designSystem.colors.primary[600]} />
+        <Image source={require('@/assets/images/logo.png')} style={{ width: 48, height: 48 }} resizeMode="contain" />
       </View>
       <Text style={styles.appName}>Pawzly</Text>
     </View>

@@ -60,23 +60,7 @@ export default function PetDetailsPage() {
         <View style={styles.container}>
             {isMobile ? (
                 <>
-                    {/* Mobile Header */}
-                    <View style={styles.mobileHeader}>
-                        <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
-                            <Ionicons name="chevron-back" size={24} color="#475569" />
-                        </TouchableOpacity>
-                        <Text style={styles.mobileHeaderTitle}>{pet.name?.toUpperCase() || ''}</Text>
-                        <View style={styles.mobileHeaderActions}>
-                            <TouchableOpacity style={styles.iconBtn} onPress={() => setShareModalVisible(true)}>
-                                <Ionicons name="share-outline" size={20} color="#475569" />
-                            </TouchableOpacity>
-                            {canEdit && (
-                                <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(`/(tabs)/pets/${petId}/edit` as any)}>
-                                    <Ionicons name="create-outline" size={20} color="#475569" />
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    </View>
+
 
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
                         {/* Sticky Tabs Header (simulated placement) */}
@@ -96,22 +80,7 @@ export default function PetDetailsPage() {
                             })}
                         </View>
 
-                        {/* Profile Summary */}
-                        <View style={styles.mobileProfileSection}>
-                            <View style={styles.mobilePhotoContainer}>
-                                <View style={styles.mobileGradientRing}>
-                                    {pet.photo_url ? (
-                                        <Image source={{ uri: pet.photo_url }} style={styles.mobilePhoto} />
-                                    ) : (
-                                        <View style={[styles.mobilePhoto, { backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }]}>
-                                            <Ionicons name="paw" size={32} color="#94A3B8" />
-                                        </View>
-                                    )}
-                                </View>
-                            </View>
 
-                            <Text style={styles.mobilePetName}>{pet.name}</Text>
-                        </View>
 
                         {/* Tab Content */}
                         <View style={{ paddingBottom: 100 }}>

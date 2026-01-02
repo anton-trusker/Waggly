@@ -158,6 +158,10 @@ export function usePets() {
     }
   };
 
+  const getPet = useCallback((id: string) => {
+    return pets.find(p => p.id === id);
+  }, [pets]);
+
   return {
     pets,
     loading,
@@ -165,5 +169,6 @@ export function usePets() {
     updatePet,
     deletePet,
     refreshPets: fetchPets,
+    getPet,
   };
 }

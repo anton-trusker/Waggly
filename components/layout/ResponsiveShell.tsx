@@ -3,7 +3,7 @@ import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'expo-router';
 import SidebarNav from '@/components/desktop/layout/SidebarNav';
-import MobileHeader from '@/components/layout/MobileHeader';
+import AppHeader from '@/components/layout/AppHeader';
 
 import FloatingTabBarWithPlus, { TabBarItem } from '@/components/layout/FloatingTabBarWithPlus';
 import KeyboardShortcutsModal from '@/components/desktop/KeyboardShortcutsModal';
@@ -81,7 +81,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
             {isDesktop && <SidebarNav />}
 
             <View style={styles.mainContent}>
-                {!isDesktop && <MobileHeader />}
+                <AppHeader />
 
                 <View style={[styles.content, !isDesktop && styles.contentMobile]}>
                     {children}

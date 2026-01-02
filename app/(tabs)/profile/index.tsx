@@ -247,10 +247,13 @@ export default function ProfilePage() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, isMobile && styles.headerMobile]}>
-        <Text style={styles.title}>{t('profile.title')}</Text>
-        <Text style={styles.subtitle}>{t('profile.subtitle')}</Text>
-      </View>
+      {/* Header - Desktop Only (Mobile uses Global AppHeader) */}
+      {!isMobile && (
+        <View style={styles.header}>
+          <Text style={styles.title}>{t('profile.title')}</Text>
+          <Text style={styles.subtitle}>{t('profile.subtitle')}</Text>
+        </View>
+      )}
 
       <View style={[styles.content, isMobile && styles.contentMobile]}>
         {/* Sidebar Tabs */}

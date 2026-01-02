@@ -18,18 +18,7 @@ export default function PetsListPage() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={[styles.header, isMobile && styles.headerMobile]}>
-        <View>
-          <Text style={styles.title}>{t('my_pets_page.title')}</Text>
-          <Text style={styles.subtitle}>{t('my_pets_page.subtitle')}</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/new' as any)}>
-            <Ionicons name="add" size={20} color="#fff" />
-            <Text style={styles.addButtonText}>{t('my_pets_page.add_pet')}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+
 
       {loading ? (
         <View style={[styles.grid, isMobile && styles.gridMobile]}>

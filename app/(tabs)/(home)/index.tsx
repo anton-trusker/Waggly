@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
@@ -59,18 +59,7 @@ export default function DashboardPage() {
         >
             <View style={[styles.content, !isLargeScreen && styles.contentMobile]}>
 
-                {/* Header (Greeting) */}
-                <View style={styles.header}>
-                    <View>
-                        <Text style={[styles.welcomeText, { color: theme.colors.text.primary }]}>{t('dashboard.welcome_back')}</Text>
-                        <Text style={[styles.subtitleText, { color: theme.colors.text.secondary }]}>{t('dashboard.subtitle')}</Text>
-                    </View>
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as any)}>
-                        <View style={styles.avatarPlaceholder}>
-                            <IconSymbol android_material_icon_name="person" size={24} color="#9CA3AF" />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+
 
                 {/* Mobile Layout - Direct vertical stack */}
                 {!isLargeScreen && (
@@ -129,23 +118,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 16,
+        backgroundColor: '#6366F1', // Blue
+        paddingHorizontal: 20,
+        paddingTop: Platform.OS === 'ios' ? 60 : 20, // Safe Area
+        paddingBottom: 20,
+        marginHorizontal: -16, // Full width bleed
+        marginTop: -16, // Full width bleed
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 4,
+        zIndex: 10,
     },
     welcomeText: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: '700',
         fontFamily: 'Plus Jakarta Sans',
+        color: '#fff',
     },
     subtitleText: {
         fontSize: 14,
         fontFamily: 'Plus Jakarta Sans',
         marginTop: 4,
+        color: 'rgba(255,255,255,0.8)',
     },
     avatarPlaceholder: {
         width: 40,
         height: 40,
-        borderRadius: 20,
-        backgroundColor: '#F3F4F6',
+        borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
         alignItems: 'center',
         justifyContent: 'center',
     },
