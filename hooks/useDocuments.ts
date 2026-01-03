@@ -5,12 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import * as FileSystem from 'expo-file-system/legacy';
 import { decode } from 'base64-arraybuffer';
 import { Platform } from 'react-native';
+import { usePostHog } from 'posthog-react-native';
 
 export function useDocuments(petId?: string) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const isMountedRef = useRef(true);
+  const posthog = usePostHog();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -117,6 +119,12 @@ export function useDocuments(petId?: string) {
 
       if (dbError) throw dbError;
 
+      posthog.capture('document_uploaded', {
+        pet_id: finalPetId,
+        document_type: type,
+        file_name: fileName,
+      });
+
       await fetchDocuments();
       return { data, error: null };
     } catch (error) {
@@ -137,6 +145,10 @@ export function useDocuments(petId?: string) {
         .eq('id', documentId);
 
       if (dbError) throw dbError;
+
+      posthog.capture('document_deleted', {
+        document_id: documentId,
+      });
 
       // 2. Delete from Storage (extract path from URL)
       // URL format: .../storage/v1/object/public/pet-documents/path/to/file

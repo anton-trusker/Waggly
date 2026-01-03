@@ -52,6 +52,11 @@ export function useTreatments(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('treatment_created', {
+        pet_id: petId,
+        treatment_name: data.treatment_name,
+      });
+
       await fetchTreatments();
       return { data, error: null };
     } catch (error) {
@@ -74,6 +79,11 @@ export function useTreatments(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('treatment_updated', {
+        pet_id: petId,
+        treatment_id: treatmentId,
+      });
+
       await fetchTreatments();
       return { data, error: null };
     } catch (error) {
@@ -93,6 +103,11 @@ export function useTreatments(petId: string | null) {
         console.error('Error deleting treatment:', error);
         return { error };
       }
+
+      posthog.capture('treatment_deleted', {
+        pet_id: petId,
+        treatment_id: treatmentId,
+      });
 
       await fetchTreatments();
       return { error: null };

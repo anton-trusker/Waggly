@@ -1,0 +1,101 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { designSystem } from '@/constants/designSystem';
+import { usePostHogExtras } from '@/hooks/usePostHogExtras';
+
+interface RemoteBannerProps {
+    flagName: string; // The PostHog feature flag name for this banner
+}
+
+export const RemoteBanner: React.FC<RemoteBannerProps> = ({ flagName }) => {
+    const { getBanner } = usePostHogExtras();
+    const banner = getBanner(flagName);
+
+    if (!banner || !banner.active) return null;
+
+    const getIcon = () => {
+        switch (banner.type) {
+            case 'success': return 'checkmark-circle';
+            case 'warning': return 'warning';
+            case 'error': return 'alert-circle';
+            default: return 'information-circle';
+        }
+    };
+
+    const getColors = () => {
+        switch (banner.type) {
+            case 'success': return { bg: '#ECFDF5', text: '#065F46', icon: '#10B981', border: '#D1FAE5' };
+            case 'warning': return { bg: '#FFFBEB', text: '#92400E', icon: '#F59E0B', border: '#FEF3C7' };
+            case 'error': return { bg: '#FEF2F2', text: '#991B1B', icon: '#EF4444', border: '#FEE2E2' };
+            default: return { bg: '#EFF6FF', text: '#1E40AF', icon: '#3B82F6', border: '#DBEAFE' };
+        }
+    };
+
+    const colors = getColors();
+
+    const handlePress = () => {
+        if (banner.link) {
+            if (Platform.OS === 'web') {
+                window.open(banner.link, '_blank');
+            } else {
+                Linking.openURL(banner.link);
+            }
+        }
+    };
+
+    return (
+        <TouchableOpacity 
+            activeOpacity={banner.link ? 0.7 : 1} 
+            onPress={handlePress}
+            style={[
+                styles.container, 
+                { backgroundColor: colors.bg, borderColor: colors.border },
+                !banner.link && { cursor: 'default' } as any
+            ]}
+        >
+            <View style={styles.content}>
+                <Ionicons name={getIcon() as any} size={20} color={colors.icon} />
+                <View style={styles.textContainer}>
+                    {banner.title ? <Text style={[styles.title, { color: colors.text }]}>{banner.title}</Text> : null}
+                    <Text style={[styles.message, { color: colors.text }]}>{banner.message}</Text>
+                </View>
+                {banner.link ? (
+                    <Ionicons name="chevron-forward" size={16} color={colors.text} style={styles.arrow} />
+                ) : null}
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        marginHorizontal: 16,
+        marginVertical: 8,
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        ...designSystem.shadows.sm,
+    },
+    content: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    textContainer: {
+        flex: 1,
+        marginLeft: 12,
+        marginRight: 8,
+    },
+    title: {
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    message: {
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    arrow: {
+        marginLeft: 4,
+    }
+});

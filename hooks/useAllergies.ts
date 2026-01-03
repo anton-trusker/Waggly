@@ -1,7 +1,7 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Allergy } from '@/types';
+import { usePostHog } from 'posthog-react-native';
 
 // Helper to normalize allergy data from potential schema variations
 const normalizeAllergy = (data: any): Allergy => {
@@ -22,6 +22,7 @@ const normalizeAllergy = (data: any): Allergy => {
 export function useAllergies(petId: string | null) {
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [loading, setLoading] = useState(true);
+  const posthog = usePostHog();
 
   const fetchAllergies = useCallback(async () => {
     if (!petId) {
@@ -87,6 +88,12 @@ export function useAllergies(petId: string | null) {
         console.error('Error adding allergy:', error);
         return { error };
       }
+
+      posthog.capture('allergy_created', {
+        pet_id: petId,
+        allergen: data.allergen,
+        type: data.type,
+      });
 
       await fetchAllergies();
       return { data: normalizeAllergy(data), error: null };

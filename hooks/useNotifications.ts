@@ -73,6 +73,10 @@ export function useNotifications() {
 
       if (error) throw error;
 
+      posthog.capture('notification_read', {
+        notification_id: id,
+      });
+
       // Optimistic update
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch (err) {
@@ -90,6 +94,8 @@ export function useNotifications() {
 
       if (error) throw error;
 
+      posthog.capture('notifications_all_read');
+
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     } catch (err) {
       console.error('Error marking all as read:', err);
@@ -105,6 +111,10 @@ export function useNotifications() {
 
       if (error) throw error;
 
+      posthog.capture('notification_deleted', {
+        notification_id: id,
+      });
+
       setNotifications(prev => prev.filter(n => n.id !== id));
     } catch (err) {
       console.error('Error deleting notification:', err);
@@ -119,6 +129,8 @@ export function useNotifications() {
         .eq('user_id', user?.id);
 
       if (error) throw error;
+
+      posthog.capture('notifications_cleared');
 
       setNotifications([]);
     } catch (err) {

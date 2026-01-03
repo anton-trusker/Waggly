@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/db';
+import { usePostHog } from 'posthog-react-native';
 
 type CoOwnerRow = Database['public']['Tables']['co_owners']['Row'];
 type CoOwnerInsert = Database['public']['Tables']['co_owners']['Insert'];
@@ -9,6 +10,7 @@ type CoOwnerUpdate = Database['public']['Tables']['co_owners']['Update'];
 export function useCoOwners() {
     const [coOwners, setCoOwners] = useState<CoOwnerRow[]>([]);
     const [loading, setLoading] = useState(false);
+    const posthog = usePostHog();
 
     const fetchCoOwners = useCallback(async () => {
         setLoading(true);
@@ -52,6 +54,12 @@ export function useCoOwners() {
 
             if (error) throw error;
 
+            posthog.capture('co_owner_invite_sent', {
+                co_owner_email: email,
+                role,
+                pet_name: petName,
+            });
+
             // 2. Call Edge Function to send email
             if (petName) {
                 const { error: fnError } = await supabase.functions.invoke('send-invite', {
@@ -86,6 +94,12 @@ export function useCoOwners() {
                 .single();
 
             if (error) throw error;
+
+            posthog.capture('co_owner_updated', {
+                co_owner_id: id,
+                updated_fields: Object.keys(updates),
+            });
+
             await fetchCoOwners();
             return { data, error: null };
         } catch (error) {
@@ -102,6 +116,11 @@ export function useCoOwners() {
                 .eq('id', id);
 
             if (error) throw error;
+
+            posthog.capture('co_owner_removed', {
+                co_owner_id: id,
+            });
+
             await fetchCoOwners();
             return { error: null };
         } catch (error) {

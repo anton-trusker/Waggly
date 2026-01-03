@@ -131,16 +131,25 @@ function NavigationThemeProvider() {
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { PostHogProvider } from "posthog-react-native";
+import { posthogConfig } from "@/lib/posthog";
+
 export default function RootLayout() {
   return (
-    <DesignSystemProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeContextProvider>
-          <AuthProvider>
-            <RootLayoutNav />
-          </AuthProvider>
-        </ThemeContextProvider>
-      </GestureHandlerRootView>
-    </DesignSystemProvider>
+    <PostHogProvider
+      apiKey={posthogConfig.apiKey}
+      options={posthogConfig.options}
+      autocapture={posthogConfig.autocapture}
+    >
+      <DesignSystemProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <ThemeContextProvider>
+            <AuthProvider>
+              <RootLayoutNav />
+            </AuthProvider>
+          </ThemeContextProvider>
+        </GestureHandlerRootView>
+      </DesignSystemProvider>
+    </PostHogProvider>
   );
 }

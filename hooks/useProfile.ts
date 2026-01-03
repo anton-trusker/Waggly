@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Profile } from '@/types';
+import { usePostHog } from 'posthog-react-native';
 
 export function useProfile() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const posthog = usePostHog();
 
   const fetchProfile = useCallback(async () => {
     if (!user) {
@@ -52,6 +54,9 @@ export function useProfile() {
         .eq('user_id', user.id);
 
       if (!error) {
+        posthog.capture('user_profile_updated', {
+          updated_fields: Object.keys(values),
+        });
         await fetchProfile();
       }
       return { error };
@@ -59,16 +64,15 @@ export function useProfile() {
       const { error } = await (supabase
         .from('profiles') as any)
         .insert([{
-          id: user.id, // Explicitly set ID to match user.id, though schema has it as separate field that defaults? 
-          // Schema: id UUID PRIMARY KEY REFERENCES auth.users(id)
-          // Actually, usually profile.id IS user.id. 
-          // Let's check schema: id UUID PRIMARY KEY REFERENCES auth.users(id)
-          // It doesn't have DEFAULT gen_random_uuid(). So we MUST provide it.
+          id: user.id,
           user_id: user.id,
           ...values
         }]);
 
       if (!error) {
+        posthog.capture('user_profile_created', {
+          full_name: values.full_name,
+        });
         await fetchProfile();
       }
       return { error };

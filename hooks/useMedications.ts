@@ -59,6 +59,11 @@ export const useMedications = (petId?: string) => {
 
             if (insertError) throw insertError;
 
+            posthog.capture('medication_created', {
+                pet_id: medication.pet_id,
+                medication_name: medication.medication_name,
+            });
+
             setMedications([data, ...medications]);
             return { data, error: null };
         } catch (err) {
@@ -77,6 +82,11 @@ export const useMedications = (petId?: string) => {
 
             if (updateError) throw updateError;
 
+            posthog.capture('medication_updated', {
+                pet_id: data.pet_id,
+                medication_id: id,
+            });
+
             setMedications(medications.map(m => m.id === id ? data : m));
             return { data, error: null };
         } catch (err) {
@@ -92,6 +102,10 @@ export const useMedications = (petId?: string) => {
                 .eq('id', id);
 
             if (deleteError) throw deleteError;
+
+            posthog.capture('medication_deleted', {
+                medication_id: id,
+            });
 
             setMedications(medications.filter(m => m.id !== id));
             return { error: null };

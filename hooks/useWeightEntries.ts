@@ -77,6 +77,11 @@ export function useWeightEntries(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('weight_entry_created', {
+        pet_id: petId,
+        weight: data.weight,
+      });
+
       await fetchWeightEntries();
       return { data, error: null };
     } catch (error) {
@@ -100,6 +105,11 @@ export function useWeightEntries(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('weight_entry_updated', {
+        pet_id: petId,
+        entry_id: entryId,
+      });
+
       await fetchWeightEntries();
       return { data, error: null };
     } catch (error) {
@@ -119,6 +129,11 @@ export function useWeightEntries(petId: string | null) {
         console.error('Error deleting weight entry:', error);
         return { error };
       }
+
+      posthog.capture('weight_entry_deleted', {
+        pet_id: petId,
+        entry_id: entryId,
+      });
 
       await fetchWeightEntries();
       return { error: null };

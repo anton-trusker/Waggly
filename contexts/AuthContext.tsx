@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
+import { usePostHog } from 'posthog-react-native';
+
 interface AuthContextType {
   session: Session | null;
   user: User | null;
@@ -22,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<any | null>(null); // Store profile data
   const [loading, setLoading] = useState(true);
   const emailRedirectTo = process.env.EXPO_PUBLIC_EMAIL_REDIRECT_URL;
+  const posthog = usePostHog();
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -30,9 +33,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .select('*')
         .eq('id', userId)
         .single();
-      
+
       if (!error && data) {
         setProfile(data);
+        // Identify in PostHog with profile details
+        posthog.identify(userId, {
+          email: data.email,
+          full_name: data.full_name,
+          platform: typeof window !== 'undefined' ? 'web' : 'native'
+        });
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -63,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(null);
         setUser(null);
         setProfile(null);
+        posthog.reset();
       }
       setLoading(false);
     });
@@ -72,18 +82,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Auth state changed:', _event, session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         fetchProfile(session.user.id);
       } else {
         setProfile(null);
+        posthog.reset(); // Reset identity on sign out
       }
-      
+
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [posthog]);
 
   const signUp = async (email: string, password: string) => {
     // Determine redirect URL: Use env var if set, otherwise fallback to window.origin on web
@@ -107,6 +118,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
       options,
     });
+
+    if (!error) {
+      posthog.capture('user_signed_up', { email });
+    }
+
     return { error };
   };
 
@@ -118,10 +134,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         skipBrowserRedirect: true // Sometimes helpful for avoiding unnecessary redirects
       }
     });
+
+    if (!error) {
+      posthog.capture('user_signed_in', { email });
+    }
+
     return { error };
   };
 
   const signOut = async () => {
+    posthog.capture('user_signed_out');
     await supabase.auth.signOut();
     try {
       if (typeof localStorage !== 'undefined') {

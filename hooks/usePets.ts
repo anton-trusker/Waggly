@@ -110,6 +110,12 @@ export function usePets() {
         return { error, data: null };
       }
 
+      posthog.capture('pet_created', {
+        pet_id: data.id,
+        species: data.species,
+        breed: data.breed,
+      });
+
       await fetchPets();
       return { error: null, data: data as Pet };
     } catch (error) {
@@ -130,6 +136,11 @@ export function usePets() {
         return { error };
       }
 
+      posthog.capture('pet_updated', {
+        pet_id: petId,
+        updated_fields: Object.keys(petData),
+      });
+
       await fetchPets();
       return { error: null };
     } catch (error) {
@@ -149,6 +160,10 @@ export function usePets() {
         console.error('Error deleting pet:', error);
         return { error };
       }
+
+      posthog.capture('pet_deleted', {
+        pet_id: petId,
+      });
 
       await fetchPets();
       return { error: null };

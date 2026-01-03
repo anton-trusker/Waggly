@@ -30,11 +30,20 @@ export function useMedicalVisits(petId: string) {
   const addVisit = async (visit: Partial<MedicalVisit>) => {
     if (!user) return { error: { message: 'No user logged in' } };
     try {
-      const { error } = await (supabase
+      const { data, error } = await (supabase
         .from('medical_visits') as any)
-        .insert({ ...visit, pet_id: petId });
+        .insert({ ...visit, pet_id: petId })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      posthog.capture('medical_visit_created', {
+        pet_id: petId,
+        visit_type: data.visit_type,
+        clinic_name: data.clinic_name,
+      });
+
       await fetchVisits();
       return { error: null };
     } catch (error) {
@@ -51,6 +60,12 @@ export function useMedicalVisits(petId: string) {
         .eq('id', visitId);
 
       if (error) throw error;
+
+      posthog.capture('medical_visit_deleted', {
+        pet_id: petId,
+        visit_id: visitId,
+      });
+
       await fetchVisits();
       return { error: null };
     } catch (error) {

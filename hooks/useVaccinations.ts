@@ -1,7 +1,7 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/db';
+import { usePostHog } from 'posthog-react-native';
 
 type Vaccination = Database['public']['Tables']['vaccinations']['Row'];
 type VaccinationInsert = Database['public']['Tables']['vaccinations']['Insert'];
@@ -12,6 +12,7 @@ export type VaccinationStatus = 'up-to-date' | 'due-soon' | 'overdue';
 export function useVaccinations(petId: string | null) {
   const [vaccinations, setVaccinations] = useState<Vaccination[]>([]);
   const [loading, setLoading] = useState(true);
+  const posthog = usePostHog();
 
   const fetchVaccinations = useCallback(async () => {
     if (!petId) {
@@ -63,6 +64,11 @@ export function useVaccinations(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('vaccination_created', {
+        pet_id: petId,
+        vaccine_name: data.vaccine_name,
+      });
+
       await fetchVaccinations();
       return { data, error: null };
     } catch (error) {
@@ -88,6 +94,11 @@ export function useVaccinations(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('vaccination_updated', {
+        pet_id: petId,
+        vaccination_id: vaccinationId,
+      });
+
       await fetchVaccinations();
       return { data, error: null };
     } catch (error) {
@@ -107,6 +118,11 @@ export function useVaccinations(petId: string | null) {
         console.error('Error deleting vaccination:', error);
         return { error };
       }
+
+      posthog.capture('vaccination_deleted', {
+        pet_id: petId,
+        vaccination_id: vaccinationId,
+      });
 
       await fetchVaccinations();
       return { error: null };

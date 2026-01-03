@@ -68,6 +68,12 @@ export function useVeterinarians(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('veterinarian_created', {
+        pet_id: petId,
+        clinic_name: data.clinic_name,
+        vet_name: data.vet_name,
+      });
+
       await fetchVeterinarians();
       return { data, error: null };
     } catch (error) {
@@ -94,6 +100,11 @@ export function useVeterinarians(petId: string | null) {
         return { error };
       }
 
+      posthog.capture('veterinarian_updated', {
+        pet_id: petId,
+        vet_id: vetId,
+      });
+
       await fetchVeterinarians();
       return { data, error: null };
     } catch (error) {
@@ -113,6 +124,11 @@ export function useVeterinarians(petId: string | null) {
         console.error('Error deleting veterinarian:', error);
         return { error };
       }
+
+      posthog.capture('veterinarian_deleted', {
+        pet_id: petId,
+        vet_id: vetId,
+      });
 
       await fetchVeterinarians();
       return { error: null };

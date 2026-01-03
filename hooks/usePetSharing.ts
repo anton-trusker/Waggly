@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { POSTHOG_API_KEY, POSTHOG_HOST } from '@/lib/posthog';
 
-export interface ShareToken {
+export interface PetShareToken {
     id: string;
     pet_id: string;
     token: string;
@@ -96,6 +98,19 @@ export function usePetSharing(petId?: string) {
                 return { data: null, error };
             }
 
+            // Track shared event
+            try {
+                const PostHog = (await import('posthog-react-native')).default;
+                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                ph.capture('pet_shared', {
+                    pet_id: petId,
+                    permission_level: permissionLevel,
+                    platform: typeof window !== 'undefined' ? 'web' : 'native'
+                });
+            } catch (e) {
+                console.warn('PostHog tracking failed', e);
+            }
+
             await fetchTokens(); // Refresh list
             return { data, error: null };
         } catch (error: any) {
@@ -148,6 +163,18 @@ export function usePetSharing(petId?: string) {
                 return { error };
             }
 
+            // Track revocation
+            try {
+                const PostHog = (await import('posthog-react-native')).default;
+                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                ph.capture('pet_share_revoked', {
+                    token_id: tokenId,
+                    pet_id: petId
+                });
+            } catch (e) {
+                console.warn('PostHog tracking failed', e);
+            }
+
             await fetchTokens(); // Refresh list
             return { error: null };
         } catch (error: any) {
@@ -167,6 +194,18 @@ export function usePetSharing(petId?: string) {
             if (error) {
                 console.error('Error deleting token:', error);
                 return { error };
+            }
+
+            // Track deletion
+            try {
+                const PostHog = (await import('posthog-react-native')).default;
+                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                ph.capture('pet_share_deleted', {
+                    token_id: tokenId,
+                    pet_id: petId
+                });
+            } catch (e) {
+                console.warn('PostHog tracking failed', e);
             }
 
             await fetchTokens(); // Refresh list

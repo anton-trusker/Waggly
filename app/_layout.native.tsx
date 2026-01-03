@@ -18,6 +18,8 @@ import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PostHogProvider } from "posthog-react-native";
 
+import { posthogConfig } from "@/lib/posthog";
+
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
@@ -73,12 +75,9 @@ export default function RootLayout() {
           value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
         >
           <PostHogProvider
-            apiKey="phc_V69oo6nlMMA57eE6zWC4uyfCop2RgR6Wuh8tC1KhPbu"
-            options={{
-              host: 'https://eu.i.posthog.com',
-              enableSessionReplay: true,
-            }}
-            autocapture
+            apiKey={posthogConfig.apiKey}
+            options={posthogConfig.options}
+            autocapture={posthogConfig.autocapture}
           >
             <AuthProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
