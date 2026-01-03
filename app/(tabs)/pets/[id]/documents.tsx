@@ -57,51 +57,19 @@ export default function DocumentsTab() {
     return matchesSearch && matchesType;
   });
 
-  const renderActionTile = (label: string, icon: string, color: string, bgColor: string, onPress: () => void) => (
-    <TouchableOpacity
-      style={[styles.actionTile, isMobile && styles.actionTileMobile]}
-      onPress={onPress}
-    >
-      <View style={[styles.actionIconBox, { backgroundColor: bgColor }, isMobile && styles.actionIconBoxMobile]}>
-        <IconSymbol android_material_icon_name={icon as any} size={isMobile ? 24 : 28} color={color} />
-      </View>
-      <Text style={[styles.actionLabel, isMobile && styles.actionLabelMobile]}>{label}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
-      {/* Desktop Header & Actions */}
-      {!isMobile && (
-        <View style={styles.desktopHeader}>
-          <Text style={styles.sectionTitle}>{t('pet_profile.documents.title')} ({filteredDocs.length})</Text>
-          <View style={styles.desktopActions}>
-            <TouchableOpacity
-              style={styles.desktopBtnSecondary}
-              onPress={() => setDocumentModalOpen(true)}
-            >
-              <IconSymbol android_material_icon_name="document-scanner" size={20} color="#6366F1" />
-              <Text style={styles.desktopBtnTextSecondary}>{t('pet_profile.documents.actions.scan')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.desktopBtnPrimary}
-              onPress={() => setDocumentModalOpen(true)}
-            >
-              <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
-              <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.actions.upload')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Mobile Actions */}
-      {isMobile && (
-        <View style={styles.mobileActionsContainer}>
-          {renderActionTile(t('pet_profile.documents.actions.scan'), 'document-scanner', '#6366F1', '#E0E7FF', () => setDocumentModalOpen(true))}
-          {renderActionTile(t('pet_profile.documents.actions.upload'), 'upload-file', '#059669', '#D1FAE5', () => setDocumentModalOpen(true))}
-          {renderActionTile(t('pet_profile.documents.actions.autofill'), 'auto-fix-high', '#EA580C', '#FFEDD5', () => { })}
-        </View>
-      )}
+      {/* Header & Actions (Unified for Mobile & Desktop) */}
+      <View style={[styles.header, isMobile && styles.headerMobile]}>
+        <Text style={styles.sectionTitle}>{t('pet_profile.documents.title')} ({filteredDocs.length})</Text>
+        <TouchableOpacity
+          style={styles.primaryBtn}
+          onPress={() => setDocumentModalOpen(true)}
+        >
+          <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
+          <Text style={styles.primaryBtnText}>{t('pet_profile.documents.actions.upload')}</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Filters */}
       <View style={[styles.filterContainer, isMobile && styles.filterContainerMobile]}>
@@ -188,11 +156,11 @@ export default function DocumentsTab() {
             <IconSymbol android_material_icon_name="folder-open" size={48} color="#D1D5DB" />
             <Text style={styles.emptyStateText}>{t('pet_profile.documents.no_documents')}</Text>
             <TouchableOpacity
-              style={styles.desktopBtnPrimary}
+              style={styles.primaryBtn}
               onPress={() => setDocumentModalOpen(true)}
             >
               <IconSymbol android_material_icon_name="upload-file" size={20} color="#fff" />
-              <Text style={styles.desktopBtnTextPrimary}>{t('pet_profile.documents.upload_cta')}</Text>
+              <Text style={styles.primaryBtnText}>{t('pet_profile.documents.upload_cta')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -215,45 +183,27 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: '#F6F6F8', // Match OverviewTab bg
   },
-  // Desktop Header
-  desktopHeader: {
+  // Header
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 24,
+  },
+  headerMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 16,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#1F2937',
   },
-  desktopActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  desktopBtnSecondary: {
+  primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  desktopBtnTextSecondary: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-  },
-  desktopBtnPrimary: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -264,56 +214,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  desktopBtnTextPrimary: {
+  primaryBtnText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
-  },
-
-  // Mobile Actions
-  mobileActionsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  actionTile: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  actionTileMobile: {
-    padding: 12,
-    gap: 8,
-  },
-  actionIconBox: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionIconBoxMobile: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  actionLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-  },
-  actionLabelMobile: {
-    fontSize: 12,
   },
 
   // Filters

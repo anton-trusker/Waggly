@@ -309,7 +309,7 @@ export default function HealthTab() {
                             ]}>{t(`pet_profile.health.badges.${status.toLowerCase().replace(' ', '_')}` as any)}</Text>
                           </View>
                         </View>
-                        <Text style={styles.vaccineName}>{vaccination.name}</Text>
+                        <Text style={styles.vaccineName}>{vaccination.vaccine_name}</Text>
                         <Text style={styles.vaccineProvider}>{vaccination.provider || 'Standard Vaccine'}</Text>
                         <View style={styles.vaccineFooter}>
                           <Text style={styles.expiresLabel}>{t('common.expires_short') || 'EXPIRES'}</Text>

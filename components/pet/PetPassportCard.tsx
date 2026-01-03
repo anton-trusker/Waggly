@@ -8,10 +8,11 @@ import { Pet } from '@/types';
 interface PetPassportCardProps {
     pet: Pet;
     onPress?: () => void;
+    onQrPress?: () => void;
 }
 
 // Memoized for performance
-export const PetPassportCard = React.memo(({ pet, onPress }: PetPassportCardProps) => {
+export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassportCardProps) => {
     const { t } = useLocale();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Mobile breakpoint
@@ -57,7 +58,7 @@ export const PetPassportCard = React.memo(({ pet, onPress }: PetPassportCardProp
                                 </Text>
                             </View>
                         )}
-                        <TouchableOpacity style={styles.qrButton}>
+                        <TouchableOpacity style={styles.qrButton} onPress={onQrPress}>
                             <IconSymbol
                                 ios_icon_name="qrcode"
                                 android_material_icon_name="qr_code"
@@ -70,11 +71,10 @@ export const PetPassportCard = React.memo(({ pet, onPress }: PetPassportCardProp
 
                 {/* Main Content - New Layout */}
                 <View style={styles.contentContainer}>
-                    {/* Top Row: Photo + Name/Breed - Hidden on Mobile */}
-                    {!isMobile && (
-                        <View style={styles.topRow}>
-                            {/* Photo */}
-                            <View style={styles.photoContainer}>
+                    {/* Top Row: Photo + Name/Breed - Always Visible */}
+                    <View style={styles.topRow}>
+                        {/* Photo */}
+                        <View style={styles.photoContainer}>
                                 {pet.photo_url ? (
                                     <Image source={{ uri: pet.photo_url }} style={styles.photo} />
                                 ) : (
@@ -116,7 +116,7 @@ export const PetPassportCard = React.memo(({ pet, onPress }: PetPassportCardProp
                                 )}
                             </View>
                         </View>
-                    )}
+
 
                     {/* Details Table */}
                     <View style={styles.detailsTable}>

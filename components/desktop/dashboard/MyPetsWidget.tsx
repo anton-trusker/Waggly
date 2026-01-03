@@ -54,18 +54,6 @@ export default function MyPetsWidget() {
             borderColor: theme.colors.border.primary,
             backgroundColor: theme.colors.background.primary
         }]}>
-            <View style={styles.header}>
-                <View style={styles.titleRow}>
-                    <Text style={[styles.title, { color: theme.colors.text.primary }]}>My Pets</Text>
-                    <View style={[styles.badge, { backgroundColor: theme.colors.primary[50] }]}>
-                        <Text style={[styles.badgeText, { color: theme.colors.primary[500] }]}>{pets.length}</Text>
-                    </View>
-                </View>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/pets' as any)}>
-                    <Text style={[styles.link, { color: theme.colors.primary[500] }]}>Manage</Text>
-                </TouchableOpacity>
-            </View>
-
             {isLargeScreen ? (
                 // Desktop: Vertical Stack of Cards (no add button if pets exist)
                 <View style={styles.desktopStack}>
@@ -102,37 +90,7 @@ const styles = StyleSheet.create({
     container: {
         // No marginBottom - grid gap handles spacing
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: '700',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    badge: {
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 8,
-    },
-    badgeText: {
-        fontSize: 12,
-        fontWeight: '600',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    link: {
-        fontSize: 14,
-        fontWeight: '600',
-        fontFamily: 'Plus Jakarta Sans',
-    },
+
     scrollContent: {
         gap: 16,
         paddingRight: 16,

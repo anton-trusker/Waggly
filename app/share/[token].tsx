@@ -127,7 +127,7 @@ export default function PublicShareScreen() {
                   {details.vaccinations.map((v, i) => (
                     <View key={i} style={styles.listItem}>
                       <Text style={styles.itemTitle}>{v.vaccine}</Text>
-                      <Text style={styles.itemDate}>Given: {formatDateFriendly(new Date(v.date_administered))}</Text>
+                      <Text style={styles.itemDate}>Given: {formatDateFriendly(new Date(v.date_given))}</Text>
                     </View>
                   ))}
                 </View>

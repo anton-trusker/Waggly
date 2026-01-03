@@ -46,6 +46,15 @@ export default function DashboardUpcoming() {
         return '#FEF3C7';
     };
 
+    const getPriorityColor = (priority?: string) => {
+        switch (priority) {
+            case 'high': return '#EF4444';
+            case 'medium': return '#F59E0B';
+            case 'low': return '#10B981';
+            default: return '#6B7280';
+        }
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: '#fff', borderColor: theme.colors.border.primary }]}>
             <View style={styles.header}>
@@ -93,13 +102,21 @@ export default function DashboardUpcoming() {
                                 onPress={() => router.push('/(tabs)/calendar' as any)}
                             >
                                 <View style={styles.cardHeader}>
-                                    <View style={[styles.iconBox, { backgroundColor: getBgColor(event.type) }]}>
-                                        <IconSymbol
-                                            android_material_icon_name={getEventIcon(event.type) as any}
-                                            ios_icon_name={getEventIconIOS(event.type) as any}
-                                            size={20}
-                                            color={getEventColor(event.type)}
-                                        />
+                                    <View style={styles.headerLeftContent}>
+                                        <View style={[styles.iconBox, { backgroundColor: getBgColor(event.type) }]}>
+                                            <IconSymbol
+                                                android_material_icon_name={getEventIcon(event.type) as any}
+                                                ios_icon_name={getEventIconIOS(event.type) as any}
+                                                size={20}
+                                                color={getEventColor(event.type)}
+                                            />
+                                        </View>
+                                        <View style={styles.headerTextContent}>
+                                            <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
+                                            <Text style={styles.subtitle} numberOfLines={1}>
+                                                <Text style={{ textTransform: 'capitalize' }}>{event.type}</Text> • {event.petName || t('dashboard.no_pet_assigned')}
+                                            </Text>
+                                        </View>
                                     </View>
                                     <View style={[styles.badge, { backgroundColor: getBgColor(event.type) }]}>
                                         <Text style={[styles.badgeText, { color: getEventColor(event.type) }]}>
@@ -109,13 +126,17 @@ export default function DashboardUpcoming() {
                                 </View>
 
                                 <View style={styles.cardContent}>
-                                    <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
-                                    <Text style={styles.subtitle} numberOfLines={1}>{event.petName || t('dashboard.no_pet_assigned')}</Text>
+                                    {event.location && (
+                                        <View style={styles.detailRow}>
+                                            <IconSymbol android_material_icon_name="location-on" ios_icon_name="location.fill" size={14} color="#6B7280" />
+                                            <Text style={styles.detailText} numberOfLines={1}>{event.location}</Text>
+                                        </View>
+                                    )}
                                 </View>
 
                                 <View style={styles.cardFooter}>
                                     <Text style={styles.dateText}>
-                                        {new Date(event.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        {new Date(event.dueDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                     </Text>
                                     <IconSymbol android_material_icon_name="chevron-right" ios_icon_name="chevron.right" size={16} color="#9CA3AF" />
                                 </View>
@@ -217,12 +238,23 @@ const styles = StyleSheet.create({
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         marginBottom: 12,
     },
+    headerLeftContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        flex: 1,
+        marginRight: 8,
+    },
+    headerTextContent: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     iconBox: {
-        width: 36,
-        height: 36,
+        width: 40,
+        height: 40,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
@@ -239,17 +271,29 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         marginBottom: 12,
+        paddingLeft: 52, // Align with text (40 icon + 12 gap)
     },
     title: {
         fontSize: 15,
         fontWeight: '700',
         color: '#1F2937',
-        marginBottom: 4,
+        marginBottom: 2,
         fontFamily: 'Plus Jakarta Sans',
     },
     subtitle: {
         fontSize: 13,
         color: '#6B7280',
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    detailRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        marginBottom: 4,
+    },
+    detailText: {
+        fontSize: 13,
+        color: '#4B5563',
         fontFamily: 'Plus Jakarta Sans',
     },
     cardFooter: {

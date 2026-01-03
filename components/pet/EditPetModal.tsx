@@ -150,19 +150,6 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
         >
             {() => (
                 <View style={styles.container}>
-                    {/* Header Info (Always Visible) */}
-                    <View style={styles.headerProfile}>
-                        {formData.photo_url ? (
-                            <Image source={{ uri: formData.photo_url }} style={styles.headerAvatar} />
-                        ) : (
-                            <View style={styles.headerAvatarPlaceholder}><Text style={{ fontSize: 20 }}>🐾</Text></View>
-                        )}
-                        <View>
-                            <Text style={styles.headerName}>{formData.name}</Text>
-                            <Text style={styles.headerSub}>Updating profile...</Text>
-                        </View>
-                    </View>
-
                     {/* Tabs */}
                     <View style={styles.tabBar}>
                         {TABS.map(tab => (
@@ -215,17 +202,6 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
 
 const styles = StyleSheet.create({
     container: { minHeight: 500 },
-    headerProfile: {
-        flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20,
-        paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: designSystem.colors.neutral[100]
-    },
-    headerAvatar: { width: 48, height: 48, borderRadius: 24 },
-    headerAvatarPlaceholder: {
-        width: 48, height: 48, borderRadius: 24, backgroundColor: designSystem.colors.neutral[100],
-        justifyContent: 'center', alignItems: 'center'
-    },
-    headerName: { ...designSystem.typography.title.medium, color: designSystem.colors.text.primary },
-    headerSub: { ...designSystem.typography.body.small, color: designSystem.colors.text.secondary },
     tabBar: {
         flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: designSystem.colors.neutral[200],
         marginBottom: 20

@@ -9,6 +9,8 @@ import { supabase } from '@/lib/supabase';
 import { useLocale } from '@/hooks/useLocale';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
+import EditPetModal from '@/components/pet/EditPetModal';
+import ShareModal from '@/components/sharing/ShareModal';
 
 type Props = {
   title?: string;
@@ -47,6 +49,9 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
   const { user, profile } = useAuth();
   const { t } = useLocale();
   const { getPet } = usePets();
+
+  const [editModalVisible, setEditModalVisible] = React.useState(false);
+  const [shareModalVisible, setShareModalVisible] = React.useState(false);
 
   // Determine Page Type
   const isPetsPath = pathname.includes('/pets');
@@ -169,10 +174,10 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
     if (isPetProfile) {
       return (
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(`/(tabs)/pets/${params.id}/edit` as any)}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => setEditModalVisible(true)}>
             <IconSymbol ios_icon_name="pencil" android_material_icon_name="edit" size={22} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBtn}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => setShareModalVisible(true)}>
             <IconSymbol ios_icon_name="square.and.arrow.up" android_material_icon_name="share" size={22} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(tabs)/notifications')}>
@@ -214,6 +219,20 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
         <View style={styles.centerContainer}>{renderCenter()}</View>
         <View style={styles.rightContainer}>{renderRight()}</View>
       </View>
+      {currentPetId && (
+        <>
+          <EditPetModal
+            visible={editModalVisible}
+            onClose={() => setEditModalVisible(false)}
+            petId={currentPetId}
+          />
+          <ShareModal
+            visible={shareModalVisible}
+            onClose={() => setShareModalVisible(false)}
+            petId={currentPetId}
+          />
+        </>
+      )}
     </View>
   );
 }

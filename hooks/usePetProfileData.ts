@@ -47,7 +47,7 @@ export function usePetProfileData(petId: string) {
                     .from('vaccinations')
                     .select('*')
                     .eq('pet_id', petId)
-                    .order('date_administered', { ascending: false }),
+                    .order('date_given', { ascending: false }),
 
                 supabase
                     .from('allergies')

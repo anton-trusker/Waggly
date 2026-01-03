@@ -21,6 +21,7 @@ import { PetProfileSkeleton } from '@/components/skeletons/PetProfileSkeleton';
 
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import ShareModal from '@/components/sharing/ShareModal';
 
 export default function OverviewTab() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function OverviewTab() {
   const [conditionModalOpen, setConditionModalOpen] = useState(false); // Added
   const [documentModalOpen, setDocumentModalOpen] = useState(false); // Added
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
 
   // Unified data fetching - replaces 5 individual hooks for better performance
   const {
@@ -98,7 +100,7 @@ export default function OverviewTab() {
 
             {/* Pet Passport Card */}
             <TouchableOpacity onPress={() => setEditKeyInfoModalVisible(true)}>
-              <PetPassportCard pet={pet} />
+              <PetPassportCard pet={pet} onQrPress={() => setShareModalVisible(true)} />
             </TouchableOpacity>
 
             {/* Quick Actions - Under Passport Card */}
@@ -517,6 +519,11 @@ export default function OverviewTab() {
       <EditKeyInfoModal
         visible={editKeyInfoModalVisible}
         onClose={() => setEditKeyInfoModalVisible(false)}
+        petId={pet.id}
+      />
+      <ShareModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
         petId={pet.id}
       />
       <ConditionFormModal

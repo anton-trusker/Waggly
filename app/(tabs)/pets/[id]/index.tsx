@@ -60,8 +60,6 @@ export default function PetDetailsPage() {
         <View style={styles.container}>
             {isMobile ? (
                 <>
-
-
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
                         {/* Sticky Tabs Header (simulated placement) */}
                         <View style={styles.mobileTabs}>

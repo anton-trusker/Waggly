@@ -138,7 +138,7 @@ export default function AddVaccinationScreen() {
         .insert([{
           pet_id: selectedPetId,
           vaccine_name: vaccine?.brandName || 'Unknown Vaccine',
-          date_administered: date,
+          date_given: date,
           next_due_date: nextDueDate || null,
           manufacturer: vaccine?.brandName.split(' ')[0] || null,
           lot_number: batchNumber || null,
