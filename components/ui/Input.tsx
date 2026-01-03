@@ -32,9 +32,10 @@ export default function Input({ label, error, required, style, containerStyle, p
           {...props}
         />
         {isPassword && (
-          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.toggle}>
+          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.toggle} activeOpacity={0.7}>
             <IconSymbol
               android_material_icon_name={isSecure ? 'visibility' : 'visibility-off'}
+              ios_icon_name={isSecure ? 'eye' : 'eye.slash'}
               size={20}
               color={colors.text.secondary}
             />

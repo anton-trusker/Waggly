@@ -189,7 +189,12 @@ export default function SignupScreen() {
   if (isDesktop) {
     return (
       <View style={styles.desktopContainer}>
-        <AuthHeroPanel />
+        {/* Left Side - Hero Panel (50%) */}
+        <View style={styles.desktopHeroContainer}>
+          <AuthHeroPanel />
+        </View>
+        
+        {/* Right Side - Form (50%) */}
         <View style={styles.desktopFormPanel}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
             <ScrollView
@@ -226,31 +231,37 @@ const styles = StyleSheet.create({
   desktopContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: designSystem.colors.neutral[50], // Slightly darker bg for contrast
+    backgroundColor: '#fff',
+  },
+  desktopHeroContainer: {
+    flex: 1,
+    display: 'flex',
   },
   desktopFormPanel: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', // Center the card
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   desktopScrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingVertical: 16, // Reduced from 24
     width: '100%',
     alignItems: 'center',
+    maxWidth: 520,
+    alignSelf: 'center',
   },
 
   // Mobile Layout
   container: {
     flex: 1,
-    backgroundColor: designSystem.colors.neutral[50], // Mobile now uses off-white bg
+    backgroundColor: '#F9FAFB',
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 16, // Add side spacing for card
-    paddingVertical: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     alignItems: 'center',
   },
 
@@ -259,68 +270,75 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20, // Reduced from 32
-    gap: 8,
+    marginBottom: 24,
+    gap: 12,
   },
   logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: designSystem.colors.primary[50],
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
   },
   appName: {
-    fontSize: 20, // Smaller text
+    fontSize: 24,
     fontWeight: '800',
-    color: designSystem.colors.text.primary,
+    color: '#111827',
     letterSpacing: -0.5,
   },
 
   // Typography
   cardTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: designSystem.colors.text.primary,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
     textAlign: 'center',
     marginBottom: 20,
-    fontFamily: 'Plus Jakarta Sans',
-  },
-  sectionTitle: {
-    display: 'none', // Hide old title
+    fontFamily: Platform.OS === 'web' ? 'Plus Jakarta Sans' : undefined,
   },
 
-  // Form Container (Mobile Card by default, Desktop overrides)
+  // Form Container
   formContainer: {
     width: '100%',
-    backgroundColor: designSystem.colors.background.primary,
-    borderRadius: designSystem.borderRadius['2xl'],
-    padding: 24, // Compact padding
-    ...designSystem.shadows.md,
+    maxWidth: 440,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
+    borderColor: '#F3F4F6',
   },
   formContainerDesktop: {
     width: '100%',
-    maxWidth: 480, // Wider for desktop
-    padding: 40,
-    ...designSystem.shadows.xl, // Stronger shadow for desktop
+    maxWidth: 440,
+    padding: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    elevation: 0,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
   },
 
   // Inputs
   inputs: {
-    gap: 12, // Compact gap
-    marginBottom: 20,
+    gap: 8, // Reduced from 12
+    marginBottom: 20, // Reduced from 24
   },
 
   signUpButton: {
-    shadowColor: designSystem.colors.primary[500],
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#6366F1',
+    shadowColor: '#6366F1',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4,
   },
@@ -329,54 +347,53 @@ const styles = StyleSheet.create({
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20, // Compact
+    marginVertical: 32,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: designSystem.colors.border.primary,
+    backgroundColor: '#E5E7EB',
   },
   orText: {
-    fontSize: 12,
-    color: designSystem.colors.text.tertiary,
-    paddingHorizontal: 12,
+    fontSize: 14,
+    color: '#6B7280',
+    paddingHorizontal: 16,
     fontWeight: '500',
   },
 
   // Social Buttons
   socialButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
   },
   socialButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 44, // Compact height
-    borderRadius: designSystem.borderRadius.xl,
+    height: 48,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: designSystem.colors.border.primary,
+    borderColor: '#E5E7EB',
     backgroundColor: '#fff',
-    gap: 8,
-    ...designSystem.shadows.sm,
+    gap: 10,
   },
   socialButtonText: {
-    fontSize: 14,
-    color: designSystem.colors.text.primary,
+    fontSize: 15,
+    color: '#374151',
     fontWeight: '600',
   },
   googleIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: '#DB4437',
     alignItems: 'center',
     justifyContent: 'center',
   },
   googleIconText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });

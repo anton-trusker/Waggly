@@ -91,7 +91,7 @@ export default function LoginScreen() {
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
-          containerStyle={{ marginBottom: 12 }}
+          containerStyle={{ marginBottom: 12, backgroundColor: '#F9FAFB' }}
         />
 
         <View>
@@ -102,6 +102,7 @@ export default function LoginScreen() {
             onChangeText={setPassword}
             secureTextEntry
             isPassword
+            containerStyle={{ backgroundColor: '#F9FAFB' }}
           />
           <TouchableOpacity
             style={styles.forgotPassword}
@@ -132,8 +133,13 @@ export default function LoginScreen() {
           onPress={handleGoogleLogin}
           activeOpacity={0.7}
         >
-          <View style={styles.googleIcon}>
-            <Text style={styles.googleIconText}>G</Text>
+          <Image 
+            source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }} 
+            style={{ width: 20, height: 20 }} 
+          />
+          {/* Fallback to text if image fails or for simplicity in RN without SVG support */}
+          <View style={[styles.googleIcon, { display: 'none' }]}>
+             <Text style={styles.googleIconText}>G</Text>
           </View>
           <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
         </TouchableOpacity>
@@ -144,10 +150,15 @@ export default function LoginScreen() {
   if (isDesktop) {
     return (
       <View style={styles.desktopContainer}>
-        <AuthHeroPanel
-          title={t('auth.hero_title')}
-          subtitle={t('auth.hero_subtitle')}
-        />
+        {/* Left Side - Hero Panel (50%) */}
+        <View style={styles.desktopHeroContainer}>
+          <AuthHeroPanel
+            title={t('auth.hero_title')}
+            subtitle={t('auth.hero_subtitle')}
+          />
+        </View>
+
+        {/* Right Side - Form (50%) */}
         <View style={styles.desktopFormPanel}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
             <ScrollView
@@ -185,110 +196,126 @@ const styles = StyleSheet.create({
   desktopContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: designSystem.colors.neutral[50], // Slightly darker bg for contrast
+    backgroundColor: '#fff', // Clean white background
+  },
+  desktopHeroContainer: {
+    flex: 1,
+    display: 'flex',
   },
   desktopFormPanel: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', // Center the card
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   desktopScrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingVertical: 16, // Reduced from 24
     width: '100%',
     alignItems: 'center',
+    maxWidth: 520, // Constrain width
+    alignSelf: 'center',
   },
 
   // Mobile Layout
   container: {
     flex: 1,
-    backgroundColor: designSystem.colors.neutral[50], // Mobile now uses off-white bg
+    backgroundColor: '#F9FAFB', // Light gray background for mobile
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 16, // Add side spacing for card
-    paddingVertical: 20,
+    paddingHorizontal: 16, // Slightly tighter padding
+    paddingVertical: 24,
     alignItems: 'center',
   },
 
   // Common Header
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Horizontal
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20, // Reduced from 32
-    gap: 8,
+    marginBottom: 24, // Reduced from 32
+    gap: 12,
   },
   logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: designSystem.colors.primary[50],
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
   },
   appName: {
-    fontSize: 20, // Smaller text
+    fontSize: 24, // Smaller font
     fontWeight: '800',
-    color: designSystem.colors.text.primary,
+    color: '#111827',
     letterSpacing: -0.5,
   },
 
   // Typography
   cardTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: designSystem.colors.text.primary,
+    fontSize: 20, // Smaller title for mobile
+    fontWeight: '700',
+    color: '#111827',
     textAlign: 'center',
     marginBottom: 20,
-    fontFamily: 'Plus Jakarta Sans',
+    fontFamily: Platform.OS === 'web' ? 'Plus Jakarta Sans' : undefined,
   },
   sectionTitle: {
-    display: 'none', // Hide old title
+    display: 'none',
   },
 
-  // Form Container (Mobile Card by default, Desktop overrides)
+  // Form Container
   formContainer: {
     width: '100%',
-    backgroundColor: designSystem.colors.background.primary,
-    borderRadius: designSystem.borderRadius['2xl'],
-    padding: 24, // Compact padding
-    ...designSystem.shadows.md,
+    maxWidth: 440,
+    backgroundColor: '#fff',
+    borderRadius: 20, // Slightly less rounded
+    padding: 20, // Reduced padding
+    shadowColor: '#000', // Softer shadow color
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
+    borderColor: '#F3F4F6',
   },
   formContainerDesktop: {
     width: '100%',
-    maxWidth: 480, // Wider for desktop
-    padding: 40,
-    ...designSystem.shadows.xl, // Stronger shadow for desktop
+    maxWidth: 440,
+    padding: 0, // Remove padding to make it flush
+    shadowColor: 'transparent', // Remove shadow for cleaner look on split screen
+    shadowOpacity: 0,
+    elevation: 0,
+    borderWidth: 0,
+    backgroundColor: 'transparent', // Ensure it's transparent
   },
 
   // Inputs
   inputs: {
-    gap: 12, // Compact gap
-    marginBottom: 20,
+    gap: 8, // Reduced from 12
+    marginBottom: 20, // Reduced from 24
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginTop: 6,
+    marginTop: 8,
   },
   forgotPasswordText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: designSystem.colors.primary[500],
+    color: '#6366F1', // Primary brand color
   },
 
   signInButton: {
-    shadowColor: designSystem.colors.primary[500],
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#6366F1',
+    shadowColor: '#6366F1',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4,
   },
@@ -297,54 +324,54 @@ const styles = StyleSheet.create({
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20, // Compact
+    marginVertical: 32,
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: designSystem.colors.border.primary,
+    backgroundColor: '#E5E7EB',
   },
   orText: {
-    fontSize: 12,
-    color: designSystem.colors.text.tertiary,
-    paddingHorizontal: 12,
+    fontSize: 14,
+    color: '#6B7280',
+    paddingHorizontal: 16,
     fontWeight: '500',
   },
 
   // Social Buttons
   socialButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
   },
   socialButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 44, // Compact height
-    borderRadius: designSystem.borderRadius.xl, // More rounded
+    height: 48,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: designSystem.colors.border.primary,
+    borderColor: '#E5E7EB',
     backgroundColor: '#fff',
-    gap: 8,
-    ...designSystem.shadows.sm, // Add subtle shadow
+    gap: 10,
+    // Hover state would be handled in CSS/interaction
   },
   socialButtonText: {
-    fontSize: 14,
-    color: designSystem.colors.text.primary,
+    fontSize: 15,
+    color: '#374151',
     fontWeight: '600',
   },
   googleIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: '#DB4437',
     alignItems: 'center',
     justifyContent: 'center',
   },
   googleIconText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });
