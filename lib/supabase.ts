@@ -48,8 +48,31 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     storage: ExpoSecureStoreAdapter as any,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: false, // Security: prevent URL session injection
+  },
+  global: {
+    headers: {
+      'x-application-name': 'pawzly-mobile',
+    },
+  },
+  db: {
+    schema: 'public',
   },
 });
+
+// Helper to get authenticated client with fresh token
+export async function getAuthenticatedClient() {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    throw new Error('User not authenticated');
+  }
+  
+  return {
+    supabase,
+    session,
+    userId: session.user.id,
+  };
+}
 
 export {};
