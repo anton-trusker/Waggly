@@ -555,6 +555,7 @@ export default function OverviewTab() {
         visible={shareModalVisible}
         onClose={() => setShareModalVisible(false)}
         petId={pet.id}
+        petName={pet.name}
       />
       <ConditionFormModal
         visible={conditionModalOpen}

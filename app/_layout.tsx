@@ -84,14 +84,15 @@ function RootLayoutNav() {
   useEffect(() => {
     const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
     const inOnboardingGroup = segments[0] === '(onboarding)';
+    const isPublicRoute = segments[0] === 'pet' && segments[1] === 'shared';
 
     // If logged in and still in auth pages, go to home
     if (session && inAuthGroup) {
       router.replace('/(tabs)/(home)');
     }
 
-    // If not logged in and not in auth/onboarding, go to login
-    if (!session && !inAuthGroup && !inOnboardingGroup) {
+    // If not logged in and not in auth/onboarding or public route, go to login
+    if (!session && !inAuthGroup && !inOnboardingGroup && !isPublicRoute) {
       router.replace('/(auth)/login');
     }
   }, [session, segments]);

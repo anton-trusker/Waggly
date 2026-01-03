@@ -1,33 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Clipboard, Alert } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Platform, Clipboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { QRCode } from 'react-qrcode-logo';
-import { usePets } from '@/hooks/usePets';
 import { usePetSharing, ShareToken } from '@/hooks/usePetSharing';
-import { useLocale } from '@/hooks/useLocale';
 import { designSystem } from '@/constants/designSystem';
+import FormModal from '@/components/ui/FormModal';
 
-export default function ShareTab() {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    const { pets } = usePets();
-    const pet = pets?.find(p => p.id === id);
-    const { t } = useLocale();
-    const { tokens, loading, getOrCreateToken, deleteToken, getShareUrl } = usePetSharing(id);
+interface ShareModalProps {
+    visible: boolean;
+    onClose: () => void;
+    petId: string;
+    petName: string;
+}
+
+export default function ShareModal({ visible, onClose, petId, petName }: ShareModalProps) {
+    const theme = designSystem;
+    const { tokens, loading, getOrCreateToken, deleteToken, getShareUrl } = usePetSharing(petId);
 
     const [basicToken, setBasicToken] = useState<ShareToken | null>(null);
     const [advancedToken, setAdvancedToken] = useState<ShareToken | null>(null);
 
+    // Load tokens when modal opens
     useEffect(() => {
-        loadTokens();
-    }, [id, tokens]);
+        if (visible && petId) {
+            loadTokens();
+        }
+    }, [visible, petId]);
 
     const loadTokens = async () => {
-        // Get or create basic token
+        // Get or create basic token (should already exist from auto-generation)
         const { data: basic } = await getOrCreateToken('basic');
         if (basic) setBasicToken(basic);
 
-        // Check for advanced token
+        // Check if advanced token exists
         const advanced = tokens.find(t => t.permission_level === 'advanced' && t.is_active);
         if (advanced) setAdvancedToken(advanced);
     };
@@ -67,6 +72,7 @@ export default function ShareTab() {
                         } else {
                             if (level === 'basic') setBasicToken(null);
                             if (level === 'advanced') setAdvancedToken(null);
+                            // Reload tokens
                             await loadTokens();
                         }
                     },
@@ -75,30 +81,31 @@ export default function ShareTab() {
         );
     };
 
-    const renderShareCard = (token: ShareToken | null, level: 'basic' | 'advanced', title: string, description: string, icon: string) => {
-        if (!token && level === 'advanced') {
-            return (
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>{icon} {title}</Text>
-                    <Text style={styles.cardDescription}>{description}</Text>
-                    <TouchableOpacity style={styles.generateButton} onPress={handleGenerateAdvanced}>
-                        <Ionicons name="add-circle" size={20} color="#FFFFFF" />
-                        <Text style={styles.generateButtonText}>Generate Advanced Link</Text>
-                    </TouchableOpacity>
-                </View>
-            );
+    const renderShareCard = (token: ShareToken | null, level: 'basic' | 'advanced', title: string, description: string) => {
+        if (!token) {
+            if (level === 'advanced') {
+                return (
+                    <View style={styles.card}>
+                        <Text style={styles.cardTitle}>{title}</Text>
+                        <Text style={styles.cardDescription}>{description}</Text>
+                        <TouchableOpacity style={styles.generateButton} onPress={handleGenerateAdvanced}>
+                            <Ionicons name="add-circle" size={20} color="#FFFFFF" />
+                            <Text style={styles.generateButtonText}>Generate Advanced Link</Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            }
+            return null;
         }
-
-        if (!token) return null;
 
         const shareUrl = getShareUrl(token.token);
 
         return (
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>{icon} {title}</Text>
+                    <Text style={styles.cardTitle}>{title}</Text>
                     {token.accessed_count > 0 && (
-                        <Text style={styles.accessCount}>👁️ {token.accessed_count} views</Text>
+                        <Text style={styles.accessCount}>Viewed {token.accessed_count} times</Text>
                     )}
                 </View>
                 <Text style={styles.cardDescription}>{description}</Text>
@@ -112,6 +119,7 @@ export default function ShareTab() {
                             quietZone={10}
                             bgColor="#FFFFFF"
                             fgColor="#000000"
+                            logoImage={undefined}
                             qrStyle="squares"
                         />
                     ) : (
@@ -131,7 +139,7 @@ export default function ShareTab() {
                             style={styles.copyButton}
                             onPress={() => handleCopyLink(shareUrl)}
                         >
-                            <Ionicons name="copy-outline" size={18} color={designSystem.colors.primary[500]} />
+                            <Ionicons name="copy-outline" size={18} color="#4F46E5" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -148,114 +156,48 @@ export default function ShareTab() {
         );
     };
 
-    const renderTokenList = () => {
-        if (loading && tokens.length === 0) return null;
-
-        // Filter out the "current" tokens we're already showing as cards
-        const otherTokens = tokens.filter(t =>
-            t.id !== basicToken?.id && t.id !== advancedToken?.id
-        );
-
-        if (otherTokens.length === 0) return null;
-
-        return (
-            <View style={styles.historySection}>
-                <Text style={styles.sectionTitle}>Other Active Links</Text>
-                {otherTokens.map((token) => (
-                    <View key={token.id} style={styles.historyItem}>
-                        <View style={styles.historyItemInfo}>
-                            <Text style={styles.historyItemTitle}>
-                                {token.permission_level === 'basic' ? '📱 Basic' : '🏥 Advanced'}
-                            </Text>
-                            <Text style={styles.historyItemSubtitle}>
-                                Created: {new Date(token.created_at).toLocaleDateString()} • {token.accessed_count} views
-                            </Text>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => handleDeleteToken(token.id, token.permission_level)}
-                            style={styles.historyDeleteButton}
-                        >
-                            <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                        </TouchableOpacity>
-                    </View>
-                ))}
-            </View>
-        );
-    };
-
-    if (!pet) {
-        return (
-            <View style={styles.container}>
-                <Text>Pet not found</Text>
-            </View>
-        );
-    }
-
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Ionicons name="share-social" size={32} color={designSystem.colors.primary[500]} />
-                <Text style={styles.headerTitle}>Share {pet.name}'s Profile</Text>
-                <Text style={styles.headerSubtitle}>
-                    Generate secure share links with QR codes
-                </Text>
-            </View>
+        <FormModal
+            visible={visible}
+            onClose={onClose}
+            title={`Share ${petName}'s Profile`}
+            hideFooter
+            forceLight
+        >
+            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Info Banner */}
+                <View style={styles.infoBanner}>
+                    <Ionicons name="information-circle" size={20} color="#3B82F6" />
+                    <Text style={styles.infoBannerText}>
+                        Share your pet's profile with others via QR code or link
+                    </Text>
+                </View>
 
-            {/* Info Banner */}
-            <View style={styles.infoBanner}>
-                <Ionicons name="information-circle" size={20} color="#3B82F6" />
-                <Text style={styles.infoBannerText}>
-                    Share your pet's profile with others via QR code or link
-                </Text>
-            </View>
+                {/* Basic Share */}
+                {renderShareCard(
+                    basicToken,
+                    'basic',
+                    '📱 Basic Profile',
+                    'Share basic information like name, photo, breed, and microchip number.'
+                )}
 
-            {/* Basic Share Card */}
-            {renderShareCard(
-                basicToken,
-                'basic',
-                'Basic Profile',
-                'Share basic information like name, photo, breed, and microchip number.',
-                '📱'
-            )}
+                {/* Advanced Share */}
+                {renderShareCard(
+                    advancedToken,
+                    'advanced',
+                    '🏥 Full Medical Profile',
+                    'Share complete medical history including vaccinations, treatments, and allergies.'
+                )}
 
-            {/* Advanced Share Card */}
-            {renderShareCard(
-                advancedToken,
-                'advanced',
-                'Full Medical Profile',
-                'Share complete medical history including vaccinations, treatments, and allergies.',
-                '🏥'
-            )}
-
-            {/* Other Links / History */}
-            {renderTokenList()}
-        </ScrollView>
+                <View style={{ height: 20 }} />
+            </ScrollView>
+        </FormModal>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    content: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
-    },
-    scrollContent: {
-        padding: 20,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: designSystem.colors.text.primary,
-        marginTop: 12,
-    },
-    headerSubtitle: {
-        fontSize: 14,
-        color: designSystem.colors.text.secondary,
-        marginTop: 4,
     },
     infoBanner: {
         flexDirection: 'row',
@@ -280,11 +222,6 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 20,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
     },
     cardHeader: {
         flexDirection: 'row',
@@ -295,7 +232,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 18,
         fontWeight: '700',
-        color: designSystem.colors.text.primary,
+        color: '#1F2937',
     },
     accessCount: {
         fontSize: 12,
@@ -307,7 +244,7 @@ const styles = StyleSheet.create({
     },
     cardDescription: {
         fontSize: 14,
-        color: designSystem.colors.text.secondary,
+        color: '#6B7280',
         marginBottom: 20,
         lineHeight: 20,
     },
@@ -351,7 +288,7 @@ const styles = StyleSheet.create({
     urlText: {
         flex: 1,
         fontSize: 13,
-        color: designSystem.colors.text.primary,
+        color: '#1F2937',
         fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     },
     copyButton: {
@@ -361,7 +298,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: designSystem.colors.primary[500],
+        backgroundColor: '#4F46E5',
         borderRadius: 12,
         paddingVertical: 14,
         gap: 8,
@@ -382,43 +319,5 @@ const styles = StyleSheet.create({
         color: '#EF4444',
         fontSize: 14,
         fontWeight: '600',
-    },
-    historySection: {
-        marginTop: 32,
-        paddingTop: 24,
-        borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: designSystem.colors.text.primary,
-        marginBottom: 16,
-    },
-    historyItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    historyItemInfo: {
-        flex: 1,
-    },
-    historyItemTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: designSystem.colors.text.primary,
-    },
-    historyItemSubtitle: {
-        fontSize: 13,
-        color: designSystem.colors.text.secondary,
-        marginTop: 2,
-    },
-    historyDeleteButton: {
-        padding: 8,
     },
 });
