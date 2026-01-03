@@ -107,14 +107,17 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
       );
     }
 
-    // App Icon for Main Tabs - REMOVED for desktop view (or generally if requested)
-    // If you want to keep it on mobile only, check Platform.OS or window width
-    // For now, based on instructions "On desktop view remove Logo icon from header", we can hide it conditionally.
-    // Assuming this component is shared, we might need a prop or check. 
-    // But since the request implies removing it, we'll return null for main tabs if that's the desired cleanup.
-    // However, usually on mobile having a logo is fine. 
-    // Let's assume we remove it entirely as per "Remove Logo icon from header img" to be safe or just return null.
-    
+    // Logo for Main Tabs (Home, Calendar, Pets, Settings)    
+    if (isMainTab) {
+      return (
+        <Image
+          source={require('@/assets/images/logo.png')}
+          style={{ width: 32, height: 32 }}
+          resizeMode="contain"
+        />
+      );
+    }
+
     return null;
   };
 
