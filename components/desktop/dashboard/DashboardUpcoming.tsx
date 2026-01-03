@@ -7,18 +7,25 @@ import { useEvents } from '@/hooks/useEvents';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
 
+const EVENTS_PER_PAGE = 3;
+
 export default function DashboardUpcoming() {
     const router = useRouter();
     const { theme } = useAppTheme();
     const { t } = useLocale();
     const { events } = useEvents();
-    const [showCount, setShowCount] = useState<3 | 5 | 'all'>(3);
+    const [visibleCount, setVisibleCount] = useState(EVENTS_PER_PAGE);
 
     const allUpcoming = events
         .filter(event => new Date(event.dueDate) > new Date())
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
-    const upcomingEvents = showCount === 'all' ? allUpcoming : allUpcoming.slice(0, showCount);
+    const upcomingEvents = allUpcoming.slice(0, visibleCount);
+    const hasMore = visibleCount < allUpcoming.length;
+
+    const handleShowMore = () => {
+        setVisibleCount(prev => Math.min(prev + EVENTS_PER_PAGE, allUpcoming.length));
+    };
 
     const getEventIcon = (type?: string) => {
         if (['vet', 'vaccination', 'medication'].includes(type || '')) return 'medical-services';
@@ -46,46 +53,15 @@ export default function DashboardUpcoming() {
         return '#FEF3C7';
     };
 
-    const getPriorityColor = (priority?: string) => {
-        switch (priority) {
-            case 'high': return '#EF4444';
-            case 'medium': return '#F59E0B';
-            case 'low': return '#10B981';
-            default: return '#6B7280';
-        }
-    };
-
     return (
         <View style={[styles.container, { backgroundColor: '#fff', borderColor: theme.colors.border.primary }]}>
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <View style={styles.orangeDot} />
-                    <Text style={styles.heading}>{t('dashboard.upcoming_care')}</Text>
+                    <Text style={styles.heading}>Upcoming Events</Text>
                 </View>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/calendar' as any)}>
                     <Text style={[styles.viewAllLink, { color: theme.colors.primary[500] }]}>{t('dashboard.see_all')}</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Count Selector */}
-            <View style={styles.countSelector}>
-                <TouchableOpacity
-                    style={[styles.countBtn, showCount === 3 && styles.countBtnActive]}
-                    onPress={() => setShowCount(3)}
-                >
-                    <Text style={[styles.countBtnText, showCount === 3 && styles.countBtnTextActive]}>3</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.countBtn, showCount === 5 && styles.countBtnActive]}
-                    onPress={() => setShowCount(5)}
-                >
-                    <Text style={[styles.countBtnText, showCount === 5 && styles.countBtnTextActive]}>5</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.countBtn, showCount === 'all' && styles.countBtnActive]}
-                    onPress={() => setShowCount('all')}
-                >
-                    <Text style={[styles.countBtnText, showCount === 'all' && styles.countBtnTextActive]}>All</Text>
                 </TouchableOpacity>
             </View>
 
@@ -93,61 +69,79 @@ export default function DashboardUpcoming() {
                 {upcomingEvents.length === 0 ? (
                     <Text style={styles.emptyText}>{t('dashboard.no_upcoming_events')}</Text>
                 ) : (
-                    upcomingEvents.map((event) => {
-                        const daysAway = Math.ceil((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-                        return (
-                            <TouchableOpacity
-                                key={event.id}
-                                style={[styles.card, { borderColor: theme.colors.border.secondary }]}
-                                onPress={() => router.push('/(tabs)/calendar' as any)}
-                            >
-                                <View style={styles.cardHeader}>
-                                    <View style={styles.headerLeftContent}>
-                                        <View style={[styles.iconBox, { backgroundColor: getBgColor(event.type) }]}>
-                                            <IconSymbol
-                                                android_material_icon_name={getEventIcon(event.type) as any}
-                                                ios_icon_name={getEventIconIOS(event.type) as any}
-                                                size={20}
-                                                color={getEventColor(event.type)}
-                                            />
-                                        </View>
-                                        <View style={styles.headerTextContent}>
-                                            <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
-                                            <Text style={styles.subtitle} numberOfLines={1}>
-                                                <Text style={{ textTransform: 'capitalize' }}>{event.type}</Text> • {event.petName || t('dashboard.no_pet_assigned')}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View style={[styles.badge, { backgroundColor: getBgColor(event.type) }]}>
-                                        <Text style={[styles.badgeText, { color: getEventColor(event.type) }]}>
-                                            {daysAway === 0 ? t('dashboard.days_remaining.today') : daysAway === 1 ? t('dashboard.days_remaining.tomorrow') : t('dashboard.days_remaining.days', { count: daysAway })}
-                                        </Text>
-                                    </View>
-                                </View>
+                    <>
+                        {upcomingEvents.map((event) => {
+                            const daysAway = Math.ceil((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+                            const dateText = new Date(event.dueDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 
-                                <View style={styles.cardContent}>
+                            return (
+                                <TouchableOpacity
+                                    key={event.id}
+                                    style={[styles.card, { borderColor: theme.colors.border.secondary }]}
+                                    onPress={() => router.push('/(tabs)/calendar' as any)}
+                                >
+                                    <View style={styles.cardHeader}>
+                                        <View style={styles.headerLeftContent}>
+                                            <View style={[styles.iconBox, { backgroundColor: getBgColor(event.type) }]}>
+                                                <IconSymbol
+                                                    android_material_icon_name={getEventIcon(event.type) as any}
+                                                    ios_icon_name={getEventIconIOS(event.type) as any}
+                                                    size={20}
+                                                    color={getEventColor(event.type)}
+                                                />
+                                            </View>
+                                            <View style={styles.headerTextContent}>
+                                                <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
+                                                <Text style={styles.subtitle} numberOfLines={1}>
+                                                    <Text style={{ textTransform: 'capitalize' }}>{event.type}</Text> • {event.petName || t('dashboard.no_pet_assigned')}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.rightColumn}>
+                                            <View style={[styles.badge, { backgroundColor: getBgColor(event.type) }]}>
+                                                <Text style={[styles.badgeText, { color: getEventColor(event.type) }]}>
+                                                    {daysAway === 0 ? t('dashboard.days_remaining.today') : daysAway === 1 ? t('dashboard.days_remaining.tomorrow') : t('dashboard.days_remaining.days', { count: daysAway })}
+                                                </Text>
+                                            </View>
+                                            <Text style={styles.dateTextSmall}>{dateText}</Text>
+                                        </View>
+                                    </View>
+
                                     {event.location && (
-                                        <View style={styles.detailRow}>
-                                            <IconSymbol android_material_icon_name="location-on" ios_icon_name="location.fill" size={14} color="#6B7280" />
-                                            <Text style={styles.detailText} numberOfLines={1}>{event.location}</Text>
+                                        <View style={styles.cardContent}>
+                                            <View style={styles.detailRow}>
+                                                <IconSymbol android_material_icon_name="location-on" ios_icon_name="location.fill" size={14} color="#6B7280" />
+                                                <Text style={styles.detailText} numberOfLines={1}>{event.location}</Text>
+                                            </View>
                                         </View>
                                     )}
-                                </View>
+                                </TouchableOpacity>
+                            );
+                        })}
 
-                                <View style={styles.cardFooter}>
-                                    <Text style={styles.dateText}>
-                                        {new Date(event.dueDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                                    </Text>
-                                    <IconSymbol android_material_icon_name="chevron-right" ios_icon_name="chevron.right" size={16} color="#9CA3AF" />
-                                </View>
+                        {hasMore && (
+                            <TouchableOpacity
+                                style={styles.showMoreButton}
+                                onPress={handleShowMore}
+                            >
+                                <Text style={[styles.showMoreText, { color: theme.colors.primary[500] }]}>
+                                    Show More
+                                </Text>
+                                <IconSymbol
+                                    android_material_icon_name="expand-more"
+                                    ios_icon_name="chevron.down"
+                                    size={16}
+                                    color={theme.colors.primary[500]}
+                                />
                             </TouchableOpacity>
-                        );
-                    })
+                        )}
+                    </>
                 )}
             </View>
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -183,37 +177,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
-    },
-    countSelector: {
-        flexDirection: 'row',
-        gap: 8,
-        marginBottom: 16,
-        backgroundColor: '#F3F4F6',
-        padding: 4,
-        borderRadius: 10,
-        alignSelf: 'flex-start',
-    },
-    countBtn: {
-        paddingVertical: 6,
-        paddingHorizontal: 14,
-        borderRadius: 8,
-    },
-    countBtnActive: {
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 1,
-    },
-    countBtnText: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#6B7280',
-    },
-    countBtnTextActive: {
-        color: '#111827',
-        fontWeight: '600',
     },
     list: {
         gap: 12,
@@ -259,6 +222,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    rightColumn: {
+        alignItems: 'flex-end',
+        gap: 6,
+    },
     badge: {
         paddingHorizontal: 8,
         paddingVertical: 4,
@@ -269,8 +236,13 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         letterSpacing: 0.5,
     },
+    dateTextSmall: {
+        fontSize: 11,
+        color: '#6B7280',
+        fontWeight: '500',
+        fontFamily: 'Plus Jakarta Sans',
+    },
     cardContent: {
-        marginBottom: 12,
         paddingLeft: 52, // Align with text (40 icon + 12 gap)
     },
     title: {
@@ -296,18 +268,20 @@ const styles = StyleSheet.create({
         color: '#4B5563',
         fontFamily: 'Plus Jakarta Sans',
     },
-    cardFooter: {
+    showMoreButton: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        borderTopWidth: 1,
-        borderTopColor: '#F3F4F6',
-        paddingTop: 12,
+        justifyContent: 'center',
+        gap: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        backgroundColor: '#F9FAFB',
+        marginTop: 8,
     },
-    dateText: {
-        fontSize: 13,
-        color: '#4B5563',
-        fontWeight: '500',
+    showMoreText: {
+        fontSize: 14,
+        fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
     },
 });

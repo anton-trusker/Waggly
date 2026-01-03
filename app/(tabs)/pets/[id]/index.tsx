@@ -84,7 +84,7 @@ export default function PetDetailsPage() {
                         {/* Tab Content */}
                         <View style={{ paddingBottom: 100 }}>
                             {activeTab === 'overview' && <OverviewTab />}
-                            {/* {activeTab === 'health' && <PetHealthProfile petId={petId} />} */}
+                            {activeTab === 'health' && <PetHealthProfile petId={petId} />}
                             {activeTab === 'documents' && <DocumentsTab />}
                             {activeTab === 'history' && <HistoryTab />}
                             {activeTab === 'settings' && <SettingsTab />}
@@ -112,8 +112,7 @@ export default function PetDetailsPage() {
                                 Overview
                             </Text>
                         </TouchableOpacity>
-                        {/* Health Tab Hidden */}
-                        {/*
+                        {/* Health Tab */}
                         <TouchableOpacity
                             style={[styles.tab, activeTab === 'health' && styles.tabActive]}
                             onPress={() => setActiveTab('health')}
@@ -122,7 +121,6 @@ export default function PetDetailsPage() {
                                 Health
                             </Text>
                         </TouchableOpacity>
-                        */}
                         <TouchableOpacity
                             style={[styles.tab, activeTab === 'documents' && styles.tabActive]}
                             onPress={() => setActiveTab('documents')}
@@ -160,7 +158,7 @@ export default function PetDetailsPage() {
                     {/* Desktop Tab Content */}
                     <ScrollView style={styles.tabContent}>
                         {activeTab === 'overview' && <OverviewTab />}
-                        {/* {activeTab === 'health' && <PetHealthProfile petId={petId} />} */}
+                        {activeTab === 'health' && <PetHealthProfile petId={petId} />}
                         {activeTab === 'documents' && <DocumentsTab />}
                         {activeTab === 'share' && (
                             <View style={{ padding: 32 }}>

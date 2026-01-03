@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,6 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import ShareModal from '@/components/desktop/modals/ShareModal';
+import { Pet } from '@/types';
+
 
 export default function MyPetsWidget() {
     const router = useRouter();
@@ -14,7 +17,15 @@ export default function MyPetsWidget() {
     const { width } = useWindowDimensions();
     const isLargeScreen = width >= 1024;
 
+    const [shareModalVisible, setShareModalVisible] = useState(false);
+    const [selectedPetForShare, setSelectedPetForShare] = useState<Pet | null>(null);
+
     const hasPets = pets.length > 0;
+
+    const handleQrPress = (pet: Pet) => {
+        setSelectedPetForShare(pet);
+        setShareModalVisible(true);
+    };
 
     // Empty State Banner
     if (!hasPets && !loading) {
@@ -62,6 +73,7 @@ export default function MyPetsWidget() {
                             key={pet.id}
                             pet={pet}
                             onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+                            onQrPress={() => handleQrPress(pet)}
                         />
                     ))}
                 </View>
@@ -77,10 +89,23 @@ export default function MyPetsWidget() {
                             <PetPassportCard
                                 pet={pet}
                                 onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+                                onQrPress={() => handleQrPress(pet)}
                             />
                         </View>
                     ))}
                 </ScrollView>
+            )}
+
+            {/* Share Modal */}
+            {selectedPetForShare && (
+                <ShareModal
+                    visible={shareModalVisible}
+                    onClose={() => {
+                        setShareModalVisible(false);
+                        setSelectedPetForShare(null);
+                    }}
+                    petId={selectedPetForShare.id}
+                />
             )}
         </View>
     );
@@ -94,6 +119,8 @@ const styles = StyleSheet.create({
     scrollContent: {
         gap: 16,
         paddingRight: 16,
+        justifyContent: 'center', // Center cards on mobile
+        flexGrow: 1, // Allow centering when content is smaller than viewport
     },
     cardWrapper: {
         // width: 'auto',
@@ -124,6 +151,7 @@ const styles = StyleSheet.create({
     },
     desktopStack: {
         gap: 4,
+        alignItems: 'center', // Center the cards
     },
     desktopAddButton: {
         flexDirection: 'row',

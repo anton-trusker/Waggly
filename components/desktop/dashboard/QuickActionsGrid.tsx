@@ -36,9 +36,9 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
         },
         {
             id: 'weight',
-            label: t('widgets.quick_actions.weight'),
-            icon: 'monitor-weight',
-            iosIcon: 'scalemass.fill',
+            label: 'Health Record',
+            icon: 'favorite',
+            iosIcon: 'heart.text.square.fill',
             colors: ['#F59E0B', '#FBBF24'] // Amber
         },
         {
@@ -84,15 +84,20 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
 const styles = StyleSheet.create({
     container: {
         marginBottom: 24,
+        alignItems: 'center', // Center the grid container itself if needed
     },
     grid: {
         flexDirection: 'row',
         gap: 16,
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap', // Force single row
+        justifyContent: 'center',
+        alignSelf: 'center',
     },
     actionCard: {
         alignItems: 'center',
         gap: 8,
+        minWidth: 70,
+        flex: 0, // Prevent growing
     },
     iconContainer: {
         width: 64,

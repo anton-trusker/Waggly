@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 
@@ -7,6 +7,7 @@ interface MobileCalendarHeaderProps {
     currentView: 'timeline' | 'calendar';
     onViewChange: (view: 'timeline' | 'calendar') => void;
     onFilterPress: () => void;
+    onAddEventPress?: () => void;
     hasActiveFilters?: boolean;
 }
 
@@ -14,11 +15,16 @@ export default function MobileCalendarHeader({
     currentView,
     onViewChange,
     onFilterPress,
+    onAddEventPress,
     hasActiveFilters = false,
 }: MobileCalendarHeaderProps) {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Calendar</Text>
+            <Image
+                source={require('@/assets/images/logo.png')}
+                style={styles.logo}
+                resizeMode="contain"
+            />
 
             <View style={styles.controls}>
                 {/* View Toggle */}
@@ -68,6 +74,21 @@ export default function MobileCalendarHeader({
                     />
                     {hasActiveFilters && <View style={styles.filterBadge} />}
                 </TouchableOpacity>
+
+                {/* Add Event Button */}
+                {onAddEventPress && (
+                    <TouchableOpacity
+                        style={styles.addButton}
+                        onPress={onAddEventPress}
+                    >
+                        <IconSymbol
+                            ios_icon_name="plus"
+                            android_material_icon_name="add"
+                            size={20}
+                            color={designSystem.colors.neutral[0]}
+                        />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -88,6 +109,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '700',
         color: designSystem.colors.text.primary,
+    },
+    logo: {
+        width: 32,
+        height: 32,
     },
     controls: {
         flexDirection: 'row',
@@ -137,5 +162,13 @@ const styles = StyleSheet.create({
         height: 8,
         borderRadius: 4,
         backgroundColor: designSystem.colors.primary[500],
+    },
+    addButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        backgroundColor: designSystem.colors.primary[500],
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

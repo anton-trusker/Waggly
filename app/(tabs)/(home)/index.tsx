@@ -19,6 +19,7 @@ import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
 import MyPetsWidget from '@/components/desktop/dashboard/MyPetsWidget';
 import DashboardUpcoming from '@/components/desktop/dashboard/DashboardUpcoming';
 import DashboardTimeline from '@/components/desktop/dashboard/DashboardTimeline';
+import PetStatusRow from '@/components/desktop/dashboard/PetStatusRow';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -34,7 +35,7 @@ export default function DashboardPage() {
     const [vaccinationOpen, setVaccinationOpen] = useState(false);
     const [treatmentOpen, setTreatmentOpen] = useState(false);
     const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
-    
+
     // Onboarding State
     const [onboardingVisible, setOnboardingVisible] = useState(false);
 
@@ -45,20 +46,20 @@ export default function DashboardPage() {
                 setOnboardingVisible(true);
             }
         } else if (user) {
-             // Fallback to manual check if profile isn't loaded yet (though AuthContext handles it)
+            // Fallback to manual check if profile isn't loaded yet (though AuthContext handles it)
             checkOnboardingStatus();
         }
     }, [user, profile]);
 
     const checkOnboardingStatus = async () => {
         if (!user) return;
-        
+
         const { data, error } = await supabase
             .from('profiles')
             .select('onboarding_completed')
             .eq('id', user.id)
             .single();
-            
+
         if (data && !data.onboarding_completed) {
             setOnboardingVisible(true);
         }
@@ -107,6 +108,8 @@ export default function DashboardPage() {
                         {!isLargeScreen && (
                             <View style={styles.mobileStack}>
                                 <MyPetsWidget />
+                                {/* Quick Actions hidden on mobile/tablet */}
+                                {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
                                 <DashboardUpcoming />
                                 <DashboardTimeline />
                             </View>
@@ -119,6 +122,7 @@ export default function DashboardPage() {
                                 <View style={styles.colMain}>
                                     <MyPetsWidget />
                                     <QuickActionsGrid onActionPress={handleQuickAction} />
+                                    {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
                                 </View>
 
                                 {/* Right Column (Sidebar/Widgets) */}
@@ -140,15 +144,15 @@ export default function DashboardPage() {
             <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
             <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
             <HealthMetricsModal visible={healthMetricsOpen} onClose={() => setHealthMetricsOpen(false)} initialTab="weight" />
-            
+
             {/* Onboarding Modal */}
-            <UserOnboardingModal 
-                visible={onboardingVisible} 
+            <UserOnboardingModal
+                visible={onboardingVisible}
                 onClose={() => setOnboardingVisible(false)}
                 onComplete={async () => {
                     setOnboardingVisible(false);
                     await refreshProfile(); // Refresh profile immediately after onboarding
-                }} 
+                }}
             />
 
         </ScrollView>

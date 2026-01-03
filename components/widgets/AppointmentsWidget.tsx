@@ -1,28 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { LinearGradient } from 'expo-linear-gradient';
 
-interface HealthScoreWidgetProps {
-    score: number; // 0-100
+interface AppointmentsWidgetProps {
+    upcomingCount: number;
+    nextDate?: string;
     loading?: boolean;
 }
 
-export function HealthScoreWidget({ score, loading = false }: HealthScoreWidgetProps) {
-    const getScoreColor = (s: number) => {
-        if (s >= 80) return ['#22c55e', '#16a34a']; // Green
-        if (s >= 50) return ['#eab308', '#ca8a04']; // Yellow
-        if (s > 0) return ['#ef4444', '#dc2626']; // Red
-        return ['#9ca3af', '#6b7280']; // Gray
-    };
-
-    const colors = getScoreColor(score);
-    const label = score >= 80 ? 'Excellent' : score >= 50 ? 'Good' : score > 0 ? 'Regular' : 'No Data';
-
+export function AppointmentsWidget({ upcomingCount, nextDate, loading }: AppointmentsWidgetProps) {
     if (loading) {
         return (
             <View style={[styles.container, styles.loading]}>
-                <Text style={styles.loadingText}>Loading score...</Text>
+                <Text style={styles.loadingText}>Loading...</Text>
             </View>
         );
     }
@@ -30,20 +20,20 @@ export function HealthScoreWidget({ score, loading = false }: HealthScoreWidgetP
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={[styles.iconCircle, { backgroundColor: `${colors[0]}15` }]}>
-                    <IconSymbol android_material_icon_name="favorite" size={18} color={colors[1]} />
+                <View style={[styles.iconCircle, { backgroundColor: '#FEF3C7' }]}>
+                    <IconSymbol android_material_icon_name="event" size={18} color="#F59E0B" />
                 </View>
-                <Text style={styles.title}>Health Score</Text>
+                <Text style={styles.title}>Appointments</Text>
             </View>
 
             <View style={styles.content}>
-                <View style={styles.scoreContainer}>
-                    <Text style={[styles.scoreValue, { color: colors[1] }]}>{score}</Text>
-                    <Text style={styles.scoreMax}>/100</Text>
-                </View>
-                <View style={[styles.statusBadge, { backgroundColor: `${colors[0]}20` }]}>
-                    <Text style={[styles.statusText, { color: colors[1] }]}>{label}</Text>
-                </View>
+                <Text style={styles.countValue}>{upcomingCount}</Text>
+                <Text style={styles.countLabel}>upcoming</Text>
+                {nextDate && (
+                    <View style={styles.nextBadge}>
+                        <Text style={styles.nextText}>Next: {nextDate}</Text>
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -79,7 +69,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        marginBottom: 8,
+        marginBottom: 12,
     },
     iconCircle: {
         width: 32,
@@ -95,36 +85,34 @@ const styles = StyleSheet.create({
         fontFamily: 'Plus Jakarta Sans',
     },
     content: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 8,
+        flex: 1,
+        justifyContent: 'center',
     },
-    scoreContainer: {
-        flexDirection: 'row',
-        alignItems: 'baseline',
-    },
-    scoreValue: {
-        fontSize: 32,
+    countValue: {
+        fontSize: 28,
         fontWeight: '800',
+        color: '#F59E0B',
         fontFamily: 'Plus Jakarta Sans',
     },
-    scoreMax: {
-        fontSize: 14,
+    countLabel: {
+        fontSize: 11,
         color: '#6B7280',
-        fontWeight: '600',
+        fontWeight: '500',
         fontFamily: 'Plus Jakarta Sans',
-        marginLeft: 2,
+        marginTop: 2,
     },
-    statusBadge: {
+    nextBadge: {
+        backgroundColor: '#FEF3C7',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 8,
+        marginTop: 8,
+        alignSelf: 'flex-start',
     },
-    statusText: {
-        fontSize: 11,
-        fontWeight: '700',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
+    nextText: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#D97706',
         fontFamily: 'Plus Jakarta Sans',
     },
 });

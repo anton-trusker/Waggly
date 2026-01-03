@@ -7,6 +7,7 @@ import MiniCalendar from '@/components/desktop/calendar/MiniCalendar';
 import UpcomingEventsList from '@/components/desktop/calendar/UpcomingEventsList';
 import MobileCalendarHeader from '@/components/desktop/calendar/MobileCalendarHeader';
 import { useEvents, type EventType } from '@/hooks/useEvents';
+import { usePets } from '@/hooks/usePets';
 import { designSystem } from '@/constants/designSystem';
 
 import { startOfDay, addMonths, endOfDay, isAfter, isBefore } from 'date-fns';
@@ -19,8 +20,14 @@ export default function CalendarPage() {
     const { t } = useLocale();
     const router = useRouter();
 
+    // Fetch all events first to get pets/types for default selection
+    const { events } = useEvents();
+    const { pets } = usePets();
+
     const [selectedDate, setSelectedDate] = useState(new Date());
+    // Initialize with all pets selected by default
     const [selectedPets, setSelectedPets] = useState<string[]>([]);
+    // Initialize with all types selected by default
     const [selectedTypes, setSelectedTypes] = useState<EventType[]>([]);
     const [mobileView, setMobileView] = useState<'timeline' | 'calendar'>('timeline');
     const [showFiltersModal, setShowFiltersModal] = useState(false);
@@ -28,8 +35,19 @@ export default function CalendarPage() {
     // Period selection
     const [period, setPeriod] = useState<'3m' | '6m' | '1y' | 'all'>('3m');
 
-    // Fetch all events (unfiltered by date to allow Calendar Grid navigation)
-    const { events } = useEvents();
+    // Initialize filters with all options selected (only once)
+    React.useEffect(() => {
+        if (pets.length > 0 && selectedPets.length === 0) {
+            setSelectedPets(pets.map(p => p.id));
+        }
+    }, [pets, selectedPets.length]);
+
+    React.useEffect(() => {
+        const allTypes: EventType[] = ['vaccination', 'treatment', 'vet', 'grooming', 'walking', 'other'];
+        if (selectedTypes.length === 0) {
+            setSelectedTypes(allTypes);
+        }
+    }, [selectedTypes.length]);
 
     // Filter events based on selected pets and types (Base Filter)
     const filteredEvents = useMemo(() => {
@@ -101,34 +119,30 @@ export default function CalendarPage() {
                 {isMobile ? (
                     // Mobile View
                     <>
-                        <View style={{ marginBottom: 16, paddingHorizontal: 16 }}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                                <TouchableOpacity
-                                    style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
-                                    onPress={() => setPeriod('3m')}
-                                >
-                                    <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.periodBtn, period === '6m' && styles.periodBtnActive]}
-                                    onPress={() => setPeriod('6m')}
-                                >
-                                    <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>{t('calendar.period_6m')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
-                                    onPress={() => setPeriod('1y')}
-                                >
-                                    <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
-                                    onPress={() => setPeriod('all')}
-                                >
-                                    <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
-                                </TouchableOpacity>
-                            </ScrollView>
-                        </View>
+                        {mobileView === 'timeline' && (
+                            <View style={{ marginBottom: 16, paddingHorizontal: 16 }}>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                                    <TouchableOpacity
+                                        style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
+                                        onPress={() => setPeriod('3m')}
+                                    >
+                                        <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
+                                        onPress={() => setPeriod('1y')}
+                                    >
+                                        <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
+                                        onPress={() => setPeriod('all')}
+                                    >
+                                        <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
+                            </View>
+                        )}
 
                         {mobileView === 'timeline' ? (
                             <UpcomingEventsList
@@ -244,16 +258,6 @@ export default function CalendarPage() {
             )}
 
             {isMobile && <View style={{ height: 80 }} />}
-
-            {/* Floating Action Button for Mobile */}
-            {isMobile && (
-                <TouchableOpacity
-                    style={styles.fab}
-                    onPress={() => router.push('/(tabs)/calendar/add-event')}
-                >
-                    <Ionicons name="add" size={28} color="#fff" />
-                </TouchableOpacity>
-            )}
         </View>
     );
 }
