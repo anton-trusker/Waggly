@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAllergies } from '@/hooks/useAllergies';
 import { usePets } from '@/hooks/usePets';
@@ -9,6 +9,7 @@ import PetSelector from './shared/PetSelector';
 import RichTextInput from './shared/RichTextInput';
 import FormModal, { FormState } from '@/components/ui/FormModal';
 import { useLocale } from '@/hooks/useLocale';
+import { supabase } from '@/lib/supabase';
 
 interface AllergyModalProps {
     visible: boolean;
@@ -45,6 +46,14 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
     const theme = designSystem;
 
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || existingAllergy?.pet_id || '');
+    const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Get user session for activity logging
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUserId(session?.user?.id || null);
+        });
+    }, []);
 
     useEffect(() => {
         if (visible) {
@@ -58,23 +67,17 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
         }
     }, [visible, existingAllergy, initialPetId, pets]);
 
-    const { addAllergy, updateAllergy } = useAllergies(selectedPetId || null);
+    const { addAllergy, updateAllergy, deleteAllergy } = useAllergies(selectedPetId || null);
 
     const initialData: AllergyFormData = useMemo(() => {
         if (existingAllergy) {
-            let reaction = '';
-            let notes = existingAllergy.notes || '';
-            if (notes.startsWith('Reaction: ')) {
-                const parts = notes.split('\n');
-                reaction = parts[0].replace('Reaction: ', '');
-                notes = parts.slice(1).join('\n');
-            }
+            // Use the consistent fields from our normalized hook
             return {
-                name: existingAllergy.allergen || existingAllergy.allergen_name, // Handle both column names if migrated
-                type: (existingAllergy.type as any) || 'environment',
-                severity: existingAllergy.severity_level || 'moderate',
-                reaction,
-                notes,
+                name: existingAllergy.allergen_name || existingAllergy.allergen || '',
+                type: (existingAllergy.allergy_type as any) || (existingAllergy.type as any) || 'environment',
+                severity: existingAllergy.severity_level || existingAllergy.severity || 'moderate',
+                reaction: existingAllergy.reaction_description || '',
+                notes: existingAllergy.notes || '',
             };
         }
         return {
@@ -92,24 +95,98 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
             return;
         }
 
+        // We can now send a simple payload, the hook handles the complex mapping!
         const payload: Partial<Allergy> = {
-            allergen: data.name,
-            severity_level: data.severity,
-            notes: data.reaction ? `Reaction: ${data.reaction}\n${data.notes}` : data.notes,
-            type: data.type,
-            allergy_type: data.type, // Sync both columns
-            pet_id: selectedPetId
+            allergen: data.name, // Hook will map this to allergen_name/allergen
+            severity: data.severity, // Hook will map to severity_level/severity
+            reaction: data.reaction, // Hook will map to reaction_description
+            reaction_description: data.reaction,
+            notes: data.notes,
+            type: data.type, // Hook will map to allergy_type/type
         };
 
-        let result;
-        if (existingAllergy) {
-            result = await updateAllergy(existingAllergy.id, payload);
-        } else {
-            result = await addAllergy(payload);
-        }
+        const logActivity = async (action: string, logDetails: any) => {
+            if (!userId || !selectedPetId) return;
+            await supabase.from('activity_logs').insert({
+                actor_id: userId,
+                owner_id: userId,
+                pet_id: selectedPetId,
+                action_type: action,
+                details: logDetails,
+            });
+        };
 
-        if (result && result.error) {
-            throw new Error(result.error.message);
+        if (existingAllergy) {
+            const { error } = await updateAllergy(existingAllergy.id, payload);
+            if (error) {
+                Alert.alert('Update Failed', error.message || 'Could not update allergy. Please try again.');
+            } else {
+                await logActivity('allergy_updated', { allergen: data.name, severity: data.severity });
+                onSuccess?.();
+                onClose();
+            }
+        } else {
+            const { error } = await addAllergy({ ...payload, pet_id: selectedPetId });
+            if (error) {
+                Alert.alert('Creation Failed', error.message || 'Could not create allergy. Please try again.');
+            } else {
+                await logActivity('allergy_added', { allergen: data.name, severity: data.severity });
+                onSuccess?.();
+                onClose();
+            }
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!existingAllergy) return;
+
+        const performDelete = async () => {
+            // Log start
+            console.log('Attempting to delete allergy:', existingAllergy.id);
+            try {
+                const result = await deleteAllergy(existingAllergy.id);
+
+                if (result?.error) {
+                    Alert.alert('Delete Failed', result.error.message || 'Could not delete allergy.');
+                } else {
+                    // Log activity
+                    if (userId && selectedPetId) {
+                        await supabase.from('activity_logs').insert({
+                            actor_id: userId,
+                            owner_id: userId,
+                            pet_id: selectedPetId,
+                            action_type: 'allergy_deleted',
+                            details: {
+                                allergen: existingAllergy.allergen_name || existingAllergy.allergen || 'Unknown Allergy',
+                            },
+                        });
+                    }
+                    onSuccess?.();
+                    onClose();
+                }
+            } catch (error: any) {
+                console.error('Delete exception:', error);
+                Alert.alert('Error', error.message || 'Failed to delete allergy');
+            }
+        };
+
+        if (Platform.OS === 'web') {
+            if (window.confirm(`Are you sure you want to delete ${existingAllergy.allergen_name || existingAllergy.allergen || 'this allergy'}?`)) {
+                await performDelete();
+            }
+        } else {
+            Alert.alert(
+                'Delete Allergy',
+                `Are you sure you want to delete ${existingAllergy.allergen_name || existingAllergy.allergen || 'this allergy'}?`,
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: performDelete,
+                    },
+                ]
+            );
         }
     };
 
@@ -130,6 +207,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
             validate={validate}
             submitLabel={t('allergy_form.save')}
             forceLight // Force White Modal Background
+
         >
             {(formState: FormState<AllergyFormData>) => (
                 <View style={styles.formContent}>
@@ -230,6 +308,12 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                             onChangeText={(text) => formState.updateField('notes', text)}
                             minHeight={80}
                         />
+
+                        {existingAllergy && (
+                            <TouchableOpacity style={styles.deleteButtonFooter} onPress={handleDelete}>
+                                <Text style={styles.deleteButtonText}>Delete Allergy</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
             )}
@@ -279,5 +363,20 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 14,
         fontFamily: 'Plus Jakarta Sans',
+    },
+    deleteButtonFooter: {
+        marginTop: 8,
+        paddingVertical: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 12,
+        backgroundColor: '#FEF2F2',
+        borderWidth: 1,
+        borderColor: '#FECACA',
+    },
+    deleteButtonText: {
+        color: '#DC2626',
+        fontWeight: '600',
+        fontSize: 14,
     },
 });

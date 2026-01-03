@@ -14,6 +14,7 @@ import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
 import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
 import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
+import PetAllergiesWidget from '@/components/widgets/PetAllergiesWidget'; // Added import
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import { useLocale } from '@/hooks/useLocale';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
@@ -63,6 +64,47 @@ export default function OverviewTab() {
 
   const recentConditions = conditions.slice(0, 2); // Show top 2
 
+  // Helper to safely extract Activity Type for styling
+  const getActivityType = (item: any) => {
+    // If item has 'type' (from a view/transformer), use it.
+    // Otherwise map 'action_type' from DB to a design type.
+    if (item.type) return item.type;
+    const action = item.action_type || '';
+    if (action.includes('visit')) return 'visit';
+    if (action.includes('vaccin')) return 'vaccination'; // vaccination or added_vaccination
+    if (action.includes('weight')) return 'weight';
+    if (action.includes('medication') || action.includes('treatment')) return 'medication';
+    if (action.includes('document')) return 'document';
+    if (action.includes('allergy')) return 'allergy';
+    return 'default';
+  };
+
+  // Helper to get Title
+  const getActivityTitle = (item: any) => {
+    if (item.title) return item.title;
+    // Format action_type: 'added_vaccination' -> 'Added Vaccination'
+    return (item.action_type || 'Event').split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  };
+
+  // Helper to get Description details
+  const getActivityDescription = (item: any) => {
+    if (item.description) return item.description;
+    const details = item.details || {};
+    if (typeof details === 'string') return details;
+
+    // Try specific keys based on known log patterns
+    if (details.note) return details.note;
+    if (details.notes) return details.notes;
+    if (details.description) return details.description;
+
+    // Fallback for key entities
+    if (details.vaccine_name) return details.vaccine_name;
+    if (details.medication_name) return details.medication_name;
+    if (details.allergen) return `Allergy: ${details.allergen}`;
+
+    return 'Updated profile'; // Generic fallback
+  };
+
   // Show skeleton while pet data is loading
   if (!pet) {
     return <PetProfileSkeleton />;
@@ -89,6 +131,7 @@ export default function OverviewTab() {
   };
 
   return (
+
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={[styles.content, isMobile && styles.contentMobile]}>
 
@@ -106,42 +149,30 @@ export default function OverviewTab() {
             {/* Quick Actions - Under Passport Card */}
             {!isMobile && <QuickActionsGrid onActionPress={handleQuickAction} />}
 
-            {/* Allergies Card */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>{t('pet_profile.allergies')}</Text>
-                <TouchableOpacity
-                  style={styles.addButtonSmall}
-                  onPress={() => {
-                    setSelectedAllergy(null);
-                    setAllergyModalOpen(true);
-                  }}
-                >
-                  <IconSymbol android_material_icon_name="add" size={16} color="#6366F1" />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.tagsContainer}>
-                {allergies.length > 0 ? (
-                  allergies.map(a => (
-                    <TouchableOpacity
-                      key={a.id}
-                      style={styles.allergyTag}
-                      onPress={() => {
-                        setSelectedAllergy(a);
-                        setAllergyModalOpen(true);
-                      }}
-                    >
-                      <Text style={styles.allergyTagText}>{a.name?.toUpperCase() || ''}</Text>
-                      <IconSymbol android_material_icon_name="edit" size={12} color="#EF4444" />
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <View style={[styles.allergyTag, { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' }]}>
-                    <Text style={[styles.allergyTagText, { color: '#6B7280' }]}>{t('pet_profile.no_allergies')}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
+            {/* Allergies Widget */}
+            <PetAllergiesWidget
+              allergies={allergies}
+              onAdd={() => {
+                setSelectedAllergy(null);
+                setAllergyModalOpen(true);
+              }}
+              onEdit={(allergy) => {
+                console.log('Opening edit modal for:', allergy);
+                setSelectedAllergy(allergy);
+                setAllergyModalOpen(true);
+              }}
+              onRemove={async (id) => {
+                // Widget will handle visual removal, logic handled in modal or here if we moved it.
+                // For now, we open the modal in edit mode which has delete.
+                // Or if we want direct delete, we can implement it.
+                // Let's stick to the modal pattern for safety as per current design.
+                const allergy = allergies.find(a => a.id === id);
+                if (allergy) {
+                  setSelectedAllergy(allergy);
+                  setAllergyModalOpen(true);
+                }
+              }}
+            />
 
             {/* Past Conditions Card */}
             <View style={styles.card}>
@@ -390,43 +421,44 @@ export default function OverviewTab() {
                   <Text style={{ color: '#6B7280', padding: 8 }}>{t('pet_profile.loading') || 'Loading...'}</Text>
                 ) : activities.length > 0 ? (
                   activities.map((item, index) => {
+                    const activityType = getActivityType(item);
+
                     // Map activity types to design styles
                     let iconName = 'ellipse';
                     let iconColor = '#6B7280';
                     let iconBg = '#F3F4F6';
-                    let dotColor = '#9CA3AF'; // Gray default
 
-                    switch (item.type) {
+                    switch (activityType) {
                       case 'visit':
                         iconName = 'medical-services';
                         iconColor = '#2563EB'; // Blue
                         iconBg = '#DBEAFE';
-                        dotColor = '#3B82F6';
                         break;
                       case 'vaccination':
                         iconName = 'vaccines';
                         iconColor = '#7C3AED'; // Violet
                         iconBg = '#EDE9FE';
-                        dotColor = '#8B5CF6';
                         break;
                       case 'weight':
                         iconName = 'monitor-weight';
                         iconColor = '#059669'; // Green
                         iconBg = '#D1FAE5';
-                        dotColor = '#10B981';
                         break;
                       case 'treatment':
                       case 'medication':
                         iconName = 'healing';
                         iconColor = '#0D9488'; // Teal
                         iconBg = '#CCFBF1';
-                        dotColor = '#14B8A6';
                         break;
                       case 'document':
                         iconName = 'description';
                         iconColor = '#EA580C'; // Orange
                         iconBg = '#FFEDD5';
-                        dotColor = '#F97316';
+                        break;
+                      case 'allergy':
+                        iconName = 'warning'; // or 'nutrition' or similar
+                        iconColor = '#D97706'; // Amber 600
+                        iconBg = '#FEF3C7'; // Amber 100
                         break;
                       default:
                         iconName = 'pets';
@@ -435,6 +467,9 @@ export default function OverviewTab() {
                     }
 
                     const isFirst = index === 0;
+                    const activityTitle = getActivityTitle(item);
+                    const activityDesc = getActivityDescription(item);
+                    const activityDate = item.created_at || item.timestamp; // Support both
 
                     return (
                       <View key={item.id} style={styles.timelineItem}>
@@ -453,18 +488,13 @@ export default function OverviewTab() {
                               <View style={[styles.timelineIconSmall, { backgroundColor: iconBg }]}>
                                 <IconSymbol android_material_icon_name={iconName as any} size={14} color={iconColor} />
                               </View>
-                              <Text style={styles.timelineItemTitle}>{item.title}</Text>
+                              <Text style={styles.timelineItemTitle}>{activityTitle}</Text>
                             </View>
                             <Text style={styles.timelineDateText}>
-                              {new Date(item.timestamp).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' })}
+                              {activityDate ? new Date(activityDate).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' }) : 'N/A'}
                             </Text>
                           </View>
-                          <Text style={styles.timelineSubtitle}>{item.description}</Text>
-                          {item.data?.notes && (
-                            <View style={styles.timelineNoteBox}>
-                              <Text style={styles.timelineNoteText} numberOfLines={2}>{item.data.notes}</Text>
-                            </View>
-                          )}
+                          <Text style={styles.timelineSubtitle}>{activityDesc}</Text>
                         </View>
                       </View>
                     );
@@ -542,9 +572,17 @@ export default function OverviewTab() {
       />
       <AllergyModal
         visible={allergyModalOpen}
-        onClose={() => setAllergyModalOpen(false)}
+        onClose={() => {
+          setAllergyModalOpen(false);
+          setSelectedAllergy(null);
+        }}
         petId={pet.id}
         existingAllergy={selectedAllergy}
+        onSuccess={() => {
+          setAllergyModalOpen(false);
+          setSelectedAllergy(null);
+          refetchAllData();
+        }}
       />
       <DocumentUploadModal
         visible={documentModalOpen}
@@ -560,6 +598,7 @@ export default function OverviewTab() {
         }}
       />
     </ScrollView>
+
   );
 }
 

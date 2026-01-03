@@ -68,10 +68,10 @@ export function usePetProfileData(petId: string) {
                     .order('diagnosed_date', { ascending: false }),
 
                 supabase
-                    .from('activity_feed')
+                    .from('activity_logs')
                     .select('*')
                     .eq('pet_id', petId)
-                    .order('timestamp', { ascending: false })
+                    .order('created_at', { ascending: false })
                     .limit(5),
             ]);
 

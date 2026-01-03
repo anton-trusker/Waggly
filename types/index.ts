@@ -35,7 +35,16 @@ export type Condition = {
   severity?: 'mild' | 'moderate' | 'severe';
   treatment_plan?: string;
 };
-export type Allergy = Database['public']['Tables']['allergies']['Row'];
+export type Allergy = Database['public']['Tables']['allergies']['Row'] & {
+  // Add support for alternate schema names or legacy fields
+  allergen?: string; // Legacy alias for allergen_name
+  allergen_name?: string; // Schema name
+  type?: 'food' | 'environment' | 'medication'; // Legacy alias for allergy_type
+  allergy_type?: string; // Schema name
+  severity?: string; // Legacy alias for severity_level
+  severity_level?: string; // Schema name
+  reaction_description?: string;
+};
 export type BehaviorTag = Database['public']['Tables']['behavior_tags']['Row'];
 export type MedicalHistory = Database['public']['Tables']['medical_history']['Row'];
 export type Food = Database['public']['Tables']['food']['Row'];
@@ -79,4 +88,53 @@ export type TreatmentStatus = 'active' | 'completed' | 'upcoming';
 
 export type Medication = Database['public']['Tables']['medications']['Row'];
 export type SharedLink = Database['public']['Tables']['shared_links']['Row'];
-export type ActivityLog = Database['public']['Tables']['activity_logs']['Row'];
+// Health Tab View Models
+export interface HealthDashboardSummary {
+  pet_id: string;
+  health_score: number;
+  weight_summary: {
+    current: number | null;
+    trend: 'increasing' | 'decreasing' | 'stable' | null;
+    last_measured: string | null;
+  };
+  preventive_status: {
+    vaccines_active: number;
+    vaccines_overdue: number;
+    meds_active: number;
+  };
+}
+
+export interface VaccinationStatusView {
+  id: string;
+  pet_id: string;
+  vaccine_name: string;
+  date_given: string;
+  next_due_date: string | null;
+  status_code: 'overdue' | 'due_soon' | 'valid';
+  category: 'core' | 'non-core';
+  reminder_enabled: boolean;
+}
+
+export interface MedicationTrackerView {
+  id: string;
+  pet_id: string;
+  medication_name: string;
+  frequency: string | null;
+  start_date: string;
+  end_date: string | null;
+  days_remaining: number | null;
+  refill_status: 'refill_needed' | 'ok';
+  next_due_date: string | null;
+  dosage_value?: number | null;
+  dosage_unit?: string | null;
+}
+
+export interface PreventiveCareStatusView {
+  id: string;
+  pet_id: string;
+  treatment_name: string;
+  category: 'preventive';
+  is_active: boolean;
+  next_due_date: string | null;
+  frequency: string | null;
+}

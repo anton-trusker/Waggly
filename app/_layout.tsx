@@ -85,19 +85,14 @@ function RootLayoutNav() {
     const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
     const inOnboardingGroup = segments[0] === '(onboarding)';
 
+    // If logged in and still in auth pages, go to home
     if (session && inAuthGroup) {
       router.replace('/(tabs)/(home)');
-    } else if (session && !inAuthGroup && !inOnboardingGroup) {
-      // Profile check logic placeholder
     }
 
-    // Simple check: If no session, go to login.
-    if (!session) {
-      if (inOnboardingGroup) {
-        router.replace('/(auth)/login');
-      } else if (!inAuthGroup) {
-        router.replace('/(auth)/login');
-      }
+    // If not logged in and not in auth/onboarding, go to login
+    if (!session && !inAuthGroup && !inOnboardingGroup) {
+      router.replace('/(auth)/login');
     }
   }, [session, segments]);
 

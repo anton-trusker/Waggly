@@ -61,7 +61,7 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
                         <TouchableOpacity style={styles.qrButton} onPress={onQrPress}>
                             <IconSymbol
                                 ios_icon_name="qrcode"
-                                android_material_icon_name="qr_code"
+                                android_material_icon_name="qr-code-scanner"
                                 size={20}
                                 color="#fff"
                             />
@@ -75,47 +75,47 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
                     <View style={styles.topRow}>
                         {/* Photo */}
                         <View style={styles.photoContainer}>
-                                {pet.photo_url ? (
-                                    <Image source={{ uri: pet.photo_url }} style={styles.photo} />
-                                ) : (
-                                    <View style={styles.photoPlaceholder}>
-                                        <IconSymbol
-                                            ios_icon_name="pawprint.fill"
-                                            android_material_icon_name="pets"
-                                            size={32}
-                                            color="#C7D2FE"
-                                        />
-                                    </View>
-                                )}
-                                <View style={styles.verifiedBadge}>
+                            {pet.photo_url ? (
+                                <Image source={{ uri: pet.photo_url }} style={styles.photo} />
+                            ) : (
+                                <View style={styles.photoPlaceholder}>
                                     <IconSymbol
-                                        ios_icon_name="checkmark.circle.fill"
-                                        android_material_icon_name="verified"
-                                        size={16}
-                                        color="#10B981"
+                                        ios_icon_name="pawprint.fill"
+                                        android_material_icon_name="pets"
+                                        size={32}
+                                        color="#C7D2FE"
+                                    />
+                                </View>
+                            )}
+                            <View style={styles.verifiedBadge}>
+                                <IconSymbol
+                                    ios_icon_name="checkmark.circle.fill"
+                                    android_material_icon_name="verified"
+                                    size={16}
+                                    color="#10B981"
+                                />
+                            </View>
+                        </View>
+
+                        {/* Name & Breed */}
+                        <View style={styles.nameSection}>
+                            <View style={styles.nameRow}>
+                                <Text style={styles.nameText}>{pet.name}</Text>
+                                <View style={styles.genderBadge}>
+                                    <IconSymbol
+                                        ios_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                        android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
+                                        size={14}
+                                        color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
                                     />
                                 </View>
                             </View>
-
-                            {/* Name & Breed */}
-                            <View style={styles.nameSection}>
-                                <View style={styles.nameRow}>
-                                    <Text style={styles.nameText}>{pet.name}</Text>
-                                    <View style={styles.genderBadge}>
-                                        <IconSymbol
-                                            ios_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                            android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                            size={14}
-                                            color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
-                                        />
-                                    </View>
-                                </View>
-                                <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
-                                {pet.registration_id && (
-                                    <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
-                                )}
-                            </View>
+                            <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
+                            {pet.registration_id && (
+                                <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
+                            )}
                         </View>
+                    </View>
 
 
                     {/* Details Table */}

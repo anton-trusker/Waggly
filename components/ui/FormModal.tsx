@@ -32,6 +32,7 @@ export interface FormModalProps<T = any> {
     showBackButton?: boolean;
     headerIcon?: string;
     forceLight?: boolean; // Added
+    headerRight?: ReactNode; // Added for custom header actions
 }
 
 export interface FormState<T> {
@@ -60,6 +61,7 @@ export default function FormModal<T = any>({
     showBackButton = true,
     headerIcon,
     forceLight = false,
+    headerRight,
 }: FormModalProps<T>) {
     const { width } = useWindowDimensions();
 
@@ -75,6 +77,14 @@ export default function FormModal<T = any>({
     const [formData, setFormData] = useState<T>((initialData || {}) as T);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
+
+    // Sync formData with initialData when it changes or modal opens
+    React.useEffect(() => {
+        if (visible && initialData) {
+            setFormData(initialData as T);
+            setErrors({});
+        }
+    }, [visible, initialData]);
 
     // Responsive modal width
     const getModalWidth = () => {
@@ -213,6 +223,12 @@ export default function FormModal<T = any>({
                                     )}
                                 </View>
                             </View>
+
+                            {headerRight && (
+                                <View style={{ marginLeft: 12 }}>
+                                    {headerRight}
+                                </View>
+                            )}
 
                             <TouchableOpacity
                                 onPress={onClose}

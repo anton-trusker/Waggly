@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Switch, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Switch, StyleSheet, Alert, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { usePets } from '@/hooks/usePets';
@@ -176,6 +176,59 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
         onSuccess?.();
     };
 
+    const handleDelete = async () => {
+        if (!existingVaccination) return;
+
+        const performDelete = async () => {
+            try {
+                const { error } = await supabase
+                    .from('vaccinations')
+                    .delete()
+                    .eq('id', existingVaccination.id);
+
+                if (error) {
+                    Alert.alert('Delete Failed', error.message || 'Could not delete vaccination.');
+                } else {
+                    const userId = (await supabase.auth.getUser()).data.user?.id;
+                    await supabase.from('activity_logs').insert({
+                        actor_id: userId,
+                        owner_id: userId,
+                        pet_id: selectedPetId,
+                        action_type: 'vaccination_deleted',
+                        details: {
+                            vaccine_name: existingVaccination.vaccine_name,
+                        },
+                    });
+
+                    onSuccess?.();
+                    onClose();
+                }
+            } catch (error: any) {
+                console.error('Delete exception:', error);
+                Alert.alert('Error', error.message || 'Failed to delete vaccination');
+            }
+        };
+
+        if (Platform.OS === 'web') {
+            if (window.confirm(`Are you sure you want to delete this vaccination record for ${existingVaccination.vaccine_name}?`)) {
+                await performDelete();
+            }
+        } else {
+            Alert.alert(
+                'Delete Vaccination',
+                `Are you sure you want to delete this vaccination record for ${existingVaccination.vaccine_name}?`,
+                [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: performDelete,
+                    },
+                ]
+            );
+        }
+    };
+
     const validate = (data: VaccinationFormData) => {
         const errors: Record<string, string> = {};
         if (!selectedVaccine && !data.customVaccineName) {
@@ -337,6 +390,12 @@ export default function VaccinationFormModal({ visible, onClose, petId: initialP
                     </View>
 
                     <View style={{ height: 20 }} />
+
+                    {existingVaccination && (
+                        <TouchableOpacity style={styles.deleteButtonFooter} onPress={handleDelete}>
+                            <Text style={styles.deleteButtonText}>Delete Vaccination</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
         </FormModal>
@@ -409,5 +468,25 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 15,
         fontFamily: 'Plus Jakarta Sans',
+    },
+    switchLabel: {
+        fontWeight: '500',
+        fontSize: 15,
+        fontFamily: 'Plus Jakarta Sans',
+    },
+    deleteButtonFooter: {
+        marginTop: 8,
+        paddingVertical: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 12,
+        backgroundColor: '#FEF2F2',
+        borderWidth: 1,
+        borderColor: '#FECACA',
+    },
+    deleteButtonText: {
+        color: '#DC2626',
+        fontWeight: '600',
+        fontSize: 14,
     },
 });

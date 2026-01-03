@@ -13,6 +13,7 @@ import ShareModal from '@/components/sharing/ShareModal';
 import ActiveLinksList from '@/components/sharing/ActiveLinksList';
 import Button from '@/components/ui/Button';
 import EditPetModal from '@/components/pet/EditPetModal';
+import { PetHealthProfile } from '@/components/health/PetHealthProfile';
 
 export default function PetDetailsPage() {
     const router = useRouter();
@@ -83,6 +84,7 @@ export default function PetDetailsPage() {
                         {/* Tab Content */}
                         <View style={{ paddingBottom: 100 }}>
                             {activeTab === 'overview' && <OverviewTab />}
+                            {/* {activeTab === 'health' && <PetHealthProfile petId={petId} />} */}
                             {activeTab === 'documents' && <DocumentsTab />}
                             {activeTab === 'history' && <HistoryTab />}
                             {activeTab === 'settings' && <SettingsTab />}
@@ -92,39 +94,13 @@ export default function PetDetailsPage() {
             ) : (
                 <>
                     {/* Desktop Header */}
+                    {/* Desktop Header Removed */}
+                    {/*
                     <View style={styles.petHeader}>
-                        <View style={styles.petInfo}>
-                            <View style={styles.petPhotoGradient}>
-                                {pet.photo_url ? (
-                                    <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
-                                ) : (
-                                    <View style={styles.petPhotoPlaceholder}>
-                                        <Ionicons name="paw" size={32} color="#6366F1" />
-                                    </View>
-                                )}
-                            </View>
-                            <View style={styles.petMeta}>
-                                <Text style={styles.petName}>{pet.name}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.headerActions}>
-                            {canEdit && (
-                                <Button
-                                    variant="outline"
-                                    onPress={() => setEditProfileModalVisible(true)}
-                                    style={styles.editButton}
-                                >
-                                    Edit Profile
-                                </Button>
-                            )}
-                            <Button
-                                onPress={() => setShareModalVisible(true)}
-                                style={styles.shareButton}
-                            >
-                                <Text style={styles.shareButtonText}>Share Profile</Text>
-                            </Button>
-                        </View>
+                        ...
                     </View>
+                    */}
+
 
                     {/* Desktop Tabs */}
                     <View style={styles.tabs}>
@@ -136,6 +112,17 @@ export default function PetDetailsPage() {
                                 Overview
                             </Text>
                         </TouchableOpacity>
+                        {/* Health Tab Hidden */}
+                        {/*
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'health' && styles.tabActive]}
+                            onPress={() => setActiveTab('health')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'health' && styles.tabTextActive]}>
+                                Health
+                            </Text>
+                        </TouchableOpacity>
+                        */}
                         <TouchableOpacity
                             style={[styles.tab, activeTab === 'documents' && styles.tabActive]}
                             onPress={() => setActiveTab('documents')}
@@ -173,6 +160,7 @@ export default function PetDetailsPage() {
                     {/* Desktop Tab Content */}
                     <ScrollView style={styles.tabContent}>
                         {activeTab === 'overview' && <OverviewTab />}
+                        {/* {activeTab === 'health' && <PetHealthProfile petId={petId} />} */}
                         {activeTab === 'documents' && <DocumentsTab />}
                         {activeTab === 'share' && (
                             <View style={{ padding: 32 }}>
@@ -314,17 +302,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
     },
     tab: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderBottomWidth: 2,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        borderBottomWidth: 3,
         borderBottomColor: 'transparent',
     },
     tabActive: {
         borderBottomColor: '#2C097F',
     },
     tabText: {
-        fontSize: 13,
-        fontWeight: '600',
+        fontSize: 16,
+        fontWeight: '700',
         color: '#6B7280',
     },
     tabTextActive: {
@@ -390,9 +378,9 @@ const styles = StyleSheet.create({
         borderBottomColor: '#3B82F6',
     },
     mobileTabText: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#94A3B8',
+        fontSize: 12, // Kept small to fit 6 tabs
+        fontWeight: '600',
+        color: '#64748B',
     },
     mobileTabTextActive: {
         color: '#3B82F6',

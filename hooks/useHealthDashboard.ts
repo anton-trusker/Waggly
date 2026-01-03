@@ -1,201 +1,91 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
+import {
+    HealthDashboardSummary,
+    VaccinationStatusView,
+    MedicationTrackerView,
+    PreventiveCareStatusView
+} from '@/types';
 
-export interface HealthEvent {
-    id: string;
-    pet_id: string;
-    pet_name?: string;
-    pet_photo?: string;
-    title: string;
-    date: string;
-    type: 'vaccination' | 'visit' | 'treatment' | 'weight';
-    details?: any;
-    status?: string;
-    is_active?: boolean;
+interface HealthDashboardData {
+    summary: HealthDashboardSummary | null;
+    vaccinations: VaccinationStatusView[];
+    medications: MedicationTrackerView[];
+    preventiveCare: PreventiveCareStatusView[];
 }
 
-export function useHealthDashboard(petId?: string) {
-    const { user } = useAuth();
-    const [data, setData] = useState<{
-        recentEvents: HealthEvent[];
-        upcomingEvents: HealthEvent[];
-        activeTreatments: HealthEvent[];
-        loading: boolean;
-    }>({
-        recentEvents: [],
-        upcomingEvents: [],
-        activeTreatments: [],
-        loading: true,
+export function useHealthDashboard(petId: string) {
+    const [data, setData] = useState<HealthDashboardData>({
+        summary: null,
+        vaccinations: [],
+        medications: [],
+        preventiveCare: [],
     });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const fetchData = useCallback(async () => {
-        if (!user) return;
+    const fetchHealthData = useCallback(async () => {
+        if (!petId) return;
 
         try {
-            setData(prev => ({ ...prev, loading: true }));
+            setLoading(true);
+            setError(null);
 
-            // filtering by petId if provided
-            const filterByPet = (query: any) => {
-                if (petId && petId !== 'all') {
-                    return query.eq('pet_id', petId);
-                }
-                return query;
-            };
+            // Parallel fetch from all views
+            const [summaryRes, vaxRes, medsRes, prevRes] = await Promise.all([
+                supabase
+                    .from('view_health_dashboard_summary')
+                    .select('*')
+                    .eq('pet_id', petId)
+                    .single(),
 
-            // 1. Fetch Vaccinations
-            let vaxQuery = supabase
-                .from('vaccinations')
-                .select(`
-          *,
-          pets (name, photo_url)
-        `)
-                .order('next_due_date', { ascending: true }); // optimize for upcoming
+                supabase
+                    .from('view_vaccination_status')
+                    .select('*')
+                    .eq('pet_id', petId)
+                    .order('next_due_date', { ascending: true }),
 
-            const { data: vaccinations } = await filterByPet(vaxQuery);
+                supabase
+                    .from('view_medication_tracker')
+                    .select('*')
+                    .eq('pet_id', petId)
+                    .order('next_due_date', { ascending: true }),
 
-            // 2. Fetch Medical Visits
-            let visitQuery = supabase
-                .from('medical_visits')
-                .select(`
-          *,
-          pets (name, photo_url)
-        `)
-                .order('date', { ascending: false });
+                supabase
+                    .from('view_preventive_care_status')
+                    .select('*')
+                    .eq('pet_id', petId)
+                    .order('treatment_name', { ascending: true })
+            ]);
 
-            const { data: visits } = await filterByPet(visitQuery);
-
-            // 3. Fetch Treatments
-            let treatQuery = supabase
-                .from('treatments')
-                .select(`
-          *,
-          pets (name, photo_url)
-        `)
-                .eq('is_active', true);
-
-            const { data: treatments } = await filterByPet(treatQuery);
-
-            // 4. Fetch Weight Entries (Recent)
-            let weightQuery = supabase
-                .from('weight_entries')
-                .select(`
-          *,
-          pets (name, photo_url)
-        `)
-                .order('date', { ascending: false })
-                .limit(50); // Limit to recent
-
-            const { data: weights } = await filterByPet(weightQuery);
-
-            // Process and Sort
-            const now = new Date();
-            const upcoming: HealthEvent[] = [];
-            const history: HealthEvent[] = [];
-            const active: HealthEvent[] = [];
-
-            // Process Vaccinations
-            (vaccinations || []).forEach((v: any) => {
-                const petInfo = v.pets;
-                const nextDueDate = v.next_due_date ? new Date(v.next_due_date) : null;
-
-                // Past Vaccination (History)
-                history.push({
-                    id: v.id,
-                    pet_id: v.pet_id,
-                    pet_name: petInfo?.name || 'Unknown',
-                    pet_photo: petInfo?.photo_url,
-                    title: `Vaccination: ${v.name}`,
-                    date: v.date,
-                    type: 'vaccination',
-                    details: v,
-                });
-
-                // Upcoming Vaccination
-                if (nextDueDate && nextDueDate >= now) {
-                    upcoming.push({
-                        id: `upcoming-vax-${v.id}`,
-                        pet_id: v.pet_id,
-                        pet_name: petInfo?.name || 'Unknown',
-                        pet_photo: petInfo?.photo_url,
-                        title: `Due: ${v.name}`,
-                        date: v.next_due_date,
-                        type: 'vaccination',
-                        details: v,
-                        status: 'upcoming'
-                    });
-                }
-            });
-
-            // Process Visits (History)
-            (visits || []).forEach((v: any) => {
-                const petInfo = v.pets;
-                history.push({
-                    id: v.id,
-                    pet_id: v.pet_id,
-                    pet_name: petInfo?.name || 'Unknown',
-                    pet_photo: petInfo?.photo_url,
-                    title: `Vet Visit: ${v.reason}`,
-                    date: v.date,
-                    type: 'visit',
-                    details: v,
-                });
-            });
-
-            // Process Treatments (Active)
-            (treatments || []).forEach((t: any) => {
-                const petInfo = t.pets;
-                active.push({
-                    id: t.id,
-                    pet_id: t.pet_id,
-                    pet_name: petInfo?.name || 'Unknown',
-                    pet_photo: petInfo?.photo_url,
-                    title: `Treatment: ${t.type}`,
-                    date: t.date, // Start date?
-                    type: 'treatment',
-                    details: t,
-                    is_active: true
-                });
-            });
-
-            // Process Weights
-            (weights || []).forEach((w: any) => {
-                const petInfo = w.pets;
-                history.push({
-                    id: w.id,
-                    pet_id: w.pet_id,
-                    pet_name: petInfo?.name || 'Unknown',
-                    pet_photo: petInfo?.photo_url,
-                    title: `Weight: ${w.weight} ${w.unit}`,
-                    date: w.date,
-                    type: 'weight',
-                    details: w
-                });
-            });
-
-            // Sort History (Desc)
-            history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-            // Sort Upcoming (Asc)
-            upcoming.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            if (summaryRes.error) throw summaryRes.error;
+            if (vaxRes.error) throw vaxRes.error;
+            if (medsRes.error) throw medsRes.error;
+            if (prevRes.error) throw prevRes.error;
 
             setData({
-                recentEvents: history,
-                upcomingEvents: upcoming,
-                activeTreatments: active,
-                loading: false
+                summary: summaryRes.data as HealthDashboardSummary,
+                vaccinations: vaxRes.data as VaccinationStatusView[],
+                medications: medsRes.data as MedicationTrackerView[],
+                preventiveCare: prevRes.data as PreventiveCareStatusView[],
             });
 
-        } catch (e) {
-            console.error('Error fetching health dashboard data:', e);
-            setData(prev => ({ ...prev, loading: false }));
+        } catch (err) {
+            console.error('Error fetching health dashboard:', err);
+            setError(err as Error);
+        } finally {
+            setLoading(false);
         }
-    }, [user, petId]);
+    }, [petId]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchHealthData();
+    }, [fetchHealthData]);
 
-    // Expose refresh function/data
-    return { ...data, refresh: fetchData };
+    return {
+        ...data,
+        loading,
+        error,
+        refresh: fetchHealthData
+    };
 }

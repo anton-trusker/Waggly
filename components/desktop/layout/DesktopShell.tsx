@@ -18,16 +18,16 @@ const DesktopShell: React.FC<DesktopShellProps> = ({ children }) => {
     const { width } = useWindowDimensions();
     const [showShortcuts, setShowShortcuts] = useState(false);
 
-    // Global keyboard shortcuts
-    useKeyboardShortcuts({
-        [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/(tabs)/(home)'),
-        [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/(tabs)/calendar'),
-        [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/(tabs)/pets'),
-        [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/(tabs)/notifications'),
-        [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/(tabs)/profile'),
-        [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/(tabs)/pets/add-pet-wizard'),
-        [KEYBOARD_SHORTCUTS.HELP]: () => setShowShortcuts(prev => !prev),
-    });
+    // Global keyboard shortcuts - DISABLED
+    // useKeyboardShortcuts({
+    //     [KEYBOARD_SHORTCUTS.DASHBOARD]: () => router.push('/(tabs)/(home)'),
+    //     [KEYBOARD_SHORTCUTS.CALENDAR]: () => router.push('/(tabs)/calendar'),
+    //     [KEYBOARD_SHORTCUTS.PETS]: () => router.push('/(tabs)/pets'),
+    //     [KEYBOARD_SHORTCUTS.NOTIFICATIONS]: () => router.push('/(tabs)/notifications'),
+    //     [KEYBOARD_SHORTCUTS.SETTINGS]: () => router.push('/(tabs)/profile'),
+    //     [KEYBOARD_SHORTCUTS.ADD_PET]: () => router.push('/(tabs)/pets/add-pet-wizard'),
+    //     [KEYBOARD_SHORTCUTS.HELP]: () => setShowShortcuts(prev => !prev),
+    // });
 
     // Don't show shell on auth/onboarding pages or on mobile/tablet
     const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');

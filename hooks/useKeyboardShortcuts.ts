@@ -41,7 +41,7 @@ export const useKeyboardShortcuts = (shortcuts: {
 export const KEYBOARD_SHORTCUTS = {
     // Navigation
     DASHBOARD: 'cmd+d',
-    CALENDAR: 'cmd+c',
+    CALENDAR: 'cmd+l',
     PETS: 'cmd+p',
     NOTIFICATIONS: 'cmd+n',
     SETTINGS: 'cmd+,',
