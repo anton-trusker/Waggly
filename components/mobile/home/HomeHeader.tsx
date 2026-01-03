@@ -4,12 +4,10 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProfile } from '@/hooks/useProfile';
 import { designSystem } from '@/constants/designSystem';
 
 export default function HomeHeader() {
-    const { user } = useAuth();
-    const { profile } = useProfile();
+    const { user, profile } = useAuth();
     const insets = useSafeAreaInsets();
 
     const firstName = profile?.first_name || user?.email?.split('@')[0] || 'User';

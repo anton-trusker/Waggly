@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProfile } from '@/hooks/useProfile';
 import { PetImage } from '@/components/ui/PetImage';
 import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
@@ -19,8 +18,7 @@ function resolveImageUrl(url?: string): string | undefined {
 }
 
 export default function HomeHeader() {
-    const { user } = useAuth();
-    const { profile } = useProfile();
+    const { user, profile } = useAuth();
     const { colors } = useAppTheme();
 
     const firstName =

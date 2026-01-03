@@ -17,10 +17,10 @@ import { designSystem } from '@/constants/designSystem';
 import Input from '@/components/ui/Input';
 import { EnhancedButton } from '@/components/ui/EnhancedButton';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { supabase } from '@/lib/supabase';
 import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
 import { useLocale } from '@/hooks/useLocale';
+import { AuthTabs } from '@/components/auth/AuthTabs';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -48,14 +48,11 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     try {
-      // Use window.location.origin for web, or allow Supabase to handle default for native
       const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo,
-          // skipBrowserRedirect: false // Default is false, removing explicit set to avoid issues
         }
       });
 
@@ -69,51 +66,22 @@ export default function LoginScreen() {
     }
   };
 
-  const handleAppleLogin = async () => {
-    // Hidden per request
-    return;
-    /*
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        }
-      });
-      // ...
-    } catch (error) { ... }
-    */
-  };
-
-  const renderDesktopHeader = () => (
-    <View style={styles.desktopHeader}>
-      <View style={styles.desktopLogoContainer}>
-        <Image source={require('@/assets/images/logo.png')} style={{ width: 32, height: 32 }} resizeMode="contain" />
-      </View>
-      <Text style={styles.desktopAppName}>Pawzly</Text>
-    </View>
-  );
-
-  const renderMobileHeader = () => (
-    <View style={styles.mobileHeader}>
+  // Common Header (Logo + Name)
+  const renderLogo = () => (
+    <View style={styles.header}>
       <View style={styles.logoContainer}>
-        <Image source={require('@/assets/images/logo.png')} style={{ width: 48, height: 48 }} resizeMode="contain" />
+        <Image source={require('@/assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
       <Text style={styles.appName}>Pawzly</Text>
     </View>
   );
 
-  const renderForm = () => (
+  const renderFormContent = () => (
     <View style={[styles.formContainer, isDesktop && styles.formContainerDesktop]}>
-      {/* Dynamic Headers based on platform/view within the form flow if needed, but we place them outside in main render usually. 
-          However, for Mobile, "In center before Form" suggests inside scrollview.
-          For Desktop, "Add Header...". We'll put it top left of form panel.
-      */}
-      {!isDesktop && renderMobileHeader()}
-      {isDesktop && renderDesktopHeader()}
+      {/* Title on Top of Card */}
+      <Text style={styles.cardTitle}>{t('auth.sign_in')}</Text>
 
-      <Text style={styles.title}>{t('auth.login_title')}</Text>
-      <Text style={styles.subtitle}>{t('auth.login_subtitle')}</Text>
+      <AuthTabs activeTab="signin" />
 
       <View style={styles.inputs}>
         <Input
@@ -123,6 +91,7 @@ export default function LoginScreen() {
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
+          containerStyle={{ marginBottom: 12 }}
         />
 
         <View>
@@ -148,6 +117,7 @@ export default function LoginScreen() {
         onPress={handleLogin}
         loading={loading}
         fullWidth
+        style={styles.signInButton}
       />
 
       <View style={styles.divider}>
@@ -160,28 +130,12 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.socialButton}
           onPress={handleGoogleLogin}
+          activeOpacity={0.7}
         >
           <View style={styles.googleIcon}>
             <Text style={styles.googleIconText}>G</Text>
           </View>
           <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
-        </TouchableOpacity>
-
-        {/* Hidden Apple Signin 
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={handleAppleLogin}
-        >
-          <IconSymbol android_material_icon_name="apple" size={20} color={designSystem.colors.text.primary} />
-          <Text style={styles.socialButtonText}>Apple</Text>
-        </TouchableOpacity>
-        */}
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>{t('auth.no_account')} </Text>
-        <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
-          <Text style={styles.signUpLink}>{t('auth.sign_up_link')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -195,12 +149,13 @@ export default function LoginScreen() {
           subtitle={t('auth.hero_subtitle')}
         />
         <View style={styles.desktopFormPanel}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
             <ScrollView
               contentContainerStyle={styles.desktopScrollContent}
               showsVerticalScrollIndicator={false}
             >
-              {renderForm()}
+              {renderLogo()}
+              {renderFormContent()}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
@@ -209,11 +164,14 @@ export default function LoginScreen() {
     );
   }
 
+  // Mobile
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          {renderForm()}
+          {/* Logo OUTSIDE the form card on mobile */}
+          {renderLogo()}
+          {renderFormContent()}
         </ScrollView>
       </KeyboardAvoidingView>
       <LoadingOverlay visible={loading} />
@@ -227,114 +185,119 @@ const styles = StyleSheet.create({
   desktopContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: designSystem.colors.background.primary,
+    backgroundColor: designSystem.colors.neutral[50], // Slightly darker bg for contrast
   },
   desktopFormPanel: {
     flex: 1,
-    backgroundColor: designSystem.colors.background.primary,
-    justifyContent: 'center', // Center vertically
+    justifyContent: 'center',
+    alignItems: 'center', // Center the card
   },
   desktopScrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 64,
-    paddingVertical: 48,
+    paddingVertical: 16, // Reduced from 24
+    width: '100%',
+    alignItems: 'center',
   },
 
   // Mobile Layout
   container: {
     flex: 1,
-    backgroundColor: designSystem.colors.background.primary,
+    backgroundColor: designSystem.colors.neutral[50], // Mobile now uses off-white bg
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 40,
-    paddingHorizontal: 24,
-    paddingTop: 60,
+    justifyContent: 'center',
+    paddingHorizontal: 16, // Add side spacing for card
+    paddingVertical: 20,
+    alignItems: 'center',
   },
 
-  // Header Logic
-  mobileHeader: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  desktopHeader: {
+  // Common Header
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 48,
-    gap: 12,
+    justifyContent: 'center',
+    marginBottom: 20, // Reduced from 32
+    gap: 8,
   },
-
   logoContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: designSystem.colors.primary[50],
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
-  desktopLogoContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: designSystem.colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
+  logo: {
+    width: 24,
+    height: 24,
   },
   appName: {
-    fontSize: 28,
+    fontSize: 20, // Smaller text
     fontWeight: '800',
     color: designSystem.colors.text.primary,
     letterSpacing: -0.5,
-  },
-  desktopAppName: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: designSystem.colors.text.primary,
-    letterSpacing: -0.5,
-  },
-
-  // Form Container
-  formContainer: {
-    width: '100%',
-  },
-  formContainerDesktop: {
-    maxWidth: 480,
-    alignSelf: 'center', // Ensure centered in panel
   },
 
   // Typography
-  title: {
-    ...(designSystem.typography.headline.medium as any),
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: '800',
     color: designSystem.colors.text.primary,
-    marginBottom: 8,
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'Plus Jakarta Sans',
   },
-  subtitle: {
-    ...(designSystem.typography.body.large as any),
-    color: designSystem.colors.text.secondary,
-    marginBottom: 32,
+  sectionTitle: {
+    display: 'none', // Hide old title
+  },
+
+  // Form Container (Mobile Card by default, Desktop overrides)
+  formContainer: {
+    width: '100%',
+    backgroundColor: designSystem.colors.background.primary,
+    borderRadius: designSystem.borderRadius['2xl'],
+    padding: 24, // Compact padding
+    ...designSystem.shadows.md,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  formContainerDesktop: {
+    width: '100%',
+    maxWidth: 480, // Wider for desktop
+    padding: 40,
+    ...designSystem.shadows.xl, // Stronger shadow for desktop
   },
 
   // Inputs
   inputs: {
-    gap: 20,
-    marginBottom: 24,
+    gap: 12, // Compact gap
+    marginBottom: 20,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginTop: 8,
+    marginTop: 6,
   },
   forgotPasswordText: {
-    ...(designSystem.typography.label.medium as any),
+    fontSize: 13,
+    fontWeight: '600',
     color: designSystem.colors.primary[500],
+  },
+
+  signInButton: {
+    shadowColor: designSystem.colors.primary[500],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   // Divider
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: 20, // Compact
   },
   line: {
     flex: 1,
@@ -342,9 +305,10 @@ const styles = StyleSheet.create({
     backgroundColor: designSystem.colors.border.primary,
   },
   orText: {
-    ...(designSystem.typography.body.small as any),
+    fontSize: 12,
     color: designSystem.colors.text.tertiary,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
+    fontWeight: '500',
   },
 
   // Social Buttons
@@ -357,46 +321,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 48,
-    borderRadius: designSystem.borderRadius.md,
+    height: 44, // Compact height
+    borderRadius: designSystem.borderRadius.xl, // More rounded
     borderWidth: 1,
     borderColor: designSystem.colors.border.primary,
-    backgroundColor: designSystem.colors.background.secondary,
+    backgroundColor: '#fff',
     gap: 8,
+    ...designSystem.shadows.sm, // Add subtle shadow
   },
   socialButtonText: {
-    ...(designSystem.typography.body.medium as any),
+    fontSize: 14,
     color: designSystem.colors.text.primary,
     fontWeight: '600',
   },
   googleIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#DB4437',
     alignItems: 'center',
     justifyContent: 'center',
   },
   googleIconText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-
-  // Footer
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 32,
-  },
-  footerText: {
-    ...(designSystem.typography.body.medium as any),
-    color: designSystem.colors.text.secondary,
-  },
-  signUpLink: {
-    ...(designSystem.typography.body.medium as any),
-    color: designSystem.colors.primary[500],
+    fontSize: 11,
     fontWeight: 'bold',
   },
 });
-

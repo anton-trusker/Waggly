@@ -63,15 +63,9 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
             route: '/(tabs)/pets',
         },
         {
-            name: 'notifications',
-            label: 'navigation.notifications',
-            icon: 'notifications' as any,
-            route: '/(tabs)/notifications',
-        },
-        {
-            name: 'menu',
-            label: 'navigation.profile',
-            icon: 'menu' as any,
+            name: 'settings',
+            label: 'Settings',
+            icon: 'settings' as any,
             route: '/(tabs)/profile',
         },
     ];
@@ -130,6 +124,6 @@ const styles = StyleSheet.create({
         overflow: Platform.OS === 'web' ? ('auto' as any) : 'scroll',
     },
     contentMobile: {
-        paddingBottom: 80, // Space for floating tab bar
+        // paddingBottom removed as per user request to remove blocking section
     },
 });

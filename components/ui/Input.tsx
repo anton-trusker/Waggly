@@ -1,4 +1,4 @@
-import { TextInput, TextInputProps, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { TextInput, TextInputProps, StyleSheet, View, TouchableOpacity, ViewStyle } from 'react-native';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import FormField from './FormField';
 import { useLocale } from '@/hooks/useLocale';
@@ -10,9 +10,10 @@ type Props = TextInputProps & {
   error?: string;
   required?: boolean;
   isPassword?: boolean;
+  containerStyle?: ViewStyle;
 };
 
-export default function Input({ label, error, required, style, placeholder, isPassword, ...props }: Props) {
+export default function Input({ label, error, required, style, containerStyle, placeholder, isPassword, ...props }: Props) {
   const { t } = useLocale();
   const { colors } = useAppTheme();
   const [isSecure, setIsSecure] = useState(isPassword);
@@ -22,7 +23,7 @@ export default function Input({ label, error, required, style, placeholder, isPa
       <View style={[styles.container, {
         backgroundColor: colors.background.tertiary, // Use tertiary (white/dark gray)
         borderColor: error ? colors.status.error[500] : colors.border.primary,
-      }]}>
+      }, containerStyle]}>
         <TextInput
           style={[styles.input, { color: colors.text.primary }, style]}
           placeholderTextColor={colors.text.tertiary}

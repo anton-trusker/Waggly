@@ -1,16 +1,18 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocale } from '@/hooks/useLocale';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
+import UserOnboardingModal from '@/components/desktop/modals/UserOnboardingModal';
+import { supabase } from '@/lib/supabase';
 
 // Widgets
 import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
@@ -23,7 +25,8 @@ export default function DashboardPage() {
     const { width } = useWindowDimensions();
     const isLargeScreen = width >= 1024;
     const { theme } = useAppTheme();
-    const { refreshPets } = usePets();
+    const { pets, refreshPets, loading } = usePets();
+    const { user, profile, refreshProfile } = useAuth(); // Use profile and refreshProfile
     const { t } = useLocale();
 
     const [refreshing, setRefreshing] = useState(false);
@@ -31,11 +34,40 @@ export default function DashboardPage() {
     const [vaccinationOpen, setVaccinationOpen] = useState(false);
     const [treatmentOpen, setTreatmentOpen] = useState(false);
     const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
+    
+    // Onboarding State
+    const [onboardingVisible, setOnboardingVisible] = useState(false);
+
+    useEffect(() => {
+        // Use the profile from context if available, or fetch it
+        if (profile) {
+            if (!profile.onboarding_completed) {
+                setOnboardingVisible(true);
+            }
+        } else if (user) {
+             // Fallback to manual check if profile isn't loaded yet (though AuthContext handles it)
+            checkOnboardingStatus();
+        }
+    }, [user, profile]);
+
+    const checkOnboardingStatus = async () => {
+        if (!user) return;
+        
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('onboarding_completed')
+            .eq('id', user.id)
+            .single();
+            
+        if (data && !data.onboarding_completed) {
+            setOnboardingVisible(true);
+        }
+    };
 
     const onRefresh = async () => {
         setRefreshing(true);
         await refreshPets();
-        // Add other refresh calls here if needed (useEvents, useActivityFeed, etc.)
+        await refreshProfile(); // Refresh profile on pull-to-refresh
         setRefreshing(false);
     };
 
@@ -59,34 +91,46 @@ export default function DashboardPage() {
         >
             <View style={[styles.content, !isLargeScreen && styles.contentMobile]}>
 
-
-
-                {/* Mobile Layout - Direct vertical stack */}
-                {!isLargeScreen && (
-                    <View style={styles.mobileStack}>
-                        <MyPetsWidget />
-                        <DashboardUpcoming />
-                        <DashboardTimeline />
+                {!loading && pets.length === 0 ? (
+                    <View style={styles.emptyState}>
+                        <Text style={styles.emptyIcon}>🐾</Text>
+                        <Text style={styles.emptyTitle}>{t('my_pets_page.empty_title', { defaultValue: 'No Pets Yet' })}</Text>
+                        <Text style={styles.emptyText}>{t('my_pets_page.empty_text', { defaultValue: 'Add your first pet to start managing their health and care' })}</Text>
+                        <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(tabs)/pets/new' as any)}>
+                            <Ionicons name="add" size={20} color="#fff" />
+                            <Text style={styles.addButtonText}>{t('my_pets_page.add_first_pet', { defaultValue: 'Add Your First Pet' })}</Text>
+                        </TouchableOpacity>
                     </View>
-                )}
-
-                {/* Desktop Layout - Two columns */}
-                {isLargeScreen && (
-                    <View style={styles.gridLarge}>
-                        {/* Left Column (Main) */}
-                        <View style={styles.colMain}>
-                            <MyPetsWidget />
-                            <QuickActionsGrid onActionPress={handleQuickAction} />
-                        </View>
-
-                        {/* Right Column (Sidebar/Widgets) */}
-                        <View style={styles.colSide}>
-                            <View style={{ gap: 24 }}>
+                ) : (
+                    <>
+                        {/* Mobile Layout - Direct vertical stack */}
+                        {!isLargeScreen && (
+                            <View style={styles.mobileStack}>
+                                <MyPetsWidget />
                                 <DashboardUpcoming />
                                 <DashboardTimeline />
                             </View>
-                        </View>
-                    </View>
+                        )}
+
+                        {/* Desktop Layout - Two columns */}
+                        {isLargeScreen && (
+                            <View style={styles.gridLarge}>
+                                {/* Left Column (Main) */}
+                                <View style={styles.colMain}>
+                                    <MyPetsWidget />
+                                    <QuickActionsGrid onActionPress={handleQuickAction} />
+                                </View>
+
+                                {/* Right Column (Sidebar/Widgets) */}
+                                <View style={styles.colSide}>
+                                    <View style={{ gap: 24 }}>
+                                        <DashboardUpcoming />
+                                        <DashboardTimeline />
+                                    </View>
+                                </View>
+                            </View>
+                        )}
+                    </>
                 )}
 
             </View>
@@ -96,6 +140,16 @@ export default function DashboardPage() {
             <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
             <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
             <HealthMetricsModal visible={healthMetricsOpen} onClose={() => setHealthMetricsOpen(false)} initialTab="weight" />
+            
+            {/* Onboarding Modal */}
+            <UserOnboardingModal 
+                visible={onboardingVisible} 
+                onClose={() => setOnboardingVisible(false)}
+                onComplete={async () => {
+                    setOnboardingVisible(false);
+                    await refreshProfile(); // Refresh profile immediately after onboarding
+                }} 
+            />
 
         </ScrollView>
     );
@@ -169,4 +223,10 @@ const styles = StyleSheet.create({
     colSide: {
         flex: 1,
     },
+    emptyState: { alignItems: 'center', paddingVertical: 60 },
+    emptyIcon: { fontSize: 64, marginBottom: 16 },
+    emptyTitle: { fontSize: 20, fontWeight: '700', color: '#111827', marginBottom: 8 },
+    emptyText: { fontSize: 16, color: '#6B7280', textAlign: 'center', maxWidth: 400, marginBottom: 24 },
+    addButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#6366F1', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12 },
+    addButtonText: { fontSize: 14, fontWeight: '600', color: '#fff' },
 });

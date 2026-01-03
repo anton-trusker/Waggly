@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProfile } from '@/hooks/useProfile';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useLocale } from '@/hooks/useLocale';
 import { LanguageSelector } from './LanguageSelector';
@@ -11,8 +10,7 @@ import { LanguageSelector } from './LanguageSelector';
 const SidebarNav: React.FC = () => {
     const router = useRouter();
     const pathname = usePathname();
-    const { user } = useAuth();
-    const { profile } = useProfile();
+    const { user, profile } = useAuth();
     const { unreadCount } = useNotifications();
     const { t } = useLocale();
 
@@ -60,18 +58,6 @@ const SidebarNav: React.FC = () => {
                 {/* Utilities Row */}
                 <View style={styles.utilityRow}>
                     <LanguageSelector />
-
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="moon-outline" size={20} color="#6B7280" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.iconButton}
-                        onPress={() => router.push('/(tabs)/notifications')}
-                    >
-                        <Ionicons name="notifications-outline" size={20} color="#6B7280" />
-                        {unreadCount > 0 && <View style={styles.notificationBadge} />}
-                    </TouchableOpacity>
                 </View>
 
                 {/* User Card */}

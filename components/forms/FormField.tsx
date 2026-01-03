@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput as RNTextInput, TextInputProps as RNTextInputProps, TouchableOpacity, Platform } from 'react-native';
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface FormFieldProps<T extends FieldValues> extends Omit<RNTextInputProps, 'value' | 'onChangeText'> {
     control: Control<T>;
@@ -28,6 +29,7 @@ export default function FormField<T extends FieldValues>({
 }: FormFieldProps<T>) {
     const { theme } = useAppTheme();
     const isDark = theme === 'dark';
+    const [isSecure, setIsSecure] = useState(type === 'password');
 
     return (
         <Controller
@@ -43,37 +45,53 @@ export default function FormField<T extends FieldValues>({
                         </Text>
                     </View>
 
-                    {/* Input */}
-                    <RNTextInput
-                        style={[
-                            styles.input,
-                            isDark && styles.inputDark,
-                            multiline && styles.inputMultiline,
-                            multiline && { height: rows * 20 + 24 },
-                            error && styles.inputError,
-                        ]}
-                        value={value?.toString() || ''}
-                        onChangeText={(text) => {
-                            if (type === 'number') {
-                                const num = parseFloat(text);
-                                onChange(isNaN(num) ? undefined : num);
-                            } else {
-                                onChange(text);
+                    {/* Input Container for Relative Positioning */}
+                    <View style={styles.inputWrapper}>
+                        <RNTextInput
+                            style={[
+                                styles.input,
+                                isDark && styles.inputDark,
+                                multiline && styles.inputMultiline,
+                                multiline && { height: rows * 20 + 24 },
+                                error && styles.inputError,
+                                type === 'password' && { paddingRight: 40 } // Add space for icon
+                            ]}
+                            value={value?.toString() || ''}
+                            onChangeText={(text) => {
+                                if (type === 'number') {
+                                    const num = parseFloat(text);
+                                    onChange(isNaN(num) ? undefined : num);
+                                } else {
+                                    onChange(text);
+                                }
+                            }}
+                            onBlur={onBlur}
+                            placeholder={placeholder}
+                            placeholderTextColor={designSystem.colors.text.tertiary}
+                            keyboardType={
+                                type === 'email' ? 'email-address' :
+                                    type === 'number' ? 'numeric' :
+                                        'default'
                             }
-                        }}
-                        onBlur={onBlur}
-                        placeholder={placeholder}
-                        placeholderTextColor={designSystem.colors.text.tertiary}
-                        keyboardType={
-                            type === 'email' ? 'email-address' :
-                                type === 'number' ? 'numeric' :
-                                    'default'
-                        }
-                        secureTextEntry={type === 'password'}
-                        multiline={multiline}
-                        textAlignVertical={multiline ? 'top' : 'center'}
-                        {...textInputProps}
-                    />
+                            secureTextEntry={type === 'password' ? isSecure : false}
+                            multiline={multiline}
+                            textAlignVertical={multiline ? 'top' : 'center'}
+                            {...textInputProps}
+                        />
+
+                        {type === 'password' && (
+                            <TouchableOpacity
+                                style={styles.toggleButton}
+                                onPress={() => setIsSecure(!isSecure)}
+                            >
+                                <IconSymbol
+                                    android_material_icon_name={isSecure ? 'visibility' : 'visibility-off'}
+                                    size={20}
+                                    color={designSystem.colors.text.secondary}
+                                />
+                            </TouchableOpacity>
+                        )}
+                    </View>
 
                     {/* Error Message */}
                     {error && (
@@ -103,6 +121,10 @@ const styles = StyleSheet.create({
     required: {
         color: designSystem.colors.status.error[500],
     },
+    inputWrapper: {
+        position: 'relative',
+        justifyContent: 'center',
+    },
     input: {
         backgroundColor: designSystem.colors.neutral[0],
         borderWidth: 1,
@@ -124,6 +146,13 @@ const styles = StyleSheet.create({
     },
     inputError: {
         borderColor: designSystem.colors.status.error[500],
+    },
+    toggleButton: {
+        position: 'absolute',
+        right: 12,
+        height: '100%',
+        justifyContent: 'center',
+        paddingHorizontal: 4,
     },
     errorText: {
         ...designSystem.typography.body.small,

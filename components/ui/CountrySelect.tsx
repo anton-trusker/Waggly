@@ -6,9 +6,11 @@ type Props = {
   value?: string;
   onChange: (code: string) => void;
   label?: string;
+  error?: string;
+  containerStyle?: import('react-native').ViewStyle;
 };
 
-export default function CountrySelect({ value, onChange, label = 'Country' }: Props) {
+export default function CountrySelect({ value, onChange, label = 'Country', error, containerStyle }: Props) {
   const items = COUNTRIES.map(c => ({
     value: c.code,
     label: c.name,
@@ -21,6 +23,8 @@ export default function CountrySelect({ value, onChange, label = 'Country' }: Pr
       onChange={onChange}
       items={items}
       label={label}
+      error={error}
+      containerStyle={containerStyle}
       placeholder="Select country"
       searchPlaceholder="Search country..."
     />

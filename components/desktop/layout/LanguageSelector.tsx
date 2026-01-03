@@ -28,7 +28,9 @@ export function LanguageSelector() {
                 style={styles.button}
                 onPress={() => setVisible(true)}
             >
-                <Ionicons name="globe-outline" size={20} color="#6B7280" />
+                <Text style={{ fontSize: 24 }}>{currentLanguage.flag}</Text>
+                <Text style={styles.buttonText}>{currentLanguage.label}</Text>
+                <Ionicons name="chevron-down" size={16} color="#6B7280" />
             </TouchableOpacity>
 
             {visible && (
@@ -75,12 +77,18 @@ const styles = StyleSheet.create({
         zIndex: 50,
     },
     button: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: '#F3F4F6',
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        gap: 8,
+    },
+    buttonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#374151',
     },
     overlay: {
         flex: 1,

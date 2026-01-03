@@ -12,15 +12,19 @@ import { useCityAutocomplete } from '@/hooks/useCityAutocomplete';
 import { designSystem, getSpacing } from '@/constants/designSystem';
 import { getColor } from '@/utils/designSystem';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
+import { ConfirmationModal } from '../../../components/ui/ConfirmationModal';
 
 export default function ProfilePage() {
-  const { user, signOut } = useAuth();
-  const { profile, upsertProfile, loading: profileLoading } = useProfile();
+  const { user, signOut, profile: authProfile, refreshProfile } = useAuth(); // Use profile from AuthContext
+  const { profile: hookProfile, upsertProfile, loading: profileLoading } = useProfile(); // Keep for update logic
   const { locale, setLocale, t } = useLocale();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const [activeTab, setActiveTab] = useState<'account' | 'notifications' | 'privacy'>('account');
+
+  // Use authProfile (globally cached) preferably, fall back to hookProfile
+  const profile = authProfile || hookProfile;
 
   // Profile State
   const [firstName, setFirstName] = useState('');
@@ -43,6 +47,8 @@ export default function ProfilePage() {
   const [countrySearch, setCountrySearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
+
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // City autocomplete using Google Places JS SDK
   const cityAutocomplete = useCityAutocomplete(countryCode);
@@ -144,6 +150,12 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     setSaving(true);
+    // Use phone state directly if simple field, or combine logic if complex
+    // Assuming simple field from modal changes, but here we might want to keep robust parsing if editing again
+    // For now, let's just save the phone string as is if user edited it, or use the combined logic if we kept the picker
+    // If we want to align with onboarding modal, we should probably simplify this page too.
+    // But keeping existing logic for now as it's more advanced.
+    
     const { error } = await upsertProfile({
       first_name: firstName,
       last_name: lastName,
@@ -157,6 +169,11 @@ export default function ProfilePage() {
       country_code: countryCode || null,
       language_code: languageCode || null,
     } as any);
+    
+    if (!error) {
+        await refreshProfile(); // Refresh global context
+    }
+    
     setSaving(false);
 
     if (error) {
@@ -167,30 +184,8 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSignOut = async () => {
-    Alert.alert(
-      t('profile.sign_out_confirm_title'),
-      t('profile.sign_out_confirm_message'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('profile.sign_out'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-              // Router redirection is handled by _layout.tsx based on session state
-            } catch (error) {
-              console.error('Sign out error:', error);
-              Alert.alert(
-                t('common.error'),
-                'Failed to sign out. Please try again.'
-              );
-            }
-          }
-        }
-      ]
-    );
+  const handleSignOut = () => {
+    setShowSignOutConfirm(true);
   };
 
   const handleDeleteAccount = () => {
@@ -246,6 +241,25 @@ export default function ProfilePage() {
 
   return (
     <View style={styles.container}>
+      <ConfirmationModal
+        visible={showSignOutConfirm}
+        title={t('profile.sign_out_confirm_title')}
+        message={t('profile.sign_out_confirm_message')}
+        confirmText={t('profile.sign_out')}
+        cancelText={t('common.cancel')}
+        onConfirm={async () => {
+          setShowSignOutConfirm(false);
+          try {
+            await signOut();
+          } catch (error) {
+            console.error('Sign out error:', error);
+            Alert.alert(t('common.error'), 'Failed to sign out. Please try again.');
+          }
+        }}
+        onCancel={() => setShowSignOutConfirm(false)}
+        variant="danger"
+        icon="log-out-outline"
+      />
       {/* Header */}
       {/* Header - Desktop Only (Mobile uses Global AppHeader) */}
       {!isMobile && (
@@ -587,50 +601,40 @@ export default function ProfilePage() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View style={[styles.profileView, !isMobile && styles.profileGrid]}>
-                  <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
+                <View style={[styles.profileView, styles.profileGrid]}>
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
                     <Text style={styles.infoLabel}>{t('profile.label_first_name')} / {t('profile.label_last_name')}</Text>
-                    <Text style={styles.infoValue}>{firstName} {lastName}</Text>
+                    <Text style={styles.infoValue}>{(firstName || lastName) ? `${firstName} ${lastName}`.trim() : '-'}</Text>
                   </View>
 
-                  {dateOfBirth ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_dob')}</Text>
-                      <Text style={styles.infoValue}>{dateOfBirth}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_dob')}</Text>
+                    <Text style={styles.infoValue}>{dateOfBirth || '-'}</Text>
+                  </View>
 
-                  {gender ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_gender')}</Text>
-                      <Text style={styles.infoValue}>{gender}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_gender')}</Text>
+                    <Text style={styles.infoValue}>{gender || '-'}</Text>
+                  </View>
 
-                  {phone ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_phone')}</Text>
-                      <Text style={styles.infoValue}>{phone}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_phone')}</Text>
+                    <Text style={styles.infoValue}>{phone || '-'}</Text>
+                  </View>
 
-                  {website ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_website')}</Text>
-                      <Text style={[styles.infoValue, styles.link]}>{website}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_website')}</Text>
+                    <Text style={[styles.infoValue, website ? styles.link : {}]}>{website || '-'}</Text>
+                  </View>
 
-                  {address ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_address')}</Text>
-                      <Text style={styles.infoValue}>{address}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_address')}</Text>
+                    <Text style={styles.infoValue}>{address || '-'}</Text>
+                  </View>
 
-                  {countryCode ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_country')}</Text>
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_country')}</Text>
+                    {countryCode ? (
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <Text style={{ fontSize: 20 }}>
                           {COUNTRIES.find(c => c.code === countryCode)?.flag}
@@ -639,27 +643,25 @@ export default function ProfilePage() {
                           {COUNTRIES.find(c => c.code === countryCode)?.name || countryCode}
                         </Text>
                       </View>
-                    </View>
-                  ) : null}
+                    ) : (
+                      <Text style={styles.infoValue}>-</Text>
+                    )}
+                  </View>
 
-                  {languageCode ? (
-                    <View style={[styles.infoSection, !isMobile && styles.infoSectionGrid]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_language')}</Text>
-                      <Text style={styles.infoValue}>
-                        {languageCode === 'en' ? 'English' :
-                          languageCode === 'de' ? 'Deutsch' :
-                            languageCode === 'fr' ? 'Français' :
-                              languageCode === 'ru' ? 'Русский' : languageCode}
-                      </Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionGrid]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_language')}</Text>
+                    <Text style={styles.infoValue}>
+                      {languageCode ? (languageCode === 'en' ? 'English' :
+                        languageCode === 'de' ? 'Deutsch' :
+                          languageCode === 'fr' ? 'Français' :
+                            languageCode === 'ru' ? 'Русский' : languageCode) : '-'}
+                    </Text>
+                  </View>
 
-                  {bio ? (
-                    <View style={[styles.infoSection, styles.infoSectionFull]}>
-                      <Text style={styles.infoLabel}>{t('profile.label_bio')}</Text>
-                      <Text style={styles.infoValue}>{bio}</Text>
-                    </View>
-                  ) : null}
+                  <View style={[styles.infoSection, styles.infoSectionFull]}>
+                    <Text style={styles.infoLabel}>{t('profile.label_bio')}</Text>
+                    <Text style={styles.infoValue}>{bio || '-'}</Text>
+                  </View>
                 </View>
               )}
 
@@ -1562,6 +1564,19 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     marginBottom: 20,
+  },
+  infoSectionGrid: {
+    width: '48%',
+    marginBottom: 24,
+  },
+  infoSectionFull: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  profileGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   infoLabel: {
     fontSize: 12,

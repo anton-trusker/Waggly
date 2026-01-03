@@ -38,7 +38,10 @@ const styles = StyleSheet.create({
     paddingVertical: getSpacing(5),
     borderRadius: designSystem.borderRadius.lg,
     alignItems: 'center',
-    ...designSystem.shadows.md,
+    ...Platform.select({
+      web: { boxShadow: designSystem.shadows.md.boxShadow },
+      default: designSystem.shadows.md,
+    }),
   },
   message: {
     marginTop: getSpacing(3),

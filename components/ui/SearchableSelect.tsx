@@ -17,6 +17,8 @@ type Props = {
   label?: string;
   placeholder?: string;
   searchPlaceholder?: string;
+  error?: string;
+  containerStyle?: import('react-native').ViewStyle;
 };
 
 export default function SearchableSelect({
@@ -26,6 +28,8 @@ export default function SearchableSelect({
   label = 'Select',
   placeholder = 'Select option',
   searchPlaceholder = 'Search...',
+  error,
+  containerStyle,
 }: Props) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -46,7 +50,7 @@ export default function SearchableSelect({
     <View style={styles.container}>
       {label && <Text style={styles.label}>{t(label, { defaultValue: label })}</Text>}
       <TouchableOpacity
-        style={styles.input}
+        style={[styles.input, error ? { borderColor: colors.statusError } : {}, containerStyle]}
         onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={t('open_selector', { defaultValue: `Open ${label} selector`, label })}
