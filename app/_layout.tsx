@@ -16,10 +16,17 @@ function RootLayoutNav() {
   const { session, user } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  // Ensure layout is mounted before navigation
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Handle Deep Linking
   useEffect(() => {
-    // ... existing code ...
+    if (!isMounted) return;
+
     const handleDeepLink = async (event: { url: string }) => {
       const { path, queryParams } = Linking.parse(event.url);
 
@@ -79,9 +86,11 @@ function RootLayoutNav() {
     return () => {
       subscription.remove();
     };
-  }, [user]);
+  }, [user, isMounted]);
 
   useEffect(() => {
+    if (!isMounted) return; // Don't navigate before mount
+
     const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
     const inOnboardingGroup = segments[0] === '(onboarding)';
     const isPublicRoute = segments[0] === 'pet' && segments[1] === 'shared';
@@ -95,7 +104,7 @@ function RootLayoutNav() {
     if (!session && !inAuthGroup && !inOnboardingGroup && !isPublicRoute) {
       router.replace('/(auth)/login');
     }
-  }, [session, segments]);
+  }, [session, segments, isMounted]);
 
   return (
     <NavigationThemeProvider />
