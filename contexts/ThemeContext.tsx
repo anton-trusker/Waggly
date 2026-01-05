@@ -13,16 +13,14 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    // Always use light theme
-    const theme = designSystem;
-
+    // Always use light theme - no async loading needed
     return (
         <ThemeContext.Provider
             value={{
                 themeMode: 'light',
                 isDark: false,
-                colors: theme.colors,
-                theme,
+                colors: designSystem.colors,
+                theme: designSystem,
             }}
         >
             {children}
