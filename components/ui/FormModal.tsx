@@ -31,8 +31,9 @@ export interface FormModalProps<T = any> {
     submitLabel?: string;
     showBackButton?: boolean;
     headerIcon?: string;
-    forceLight?: boolean; // Added
-    headerRight?: ReactNode; // Added for custom header actions
+    forceLight?: boolean;
+    headerRight?: ReactNode;
+    hideFooter?: boolean; // Added
 }
 
 export interface FormState<T> {
@@ -62,6 +63,7 @@ export default function FormModal<T = any>({
     headerIcon,
     forceLight = false,
     headerRight,
+    hideFooter = false, // Default to showing footer
 }: FormModalProps<T>) {
     const { width } = useWindowDimensions();
 
@@ -164,6 +166,10 @@ export default function FormModal<T = any>({
 
         setLoading(true);
         try {
+            if (typeof onSubmit !== 'function') {
+                console.warn('FormModal: onSubmit prop is missing or not a function');
+                return;
+            }
             await onSubmit(formData);
             Alert.alert('Success', successMessage);
             reset();
@@ -254,18 +260,20 @@ export default function FormModal<T = any>({
                         >
                             {children(formState)}
 
-                            {/* Spacer for bottom button */}
-                            <View style={{ height: 100 }} />
+                            {/* Spacer for bottom button if footer is shown */}
+                            {!hideFooter && <View style={{ height: 100 }} />}
                         </ScrollView>
 
                         {/* Bottom CTA */}
-                        <BottomCTA
-                            onBack={showBackButton ? onClose : undefined}
-                            onPrimary={handleSubmit}
-                            primaryLabel={submitLabel}
-                            disabled={loading}
-                            bottomOffset={Platform.OS === 'ios' ? 0 : 20}
-                        />
+                        {!hideFooter && (
+                            <BottomCTA
+                                onBack={showBackButton ? onClose : undefined}
+                                onPrimary={handleSubmit}
+                                primaryLabel={submitLabel}
+                                disabled={loading}
+                                bottomOffset={Platform.OS === 'ios' ? 0 : 20}
+                            />
+                        )}
 
                         {/* Loading Overlay */}
                         <LoadingOverlay visible={loading} message="Saving..." />

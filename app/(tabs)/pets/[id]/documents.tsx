@@ -6,6 +6,9 @@ import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useLocale } from '@/hooks/useLocale';
 import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
+import DocumentActionModal from '@/components/desktop/modals/DocumentActionModal';
+import DocumentViewerModal from '@/components/desktop/modals/DocumentViewerModal';
+import { Document } from '@/types';
 
 export default function DocumentsTab() {
   const { t } = useLocale();
@@ -15,11 +18,16 @@ export default function DocumentsTab() {
   const isMobile = width < 768;
 
   const { pets } = usePets();
-  const { documents, fetchDocuments } = useDocuments(id);
+  const { documents, fetchDocuments, deleteDocument } = useDocuments(id);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all_types');
   const [selectedTime, setSelectedTime] = useState('last_6_months');
   const [documentModalOpen, setDocumentModalOpen] = useState(false);
+
+  // Action & Viewer State
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [actionModalVisible, setActionModalVisible] = useState(false);
+  const [viewerVisible, setViewerVisible] = useState(false);
 
   const pet = pets?.find(p => p.id === id);
 
@@ -56,6 +64,11 @@ export default function DocumentsTab() {
     const matchesType = selectedType === 'all_types' || doc.type === selectedType;
     return matchesSearch && matchesType;
   });
+
+  const openDocumentActions = (doc: Document) => {
+    setSelectedDocument(doc);
+    setActionModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -136,13 +149,10 @@ export default function DocumentsTab() {
 
               {!isMobile && (
                 <View style={styles.docActions}>
-                  <TouchableOpacity style={styles.iconBtn}>
-                    <IconSymbol android_material_icon_name="visibility" size={20} color="#6B7280" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.iconBtn}>
-                    <IconSymbol android_material_icon_name="download" size={20} color="#6B7280" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.iconBtn}>
+                  <TouchableOpacity
+                    style={styles.iconBtn}
+                    onPress={() => openDocumentActions(doc)}
+                  >
                     <IconSymbol android_material_icon_name="more-vert" size={20} color="#6B7280" />
                   </TouchableOpacity>
                 </View>
@@ -170,8 +180,33 @@ export default function DocumentsTab() {
 
       <DocumentUploadModal
         visible={documentModalOpen}
-        onClose={() => setDocumentModalOpen(false)}
+        onClose={() => {
+          setDocumentModalOpen(false);
+          fetchDocuments();
+        }}
         petId={id}
+      />
+      <DocumentActionModal
+        visible={actionModalVisible}
+        onClose={() => setActionModalVisible(false)}
+        document={selectedDocument}
+        onDelete={async (doc) => {
+          const { error } = await deleteDocument(doc.id, doc.file_url);
+          if (error) {
+            Alert.alert(t('common.error'), error.message || t('documents.delete_error'));
+          } else {
+            fetchDocuments();
+          }
+        }}
+        onView={(doc) => {
+          setSelectedDocument(doc);
+          setViewerVisible(true);
+        }}
+      />
+      <DocumentViewerModal
+        visible={viewerVisible}
+        onClose={() => setViewerVisible(false)}
+        document={selectedDocument}
       />
     </View>
   );

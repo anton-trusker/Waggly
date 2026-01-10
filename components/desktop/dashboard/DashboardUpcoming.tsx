@@ -3,17 +3,21 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useEvents } from '@/hooks/useEvents';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
+import { CalendarEvent } from '@/hooks/useEvents';
 
 const EVENTS_PER_PAGE = 3;
 
-export default function DashboardUpcoming() {
+interface DashboardUpcomingProps {
+    events: CalendarEvent[];
+}
+
+export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
     const router = useRouter();
     const { theme } = useAppTheme();
     const { t } = useLocale();
-    const { events } = useEvents();
+    // Removed internal useEvents and useFocusEffect
     const [visibleCount, setVisibleCount] = useState(EVENTS_PER_PAGE);
 
     const allUpcoming = events

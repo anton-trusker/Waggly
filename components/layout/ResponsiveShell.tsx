@@ -39,8 +39,8 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');
     const showShell = session && !isAuthPage;
 
-    // Hide bottom navigation during wizard flows
-    const isWizardRoute = pathname?.includes('/pets/new') || pathname?.includes('/add-pet');
+    // Hide bottom navigation during wizard flows and add-record forms
+    const isWizardRoute = pathname?.includes('/pets/new') || pathname?.includes('/add-pet') || pathname?.includes('/add-');
 
     if (!showShell) {
         return <View style={styles.fullScreen}>{children}</View>;

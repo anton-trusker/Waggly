@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import FormModal from '@/components/ui/FormModal';
 import Button from '@/components/ui/Button';
 import { designSystem } from '@/constants/designSystem';
-import { PublicShare } from '@/hooks/usePublicShare';
+import { PetShareToken } from '@/hooks/usePetSharing';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as Clipboard from 'expo-clipboard';
 import QRCode from 'react-native-qrcode-svg';
@@ -15,7 +15,7 @@ import { formatDateFriendly } from '@/utils/dateUtils';
 interface ShareDetailsModalProps {
     visible: boolean;
     onClose: () => void;
-    share: PublicShare | null;
+    share: PetShareToken | null;
 }
 
 export default function ShareDetailsModal({ visible, onClose, share }: ShareDetailsModalProps) {
@@ -23,7 +23,7 @@ export default function ShareDetailsModal({ visible, onClose, share }: ShareDeta
 
     if (!share) return null;
 
-    const shareUrl = `https://mypawzly.app/share/${share.token}`;
+    const shareUrl = `https://mypawzly.app/pet/shared/${share.token}`;
 
     const handleCopyLink = async () => {
         await Clipboard.setStringAsync(shareUrl);
@@ -83,7 +83,7 @@ export default function ShareDetailsModal({ visible, onClose, share }: ShareDeta
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>Template:</Text>
                             <Text style={styles.infoValue}>
-                                {share.settings.preset === 'FULL' ? 'Full Profile' : 'Basic Info'}
+                                {share.permission_level === 'advanced' ? 'Full Profile' : 'Basic Info'}
                             </Text>
                         </View>
                         <View style={styles.infoRow}>

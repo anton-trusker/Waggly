@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity, RefreshControl, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { usePets } from '@/hooks/usePets';
+import { useEvents } from '@/hooks/useEvents';
 import { useAuth } from '@/contexts/AuthContext';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +12,7 @@ import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
 import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
 import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
+import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
 import UserOnboardingModal from '@/components/desktop/modals/UserOnboardingModal';
 import { supabase } from '@/lib/supabase';
 
@@ -27,6 +29,7 @@ export default function DashboardPage() {
     const isLargeScreen = width >= 1024;
     const { theme } = useAppTheme();
     const { pets, refreshPets, loading } = usePets();
+    const { events, refreshEvents } = useEvents();
     const { user, profile, refreshProfile } = useAuth(); // Use profile and refreshProfile
     const { t } = useLocale();
 
@@ -35,6 +38,7 @@ export default function DashboardPage() {
     const [vaccinationOpen, setVaccinationOpen] = useState(false);
     const [treatmentOpen, setTreatmentOpen] = useState(false);
     const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
+    const [documentOpen, setDocumentOpen] = useState(false);
 
     // Onboarding State
     const [onboardingVisible, setOnboardingVisible] = useState(false);
@@ -50,6 +54,15 @@ export default function DashboardPage() {
             checkOnboardingStatus();
         }
     }, [user, profile]);
+
+    // Refresh data when screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            refreshPets();
+            refreshProfile();
+            refreshEvents();
+        }, [])
+    );
 
     const checkOnboardingStatus = async () => {
         if (!user) return;
@@ -67,8 +80,11 @@ export default function DashboardPage() {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await refreshPets();
-        await refreshProfile(); // Refresh profile on pull-to-refresh
+        await Promise.all([
+            refreshPets(),
+            refreshProfile(),
+            refreshEvents()
+        ]);
         setRefreshing(false);
     };
 
@@ -78,7 +94,7 @@ export default function DashboardPage() {
             case 'vaccine': setVaccinationOpen(true); break;
             case 'meds': setTreatmentOpen(true); break;
             case 'weight': setHealthMetricsOpen(true); break;
-            case 'doc': router.push('/(tabs)/pets/documents/add' as any); break;
+            case 'doc': setDocumentOpen(true); break;
         }
     };
 
@@ -107,10 +123,10 @@ export default function DashboardPage() {
                         {/* Mobile Layout - Direct vertical stack */}
                         {!isLargeScreen && (
                             <View style={styles.mobileStack}>
-                                <MyPetsWidget />
+                                <MyPetsWidget pets={pets} loading={loading} />
                                 {/* Quick Actions hidden on mobile/tablet */}
                                 {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
-                                <DashboardUpcoming />
+                                <DashboardUpcoming events={events} />
                                 <DashboardTimeline />
                             </View>
                         )}
@@ -120,7 +136,7 @@ export default function DashboardPage() {
                             <View style={styles.gridLarge}>
                                 {/* Left Column (Main) */}
                                 <View style={styles.colMain}>
-                                    <MyPetsWidget />
+                                    <MyPetsWidget pets={pets} loading={loading} />
                                     <QuickActionsGrid onActionPress={handleQuickAction} />
                                     {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
                                 </View>
@@ -128,7 +144,7 @@ export default function DashboardPage() {
                                 {/* Right Column (Sidebar/Widgets) */}
                                 <View style={styles.colSide}>
                                     <View style={{ gap: 24 }}>
-                                        <DashboardUpcoming />
+                                        <DashboardUpcoming events={events} />
                                         <DashboardTimeline />
                                     </View>
                                 </View>
@@ -140,10 +156,23 @@ export default function DashboardPage() {
             </View>
 
             {/* Modals */}
-            <VisitFormModal visible={visitOpen} onClose={() => setVisitOpen(false)} />
-            <VaccinationFormModal visible={vaccinationOpen} onClose={() => setVaccinationOpen(false)} />
-            <TreatmentFormModal visible={treatmentOpen} onClose={() => setTreatmentOpen(false)} />
+            <VisitFormModal
+                visible={visitOpen}
+                onClose={() => setVisitOpen(false)}
+                onSuccess={() => { setVisitOpen(false); refreshEvents(); }}
+            />
+            <VaccinationFormModal
+                visible={vaccinationOpen}
+                onClose={() => setVaccinationOpen(false)}
+                onSuccess={() => { setVaccinationOpen(false); refreshEvents(); }}
+            />
+            <TreatmentFormModal
+                visible={treatmentOpen}
+                onClose={() => setTreatmentOpen(false)}
+                onSuccess={() => { setTreatmentOpen(false); refreshEvents(); }}
+            />
             <HealthMetricsModal visible={healthMetricsOpen} onClose={() => setHealthMetricsOpen(false)} initialTab="weight" />
+            <DocumentUploadModal visible={documentOpen} onClose={() => setDocumentOpen(false)} />
 
             {/* Onboarding Modal */}
             <UserOnboardingModal

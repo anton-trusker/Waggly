@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
-import { CompactPetCard } from '@/components/pet/CompactPetCard'; // Added import
 import { PetCardSkeleton } from '@/components/skeletons/PetCardSkeleton';
-import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
+
 import { useLocale } from '@/hooks/useLocale';
 
 export default function PetsListPage() {
   const router = useRouter();
-  const { pets, loading } = usePets();
+  const { pets, loading, refreshPets } = usePets();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const { t } = useLocale();
-  const [visitPetId, setVisitPetId] = useState<string | null>(null);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshPets();
+    }, [])
+  );
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -38,54 +43,23 @@ export default function PetsListPage() {
             <Text style={styles.addButtonText}>{t('my_pets_page.add_first_pet')}</Text>
           </TouchableOpacity>
         </View>
-      ) : isMobile ? (
-        // Mobile View: Horizontal Scroll
-        <View style={styles.mobileContainer}>
-          <Text style={styles.sectionTitle}>{t('my_pets_page.title')}</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalList}
-          >
-            {pets.map((pet) => (
-              <CompactPetCard
-                key={pet.id}
-                pet={pet}
-                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
-              />
-            ))}
-            {/* Add button at the end of the scroll */}
-            <TouchableOpacity
-              style={styles.addCardCompact}
-              onPress={() => router.push('/(tabs)/pets/new' as any)}
-            >
-              <Ionicons name="add" size={24} color="#6366F1" />
-              <Text style={styles.addCardText}>{t('action.add')}</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
       ) : (
-        // Desktop View: Grid
-        <View style={styles.grid}>
+        // Unified Grid View (Mobile: 1 col, Desktop: Grid)
+        <View style={[styles.grid, isMobile && styles.gridMobile]}>
           {pets.map((pet) => (
-            <View key={pet.id} style={styles.cardWrapper}>
+            <View key={pet.id} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
               <PetPassportCard
                 pet={pet}
                 onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
               />
-              <View style={styles.cardActions}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={() => setVisitPetId(pet.id)}>
-                  <Ionicons name="calendar-outline" size={18} color="#374151" />
-                  <Text style={styles.secondaryButtonText}>{t('my_pets_page.book_visit')}</Text>
-                </TouchableOpacity>
-              </View>
+
             </View>
           ))}
         </View>
       )}
 
       {isMobile && <View style={{ height: 80 }} />}
-      <VisitFormModal visible={!!visitPetId} petId={visitPetId || ''} onClose={() => setVisitPetId(null)} />
+
     </ScrollView>
   );
 }
@@ -106,42 +80,9 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 16, color: '#6B7280', textAlign: 'center', maxWidth: 400, marginBottom: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 20, padding: 32 },
   gridMobile: { flexDirection: 'column', padding: 16 },
-  cardWrapper: { width: 'calc(33.333% - 14px)' as any, minWidth: 320 },
+  cardWrapper: { width: '32%', minWidth: 320 },
   cardWrapperMobile: { width: '100%', minWidth: '100%' },
-  cardActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
-  secondaryButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#fff' },
-  secondaryButtonText: { fontSize: 13, fontWeight: '600', color: '#374151' },
 
-  // Mobile Horizontal List Styles
-  mobileContainer: {
-    paddingVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12,
-    paddingHorizontal: 16,
-  },
-  horizontalList: {
-    paddingHorizontal: 16,
-    paddingBottom: 24, // Space for shadow
-  },
-  addCardCompact: {
-    width: 60,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: '#EEF2FF',
-    borderWidth: 2,
-    borderColor: '#C7D2FE',
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  addCardText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6366F1',
-  },
+
+
 });

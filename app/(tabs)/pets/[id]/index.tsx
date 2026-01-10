@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { usePets } from '@/hooks/usePets';
@@ -19,13 +19,19 @@ export default function PetDetailsPage() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const petId = params.id as string;
-    const { pets } = usePets();
+    const { pets, refreshPets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
     const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'share' | 'history' | 'settings'>('overview');
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
     const [editProfileModalVisible, setEditProfileModalVisible] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshPets();
+        }, [])
+    );
 
     const pet = pets.find(p => p.id === petId);
 
@@ -86,6 +92,15 @@ export default function PetDetailsPage() {
                             {activeTab === 'overview' && <OverviewTab />}
                             {activeTab === 'health' && <PetHealthProfile petId={petId} />}
                             {activeTab === 'documents' && <DocumentsTab />}
+                            {activeTab === 'share' && (
+                                <View style={{ padding: 16 }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                                        <Text style={{ fontSize: 18, fontWeight: '600', color: '#1F2937' }}>Active Links</Text>
+                                        <Button onPress={() => setShareModalVisible(true)} size="sm">Create Link</Button>
+                                    </View>
+                                    <ActiveLinksList petId={petId} refreshTrigger={shareRefreshTrigger} />
+                                </View>
+                            )}
                             {activeTab === 'history' && <HistoryTab />}
                             {activeTab === 'settings' && <SettingsTab />}
                         </View>
@@ -184,7 +199,10 @@ export default function PetDetailsPage() {
 
             <EditPetModal
                 visible={editProfileModalVisible}
-                onClose={() => setEditProfileModalVisible(false)}
+                onClose={() => {
+                    setEditProfileModalVisible(false);
+                    refreshPets();
+                }}
                 petId={petId}
             />
         </View>

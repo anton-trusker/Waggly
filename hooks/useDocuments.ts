@@ -2,10 +2,20 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Document } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import { Platform } from 'react-native';
-import { usePostHog } from 'posthog-react-native';
+
+let usePostHog: any = () => ({ capture: () => { } });
+
+if (Platform.OS !== 'web') {
+  try {
+    const PostHogRN = require('posthog-react-native');
+    usePostHog = PostHogRN.usePostHog;
+  } catch (e) {
+    console.warn('PostHog not available');
+  }
+}
 
 export function useDocuments(petId?: string) {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -34,14 +44,16 @@ export function useDocuments(petId?: string) {
         query = query.eq('pet_id', petId);
       }
 
+      console.log(`[useDocuments] Fetching docs for user ${user.id}. PetId filter: ${petId || 'None'}`);
+
       const { data, error } = await query;
 
       if (error) {
-        console.error('Supabase fetch error:', error);
+        console.error('[useDocuments] Fetch error:', error);
         throw error;
       }
 
-      console.log('Fetched documents:', data?.length);
+      console.log(`[useDocuments] Fetched ${data?.length} documents.`);
 
       // Map to Document type
       const formattedData = (data || []).map((doc: any) => ({
@@ -138,13 +150,24 @@ export function useDocuments(petId?: string) {
   const deleteDocument = async (documentId: string, fileUrl: string) => {
     if (isMountedRef.current) setLoading(true);
     try {
+      console.log(`[useDocuments] Deleting doc ${documentId}. User: ${user?.id}`);
+
       // 1. Delete from Table
-      const { error: dbError } = await supabase
+      const response = await supabase
         .from('documents')
-        .delete()
+        .delete({ count: 'exact' })
         .eq('id', documentId);
 
+      const { error: dbError, count } = response;
+      console.log('[useDocuments] Delete response:', response);
+
       if (dbError) throw dbError;
+
+      if (count === 0 || count === null) {
+        console.warn(`[useDocuments] Count is ${count}. Check RLS or ID.`);
+        // We might want to throw an error here to notify the UI, or just return custom error
+        return { error: { message: 'Document could not be deleted. Access denied or not found.' } };
+      }
 
       posthog.capture('document_deleted', {
         document_id: documentId,

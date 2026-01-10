@@ -13,7 +13,7 @@ import { ThemeProvider as ThemeContextProvider } from '@/contexts/ThemeContext';
 import { useAppTheme } from '@/hooks/useAppTheme';
 
 function RootLayoutNav() {
-  const { session, user } = useAuth();
+  const { session, user, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
@@ -88,25 +88,8 @@ function RootLayoutNav() {
     };
   }, [user, isMounted]);
 
-  // Handle OAuth callback on web
   useEffect(() => {
-    if (!isMounted || Platform.OS !== 'web') return;
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // When OAuth completes, Supabase will fire SIGNED_IN event
-      if (event === 'SIGNED_IN' && session) {
-        console.log('OAuth sign-in detected, redirecting to dashboard');
-        router.replace('/(tabs)/(home)');
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [isMounted]);
-
-  useEffect(() => {
-    if (!isMounted) return; // Don't navigate before mount
+    if (!isMounted || loading) return; // Don't navigate before mount or while loading session
 
     const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
     const inOnboardingGroup = segments[0] === '(onboarding)';
@@ -121,7 +104,11 @@ function RootLayoutNav() {
     if (!session && !inAuthGroup && !inOnboardingGroup && !isPublicRoute) {
       router.replace('/(auth)/login');
     }
-  }, [session, segments, isMounted]);
+  }, [session, segments, isMounted, loading]);
+
+  if (loading) {
+    return null; // Or a splash screen
+  }
 
   return (
     <NavigationThemeProvider />

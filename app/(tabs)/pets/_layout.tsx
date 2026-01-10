@@ -9,7 +9,7 @@ export default function PetsLayout() {
       <Stack.Screen name="[id]" />
       <Stack.Screen name="add-vaccination" />
       <Stack.Screen name="add-treatment" />
-      <Stack.Screen name="log-weight" />
+      <Stack.Screen name="add-health-record" />
     </Stack>
   );
 }

@@ -11,14 +11,27 @@ interface PetPassportCardProps {
     onQrPress?: () => void;
 }
 
+import { usePetHealthScore } from '@/hooks/usePetHealthScore';
+
+// ...
+
 // Memoized for performance
 export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassportCardProps) => {
     const { t } = useLocale();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Mobile breakpoint
+    const { score, loading: scoreLoading } = usePetHealthScore(pet);
+
     // Generate a consistent color theme based on pet id or index? 
     // For now, let's use a nice default passport blue/purple gradient.
     const gradientColors = ['#4F46E5', '#818CF8'] as const;
+
+    // Health Score Color
+    const getScoreColor = (s: number) => {
+        if (s >= 80) return '#10B981'; // Emerald
+        if (s >= 50) return '#F59E0B'; // Amber
+        return '#EF4444'; // Red
+    };
 
     return (
         <TouchableOpacity
@@ -35,16 +48,6 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
                 {/* Header Row */}
                 <View style={styles.headerRow}>
                     <View style={styles.passportLabelContainer}>
-                        <IconSymbol
-                            ios_icon_name="globe"
-                            android_material_icon_name="public"
-                            size={14}
-                            color="rgba(255,255,255,0.8)"
-                        />
-                        <Text style={styles.passportLabel}>{t('passport.label')}</Text>
-                    </View>
-
-                    <View style={styles.headerRight}>
                         {pet.microchip_number && (
                             <View style={styles.microchipContainer}>
                                 <IconSymbol
@@ -58,6 +61,9 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
                                 </Text>
                             </View>
                         )}
+                    </View>
+
+                    <View style={styles.headerRight}>
                         <TouchableOpacity style={styles.qrButton} onPress={onQrPress}>
                             <IconSymbol
                                 ios_icon_name="qrcode"
@@ -140,9 +146,15 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
                         <View style={styles.tableRowDivider} />
                         <View style={styles.tableRow}>
                             <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>{t('passport.color')}</Text>
-                                <Text style={styles.tableCellValue} numberOfLines={1}>
-                                    {pet.color || '--'}
+                                <Text style={styles.tableCellLabel}>Health Score</Text>
+                                <Text
+                                    style={[
+                                        styles.tableCellValue,
+                                        { color: getScoreColor(score), fontWeight: '800' }
+                                    ]}
+                                    numberOfLines={1}
+                                >
+                                    {scoreLoading ? '--' : `${score}/100`}
                                 </Text>
                             </View>
                             <View style={styles.tableCellDivider} />

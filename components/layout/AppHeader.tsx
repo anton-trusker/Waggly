@@ -64,7 +64,7 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
   const petsIndex = pathSegments.indexOf('pets');
   const idFromPath = (petsIndex !== -1 && pathSegments.length > petsIndex + 1) ? pathSegments[petsIndex + 1] : undefined;
 
-  const isPetProfile = isPetsPath && !isPetsList && !isEditPage && !isNewPage && !!idFromPath;
+  const isPetProfile = isPetsPath && !isPetsList && !isEditPage && !isNewPage && !!idFromPath && !pathname.includes('/add-');
 
   const isHome = pathname === '/' || pathname === '/dashboard' || pathname.includes('(home)');
   const isCalendar = pathname.includes('/calendar');
@@ -156,6 +156,12 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
       if (pathname.includes('/new')) return 'Add Pet';
       if (pathname.includes('/edit')) return 'Edit';
       if (pathname.includes('/co-owners')) return 'Co-Owners';
+
+      if (pathname.includes('/add-visit')) return 'Add Visit';
+      if (pathname.includes('/add-treatment')) return 'Add Treatment';
+      if (pathname.includes('/add-vaccination')) return 'Add Vaccination';
+      if (pathname.includes('/add-health-record')) return 'Health Record';
+      if (pathname.includes('/add-documents')) return 'Add Documents';
 
       // Try to capitalize the last segment as a fallback
       const segments = pathname.split('/').filter(Boolean);

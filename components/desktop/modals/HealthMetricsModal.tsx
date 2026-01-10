@@ -17,17 +17,18 @@ interface HealthMetricsModalProps {
 }
 
 const BODY_CONDITION_SCORES = [
-    { score: 1, label: 'Emaciated', color: '#EF4444', emoji: '😟' },
-    { score: 3, label: 'Thin', color: '#F59E0B', emoji: '😐' },
-    { score: 5, label: 'Ideal', color: '#22C55E', emoji: '😊' },
-    { score: 7, label: 'Heavy', color: '#F59E0B', emoji: '😐' },
-    { score: 9, label: 'Obese', color: '#EF4444', emoji: '😟' },
+    { score: 1, label: 'Emaciated', color: '#EF4444', width: 4 },
+    { score: 3, label: 'Thin', color: '#F59E0B', width: 8 },
+    { score: 5, label: 'Ideal', color: '#22C55E', width: 12 },
+    { score: 7, label: 'Heavy', color: '#F59E0B', width: 18 },
+    { score: 9, label: 'Obese', color: '#EF4444', width: 24 },
 ];
 
 const ACTIVITY_LEVELS = ['Low', 'Normal', 'High'];
 const APPETITE_LEVELS = ['Reduced', 'Normal', 'Increased'];
 const ENERGY_LEVELS = ['Lethargic', 'Normal', 'Hyper'];
 const STOOL_QUALITIES = ['Loose', 'Normal', 'Hard'];
+const COAT_CONDITIONS = ['Dull', 'Normal', 'Shiny', 'Matting'];
 
 interface HealthMetricsFormData {
     date: string;
@@ -38,11 +39,11 @@ interface HealthMetricsFormData {
     heartRate: string;
     respiratoryRate: string;
     bodyConditionScore: number | null;
-    activityLevel: string;
-    appetiteLevel: string;
-    energyLevel: string;
-    coatCondition: string;
-    stoolQuality: string;
+    activityLevel: string | null;
+    appetiteLevel: string | null;
+    energyLevel: string | null;
+    coatCondition: string | null;
+    stoolQuality: string | null;
     notes: string;
 }
 
@@ -55,6 +56,8 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
     const [userId, setUserId] = useState<string | null>(null);
     const [lastWeight, setLastWeight] = useState<{ value: number, unit: string } | null>(null);
     const [isLoadingWeight, setIsLoadingWeight] = useState(false);
+
+    const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
 
     // Fetch latest weight for the pet
     useEffect(() => {
@@ -105,22 +108,28 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
         }
     }, [visible, initialPetId, pets]);
 
-    const initialData: HealthMetricsFormData = useMemo(() => ({
-        date: new Date().toISOString().split('T')[0],
-        weight: lastWeight ? lastWeight.value.toString() : '',
-        weightUnit: lastWeight ? (lastWeight.unit as 'kg' | 'lb') : 'kg',
-        temperature: '',
-        temperatureUnit: 'C',
-        heartRate: '',
-        respiratoryRate: '',
-        bodyConditionScore: null,
-        activityLevel: 'Normal',
-        appetiteLevel: 'Normal',
-        energyLevel: 'Normal',
-        coatCondition: 'Normal',
-        stoolQuality: 'Normal',
-        notes: '',
-    }), [lastWeight]);
+    const initialData: HealthMetricsFormData = useMemo(() => {
+        const weightValue = lastWeight
+            ? lastWeight.value.toString()
+            : (selectedPet?.weight ? selectedPet.weight.toString() : '');
+
+        return {
+            date: new Date().toISOString().split('T')[0],
+            weight: weightValue,
+            weightUnit: lastWeight ? (lastWeight.unit as 'kg' | 'lb') : 'kg',
+            temperature: '',
+            temperatureUnit: 'C',
+            heartRate: '',
+            respiratoryRate: '',
+            bodyConditionScore: null,
+            activityLevel: null,
+            appetiteLevel: null,
+            energyLevel: null,
+            coatCondition: null,
+            stoolQuality: null,
+            notes: '',
+        };
+    }, [lastWeight, selectedPet]);
 
     const handleSubmit = async (data: HealthMetricsFormData) => {
         if (!selectedPetId) {
@@ -140,6 +149,9 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
             body_condition_score: data.bodyConditionScore,
             activity_level: data.activityLevel,
             appetite_level: data.appetiteLevel,
+            energy_level: data.energyLevel,
+            coat_condition: data.coatCondition,
+            stool_quality: data.stoolQuality,
             notes: data.notes || null,
         };
 
@@ -237,7 +249,7 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
                                 <View style={styles.inputGroup}>
                                     <TextInput
                                         style={[styles.input, styles.inputLeft]}
-                                        placeholder="38.5"
+                                        placeholder=""
                                         keyboardType="numeric"
                                         value={formState.data.temperature}
                                         onChangeText={(t) => formState.updateField('temperature', t)}
@@ -267,18 +279,37 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
                                     style={[
                                         styles.bcsItem,
                                         formState.data.bodyConditionScore === bcs.score && {
-                                            backgroundColor: bcs.color + '20',
+                                            backgroundColor: bcs.color + '10',
                                             borderColor: bcs.color
                                         }
                                     ]}
                                     onPress={() => formState.updateField('bodyConditionScore', bcs.score)}
                                 >
-                                    <Text style={{ fontSize: 20 }}>{bcs.emoji}</Text>
+                                    {/* Visual Representation of Girth */}
+                                    <View style={{ height: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
+                                        <View
+                                            style={{
+                                                width: bcs.width,
+                                                height: 32,
+                                                backgroundColor: formState.data.bodyConditionScore === bcs.score ? bcs.color : '#D1D5DB',
+                                                borderRadius: 4
+                                            }}
+                                        />
+                                    </View>
                                     <Text style={[styles.bcsLabel, formState.data.bodyConditionScore === bcs.score && { color: bcs.color }]}>
                                         {bcs.score}
                                     </Text>
+                                    <Text style={[styles.bcsTextLabel, { opacity: formState.data.bodyConditionScore === bcs.score ? 1 : 0.6 }]}>
+                                        {bcs.label}
+                                    </Text>
                                 </TouchableOpacity>
                             ))}
+                        </View>
+                        {/* Explanation Text */}
+                        <View style={styles.helpTextContainer}>
+                            <Text style={styles.helpText}>
+                                1 = Emaciated, 5 = Ideal, 9 = Obese
+                            </Text>
                         </View>
                     </View>
 
@@ -305,6 +336,21 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
                         </View>
 
                         <View style={styles.indicatorRow}>
+                            <Text style={styles.indicatorLabel}>Energy</Text>
+                            <View style={styles.pillGroup}>
+                                {ENERGY_LEVELS.map(L => (
+                                    <TouchableOpacity
+                                        key={L}
+                                        style={[styles.pill, formState.data.energyLevel === L && styles.pillActive]}
+                                        onPress={() => formState.updateField('energyLevel', L)}
+                                    >
+                                        <Text style={[styles.pillText, formState.data.energyLevel === L && styles.pillTextActive]}>{L}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+
+                        <View style={styles.indicatorRow}>
                             <Text style={styles.indicatorLabel}>Appetite</Text>
                             <View style={styles.pillGroup}>
                                 {APPETITE_LEVELS.map(L => (
@@ -314,6 +360,36 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
                                         onPress={() => formState.updateField('appetiteLevel', L)}
                                     >
                                         <Text style={[styles.pillText, formState.data.appetiteLevel === L && styles.pillTextActive]}>{L}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+
+                        <View style={styles.indicatorRow}>
+                            <Text style={styles.indicatorLabel}>Coat</Text>
+                            <View style={styles.pillGroup}>
+                                {COAT_CONDITIONS.map(L => (
+                                    <TouchableOpacity
+                                        key={L}
+                                        style={[styles.pill, formState.data.coatCondition === L && styles.pillActive]}
+                                        onPress={() => formState.updateField('coatCondition', L)}
+                                    >
+                                        <Text style={[styles.pillText, formState.data.coatCondition === L && styles.pillTextActive]}>{L}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+
+                        <View style={styles.indicatorRow}>
+                            <Text style={styles.indicatorLabel}>Stool</Text>
+                            <View style={styles.pillGroup}>
+                                {STOOL_QUALITIES.map(L => (
+                                    <TouchableOpacity
+                                        key={L}
+                                        style={[styles.pill, formState.data.stoolQuality === L && styles.pillActive]}
+                                        onPress={() => formState.updateField('stoolQuality', L)}
+                                    >
+                                        <Text style={[styles.pillText, formState.data.stoolQuality === L && styles.pillTextActive]}>{L}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
@@ -421,10 +497,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#F9FAFB',
     },
     bcsLabel: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '700',
         color: '#6B7280',
-        marginTop: 4,
+    },
+    bcsTextLabel: {
+        fontSize: 10,
+        color: '#6B7280',
+        marginTop: 2,
+        fontWeight: '500',
+    },
+    helpTextContainer: {
+        marginTop: 8,
+        alignItems: 'center',
+    },
+    helpText: {
+        fontSize: 11,
+        color: '#9CA3AF',
+        fontStyle: 'italic',
     },
     indicatorRow: {
         gap: 8,

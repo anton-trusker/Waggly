@@ -24,10 +24,9 @@ type ActionItem = {
 const actions: ActionItem[] = [
   { id: 'visit', title: 'Add Visit', icon: 'hospital-box', route: '/(tabs)/pets/add-visit', color: '#EF4444' },
   { id: 'vaccine', title: 'Vaccine', icon: 'needle', route: '/(tabs)/pets/add-vaccination', color: '#EC4899' },
-  { id: 'weight', title: 'Log Weight', icon: 'scale-bathroom', route: '/(tabs)/pets/log-weight', color: '#10B981' },
   { id: 'treatment', title: 'Add Meds', icon: 'pill', route: '/(tabs)/pets/add-treatment', color: '#8B5CF6' },
+  { id: 'record', title: 'Health Record', icon: 'clipboard-pulse', route: '/(tabs)/pets/add-health-record', color: '#10B981' },
   { id: 'document', title: 'Documents', icon: 'file-document-outline', route: '/(tabs)/pets/add-documents', color: '#4F46E5' },
-  { id: 'event', title: 'Add Event', icon: 'calendar-plus', route: '/(tabs)/calendar/add-event', color: '#F59E0B' },
 ];
 
 const { width, height } = Dimensions.get('window');
@@ -47,13 +46,13 @@ export default function AddActionsModal({ visible, onClose }: Props) {
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 250,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.spring(slideAnim, {
           toValue: 0,
           damping: 20,
           stiffness: 90,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
       ]).start();
     } else {
@@ -61,12 +60,12 @@ export default function AddActionsModal({ visible, onClose }: Props) {
         Animated.timing(fadeAnim, {
           toValue: 0,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(slideAnim, {
           toValue: height,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
       ]).start();
     }
@@ -76,7 +75,7 @@ export default function AddActionsModal({ visible, onClose }: Props) {
     onClose();
     setTimeout(() => {
       if (!selectedPet) {
-        router.push('/(tabs)/pets/add-pet-wizard');
+        router.push('/(tabs)/pets/add-pet');
         return;
       }
       router.push({ pathname: action.route as any, params: { petId: selectedPet.id } });

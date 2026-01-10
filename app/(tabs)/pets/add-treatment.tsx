@@ -53,21 +53,21 @@ export default function AddTreatmentScreen() {
 
   const medOptions = useMemo(() => {
     return MEDICINES.map(m => ({
-        id: m.id,
-        label: m.brandName,
-        subLabel: `${m.genericName} - ${m.type}`,
-        category: m.type
+      id: m.id,
+      label: m.brandName,
+      subLabel: `${m.genericName} - ${m.type}`,
+      category: m.type
     }));
   }, []);
 
   // Auto-fill details when med selected
   useEffect(() => {
     if (selectedMedId) {
-        const med = MEDICINES.find(m => m.id === selectedMedId);
-        if (med) {
-            if (!dosage) setDosage(`${med.dosage} ${med.dosageUnit}`);
-            if (!frequency) setFrequency(med.frequency);
-        }
+      const med = MEDICINES.find(m => m.id === selectedMedId);
+      if (med) {
+        if (!dosage) setDosage(`${med.dosage} ${med.dosageUnit}`);
+        if (!frequency) setFrequency(med.frequency);
+      }
     }
   }, [selectedMedId]);
 
@@ -124,7 +124,7 @@ export default function AddTreatmentScreen() {
           pet_id: selectedPetId,
           type: 'treatment',
           title: `Meds: ${med?.brandName}`,
-          start_time: startDate, 
+          start_time: startDate,
           end_time: endDate || startDate,
           description: `${dosage} - ${frequency}`,
           related_id: treatmentData.id,
@@ -144,11 +144,11 @@ export default function AddTreatmentScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <AppHeader title="Add Medication" showBack />
+
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
@@ -160,15 +160,15 @@ export default function AddTreatmentScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>For Pet</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
-                {pets.map(pet => (
-                    <TouchableOpacity 
-                        key={pet.id} 
-                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
-                        onPress={() => setSelectedPetId(pet.id)}
-                    >
-                        <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
-                    </TouchableOpacity>
-                ))}
+              {pets.map(pet => (
+                <TouchableOpacity
+                  key={pet.id}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                  onPress={() => setSelectedPetId(pet.id)}
+                >
+                  <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </View>
 
@@ -179,35 +179,35 @@ export default function AddTreatmentScreen() {
             </View>
 
             <EnhancedSelection
-                label="Medication"
-                value={selectedMedId}
-                options={medOptions}
-                onSelect={(opt) => setSelectedMedId(opt.id)}
-                placeholder="Search medication..."
-                error={errors.selectedMedId}
-                required
-                icon="pill.fill"
+              label="Medication"
+              value={selectedMedId}
+              options={medOptions}
+              onSelect={(opt) => setSelectedMedId(opt.id)}
+              placeholder="Search medication..."
+              error={errors.selectedMedId}
+              required
+              icon="pill.fill"
             />
 
             <View style={styles.inputRow}>
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.inputLabel}>Dosage</Text>
-                     <TextInput
-                        style={styles.input}
-                        value={dosage}
-                        onChangeText={setDosage}
-                        placeholder="e.g. 1 tablet"
-                     />
-                 </View>
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.inputLabel}>Frequency</Text>
-                     <TextInput
-                        style={styles.input}
-                        value={frequency}
-                        onChangeText={setFrequency}
-                        placeholder="e.g. Daily"
-                     />
-                 </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.inputLabel}>Dosage</Text>
+                <TextInput
+                  style={styles.input}
+                  value={dosage}
+                  onChangeText={setDosage}
+                  placeholder="e.g. 1 tablet"
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.inputLabel}>Frequency</Text>
+                <TextInput
+                  style={styles.input}
+                  value={frequency}
+                  onChangeText={setFrequency}
+                  placeholder="e.g. Daily"
+                />
+              </View>
             </View>
 
             <View style={styles.inputRow}>
@@ -234,25 +234,25 @@ export default function AddTreatmentScreen() {
 
             <Text style={styles.inputLabel}>Instructions / Notes</Text>
             <TextInput
-                style={[styles.input, styles.textArea]}
-                value={instructions}
-                onChangeText={setInstructions}
-                placeholder="Special instructions..."
-                multiline
-                numberOfLines={3}
+              style={[styles.input, styles.textArea]}
+              value={instructions}
+              onChangeText={setInstructions}
+              placeholder="Special instructions..."
+              multiline
+              numberOfLines={3}
             />
 
-             {/* Info Box */}
+            {/* Info Box */}
             {selectedMedId && (
-                <View style={styles.infoBox}>
-                    <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={16} color={colors.primary} />
-                    <View>
-                        <Text style={styles.infoTitle}>About this medication:</Text>
-                        <Text style={styles.infoText}>
-                            {MEDICINES.find(m => m.id === selectedMedId)?.description}
-                        </Text>
-                    </View>
+              <View style={styles.infoBox}>
+                <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={16} color={colors.primary} />
+                <View>
+                  <Text style={styles.infoTitle}>About this medication:</Text>
+                  <Text style={styles.infoText}>
+                    {MEDICINES.find(m => m.id === selectedMedId)?.description}
+                  </Text>
                 </View>
+              </View>
             )}
 
           </View>
@@ -261,14 +261,14 @@ export default function AddTreatmentScreen() {
           <View style={{ height: 100 }} />
         </ScrollView>
       </TouchableWithoutFeedback>
-      
-      <BottomCTA 
-        onBack={() => router.back()} 
-        onPrimary={handleAddTreatment} 
-        primaryLabel="Save Treatment" 
-        disabled={loading} 
+
+      <BottomCTA
+        onBack={() => router.back()}
+        onPrimary={handleAddTreatment}
+        primaryLabel="Save Treatment"
+        disabled={loading}
       />
-      
+
       <LoadingOverlay visible={loading} message="Saving treatment..." />
     </KeyboardAvoidingView>
   );

@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
-import { HealthScoreWidget } from '@/components/health/HealthScoreWidget';
 import { BehaviorWidget } from '@/components/widgets/BehaviorWidget';
 import { ActivityWidget } from '@/components/widgets/ActivityWidget';
 import { AppointmentsWidget } from '@/components/widgets/AppointmentsWidget';
 import { MedicalRecordsWidget } from '@/components/widgets/MedicalRecordsWidget';
 import { WeightWidget } from '@/components/widgets/WeightWidget';
 import { usePetBehavior } from '@/hooks/usePetBehavior';
-import { usePetHealthData } from '@/hooks/usePetHealthData';
 import { useEvents } from '@/hooks/useEvents';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { useWeightEntries } from '@/hooks/useWeightEntries';
@@ -24,25 +22,13 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
     const isLargeScreen = width >= 1024;
 
     const { behaviorTags, loading: behaviorLoading } = usePetBehavior(pet?.id);
-    const { healthData, loading: healthLoading } = usePetHealthData(pet?.id);
     const { events } = useEvents();
     const { activities } = useActivityFeed(pet?.id || '');
     const { weightEntries } = useWeightEntries(pet?.id || null);
     const { medications } = useMedications(pet?.id || null);
     const { vaccinations } = useVaccinations(pet?.id || null);
 
-    // Calculate a mock score based on data completeness
-    const healthScore = useMemo(() => {
-        if (!pet) return 0;
-        let score = 40; // Base score
-        if (pet.photo_url) score += 10;
-        if (pet.microchip_number) score += 10;
-        if (healthData?.lastVetVisit) score += 10;
-        if (healthData?.nextVaccineDue) score += 10;
-        if (healthData?.currentWeight) score += 10;
-        if (behaviorTags.length > 0) score += 10;
-        return Math.min(score, 100);
-    }, [pet, healthData, behaviorTags]);
+    // Calculate metrics
 
     // Calculate metrics
     const upcomingAppointments = useMemo(() => {
@@ -89,10 +75,6 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
 
     return (
         <View style={[styles.widgetGrid, isLargeScreen && styles.widgetGridDesktop]}>
-            <HealthScoreWidget
-                score={healthScore}
-                loading={healthLoading}
-            />
             <BehaviorWidget
                 tags={behaviorTags}
                 loading={behaviorLoading}

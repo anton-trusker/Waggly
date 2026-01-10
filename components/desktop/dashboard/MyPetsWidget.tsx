@@ -4,16 +4,19 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
 import ShareModal from '@/components/desktop/modals/ShareModal';
 import { Pet } from '@/types';
 
 
-export default function MyPetsWidget() {
+interface MyPetsWidgetProps {
+    pets: Pet[];
+    loading?: boolean;
+}
+
+export default function MyPetsWidget({ pets, loading = false }: MyPetsWidgetProps) {
     const router = useRouter();
     const { theme } = useAppTheme();
-    const { pets, loading } = usePets();
     const { width } = useWindowDimensions();
     const isLargeScreen = width >= 1024;
 

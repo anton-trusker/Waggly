@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { colors as themeColors, spacing, typography, borderRadius } from '@/constants/theme';
 
 export const colors = themeColors;
@@ -86,13 +86,20 @@ export const commonStyles = StyleSheet.create({
     borderRadius: borderRadius.l,
     padding: spacing.m,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-    // Web compatibility
-    boxShadow: '0px 2px 12px rgba(0, 0, 0, 0.06)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0px 2px 12px rgba(0, 0, 0, 0.06)',
+      },
+    }),
   },
   input: {
     backgroundColor: colors.card,

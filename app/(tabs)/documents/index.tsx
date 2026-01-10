@@ -7,6 +7,9 @@ import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal
 import * as Linking from 'expo-linking';
 import DragDropZone from '@/components/desktop/DragDropZone';
 import { useLocale } from '@/hooks/useLocale';
+import DocumentActionModal from '@/components/desktop/modals/DocumentActionModal';
+import DocumentViewerModal from '@/components/desktop/modals/DocumentViewerModal';
+import { Document } from '@/types';
 
 export default function DocumentsPage() {
     const { width } = useWindowDimensions();
@@ -18,14 +21,23 @@ export default function DocumentsPage() {
         { id: 'all', label: t('documents.type_all'), icon: 'document-text' },
         { id: 'vaccination', label: t('documents.type_vaccination'), icon: 'medical' },
         { id: 'medical', label: t('documents.type_medical'), icon: 'fitness' },
+        { id: 'lab_result', label: t('documents.type_lab_result', { defaultValue: 'Lab Result' }), icon: 'flask' }, // Using flask/biotech
+        { id: 'prescription', label: t('documents.type_prescription', { defaultValue: 'Prescription' }), icon: 'medkit' },
+        { id: 'invoice', label: t('documents.type_invoice', { defaultValue: 'Invoice' }), icon: 'receipt' },
         { id: 'legal', label: t('documents.type_legal'), icon: 'shield-checkmark' },
         { id: 'insurance', label: t('documents.type_insurance'), icon: 'umbrella' },
+        { id: 'other', label: t('documents.type_other', { defaultValue: 'Other' }), icon: 'folder' },
     ];
 
     const [selectedType, setSelectedType] = useState('all');
     const [selectedPetId, setSelectedPetId] = useState('all');
     const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
     const [initialFile, setInitialFile] = useState<File | null>(null);
+
+    // Document Action & Viewer State
+    const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+    const [actionModalVisible, setActionModalVisible] = useState(false);
+    const [viewerVisible, setViewerVisible] = useState(false);
 
     // Fetch all documents for all pets (pass undefined to hook)
     const { documents, deleteDocument, fetchDocuments } = useDocuments();
@@ -81,13 +93,22 @@ export default function DocumentsPage() {
                     onPress: async () => {
                         // Delete sequentially or parallel
                         const ids = Array.from(selectedIds);
+                        let failCount = 0;
                         for (const id of ids) {
                             const doc = documents.find(d => d.id === id);
-                            if (doc) await deleteDocument(doc.id, doc.file_url);
+                            if (doc) {
+                                const { error } = await deleteDocument(doc.id, doc.file_url);
+                                if (error) failCount++;
+                            }
                         }
+
                         setSelectedIds(new Set());
                         setIsSelectionMode(false);
                         fetchDocuments();
+
+                        if (failCount > 0) {
+                            Alert.alert('Incomplete Delete', `${failCount} document(s) could not be deleted.`);
+                        }
                     }
                 },
             ]
@@ -100,10 +121,18 @@ export default function DocumentsPage() {
                 return { icon: 'medical', color: '#10B981' };
             case 'medical':
                 return { icon: 'fitness', color: '#6366F1' };
+            case 'lab_result':
+                return { icon: 'flask', color: '#2563EB' }; // Using flask/biotech
+            case 'prescription':
+                return { icon: 'medkit', color: '#9333EA' }; // Using medkit
+            case 'invoice':
+                return { icon: 'receipt', color: '#059669' };
             case 'legal':
                 return { icon: 'shield-checkmark', color: '#F59E0B' };
             case 'insurance':
                 return { icon: 'umbrella', color: '#8B5CF6' };
+            case 'other':
+                return { icon: 'folder', color: '#9CA3AF' };
             default:
                 return { icon: 'document', color: '#6B7280' };
         }
@@ -112,6 +141,11 @@ export default function DocumentsPage() {
     const handleUpload = () => {
         setInitialFile(null); // Clear any dropped file
         setIsUploadModalVisible(true);
+    };
+
+    const openDocumentActions = (doc: Document) => {
+        setSelectedDocument(doc);
+        setActionModalVisible(true);
     };
 
     const handleDownload = (doc: any) => {
@@ -130,8 +164,12 @@ export default function DocumentsPage() {
                     text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
-                        await deleteDocument(doc.id, doc.file_url);
-                        fetchDocuments();
+                        const { error } = await deleteDocument(doc.id, doc.file_url);
+                        if (error) {
+                            Alert.alert(t('common.error'), error.message || t('documents.delete_error'));
+                        } else {
+                            fetchDocuments();
+                        }
                     }
                 },
             ]
@@ -337,26 +375,15 @@ export default function DocumentsPage() {
                                                 </View>
                                                 <Text style={styles.documentDate}>{doc.uploadedAt}</Text>
                                             </View>
-                                            <View style={styles.documentActions}>
-                                                <TouchableOpacity
-                                                    style={styles.actionButton}
-                                                    onPress={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDownload(doc);
-                                                    }}
-                                                >
-                                                    <Ionicons name="download-outline" size={20} color="#6366F1" />
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    style={styles.actionButton}
-                                                    onPress={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDelete(doc);
-                                                    }}
-                                                >
-                                                    <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                                                </TouchableOpacity>
-                                            </View>
+                                            <TouchableOpacity
+                                                style={styles.actionButton}
+                                                onPress={(e) => {
+                                                    e.stopPropagation();
+                                                    openDocumentActions(doc);
+                                                }}
+                                            >
+                                                <Ionicons name="ellipsis-horizontal" size={20} color="#6B7280" />
+                                            </TouchableOpacity>
                                         </Pressable>
                                     );
                                 })}
@@ -375,6 +402,24 @@ export default function DocumentsPage() {
                 }}
                 petId={selectedPetId === 'all' ? undefined : selectedPetId}
                 initialFile={initialFile}
+            />
+            <DocumentActionModal
+                visible={actionModalVisible}
+                onClose={() => setActionModalVisible(false)}
+                document={selectedDocument}
+                onDelete={async (doc) => {
+                    await deleteDocument(doc.id, doc.file_url);
+                    fetchDocuments();
+                }}
+                onView={(doc) => {
+                    setSelectedDocument(doc);
+                    setViewerVisible(true);
+                }}
+            />
+            <DocumentViewerModal
+                visible={viewerVisible}
+                onClose={() => setViewerVisible(false)}
+                document={selectedDocument}
             />
         </DragDropZone>
     );

@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
 import { useVaccinations } from '@/hooks/useVaccinations';
@@ -10,7 +10,10 @@ import { useWeightEntries } from '@/hooks/useWeightEntries';
 import { format } from 'date-fns';
 import { useLocale } from '@/hooks/useLocale';
 
-type EventType = 'all' | 'vaccination' | 'visit' | 'medication' | 'weight';
+import { useDocuments } from '@/hooks/useDocuments';
+import { useConditions } from '@/hooks/useConditions';
+
+type EventType = 'all' | 'vaccination' | 'visit' | 'medication' | 'weight' | 'document' | 'condition' | 'profile';
 
 interface TimelineEvent {
     id: string;
@@ -28,20 +31,29 @@ export default function HistoryTab() {
     const params = useLocalSearchParams();
     const petId = params.id as string;
     const { pets } = usePets();
-    const { vaccinations } = useVaccinations(petId);
-    const { medications } = useMedications(petId);
+    const { vaccinations, refreshVaccinations } = useVaccinations(petId);
+    const { medications, fetchMedications } = useMedications(petId);
     const { visits, fetchVisits } = useMedicalVisits(petId);
-    const { weightEntries } = useWeightEntries(petId);
+    const { weightEntries, refreshWeightEntries } = useWeightEntries(petId);
+    const { documents, fetchDocuments } = useDocuments(petId);
+    const { conditions, refreshConditions } = useConditions(petId);
 
     const [filter, setFilter] = useState<EventType>('all');
     const pet = pets.find(p => p.id === petId);
 
-    // Fetch medical visits on mount
-    useEffect(() => {
-        if (petId && fetchVisits) {
-            fetchVisits();
-        }
-    }, [petId, fetchVisits]);
+    // Fetch medical visits on mount and focus
+    useFocusEffect(
+        useCallback(() => {
+            if (petId) {
+                fetchVisits();
+                refreshVaccinations?.();
+                fetchMedications?.();
+                refreshWeightEntries?.();
+                fetchDocuments?.();
+                refreshConditions?.();
+            }
+        }, [petId, fetchVisits, refreshVaccinations, fetchMedications, refreshWeightEntries, fetchDocuments, refreshConditions])
+    );
 
     // Combine all events into timeline
     const allEvents = useMemo(() => {
@@ -111,9 +123,52 @@ export default function HistoryTab() {
             });
         });
 
+        // Add documents
+        (documents || []).forEach((d: any) => {
+            events.push({
+                id: `doc-${d.id}`,
+                type: 'document',
+                title: d.name || t('common.document'),
+                description: d.type ? t(`documents.types.${d.type}` as any) : undefined,
+                date: new Date(d.created_at),
+                icon: 'document-text',
+                color: '#F59E0B',
+                bgColor: '#FFFBEB',
+            });
+        });
+
+        // Add conditions
+        (conditions || []).forEach((c: any) => {
+            events.push({
+                id: `cond-${c.id}`,
+                type: 'condition',
+                title: c.name,
+                description: `${t('pet_profile.health.status')}: ${c.status || t('common.active')}`,
+                date: new Date(c.diagnosed_date || c.created_at),
+                icon: 'pulse',
+                color: '#DC2626',
+                bgColor: '#FEF2F2',
+            });
+        });
+
+        // Add profile creation
+        if (pet?.created_at) {
+            events.push({
+                id: `profile-${pet.id}`,
+                type: 'profile',
+                title: t('pet_profile.profile_created'),
+                description: t('pet_profile.welcome_message', { name: pet.name }),
+                date: new Date(pet.created_at),
+                icon: 'heart',
+                color: '#EC4899',
+                bgColor: '#FDF2F8',
+            });
+        }
+
+
         // Sort by date descending
         return events.sort((a, b) => b.date.getTime() - a.date.getTime());
-    }, [vaccinations, medications, visits, weightEntries]);
+    }, [vaccinations, medications, visits, weightEntries, documents, conditions, pet]);
 
     const filteredEvents = filter === 'all'
         ? allEvents
@@ -124,6 +179,8 @@ export default function HistoryTab() {
         { key: 'vaccination', label: t('pet_profile.history.filters.vaccinations'), icon: 'medical' },
         { key: 'visit', label: t('pet_profile.history.filters.visits'), icon: 'calendar' },
         { key: 'medication', label: t('pet_profile.history.filters.medications'), icon: 'medkit' },
+        { key: 'condition', label: t('pet_profile.history.filters.conditions'), icon: 'pulse' },
+        { key: 'document', label: t('common.documents'), icon: 'document-text' },
         { key: 'weight', label: t('pet_profile.history.filters.weight'), icon: 'fitness' },
     ];
 

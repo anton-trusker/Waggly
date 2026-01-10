@@ -41,7 +41,7 @@ export default function TabLayout() {
         <Stack.Screen name="pets" />
         <Stack.Screen name="calendar" />
         <Stack.Screen name="notifications" />
-        <Stack.Screen name="profile" />
+        <Stack.Screen name="profile/index" options={{ title: 'Profile' }} />
       </Stack>
     </ResponsiveShell>
   );

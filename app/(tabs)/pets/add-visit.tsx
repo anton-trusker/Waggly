@@ -184,7 +184,7 @@ export default function AddVisitScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <AppHeader title="Add Visit" showBack />
+
 
       <TouchableWithoutFeedback onPress={() => {
         Keyboard.dismiss();

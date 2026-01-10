@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, TouchableOpacity, Image, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { designSystem } from '@/constants/designSystem';
@@ -66,17 +66,19 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
   useEffect(() => {
     (async () => {
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') return;
+        if (Platform.OS !== 'web') {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') return;
 
-        const location = await Location.getCurrentPositionAsync({});
-        const address = await Location.reverseGeocodeAsync({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        });
+          const location = await Location.getCurrentPositionAsync({});
+          const address = await Location.reverseGeocodeAsync({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
 
-        if (address && address.length > 0 && address[0].isoCountryCode) {
-          setCountryCode(address[0].isoCountryCode);
+          if (address && address.length > 0 && address[0].isoCountryCode) {
+            setCountryCode(address[0].isoCountryCode);
+          }
         }
       } catch (error) {
         console.log('Error detecting location:', error);

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
@@ -61,6 +61,12 @@ export default function OverviewTab() {
     loading: dataLoading,
     refetch: refetchAllData,
   } = usePetProfileData(petId);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchAllData();
+    }, [petId])
+  );
 
   const recentConditions = conditions.slice(0, 2); // Show top 2
 

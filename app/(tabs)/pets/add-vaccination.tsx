@@ -37,10 +37,10 @@ export default function AddVaccinationScreen() {
   const [selectedVaccineId, setSelectedVaccineId] = useState<string>('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [nextDueDate, setNextDueDate] = useState('');
-  
+
   // New Fields
   const [location, setLocation] = useState('');
-  const [locationDetails, setLocationDetails] = useState<{lat: number, lng: number, placeId: string} | null>(null);
+  const [locationDetails, setLocationDetails] = useState<{ lat: number, lng: number, placeId: string } | null>(null);
   const [practitioner, setPractitioner] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
   const [notes, setNotes] = useState('');
@@ -61,49 +61,49 @@ export default function AddVaccinationScreen() {
 
   const vaccineOptions = useMemo(() => {
     if (!selectedPet) return [];
-    
+
     const species = selectedPet.species?.toLowerCase();
     const isDog = species === 'dog';
     const isCat = species === 'cat';
-    
+
     // Filter vaccines by pet species
     const filtered = VACCINES.filter(v => {
-        if (isDog && v.petType === 'Dog') return true;
-        if (isCat && v.petType === 'Cat') return true;
-        if (!isDog && !isCat) return true; 
-        return false;
+      if (isDog && v.petType === 'Dog') return true;
+      if (isCat && v.petType === 'Cat') return true;
+      if (!isDog && !isCat) return true;
+      return false;
     });
 
     return filtered.map(v => ({
-        id: v.id,
-        label: v.brandName,
-        subLabel: `${v.protectsAgainst} (${v.duration})`,
-        category: v.category
+      id: v.id,
+      label: v.brandName,
+      subLabel: `${v.protectsAgainst} (${v.duration})`,
+      category: v.category
     }));
   }, [selectedPet]);
 
   // Auto-calculate next due date
   useEffect(() => {
     if (selectedVaccineId && date) {
-        const vaccine = VACCINES.find(v => v.id === selectedVaccineId);
-        if (vaccine) {
-            const adminDate = new Date(date.split('-').reverse().join('-')); // dd-mm-yyyy -> yyyy-mm-dd
-            if (!isNaN(adminDate.getTime())) {
-                const nextDate = new Date(adminDate);
-                if (vaccine.duration.includes('1 year')) {
-                    nextDate.setFullYear(nextDate.getFullYear() + 1);
-                } else if (vaccine.duration.includes('3 years')) {
-                    nextDate.setFullYear(nextDate.getFullYear() + 3);
-                } else if (vaccine.duration.includes('6 months')) {
-                    nextDate.setMonth(nextDate.getMonth() + 6);
-                }
-                
-                const day = nextDate.getDate().toString().padStart(2, '0');
-                const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
-                const year = nextDate.getFullYear();
-                setNextDueDate(`${day}-${month}-${year}`);
-            }
+      const vaccine = VACCINES.find(v => v.id === selectedVaccineId);
+      if (vaccine) {
+        const adminDate = new Date(date.split('-').reverse().join('-')); // dd-mm-yyyy -> yyyy-mm-dd
+        if (!isNaN(adminDate.getTime())) {
+          const nextDate = new Date(adminDate);
+          if (vaccine.duration.includes('1 year')) {
+            nextDate.setFullYear(nextDate.getFullYear() + 1);
+          } else if (vaccine.duration.includes('3 years')) {
+            nextDate.setFullYear(nextDate.getFullYear() + 3);
+          } else if (vaccine.duration.includes('6 months')) {
+            nextDate.setMonth(nextDate.getMonth() + 6);
+          }
+
+          const day = nextDate.getDate().toString().padStart(2, '0');
+          const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+          const year = nextDate.getFullYear();
+          setNextDueDate(`${day}-${month}-${year}`);
         }
+      }
     }
   }, [selectedVaccineId, date]);
 
@@ -178,9 +178,9 @@ export default function AddVaccinationScreen() {
           description: `Location: ${location}. Practitioner: ${practitioner}. Notes: ${notes}`,
           related_id: vaccinationData.id,
         }]);
-        
+
       if (eventError) throw eventError;
-      
+
       Alert.alert('Success', 'Vaccination added successfully!', [
         { text: 'OK', onPress: () => router.back() }
       ]);
@@ -193,11 +193,11 @@ export default function AddVaccinationScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <AppHeader title="Add Vaccination" showBack />
+
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
@@ -209,15 +209,15 @@ export default function AddVaccinationScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>For Pet</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
-                {pets.map(pet => (
-                    <TouchableOpacity 
-                        key={pet.id} 
-                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
-                        onPress={() => setSelectedPetId(pet.id)}
-                    >
-                        <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
-                    </TouchableOpacity>
-                ))}
+              {pets.map(pet => (
+                <TouchableOpacity
+                  key={pet.id}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                  onPress={() => setSelectedPetId(pet.id)}
+                >
+                  <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </View>
 
@@ -228,14 +228,14 @@ export default function AddVaccinationScreen() {
             </View>
 
             <EnhancedSelection
-                label="Vaccine"
-                value={selectedVaccineId}
-                options={vaccineOptions}
-                onSelect={(opt) => setSelectedVaccineId(opt.id)}
-                placeholder="Select a vaccine"
-                error={errors.selectedVaccineId}
-                required
-                icon="cross.case.fill"
+              label="Vaccine"
+              value={selectedVaccineId}
+              options={vaccineOptions}
+              onSelect={(opt) => setSelectedVaccineId(opt.id)}
+              placeholder="Select a vaccine"
+              error={errors.selectedVaccineId}
+              required
+              icon="cross.case.fill"
             />
 
             <View style={styles.inputRow}>
@@ -258,58 +258,58 @@ export default function AddVaccinationScreen() {
                 />
               </View>
             </View>
-            
+
             <View style={styles.divider} />
             <Text style={styles.subsectionTitle}>Administration Details</Text>
 
             <View style={styles.inputRow}>
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.inputLabel}>Clinic / Location</Text>
-                     <TextInput
-                        style={styles.input}
-                        value={location}
-                        onChangeText={setLocation}
-                        placeholder="e.g. City Vet Clinic"
-                     />
-                 </View>
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.inputLabel}>Practitioner</Text>
-                     <TextInput
-                        style={styles.input}
-                        value={practitioner}
-                        onChangeText={setPractitioner}
-                        placeholder="e.g. Dr. Smith"
-                     />
-                 </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.inputLabel}>Clinic / Location</Text>
+                <TextInput
+                  style={styles.input}
+                  value={location}
+                  onChangeText={setLocation}
+                  placeholder="e.g. City Vet Clinic"
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.inputLabel}>Practitioner</Text>
+                <TextInput
+                  style={styles.input}
+                  value={practitioner}
+                  onChangeText={setPractitioner}
+                  placeholder="e.g. Dr. Smith"
+                />
+              </View>
             </View>
 
             <View style={styles.inputRow}>
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.inputLabel}>Batch / Lot Number</Text>
-                     <TextInput
-                        style={styles.input}
-                        value={batchNumber}
-                        onChangeText={setBatchNumber}
-                        placeholder="Optional"
-                     />
-                 </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.inputLabel}>Batch / Lot Number</Text>
+                <TextInput
+                  style={styles.input}
+                  value={batchNumber}
+                  onChangeText={setBatchNumber}
+                  placeholder="Optional"
+                />
+              </View>
             </View>
-            
+
             <View style={styles.divider} />
-            
-            <DocumentUploader 
-                files={files}
-                onFilesChange={setFiles}
+
+            <DocumentUploader
+              files={files}
+              onFilesChange={setFiles}
             />
 
             <Text style={styles.inputLabel}>Additional Notes</Text>
             <TextInput
-                style={[styles.input, styles.textArea]}
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="Any reactions or specific notes..."
-                multiline
-                numberOfLines={3}
+              style={[styles.input, styles.textArea]}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Any reactions or specific notes..."
+              multiline
+              numberOfLines={3}
             />
 
           </View>
@@ -318,14 +318,14 @@ export default function AddVaccinationScreen() {
           <View style={{ height: 100 }} />
         </ScrollView>
       </TouchableWithoutFeedback>
-      
-      <BottomCTA 
-        onBack={() => router.back()} 
-        onPrimary={handleAddVaccination} 
-        primaryLabel="Save Vaccination" 
-        disabled={loading} 
+
+      <BottomCTA
+        onBack={() => router.back()}
+        onPrimary={handleAddVaccination}
+        primaryLabel="Save Vaccination"
+        disabled={loading}
       />
-      
+
       <LoadingOverlay visible={loading} message="Saving vaccination..." />
     </KeyboardAvoidingView>
   );

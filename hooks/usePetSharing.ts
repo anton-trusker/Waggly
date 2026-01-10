@@ -100,13 +100,18 @@ export function usePetSharing(petId?: string) {
 
             // Track shared event
             try {
-                const PostHog = (await import('posthog-react-native')).default;
-                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                ph.capture('pet_shared', {
-                    pet_id: petId,
-                    permission_level: permissionLevel,
-                    platform: typeof window !== 'undefined' ? 'web' : 'native'
-                });
+                if (typeof window === 'undefined') {
+                    // Only try to import posthog-react-native on native
+                    const { default: PostHog } = await import('posthog-react-native');
+                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                    if (ph) {
+                        ph.capture('pet_shared', {
+                            pet_id: petId,
+                            permission_level: permissionLevel,
+                            platform: 'native'
+                        });
+                    }
+                }
             } catch (e) {
                 console.warn('PostHog tracking failed', e);
             }
@@ -165,12 +170,16 @@ export function usePetSharing(petId?: string) {
 
             // Track revocation
             try {
-                const PostHog = (await import('posthog-react-native')).default;
-                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                ph.capture('pet_share_revoked', {
-                    token_id: tokenId,
-                    pet_id: petId
-                });
+                if (typeof window === 'undefined') {
+                    const { default: PostHog } = await import('posthog-react-native');
+                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                    if (ph) {
+                        ph.capture('pet_share_revoked', {
+                            token_id: tokenId,
+                            pet_id: petId
+                        });
+                    }
+                }
             } catch (e) {
                 console.warn('PostHog tracking failed', e);
             }
@@ -198,12 +207,16 @@ export function usePetSharing(petId?: string) {
 
             // Track deletion
             try {
-                const PostHog = (await import('posthog-react-native')).default;
-                const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                ph.capture('pet_share_deleted', {
-                    token_id: tokenId,
-                    pet_id: petId
-                });
+                if (typeof window === 'undefined') {
+                    const { default: PostHog } = await import('posthog-react-native');
+                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
+                    if (ph) {
+                        ph.capture('pet_share_deleted', {
+                            token_id: tokenId,
+                            pet_id: petId
+                        });
+                    }
+                }
             } catch (e) {
                 console.warn('PostHog tracking failed', e);
             }

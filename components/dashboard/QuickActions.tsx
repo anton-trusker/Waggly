@@ -33,10 +33,10 @@ const quickActionsData: QuickActionItem[] = [
     accessibilityLabel: 'Add a new vaccination',
   },
   {
-    iconName: 'scale-bathroom',
-    label: 'Log Weight',
-    onPress: () => router.push('/(tabs)/pets/log-weight'), // Assuming a log-weight screen/modal
-    accessibilityLabel: 'Log pet\'s weight',
+    iconName: 'clipboard-pulse',
+    label: 'Health Record',
+    onPress: () => router.push('/(tabs)/pets/add-health-record'),
+    accessibilityLabel: 'Log pet\'s health record',
   },
   {
     iconName: 'calendar-plus',
@@ -60,10 +60,10 @@ export function QuickActions() {
             accessibilityRole="button"
             accessibilityLabel={t(action.accessibilityLabel, { defaultValue: action.accessibilityLabel })}
           >
-            <MaterialCommunityIcons 
-              name={action.iconName} 
-              size={designSystem.spacing[8]} 
-              color={designSystem.colors.primary[500]} 
+            <MaterialCommunityIcons
+              name={action.iconName}
+              size={designSystem.spacing[8]}
+              color={designSystem.colors.primary[500]}
             />
             <Text style={styles.label}>{t(action.label, { defaultValue: action.label })}</Text>
           </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { View, StyleSheet, useWindowDimensions, Modal, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarGridDesktop from '@/components/desktop/calendar/CalendarGridDesktop';
@@ -12,7 +12,8 @@ import { designSystem } from '@/constants/designSystem';
 
 import { startOfDay, addMonths, endOfDay, isAfter, isBefore } from 'date-fns';
 import { useLocale } from '@/hooks/useLocale';
-import { useRouter } from 'expo-router';
+
+import { useRouter, useFocusEffect } from 'expo-router';
 
 export default function CalendarPage() {
     const { width } = useWindowDimensions();
@@ -21,7 +22,7 @@ export default function CalendarPage() {
     const router = useRouter();
 
     // Fetch all events first to get pets/types for default selection
-    const { events } = useEvents();
+    const { events, refreshEvents } = useEvents();
     const { pets } = usePets();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -34,6 +35,12 @@ export default function CalendarPage() {
 
     // Period selection
     const [period, setPeriod] = useState<'3m' | '6m' | '1y' | 'all'>('3m');
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshEvents();
+        }, [])
+    );
 
     // Initialize filters with all options selected (only once)
     React.useEffect(() => {
