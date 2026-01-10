@@ -1,41 +1,101 @@
-
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
+import { designSystem } from '@/constants/designSystem';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function DashboardTimeline() {
     const { theme } = useAppTheme();
     const { t } = useLocale();
-    const { activities, loading } = useActivityFeed(5); // Get top 5 recent
+    const { activities, loading } = useActivityFeed(5);
 
-    const getTimeAgo = (timestamp: string) => {
-        const now = new Date();
-        const time = new Date(timestamp);
-        const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
-
-        if (diffInSeconds < 60) return t('dashboard.time_ago.just_now');
-        if (diffInSeconds < 3600) return t('dashboard.time_ago.minutes_ago', { count: Math.floor(diffInSeconds / 60) });
-        if (diffInSeconds < 86400) return t('dashboard.time_ago.hours_ago', { count: Math.floor(diffInSeconds / 3600) });
-        if (diffInSeconds < 604800) return t('dashboard.time_ago.days_ago', { count: Math.floor(diffInSeconds / 86400) });
-        return time.toLocaleDateString();
+    const getTimeFormatted = (timestamp: string) => {
+        try {
+            const date = new Date(timestamp);
+            return formatDistanceToNow(date, { addSuffix: true }).replace('about ', '');
+        } catch (e) {
+            return '';
+        }
     };
 
     const getIconInfo = (type: string) => {
         switch (type) {
-            case 'weight': return { icon: 'monitor-weight', color: '#059669', bg: '#D1FAE5' };
-            case 'visit': return { icon: 'medical-services', color: '#2563EB', bg: '#DBEAFE' };
-            case 'vaccination': return { icon: 'vaccines', color: '#9333EA', bg: '#F3E8FF' };
-            case 'treatment': return { icon: 'healing', color: '#DC2626', bg: '#FEE2E2' };
-            default: return { icon: 'pets', color: '#6B7280', bg: '#F3F4F6' };
+            case 'weight':
+                return {
+                    icon: 'monitor-weight',
+                    iosIcon: 'scalemass.fill',
+                    color: designSystem.colors.status.warning[600],
+                    bg: designSystem.colors.status.warning[50],
+                    borderColor: designSystem.colors.background.secondary
+                };
+            case 'visit':
+                return {
+                    icon: 'medical-services',
+                    iosIcon: 'cross.case.fill',
+                    color: designSystem.colors.primary[600],
+                    bg: designSystem.colors.primary[50], // Indigo/Blue
+                    borderColor: designSystem.colors.background.secondary
+                };
+            case 'vaccination':
+                return {
+                    icon: 'vaccines',
+                    iosIcon: 'syringe.fill',
+                    color: designSystem.colors.status.error[600],
+                    bg: designSystem.colors.status.error[50],
+                    borderColor: designSystem.colors.background.secondary
+                };
+            case 'treatment':
+                return {
+                    icon: 'healing',
+                    iosIcon: 'pills.fill',
+                    color: designSystem.colors.primary[600], // Mapped to Primary since Info is missing
+                    bg: designSystem.colors.primary[50],
+                    borderColor: designSystem.colors.background.secondary
+                };
+            case 'walking':
+            case 'activity':
+                return {
+                    icon: 'directions-walk',
+                    iosIcon: 'figure.walk',
+                    color: designSystem.colors.status.success[600], // Emerald
+                    bg: designSystem.colors.status.success[50],
+                    borderColor: designSystem.colors.background.secondary
+                };
+            case 'document':
+                return {
+                    icon: 'article',
+                    iosIcon: 'doc.text.fill',
+                    color: designSystem.colors.secondary.paw,
+                    bg: designSystem.colors.secondary.pawLight,
+                    borderColor: designSystem.colors.background.secondary
+                };
+            default:
+                return {
+                    icon: 'pets',
+                    iosIcon: 'pawprint.fill',
+                    color: designSystem.colors.neutral[500],
+                    bg: designSystem.colors.neutral[100],
+                    borderColor: designSystem.colors.background.secondary
+                };
         }
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: '#fff', borderColor: theme.colors.border.primary }]}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>{t('dashboard.history_activity')}</Text>
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Activity Feed</Text>
+                <TouchableOpacity style={styles.iconButton}>
+                    <IconSymbol
+                        android_material_icon_name="tune"
+                        ios_icon_name="slider.horizontal.3"
+                        size={20}
+                        color={designSystem.colors.text.secondary}
+                    />
+                </TouchableOpacity>
+            </View>
 
             <View style={styles.list}>
                 {loading ? (
@@ -48,45 +108,73 @@ export default function DashboardTimeline() {
                         const isLast = index === activities.length - 1;
 
                         return (
-                            <View key={item.id} style={styles.item}>
-                                {/* Timeline Line */}
-                                {!isLast && <View style={styles.timelineLine} />}
+                            <View key={item.id} style={styles.timelineItem}>
+                                {/* Line */}
+                                {!isLast && <View style={styles.line} />}
 
-                                {/* Icon Dot */}
-                                <View style={[styles.dot, { backgroundColor: styleInfo.bg }]}>
+                                {/* Icon Bubble */}
+                                <View style={[styles.iconBubble, { backgroundColor: styleInfo.bg, borderColor: styleInfo.borderColor }]}>
                                     <IconSymbol
                                         android_material_icon_name={styleInfo.icon as any}
+                                        ios_icon_name={styleInfo.iosIcon as any}
                                         size={14}
                                         color={styleInfo.color}
                                     />
                                 </View>
 
                                 {/* Content */}
-                                <View style={styles.content}>
+                                <View style={styles.contentContainer}>
                                     <View style={styles.row}>
-                                        <View style={styles.titleGroup}>
-                                            <Text style={styles.title}>{item.title}</Text>
-                                            {item.petPhotoUrl && (
-                                                <Image source={{ uri: item.petPhotoUrl }} style={styles.petAvatar} />
-                                            )}
-                                        </View>
-                                        <Text style={styles.time}>{getTimeAgo(item.timestamp)}</Text>
+                                        <Text style={styles.title}>{item.title}</Text>
+                                        <Text style={styles.time}>{getTimeFormatted(item.timestamp)}</Text>
                                     </View>
 
-                                    <Text style={styles.description}>{item.description}</Text>
+                                    <View style={styles.descriptionRow}>
+                                        <Text style={styles.description}>
+                                            {item.description}
+                                            {item.petName && <Text style={styles.petName}> • {item.petName}</Text>}
+                                        </Text>
+                                    </View>
 
-                                    {/* Data Preview (e.g. weight) */}
+                                    {/* Rich Data Preview (e.g. weight delta) */}
                                     {item.type === 'weight' && item.data && (
-                                        <View style={styles.dataBadge}>
-                                            <Text style={styles.dataText}>
-                                                {item.data.weight} {item.data.unit}
-                                                {item.data.change && (
-                                                    <Text style={{ color: item.data.change > 0 ? '#10B981' : '#EF4444' }}>
-                                                        {' '}({item.data.change > 0 ? '+' : ''}{item.data.change})
-                                                    </Text>
-                                                )}
-                                            </Text>
+                                        <View style={styles.dataCard}>
+                                            {item.petPhotoUrl ? (
+                                                <Image source={{ uri: item.petPhotoUrl }} style={styles.petAvatar} />
+                                            ) : (
+                                                <View style={styles.petAvatarPlaceholder}>
+                                                    <IconSymbol android_material_icon_name="pets" size={12} color={designSystem.colors.primary[300]} />
+                                                </View>
+                                            )}
+                                            <View>
+                                                <Text style={styles.dataValue}>
+                                                    {item.data.weight} {item.data.unit}
+                                                    {item.data.change !== undefined && (
+                                                        <Text style={{
+                                                            color: item.data.change > 0 ? designSystem.colors.status.success[600] :
+                                                                item.data.change < 0 ? designSystem.colors.status.success[600] : // Weight loss is usually good for pets? Or bad? Let's assume neutral green for change.
+                                                                    designSystem.colors.text.secondary
+                                                        }}>
+                                                            {' '}({item.data.change > 0 ? '+' : ''}{item.data.change})
+                                                        </Text>
+                                                    )}
+                                                </Text>
+                                                <Text style={styles.dataLabel}>{item.petName}</Text>
+                                            </View>
                                         </View>
+                                    )}
+
+                                    {/* Document Preview */}
+                                    {item.type === 'document' && (
+                                        <TouchableOpacity style={styles.documentCard}>
+                                            <View style={styles.pdfIcon}>
+                                                <IconSymbol android_material_icon_name="description" ios_icon_name="doc.text.fill" size={20} color={designSystem.colors.status.error[500]} />
+                                            </View>
+                                            <View style={{ flex: 1 }}>
+                                                <Text style={styles.docName} numberOfLines={1}>{item.title}</Text>
+                                                <Text style={styles.docSize}>PDF • 2 MB</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     )}
                                 </View>
                             </View>
@@ -96,7 +184,7 @@ export default function DashboardTimeline() {
             </View>
 
             <TouchableOpacity style={styles.footerBtn}>
-                <Text style={[styles.footerBtnText, { color: theme.colors.primary[500] }]}>{t('dashboard.view_full_timeline')}</Text>
+                <Text style={styles.footerBtnText}>View All Activity</Text>
             </TouchableOpacity>
         </View>
     );
@@ -104,115 +192,176 @@ export default function DashboardTimeline() {
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 16,
-        padding: 24,
+        backgroundColor: designSystem.colors.background.secondary,
+        borderRadius: designSystem.borderRadius.xl,
         borderWidth: 1,
-        flex: 1,
+        borderColor: designSystem.colors.border.primary,
+        ...designSystem.shadows.sm as any,
+        flex: 1, // Expand to fill column
+        overflow: 'hidden',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: designSystem.spacing[6],
+        borderBottomWidth: 1,
+        borderBottomColor: designSystem.colors.border.primary,
     },
     headerTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        marginBottom: 24,
-        fontFamily: 'Plus Jakarta Sans',
+        ...designSystem.typography.title.medium,
+        color: designSystem.colors.text.primary,
+    },
+    iconButton: {
+        padding: 8,
+        borderRadius: 20,
+        backgroundColor: 'transparent',
     },
     list: {
-
+        padding: designSystem.spacing[6],
+        flex: 1,
     },
-    item: {
+    timelineItem: {
         flexDirection: 'row',
-        paddingBottom: 24, // Spacing for line
         position: 'relative',
+        paddingBottom: designSystem.spacing[6],
     },
-    timelineLine: {
+    line: {
         position: 'absolute',
         top: 24,
-        left: 12, // Center of dot (24/2)
+        left: 12, // Center of 24px bubble
         bottom: 0,
         width: 2,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: designSystem.colors.neutral[100],
+        zIndex: 0,
     },
-    dot: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
+    iconBubble: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 16,
+        marginRight: designSystem.spacing[4],
         zIndex: 1,
+        borderWidth: 2, // Thicker border like reference
+        backgroundColor: '#fff', // Fallback
     },
-    content: {
+    contentContainer: {
         flex: 1,
-        paddingTop: 2, // Align with dot
+        paddingTop: 2,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 4,
-    },
-    titleGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
+        alignItems: 'flex-start',
+        marginBottom: 2,
     },
     title: {
-        fontSize: 14,
+        ...designSystem.typography.label.medium,
+        color: designSystem.colors.text.primary,
         fontWeight: '600',
-        color: '#1F2937',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    petAvatar: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
     },
     time: {
-        fontSize: 12,
-        color: '#9CA3AF',
-        fontFamily: 'Plus Jakarta Sans',
+        ...designSystem.typography.caption,
+        color: designSystem.colors.text.tertiary,
+    },
+    descriptionRow: {
+        marginBottom: designSystem.spacing[2],
     },
     description: {
-        fontSize: 13,
-        color: '#6B7280',
-        lineHeight: 20,
-        fontFamily: 'Plus Jakarta Sans',
+        ...designSystem.typography.body.small,
+        color: designSystem.colors.text.secondary,
+        lineHeight: 18,
     },
-    dataBadge: {
-        alignSelf: 'flex-start',
-        backgroundColor: '#F9FAFB',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 6,
-        marginTop: 8,
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
-    },
-    dataText: {
-        fontSize: 12,
+    petName: {
         fontWeight: '600',
-        color: '#374151',
-        fontFamily: 'monspace', // Fallback
+        color: designSystem.colors.text.primary,
     },
-    loadingText: {
-        fontStyle: 'italic',
-        color: '#9CA3AF',
-        padding: 12,
+    // Data Card (Weight etc)
+    dataCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: designSystem.colors.background.primary, // Greyish
+        padding: designSystem.spacing[3],
+        borderRadius: designSystem.borderRadius.lg,
+        borderWidth: 1,
+        borderColor: designSystem.colors.border.primary,
+        gap: designSystem.spacing[3],
+        marginTop: 4,
     },
-    emptyText: {
-        fontStyle: 'italic',
-        color: '#9CA3AF',
-        padding: 12,
+    petAvatar: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+    },
+    petAvatarPlaceholder: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: designSystem.colors.primary[100],
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    dataValue: {
+        ...designSystem.typography.body.medium,
+        fontWeight: '700',
+        color: designSystem.colors.text.primary,
+    },
+    dataLabel: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: designSystem.colors.text.tertiary,
+        textTransform: 'uppercase',
+    },
+    // Document Card
+    documentCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: designSystem.colors.background.secondary,
+        padding: designSystem.spacing[2],
+        borderRadius: designSystem.borderRadius.lg,
+        borderWidth: 1,
+        borderColor: designSystem.colors.border.primary,
+        marginTop: 4,
+        gap: designSystem.spacing[3],
+    },
+    pdfIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 6,
+        backgroundColor: designSystem.colors.status.error[50], // Red bg
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    docName: {
+        ...designSystem.typography.label.small,
+        color: designSystem.colors.text.primary,
+    },
+    docSize: {
+        ...designSystem.typography.caption,
+        fontSize: 10,
     },
     footerBtn: {
-        marginTop: 8,
-        alignItems: 'center',
-        paddingVertical: 12,
         borderTopWidth: 1,
-        borderTopColor: '#F3F4F6',
+        borderTopColor: designSystem.colors.border.primary,
+        padding: designSystem.spacing[4],
+        alignItems: 'center',
     },
     footerBtnText: {
-        fontSize: 14,
+        ...designSystem.typography.label.medium,
+        color: designSystem.colors.primary[500],
         fontWeight: '600',
-        fontFamily: 'Plus Jakarta Sans',
+    },
+    loadingText: {
+        ...designSystem.typography.body.small,
+        color: designSystem.colors.text.tertiary,
+        fontStyle: 'italic',
+        textAlign: 'center',
+    },
+    emptyText: {
+        ...designSystem.typography.body.small,
+        color: designSystem.colors.text.tertiary,
+        fontStyle: 'italic',
+        textAlign: 'center',
     },
 });

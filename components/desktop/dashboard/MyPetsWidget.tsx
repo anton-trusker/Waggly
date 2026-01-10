@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import { DashboardPetCard } from '@/components/desktop/dashboard/DashboardPetCard';
 import ShareModal from '@/components/desktop/modals/ShareModal';
 import { Pet } from '@/types';
 import * as Haptics from 'expo-haptics';
@@ -21,12 +21,10 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
     const router = useRouter();
     const { theme } = useAppTheme();
     const { width } = useWindowDimensions();
-    const isMobile = width < 768;
+    const isMobile = width < designSystem.breakpoints.tablet;
     const [activeIndex, setActiveIndex] = useState(0);
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [selectedPetForShare, setSelectedPetForShare] = useState<Pet | null>(null);
-
-    const hasPets = pets.length > 0;
 
     const handleQrPress = (pet: Pet) => {
         setSelectedPetForShare(pet);
@@ -35,18 +33,24 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
 
     // Responsive grid columns
     const getColumns = (screenWidth: number) => {
-        if (screenWidth < 640) return 1;      // Mobile: 1 column
-        if (screenWidth < 1024) return 2;     // Tablet: 2 columns
-        if (screenWidth < 1440) return 3;     // Desktop: 3 columns
-        return 4;                             // Wide: 4 columns
+        if (screenWidth < designSystem.breakpoints.tablet) return 1;
+        if (screenWidth < designSystem.breakpoints.desktop) return 2;
+        if (screenWidth < designSystem.breakpoints.wide) return 3;
+        return 4;
     };
 
     const columns = getColumns(width);
-    const useGrid = width >= 768; // Use grid on tablet and above
+    const useGrid = !isMobile;
 
-    const cardGap = 12;
-    const horizontalPadding = 16;
-    const cardWidth = isMobile ? (width - (horizontalPadding * 2 + cardGap)) / 2 : useGrid ? ((width - (horizontalPadding * 2) - (cardGap * (columns - 1))) / columns) : 360;
+    const cardGap = designSystem.spacing[4];
+    const horizontalPadding = isMobile ? designSystem.spacing[4] : 0; // No padding on desktop container, parent handles it
+
+    // Calculate card width
+    const containerWidth = width - (isMobile ? 0 : (designSystem.spacing[6] * 2) + 260); // Approx width accounting for sidebar
+    // Simplified width logic for robust responsiveness
+    const cardWidth = isMobile
+        ? width * 0.85
+        : (containerWidth / columns) - cardGap;
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const slideSize = cardWidth + cardGap;
@@ -61,69 +65,60 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
         }
     };
 
-    if (!hasPets && !loading) {
-        return (
-            <View style={styles.container}>
-                <LinearGradient
-                    colors={['#6366F1', '#8B5CF6']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.emptyBanner}
-                >
-                    <View style={styles.emptyContent}>
-                        <View style={styles.emptyIconContainer}>
-                            <Text style={styles.emptyIcon}>🐾</Text>
-                        </View>
-                        <View style={styles.emptyTextContainer}>
-                            <Text style={styles.emptyTitle}>Add Your First Pet</Text>
-                            <Text style={styles.emptySubtitle}>
-                                Start tracking your pet's health, vaccinations, and more
-                            </Text>
-                        </View>
-                        <TouchableOpacity
-                            style={styles.emptyButton}
-                            onPress={() => router.push('/(tabs)/pets/new' as any)}
-                        >
-                            <Ionicons name="add" size={20} color="#6366F1" />
-                            <Text style={styles.emptyButtonText}>Add Pet</Text>
-                        </TouchableOpacity>
-                    </View>
-                </LinearGradient>
+    const AddPetCard = () => (
+        <TouchableOpacity
+            style={[styles.addCard, { width: isMobile ? cardWidth : '100%', height: isMobile ? undefined : 180 }]}
+            onPress={() => router.push('/(tabs)/pets/new')}
+        >
+            <View style={styles.addCardContent}>
+                <View style={styles.addIconCircle}>
+                    <Ionicons name="add" size={32} color={designSystem.colors.primary[500]} />
+                </View>
+                <Text style={styles.addCardTitle}>Add New Pet</Text>
+                <Text style={styles.addCardSubtitle}>Track another furry friend</Text>
             </View>
-        );
-    }
+        </TouchableOpacity>
+    );
+
+    // Combine pets and "Add New" for the grid list
+    const gridData = [...pets, { id: 'add-new-pet-action' } as any];
 
     return (
         <View style={styles.container}>
             {useGrid ? (
                 /* Desktop/Tablet: Grid Layout */
-                <FlatList
-                    data={pets}
-                    numColumns={columns}
-                    key={`grid-${columns}`} // Force re-render when columns change
-                    showsVerticalScrollIndicator={false}
-                    scrollEnabled={false} // Disable scroll, parent handles it
-                    contentContainerStyle={[
-                        styles.gridContent,
-                        { paddingHorizontal: horizontalPadding }
-                    ]}
-                    columnWrapperStyle={columns > 1 ? { gap: cardGap, marginBottom: cardGap } : undefined}
-                    renderItem={({ item: pet }) => (
-                        <View style={{ flex: 1 / columns, maxWidth: cardWidth }}>
-                            <PetPassportCard
-                                pet={pet}
-                                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
-                                onQrPress={() => handleQrPress(pet)}
-                                alerts={events.filter(e => e.petId === pet.id)}
-                                cardWidth={cardWidth}
-                            />
+                <View style={styles.gridContainer}>
+                    {gridData.map((item, index) => (
+                        <View
+                            key={item.id}
+                            style={{
+                                width: `calc(${100 / columns}% - ${cardGap - (cardGap / columns)}px)`,
+                                marginBottom: cardGap
+                            }}
+                        >
+                            {item.id === 'add-new-pet-action' ? (
+                                <AddPetCard />
+                            ) : (
+                                <DashboardPetCard
+                                    pet={item}
+                                    onPress={() => router.push(`/(tabs)/pets/${item.id}` as any)}
+                                    onQrPress={() => handleQrPress(item)}
+                                    cardWidth={undefined} // Autosize to container
+                                />
+                            )}
                         </View>
-                    )}
-                    keyExtractor={(pet) => pet.id}
-                />
+                    ))}
+                </View>
             ) : (
                 /* Mobile: Horizontal Scroll */
-                <>
+                <View>
+                    <View style={styles.mobileHeader}>
+                        <Text style={styles.sectionTitle}>Your Pets</Text>
+                        <TouchableOpacity onPress={() => router.push('/(tabs)/pets/new')}>
+                            <Text style={styles.seeAllText}>Add New</Text>
+                        </TouchableOpacity>
+                    </View>
+
                     <ScrollView
                         horizontal
                         pagingEnabled={false}
@@ -134,9 +129,8 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                             styles.scrollContent,
                             { paddingHorizontal: horizontalPadding },
                         ]}
-                        snapToInterval={cardWidth + cardGap}
-                        snapToAlignment="start"
                         decelerationRate="fast"
+                        snapToInterval={cardWidth + cardGap}
                     >
                         {pets.map((pet, index) => (
                             <View
@@ -145,41 +139,23 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                                     styles.cardWrapper,
                                     {
                                         width: cardWidth,
-                                        marginRight: index === pets.length - 1 ? 0 : cardGap
+                                        marginRight: cardGap
                                     }
                                 ]}
                             >
-                                <PetPassportCard
+                                <DashboardPetCard
                                     pet={pet}
                                     onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
                                     onQrPress={() => handleQrPress(pet)}
-                                    alerts={events.filter(e => e.petId === pet.id)}
                                     cardWidth={cardWidth}
                                 />
                             </View>
                         ))}
-                    </ScrollView>
-
-                    {/* Pagination Dots */}
-                    {pets.length > 2 && (
-                        <View style={styles.pagination}>
-                            {pets.map((_, index) => (
-                                <View
-                                    key={index}
-                                    style={[
-                                        styles.dot,
-                                        {
-                                            backgroundColor: index === activeIndex
-                                                ? designSystem.colors.primary[500]
-                                                : 'rgba(0,0,0,0.1)',
-                                            width: index === activeIndex ? 20 : 6
-                                        }
-                                    ]}
-                                />
-                            ))}
+                        <View style={{ width: cardWidth }}>
+                            <AddPetCard />
                         </View>
-                    )}
-                </>
+                    </ScrollView>
+                </View>
             )}
 
             {selectedPetForShare && (
@@ -198,81 +174,66 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 8,
+        marginBottom: designSystem.spacing[6],
+    },
+    gridContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: designSystem.spacing[4],
     },
     scrollContent: {
-        alignItems: 'center',
-        paddingBottom: 8,
-        justifyContent: 'center',
-    },
-    gridContent: {
-        paddingBottom: 8,
+        paddingBottom: designSystem.spacing[4],
     },
     cardWrapper: {
-        // marginRight managed dynamically via cardGap
+        // marginRight managed dynamically
     },
-    pagination: {
+    mobileHeader: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 12,
-        gap: 6,
+        paddingHorizontal: designSystem.spacing[4],
+        marginBottom: designSystem.spacing[3],
     },
-    dot: {
-        height: 6,
-        borderRadius: 3,
-    },
-    emptyBanner: {
-        borderRadius: 24,
-        padding: 32,
-        ...designSystem.shadows.md,
-    },
-    emptyContent: {
-        alignItems: 'center',
-        gap: 16,
-    },
-    emptyIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    emptyIcon: {
-        fontSize: 32,
-    },
-    emptyTextContainer: {
-        alignItems: 'center',
-    },
-    emptyTitle: {
+    sectionTitle: {
+        ...designSystem.typography.headline.small,
         fontSize: 20,
-        fontWeight: '700',
-        color: '#fff',
-        marginBottom: 8,
-        fontFamily: 'Plus Jakarta Sans',
+        color: designSystem.colors.text.primary,
     },
-    emptySubtitle: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        textAlign: 'center',
-        maxWidth: 280,
-        fontFamily: 'Plus Jakarta Sans',
+    seeAllText: {
+        ...designSystem.typography.label.medium,
+        color: designSystem.colors.primary[500],
     },
-    emptyButton: {
-        flexDirection: 'row',
+    addCard: {
+        backgroundColor: designSystem.colors.background.secondary,
+        borderRadius: designSystem.borderRadius.lg,
+        borderWidth: 2,
+        borderColor: designSystem.colors.border.primary,
+        borderStyle: 'dashed',
         alignItems: 'center',
-        gap: 8,
-        backgroundColor: '#fff',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 12,
-        marginTop: 8,
+        justifyContent: 'center',
+        minHeight: 180, // Match typical card height
     },
-    emptyButtonText: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#6366F1',
-        fontFamily: 'Plus Jakarta Sans',
+    addCardContent: {
+        alignItems: 'center',
+        gap: designSystem.spacing[2],
+    },
+    addIconCircle: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: designSystem.colors.primary[50],
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: designSystem.spacing[1],
+    },
+    addCardTitle: {
+        ...designSystem.typography.title.medium,
+        color: designSystem.colors.primary[600],
+    },
+    addCardSubtitle: {
+        ...designSystem.typography.body.small,
+        color: designSystem.colors.text.secondary,
     },
 });
+
+

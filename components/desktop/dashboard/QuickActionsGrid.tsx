@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocale } from '@/hooks/useLocale';
+import { designSystem } from '@/constants/designSystem';
 
 interface QuickActionsGridProps {
     onActionPress: (actionId: string) => void;
@@ -18,35 +19,40 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
             label: t('widgets.quick_actions.visit'),
             icon: 'medical-services',
             iosIcon: 'cross.case.fill',
-            colors: ['#4F46E5', '#818CF8'] // Indigo
+            // Indigo
+            colors: [designSystem.colors.primary[500], designSystem.colors.primary[400]]
         },
         {
             id: 'vaccine',
             label: t('widgets.quick_actions.vaccine'),
             icon: 'vaccines',
             iosIcon: 'syringe.fill',
-            colors: ['#059669', '#34D399'] // Emerald
+            // Emerald (Success)
+            colors: [designSystem.colors.success[600], designSystem.colors.success[400]]
         },
         {
             id: 'meds',
             label: t('widgets.quick_actions.meds'),
             icon: 'medication',
             iosIcon: 'pills.fill',
-            colors: ['#D946EF', '#F472B6'] // Fuchsia
+            // Fuchsia/Pink (Secondary)
+            colors: [designSystem.colors.secondary.pawDark, designSystem.colors.secondary.paw]
         },
         {
             id: 'weight',
             label: 'Health Record',
             icon: 'favorite',
             iosIcon: 'heart.text.square.fill',
-            colors: ['#F59E0B', '#FBBF24'] // Amber
+            // Amber (Warning)
+            colors: [designSystem.colors.warning[600], designSystem.colors.warning[400]]
         },
         {
             id: 'doc',
             label: t('widgets.quick_actions.doc'),
             icon: 'description',
             iosIcon: 'doc.fill',
-            colors: ['#8B5CF6', '#A78BFA'] // Violet
+            // Violet (using primary 600/700 variant or custom) - using primary darkest for contrast
+            colors: [designSystem.colors.primary[700], designSystem.colors.primary[600]]
         },
     ];
 
@@ -69,7 +75,7 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
                             <IconSymbol
                                 android_material_icon_name={action.icon as any}
                                 ios_icon_name={action.iosIcon as any}
-                                size={28}
+                                size={26}
                                 color="#fff"
                             />
                         </LinearGradient>
@@ -83,29 +89,29 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 24,
-        alignItems: 'center', // Center the grid container itself if needed
+        marginBottom: designSystem.spacing[6],
+        alignItems: 'center',
     },
     grid: {
         flexDirection: 'row',
-        gap: 16,
-        flexWrap: 'nowrap', // Force single row
+        gap: designSystem.spacing[4],
+        flexWrap: 'wrap',
         justifyContent: 'center',
         alignSelf: 'center',
     },
     actionCard: {
         alignItems: 'center',
-        gap: 8,
+        gap: designSystem.spacing[2],
         minWidth: 70,
-        flex: 0, // Prevent growing
+        flex: 0,
     },
     iconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 20,
+        width: 56, // Standard touch target
+        height: 56,
+        borderRadius: designSystem.borderRadius.xl, // Squircle
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
+        shadowColor: designSystem.colors.neutral[900],
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
@@ -114,10 +120,10 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(255,255,255,0.2)',
     },
     label: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#4B5563',
+        ...designSystem.typography.label.medium,
+        color: designSystem.colors.text.secondary,
         textAlign: 'center',
-        fontFamily: 'Plus Jakarta Sans',
     },
 });
+
+
