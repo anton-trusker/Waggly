@@ -15,6 +15,13 @@ export type Pet = Database['public']['Tables']['pets']['Row'] & {
   height?: number | null;
   microchip_implantation_date?: string | null;
   sterilization_date?: string | null;
+  // New Physical Attributes
+  tail_length?: string | null;
+  fur_description?: string | null;
+  coat_type?: string | null;
+  eye_color?: string | null;
+  distinguishing_marks?: string | null;
+  tattoo_id?: string | null;
 };
 export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'] & {
   type?: 'clinic' | 'emergency' | 'specialist';

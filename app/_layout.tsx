@@ -11,6 +11,10 @@ import { DesignSystemProvider } from '@/design-system/DesignSystemProvider';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { ThemeProvider as ThemeContextProvider } from '@/contexts/ThemeContext';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PostHogProvider } from "posthog-react-native";
+import { posthogConfig } from "@/lib/posthog";
+import { ToastProvider } from '@/contexts/ToastContext';
 
 function RootLayoutNav() {
   const { session, user, loading } = useAuth();
@@ -142,10 +146,7 @@ function NavigationThemeProvider() {
   );
 }
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { PostHogProvider } from "posthog-react-native";
-import { posthogConfig } from "@/lib/posthog";
 
 export default function RootLayout() {
   return (
@@ -157,9 +158,11 @@ export default function RootLayout() {
       <DesignSystemProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <ThemeContextProvider>
-            <AuthProvider>
-              <RootLayoutNav />
-            </AuthProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <RootLayoutNav />
+              </AuthProvider>
+            </ToastProvider>
           </ThemeContextProvider>
         </GestureHandlerRootView>
       </DesignSystemProvider>

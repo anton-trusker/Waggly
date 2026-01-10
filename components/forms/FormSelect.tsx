@@ -17,6 +17,7 @@ interface FormSelectProps<T extends FieldValues> {
     placeholder?: string;
     required?: boolean;
     options: SelectOption[];
+    searchable?: boolean; // NEW
 }
 
 export default function FormSelect<T extends FieldValues>({
@@ -26,10 +27,12 @@ export default function FormSelect<T extends FieldValues>({
     placeholder = 'Select an option',
     required = false,
     options,
+    searchable = false, // NEW
 }: FormSelectProps<T>) {
     const { theme } = useAppTheme();
     const isDark = theme === 'dark';
     const [showModal, setShowModal] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(''); // NEW
 
     return (
         <Controller

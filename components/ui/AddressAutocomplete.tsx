@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { GooglePlacesAutocomplete, GooglePlaceDetail } from 'react-native-google-places-autocomplete';
 import { colors } from '@/styles/commonStyles';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -27,6 +27,39 @@ const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
 export default function AddressAutocomplete({ onSelect, placeholder = 'Search address', initialValue }: AddressAutocompleteProps) {
     const { theme } = useAppTheme();
+
+    // On web, use a simple input to avoid GooglePlacesAutocomplete initialization issues
+    if (Platform.OS === 'web') {
+        return (
+            <View style={styles.container}>
+                <input
+                    type="text"
+                    placeholder={placeholder}
+                    defaultValue={initialValue}
+                    onChange={(e) => {
+                        if (onSelect) {
+                            onSelect({
+                                formatted_address: e.target.value,
+                                place_id: '',
+                                geometry: { location: { lat: 0, lng: 0 } },
+                            } as GooglePlaceDetail);
+                        }
+                    }}
+                    style={{
+                        width: '100%',
+                        height: 44,
+                        padding: '0 12px',
+                        fontSize: 15,
+                        backgroundColor: colors.card,
+                        color: colors.text,
+                        border: `1px solid ${colors.border}`,
+                        borderRadius: 10,
+                        outline: 'none',
+                    }}
+                />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>

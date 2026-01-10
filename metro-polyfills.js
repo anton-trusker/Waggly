@@ -5,7 +5,7 @@
 
 // Polyfill for Array.prototype.toReversed (Node < 20)
 if (!Array.prototype.toReversed) {
-    // @ts-ignore
+    // @ts-expect-error
     Array.prototype.toReversed = function () {
         return this.slice().reverse();
     };
@@ -13,7 +13,7 @@ if (!Array.prototype.toReversed) {
 
 // Polyfill for Array.prototype.toSorted (Node < 20)
 if (!Array.prototype.toSorted) {
-    // @ts-ignore
+    // @ts-expect-error
     Array.prototype.toSorted = function (compareFn) {
         return this.slice().sort(compareFn);
     };
@@ -21,7 +21,7 @@ if (!Array.prototype.toSorted) {
 
 // Polyfill for Object.groupBy (Node < 21)
 if (!Object.groupBy) {
-    // @ts-ignore
+    // @ts-expect-error
     Object.groupBy = function (items, keySelector) {
         return items.reduce((acc, item, index) => {
             const key = keySelector(item, index);

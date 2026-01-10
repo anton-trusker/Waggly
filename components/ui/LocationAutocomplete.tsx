@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { View, StyleSheet, Platform, ViewStyle } from 'react-native';
 import { GooglePlacesAutocomplete, GooglePlaceData, GooglePlaceDetail } from 'react-native-google-places-autocomplete';
 import { colors } from '@/styles/commonStyles';
@@ -37,10 +37,42 @@ export default function LocationAutocomplete({
   const ref = useRef<GooglePlacesAutocomplete>(null);
 
   useEffect(() => {
-    if (value && ref.current) {
+    if (value && ref.current && Platform.OS !== 'web') {
       ref.current.setAddressText(value);
     }
   }, [value]);
+
+  // On web, use a simple TextInput to avoid GooglePlacesAutocomplete initialization issues
+  if (Platform.OS === 'web') {
+    return (
+      <FormField label={label} error={error} required={required} style={[styles.container, containerStyle]}>
+        <View style={styles.wrapper}>
+          <input
+            type="text"
+            placeholder={placeholder}
+            defaultValue={value}
+            onChange={(e) => {
+              if (onChangeText) onChangeText(e.target.value);
+            }}
+            style={{
+              width: '100%',
+              height: 44,
+              padding: '0 12px',
+              fontSize: 15,
+              backgroundColor: colors.card,
+              color: colors.text,
+              border: `1px solid ${colors.border}`,
+              borderRadius: 10,
+              outline: 'none',
+            }}
+          />
+          <View style={styles.iconContainer}>
+            <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={20} color={colors.textSecondary} />
+          </View>
+        </View>
+      </FormField>
+    );
+  }
 
   return (
     <FormField label={label} error={error} required={required} style={[styles.container, containerStyle]}>
@@ -60,7 +92,7 @@ export default function LocationAutocomplete({
               });
             }
             if (onChangeText) {
-                onChangeText(data.description);
+              onChangeText(data.description);
             }
           }}
           query={{
@@ -72,13 +104,13 @@ export default function LocationAutocomplete({
           textInputProps={{
             placeholderTextColor: colors.textSecondary,
             onChangeText: (text) => {
-                if (onChangeText) onChangeText(text);
+              if (onChangeText) onChangeText(text);
             },
             style: {
-                color: colors.text,
-                fontSize: 15,
-                height: 44,
-                width: '100%',
+              color: colors.text,
+              fontSize: 15,
+              height: 44,
+              width: '100%',
             }
           }}
           styles={{

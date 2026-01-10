@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable } from 
 import { useRouter } from 'expo-router';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 import { useEvents } from '@/hooks/useEvents';
 import { LinearGradient } from 'expo-linear-gradient';
 

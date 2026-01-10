@@ -1,424 +1,394 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Clipboard, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { QRCode } from 'react-qrcode-logo';
+import QRCode from 'react-native-qrcode-svg';
+import * as Clipboard from 'expo-clipboard';
+import * as Sharing from 'expo-sharing';
+import ViewShot from 'react-native-view-shot';
 import { usePets } from '@/hooks/usePets';
-import { usePetSharing, ShareToken } from '@/hooks/usePetSharing';
-import { useLocale } from '@/hooks/useLocale';
+import { useSharePassport, ShareLink } from '@/hooks/passport/useSharePassport';
 import { designSystem } from '@/constants/designSystem';
+import SharePassportModal from '@/components/passport/SharePassportModal';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function ShareTab() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { pets } = usePets();
     const pet = pets?.find(p => p.id === id);
-    const { t } = useLocale();
-    const { tokens, loading, getOrCreateToken, deleteToken, getShareUrl } = usePetSharing(id);
+    const { activeLinks, loading, revokeLink, getShareUrl } = useSharePassport(id as string);
+    const { success, error: toastError } = useToast();
 
-    const [basicToken, setBasicToken] = useState<ShareToken | null>(null);
-    const [advancedToken, setAdvancedToken] = useState<ShareToken | null>(null);
-
-    useEffect(() => {
-        loadTokens();
-    }, [id, tokens]);
-
-    const loadTokens = async () => {
-        // Get or create basic token
-        const { data: basic } = await getOrCreateToken('basic');
-        if (basic) setBasicToken(basic);
-
-        // Check for advanced token
-        const advanced = tokens.find(t => t.permission_level === 'advanced' && t.is_active);
-        if (advanced) setAdvancedToken(advanced);
-    };
-
-    const handleGenerateAdvanced = async () => {
-        const { data, error } = await getOrCreateToken('advanced');
-        if (error) {
-            Alert.alert('Error', 'Could not generate advanced share link');
-        } else if (data) {
-            setAdvancedToken(data);
-        }
-    };
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedLinkForQR, setSelectedLinkForQR] = useState<ShareLink | null>(null);
+    const viewShotRef = useRef<any>(null);
 
     const handleCopyLink = async (url: string) => {
-        if (Platform.OS === 'web') {
-            await navigator.clipboard.writeText(url);
-            Alert.alert('Copied!', 'Share link copied to clipboard');
-        } else {
-            Clipboard.setString(url);
-            Alert.alert('Copied!', 'Share link copied to clipboard');
-        }
+        await Clipboard.setStringAsync(url);
+        success('Link copied to clipboard');
     };
 
-    const handleDeleteToken = async (tokenId: string, level: string) => {
+    const handleRevoke = (token: string) => {
         Alert.alert(
-            'Delete Share Link',
-            `Are you sure you want to permanently delete the ${level} share link? This action cannot be undone.`,
+            'Revoke Link',
+            'Are you sure you want to disable this share link? It will stop working immediately.',
             [
                 { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: async () => {
-                        const { error } = await deleteToken(tokenId);
-                        if (error) {
-                            Alert.alert('Error', 'Could not delete share link');
-                        } else {
-                            if (level === 'basic') setBasicToken(null);
-                            if (level === 'advanced') setAdvancedToken(null);
-                            await loadTokens();
-                        }
-                    },
-                },
+                { text: 'Revoke', style: 'destructive', onPress: () => revokeLink(token) }
             ]
         );
     };
 
-    const renderShareCard = (token: ShareToken | null, level: 'basic' | 'advanced', title: string, description: string, icon: string) => {
-        if (!token && level === 'advanced') {
-            return (
-                <View style={styles.card}>
-                    <Text style={styles.cardTitle}>{icon} {title}</Text>
-                    <Text style={styles.cardDescription}>{description}</Text>
-                    <TouchableOpacity style={styles.generateButton} onPress={handleGenerateAdvanced}>
-                        <Ionicons name="add-circle" size={20} color="#FFFFFF" />
-                        <Text style={styles.generateButtonText}>Generate Advanced Link</Text>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
+    const handleDownloadQR = async (link: ShareLink) => {
+        setSelectedLinkForQR(link);
+        // Wait for state update and re-render
+        setTimeout(async () => {
+            if (viewShotRef.current) {
+                try {
+                    const uri = await viewShotRef.current.capture();
+                    await Sharing.shareAsync(uri, {
+                        mimeType: 'image/png',
+                        dialogTitle: `Download Branded QR`,
+                        UTI: 'public.png'
+                    });
+                    success('Branded QR ready');
+                } catch (err: any) {
+                    toastError('Failed to capture QR');
+                }
+            }
+        }, 100);
+    };
 
-        if (!token) return null;
-
-        const shareUrl = getShareUrl(token.token);
+    const renderLinkCard = (link: ShareLink) => {
+        const url = getShareUrl(link.token);
+        const permissionsCount = Object.values(link.permissions).filter(v => v === true).length;
 
         return (
-            <View style={styles.card}>
+            <View key={link.id} style={styles.card}>
                 <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>{icon} {title}</Text>
-                    {token.accessed_count > 0 && (
-                        <Text style={styles.accessCount}>👁️ {token.accessed_count} views</Text>
-                    )}
-                </View>
-                <Text style={styles.cardDescription}>{description}</Text>
-
-                {/* QR Code */}
-                <View style={styles.qrContainer}>
-                    {Platform.OS === 'web' ? (
-                        <QRCode
-                            value={shareUrl}
-                            size={200}
-                            quietZone={10}
-                            bgColor="#FFFFFF"
-                            fgColor="#000000"
-                            qrStyle="squares"
-                        />
-                    ) : (
-                        <View style={styles.qrPlaceholder}>
-                            <Ionicons name="qr-code" size={64} color="#6B7280" />
-                            <Text style={styles.qrPlaceholderText}>QR Code</Text>
-                        </View>
-                    )}
-                </View>
-
-                {/* Share URL */}
-                <View style={styles.urlContainer}>
-                    <Text style={styles.urlLabel}>Share Link:</Text>
-                    <View style={styles.urlBox}>
-                        <Text style={styles.urlText} numberOfLines={1}>{shareUrl}</Text>
-                        <TouchableOpacity
-                            style={styles.copyButton}
-                            onPress={() => handleCopyLink(shareUrl)}
-                        >
-                            <Ionicons name="copy-outline" size={18} color={designSystem.colors.primary[500]} />
-                        </TouchableOpacity>
+                    <View>
+                        <Text style={styles.cardTitle}>Secure Share Link</Text>
+                        <Text style={styles.cardSubtitle}>
+                            {permissionsCount} sections shared • Created {new Date(link.created_at).toLocaleDateString()}
+                        </Text>
+                    </View>
+                    <View style={styles.viewBadge}>
+                        <Text style={styles.viewBadgeText}>👁️ {link.accessed_count}</Text>
                     </View>
                 </View>
 
-                {/* Delete Button */}
-                <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleDeleteToken(token.id, level)}
-                >
-                    <Ionicons name="trash-outline" size={16} color="#EF4444" />
-                    <Text style={styles.deleteButtonText}>Delete Link</Text>
+                <View style={styles.qrRow}>
+                    <View style={styles.qrMiniContainer}>
+                        <QRCode
+                            value={url}
+                            size={100}
+                            color={designSystem.colors.primary[500]}
+                            backgroundColor="white"
+                        />
+                    </View>
+                    <View style={styles.linkInfo}>
+                        <Text style={styles.urlText} numberOfLines={1}>{url}</Text>
+                        <View style={styles.linkActions}>
+                            <TouchableOpacity style={styles.miniAction} onPress={() => handleCopyLink(url)}>
+                                <Ionicons name="copy-outline" size={16} color={designSystem.colors.primary[500]} />
+                                <Text style={styles.miniActionText}>Copy</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.miniAction} onPress={() => handleDownloadQR(link)}>
+                                <Ionicons name="download-outline" size={16} color={designSystem.colors.primary[500]} />
+                                <Text style={styles.miniActionText}>QR</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                <TouchableOpacity style={styles.revokeButton} onPress={() => handleRevoke(link.token)}>
+                    <Ionicons name="trash-outline" size={14} color="#EF4444" />
+                    <Text style={styles.revokeButtonText}>Disable Link</Text>
                 </TouchableOpacity>
             </View>
         );
     };
 
-    const renderTokenList = () => {
-        if (loading && tokens.length === 0) return null;
-
-        // Filter out the "current" tokens we're already showing as cards
-        const otherTokens = tokens.filter(t =>
-            t.id !== basicToken?.id && t.id !== advancedToken?.id
-        );
-
-        if (otherTokens.length === 0) return null;
-
-        return (
-            <View style={styles.historySection}>
-                <Text style={styles.sectionTitle}>Other Active Links</Text>
-                {otherTokens.map((token) => (
-                    <View key={token.id} style={styles.historyItem}>
-                        <View style={styles.historyItemInfo}>
-                            <Text style={styles.historyItemTitle}>
-                                {token.permission_level === 'basic' ? '📱 Basic' : '🏥 Advanced'}
-                            </Text>
-                            <Text style={styles.historyItemSubtitle}>
-                                Created: {new Date(token.created_at).toLocaleDateString()} • {token.accessed_count} views
-                            </Text>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => handleDeleteToken(token.id, token.permission_level)}
-                            style={styles.historyDeleteButton}
-                        >
-                            <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                        </TouchableOpacity>
-                    </View>
-                ))}
-            </View>
-        );
-    };
-
-    if (!pet) {
-        return (
-            <View style={styles.container}>
-                <Text>Pet not found</Text>
-            </View>
-        );
-    }
+    if (!pet) return null;
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Ionicons name="share-social" size={32} color={designSystem.colors.primary[500]} />
-                <Text style={styles.headerTitle}>Share {pet.name}'s Profile</Text>
-                <Text style={styles.headerSubtitle}>
-                    Generate secure share links with QR codes
-                </Text>
-            </View>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.header}>
+                    <View style={styles.headerIcon}>
+                        <Ionicons name="share-social" size={32} color="#fff" />
+                    </View>
+                    <Text style={styles.title}>Share {pet.name}'s Passport</Text>
+                    <Text style={styles.subtitle}>
+                        Manage secure links and QR codes to share medical details with vets, sitters, or groomers.
+                    </Text>
+                </View>
 
-            {/* Info Banner */}
-            <View style={styles.infoBanner}>
-                <Ionicons name="information-circle" size={20} color="#3B82F6" />
-                <Text style={styles.infoBannerText}>
-                    Share your pet's profile with others via QR code or link
-                </Text>
-            </View>
+                <TouchableOpacity style={styles.newButton} onPress={() => setModalVisible(true)}>
+                    <Ionicons name="add-circle" size={24} color="#fff" />
+                    <Text style={styles.newButtonText}>Create New Share Link</Text>
+                </TouchableOpacity>
 
-            {/* Basic Share Card */}
-            {renderShareCard(
-                basicToken,
-                'basic',
-                'Basic Profile',
-                'Share basic information like name, photo, breed, and microchip number.',
-                '📱'
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Active Share Links</Text>
+                    {activeLinks.length > 0 ? (
+                        activeLinks.map(renderLinkCard)
+                    ) : (
+                        <View style={styles.emptyState}>
+                            <Ionicons name="link-outline" size={48} color={designSystem.colors.text.tertiary} />
+                            <Text style={styles.emptyStateText}>No active share links yet.</Text>
+                            <Text style={styles.emptyStateSub}>Generate one to share your pet's details securely.</Text>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+
+            <SharePassportModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                petId={id as string}
+                petName={pet.name}
+            />
+
+            {/* Hidden Branded QR for Capture */}
+            {selectedLinkForQR && (
+                <View style={{ position: 'absolute', left: -2000, top: -2000, opacity: 0 }}>
+                    <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
+                        <View style={styles.brandedQR}>
+                            <View style={styles.brandedHeader}>
+                                <Image
+                                    source={require('../../../../assets/images/logo.png')}
+                                    style={styles.qrLogo}
+                                    resizeMode="contain"
+                                />
+                                <Text style={styles.qrBrandName}>Pawzly</Text>
+                            </View>
+                            <Text style={styles.qrPetName}>{pet.name}</Text>
+                            <View style={styles.qrWrapper}>
+                                <QRCode
+                                    value={getShareUrl(selectedLinkForQR.token)}
+                                    size={200}
+                                    color={designSystem.colors.primary[500]}
+                                    backgroundColor="white"
+                                />
+                            </View>
+                            <Text style={styles.qrFooter}>Scan to view {pet.name}'s Passport</Text>
+                        </View>
+                    </ViewShot>
+                </View>
             )}
-
-            {/* Advanced Share Card */}
-            {renderShareCard(
-                advancedToken,
-                'advanced',
-                'Full Medical Profile',
-                'Share complete medical history including vaccinations, treatments, and allergies.',
-                '🏥'
-            )}
-
-            {/* Other Links / History */}
-            {renderTokenList()}
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: '#F8F9FB',
     },
     scrollContent: {
         padding: 20,
+        paddingBottom: 40,
     },
     header: {
         alignItems: 'center',
         marginBottom: 24,
     },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: designSystem.colors.text.primary,
-        marginTop: 12,
-    },
-    headerSubtitle: {
-        fontSize: 14,
-        color: designSystem.colors.text.secondary,
-        marginTop: 4,
-    },
-    infoBanner: {
-        flexDirection: 'row',
-        backgroundColor: '#EFF6FF',
-        borderWidth: 1,
-        borderColor: '#BFDBFE',
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 20,
-        gap: 10,
-    },
-    infoBannerText: {
-        flex: 1,
-        fontSize: 13,
-        color: '#1E40AF',
-        lineHeight: 18,
-    },
-    card: {
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 16,
-        padding: 20,
-        marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    headerIcon: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: designSystem.colors.primary[500],
+        justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 16,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: designSystem.colors.text.primary,
         marginBottom: 8,
     },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: designSystem.colors.text.primary,
-    },
-    accessCount: {
-        fontSize: 12,
-        color: '#6B7280',
-        backgroundColor: '#F3F4F6',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 8,
-    },
-    cardDescription: {
+    subtitle: {
         fontSize: 14,
         color: designSystem.colors.text.secondary,
-        marginBottom: 20,
+        textAlign: 'center',
         lineHeight: 20,
     },
-    qrContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-        marginBottom: 16,
-    },
-    qrPlaceholder: {
-        alignItems: 'center',
-        padding: 40,
-    },
-    qrPlaceholderText: {
-        marginTop: 8,
-        fontSize: 14,
-        color: '#6B7280',
-    },
-    urlContainer: {
-        marginBottom: 16,
-    },
-    urlLabel: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#4B5563',
-        marginBottom: 8,
-    },
-    urlBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F9FAFB',
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        gap: 8,
-    },
-    urlText: {
-        flex: 1,
-        fontSize: 13,
-        color: designSystem.colors.text.primary,
-        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    },
-    copyButton: {
-        padding: 6,
-    },
-    generateButton: {
+    newButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: designSystem.colors.primary[500],
-        borderRadius: 12,
-        paddingVertical: 14,
-        gap: 8,
+        padding: 16,
+        borderRadius: 16,
+        marginBottom: 32,
+        gap: 10,
+        ...designSystem.shadows.medium,
     },
-    generateButtonText: {
-        color: '#FFFFFF',
-        fontSize: 15,
+    newButtonText: {
+        color: '#fff',
+        fontSize: 16,
         fontWeight: '600',
     },
-    deleteButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 10,
-        gap: 6,
-    },
-    deleteButtonText: {
-        color: '#EF4444',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    historySection: {
-        marginTop: 32,
-        paddingTop: 24,
-        borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+    section: {
+        gap: 16,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: '700',
         color: designSystem.colors.text.primary,
-        marginBottom: 16,
+        marginBottom: 8,
     },
-    historyItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 12,
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        padding: 20,
         borderWidth: 1,
         borderColor: '#E5E7EB',
+        ...designSystem.shadows.small,
     },
-    historyItemInfo: {
-        flex: 1,
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 16,
     },
-    historyItemTitle: {
+    cardTitle: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
         color: designSystem.colors.text.primary,
     },
-    historyItemSubtitle: {
-        fontSize: 13,
-        color: designSystem.colors.text.secondary,
+    cardSubtitle: {
+        fontSize: 12,
+        color: designSystem.colors.text.tertiary,
         marginTop: 2,
     },
-    historyDeleteButton: {
+    viewBadge: {
+        backgroundColor: designSystem.colors.primary[50] + '80',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
+    viewBadgeText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: designSystem.colors.primary[600],
+    },
+    qrRow: {
+        flexDirection: 'row',
+        gap: 16,
+        marginBottom: 16,
+        alignItems: 'center',
+    },
+    qrMiniContainer: {
         padding: 8,
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+    },
+    linkInfo: {
+        flex: 1,
+        gap: 8,
+    },
+    urlText: {
+        fontSize: 12,
+        color: designSystem.colors.text.secondary,
+        fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+        backgroundColor: '#F3F4F6',
+        padding: 8,
+        borderRadius: 8,
+    },
+    linkActions: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    miniAction: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingVertical: 4,
+    },
+    miniActionText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: designSystem.colors.primary[500],
+    },
+    revokeButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#F3F4F6',
+    },
+    revokeButtonText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#EF4444',
+    },
+    emptyState: {
+        alignItems: 'center',
+        padding: 40,
+        backgroundColor: '#fff',
+        borderRadius: 24,
+        borderStyle: 'dashed',
+        borderWidth: 2,
+        borderColor: '#E5E7EB',
+    },
+    emptyStateText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: designSystem.colors.text.primary,
+        marginTop: 16,
+    },
+    emptyStateSub: {
+        fontSize: 14,
+        color: designSystem.colors.text.secondary,
+        textAlign: 'center',
+        marginTop: 4,
+    },
+    brandedQR: {
+        width: 400,
+        backgroundColor: '#fff',
+        padding: 40,
+        alignItems: 'center',
+        borderRadius: 32,
+    },
+    brandedHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 16,
+    },
+    qrLogo: {
+        width: 54,
+        height: 54,
+    },
+    qrBrandName: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: designSystem.colors.primary[500],
+    },
+    qrPetName: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: designSystem.colors.text.primary,
+        marginBottom: 24,
+    },
+    qrWrapper: {
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        marginBottom: 20,
+    },
+    qrFooter: {
+        fontSize: 14,
+        color: designSystem.colors.text.secondary,
+        textAlign: 'center',
     },
 });

@@ -5,15 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
-import OverviewTab from './overview';
+// Removed: OverviewTab, PetHealthProfile - tabs no longer used
 import DocumentsTab from './documents';
 import HistoryTab from './history';
 import SettingsTab from './settings';
+import PassportTab from './passport';
 import ShareModal from '@/components/sharing/ShareModal';
 import ActiveLinksList from '@/components/sharing/ActiveLinksList';
 import Button from '@/components/ui/Button';
 import EditPetModal from '@/components/pet/EditPetModal';
-import { PetHealthProfile } from '@/components/health/PetHealthProfile';
+
 
 export default function PetDetailsPage() {
     const router = useRouter();
@@ -22,7 +23,7 @@ export default function PetDetailsPage() {
     const { pets, refreshPets } = usePets();
     const { width } = useWindowDimensions();
     const isMobile = width < 768; // Standard mobile breakpoint
-    const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'share' | 'history' | 'settings'>('overview');
+    const [activeTab, setActiveTab] = useState<'passport' | 'documents' | 'history' | 'share' | 'settings'>('passport'); // Changed default to 'passport', removed overview/health
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [shareRefreshTrigger, setShareRefreshTrigger] = useState(0);
     const [editProfileModalVisible, setEditProfileModalVisible] = useState(false);
@@ -68,9 +69,9 @@ export default function PetDetailsPage() {
             {isMobile ? (
                 <>
                     <ScrollView style={styles.mobileContent} showsVerticalScrollIndicator={false}>
-                        {/* Sticky Tabs Header (simulated placement) */}
+                        {/* Simplified Tabs - Removed Overview & Health */}
                         <View style={styles.mobileTabs}>
-                            {['Overview', 'Documents', 'Share', 'History', 'Settings'].map((tab) => {
+                            {['Passport', 'Documents', 'Share', 'History', 'Settings'].map((tab) => {
                                 const key = tab.toLowerCase() as any;
                                 const isActive = activeTab === key;
                                 return (
@@ -87,10 +88,9 @@ export default function PetDetailsPage() {
 
 
 
-                        {/* Tab Content */}
+                        {/* Tab Content - Removed Overview & Health */}
                         <View style={{ paddingBottom: 100 }}>
-                            {activeTab === 'overview' && <OverviewTab />}
-                            {activeTab === 'health' && <PetHealthProfile petId={petId} />}
+                            {activeTab === 'passport' && <PassportTab />}
                             {activeTab === 'documents' && <DocumentsTab />}
                             {activeTab === 'share' && (
                                 <View style={{ padding: 16 }}>
@@ -120,20 +120,11 @@ export default function PetDetailsPage() {
                     {/* Desktop Tabs */}
                     <View style={styles.tabs}>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'overview' && styles.tabActive]}
-                            onPress={() => setActiveTab('overview')}
+                            style={[styles.tab, activeTab === 'passport' && styles.tabActive]}
+                            onPress={() => setActiveTab('passport')}
                         >
-                            <Text style={[styles.tabText, activeTab === 'overview' && styles.tabTextActive]}>
-                                Overview
-                            </Text>
-                        </TouchableOpacity>
-                        {/* Health Tab */}
-                        <TouchableOpacity
-                            style={[styles.tab, activeTab === 'health' && styles.tabActive]}
-                            onPress={() => setActiveTab('health')}
-                        >
-                            <Text style={[styles.tabText, activeTab === 'health' && styles.tabTextActive]}>
-                                Health
+                            <Text style={[styles.tabText, activeTab === 'passport' && styles.tabTextActive]}>
+                                Passport
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -172,8 +163,11 @@ export default function PetDetailsPage() {
 
                     {/* Desktop Tab Content */}
                     <ScrollView style={styles.tabContent}>
-                        {activeTab === 'overview' && <OverviewTab />}
-                        {activeTab === 'health' && <PetHealthProfile petId={petId} />}
+                        {activeTab === 'passport' && (
+                            <PassportTab
+                                onEditPet={() => setEditProfileModalVisible(true)}
+                            />
+                        )}
                         {activeTab === 'documents' && <DocumentsTab />}
                         {activeTab === 'share' && (
                             <View style={{ padding: 32 }}>

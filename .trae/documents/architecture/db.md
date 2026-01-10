@@ -49,8 +49,8 @@ CREATE TABLE public.allergies (
   reminder_type character varying,
   shared_with_vets jsonb,
   CONSTRAINT allergies_pkey PRIMARY KEY (id),
-  CONSTRAINT allergies_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
-  CONSTRAINT allergies_test_results_document_id_fkey FOREIGN KEY (test_results_document_id) REFERENCES public.documents(id)
+  CONSTRAINT allergies_test_results_document_id_fkey FOREIGN KEY (test_results_document_id) REFERENCES public.documents(id),
+  CONSTRAINT allergies_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.audit_logs (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -73,6 +73,33 @@ CREATE TABLE public.behavior_tags (
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT behavior_tags_pkey PRIMARY KEY (id),
   CONSTRAINT behavior_tags_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.beta_access_requests (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  first_name text NOT NULL,
+  last_name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  status text DEFAULT 'pending'::text,
+  country text,
+  CONSTRAINT beta_access_requests_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.body_condition_scores (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  score integer NOT NULL CHECK (score >= 1 AND score <= 9),
+  scale_type character varying DEFAULT '9-point'::character varying,
+  assessed_date date NOT NULL,
+  assessed_by character varying,
+  ribs_palpable boolean,
+  waist_visible boolean,
+  abdominal_tuck boolean,
+  category character varying,
+  notes text,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT body_condition_scores_pkey PRIMARY KEY (id),
+  CONSTRAINT body_condition_scores_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.breeds (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -166,8 +193,26 @@ CREATE TABLE public.documents (
   archived boolean DEFAULT false,
   document_range_start date,
   document_range_end date,
+  mime_type text,
+  size_bytes bigint,
+  notes text,
   CONSTRAINT documents_pkey PRIMARY KEY (id),
   CONSTRAINT documents_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.emergency_contacts (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  contact_type character varying,
+  name character varying NOT NULL,
+  relationship character varying,
+  phone character varying NOT NULL,
+  email character varying,
+  address text,
+  is_primary boolean DEFAULT false,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT emergency_contacts_pkey PRIMARY KEY (id),
+  CONSTRAINT emergency_contacts_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.events (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -244,8 +289,72 @@ CREATE TABLE public.health_metrics (
   weight_change_percent numeric,
   weight_trend character varying,
   consultation_reasons jsonb,
+  body_condition_score numeric,
+  temperature numeric,
+  temperature_unit text,
+  heart_rate integer,
+  respiratory_rate integer,
+  date date DEFAULT CURRENT_DATE,
+  weight_unit text DEFAULT 'kg'::text,
+  notes text,
+  energy_level text,
+  stool_quality text,
   CONSTRAINT health_metrics_pkey PRIMARY KEY (id),
   CONSTRAINT health_metrics_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.health_recommendations (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  recommendation_type character varying NOT NULL,
+  priority character varying NOT NULL,
+  title character varying NOT NULL,
+  description text,
+  action_items ARRAY,
+  action_button_text character varying,
+  expected_benefit text,
+  estimated_cost_min numeric,
+  estimated_cost_max numeric,
+  currency character varying DEFAULT 'USD'::character varying,
+  due_date date,
+  completed boolean DEFAULT false,
+  completed_date timestamp without time zone,
+  dismissed boolean DEFAULT false,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT health_recommendations_pkey PRIMARY KEY (id),
+  CONSTRAINT health_recommendations_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.health_risks (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  risk_type character varying NOT NULL,
+  risk_level character varying,
+  risk_score integer CHECK (risk_score >= 0 AND risk_score <= 100),
+  description text,
+  mitigation text,
+  contributing_factors ARRAY,
+  first_identified date,
+  last_assessed timestamp without time zone,
+  status character varying DEFAULT 'active'::character varying,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT health_risks_pkey PRIMARY KEY (id),
+  CONSTRAINT health_risks_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.health_scores (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  calculated_date timestamp without time zone NOT NULL DEFAULT now(),
+  overall_score integer CHECK (overall_score >= 0 AND overall_score <= 100),
+  score_category character varying,
+  preventive_care_score integer,
+  vaccination_score integer,
+  weight_management_score integer,
+  data_completeness_percentage integer,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT health_scores_pkey PRIMARY KEY (id),
+  CONSTRAINT health_scores_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.mail_queue (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -388,6 +497,19 @@ CREATE TABLE public.pet_photos (
   CONSTRAINT pet_photos_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
   CONSTRAINT pet_photos_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
+CREATE TABLE public.pet_share_tokens (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  pet_id uuid NOT NULL,
+  token text NOT NULL UNIQUE,
+  permission_level text NOT NULL CHECK (permission_level = ANY (ARRAY['basic'::text, 'advanced'::text])),
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  expires_at timestamp with time zone,
+  accessed_count integer DEFAULT 0,
+  last_accessed_at timestamp with time zone,
+  CONSTRAINT pet_share_tokens_pkey PRIMARY KEY (id),
+  CONSTRAINT pet_share_tokens_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
 CREATE TABLE public.pets (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
@@ -409,6 +531,20 @@ CREATE TABLE public.pets (
   updated_at timestamp with time zone DEFAULT now(),
   blood_type text,
   address_json jsonb,
+  height numeric,
+  microchip_implantation_date date,
+  passport_id character varying UNIQUE,
+  passport_generated_at timestamp without time zone,
+  passport_updated_at timestamp without time zone,
+  microchip_date date,
+  pet_status character varying DEFAULT 'active'::character varying,
+  spayed_neutered_date date,
+  tattoo_id character varying,
+  coat_type character varying,
+  eye_color character varying,
+  distinguishing_marks text,
+  ideal_weight_min numeric,
+  ideal_weight_max numeric,
   CONSTRAINT pets_pkey PRIMARY KEY (id),
   CONSTRAINT pets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
@@ -580,8 +716,23 @@ CREATE TABLE public.treatments (
   cost numeric,
   currency text DEFAULT 'USD'::text,
   next_due_date date,
+  prescribed_by character varying,
+  prescription_number character varying,
+  pharmacy character varying,
+  refills_remaining integer,
+  side_effects ARRAY,
+  with_food boolean,
+  special_instructions text,
   CONSTRAINT treatments_pkey PRIMARY KEY (id),
   CONSTRAINT treatments_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
+);
+CREATE TABLE public.user_roles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  role USER-DEFINED NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT user_roles_pkey PRIMARY KEY (id),
+  CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.user_sessions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -644,9 +795,15 @@ CREATE TABLE public.vaccinations (
   reminder_days_before integer DEFAULT 14,
   reminder_methods jsonb,
   reminder_recipients jsonb,
+  lot_number character varying,
+  clinic character varying,
+  route character varying,
+  injection_site character varying,
+  certificate_number character varying,
+  required_for_travel boolean DEFAULT false,
   CONSTRAINT vaccinations_pkey PRIMARY KEY (id),
-  CONSTRAINT vaccinations_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id),
-  CONSTRAINT vaccinations_certificate_document_id_fkey FOREIGN KEY (certificate_document_id) REFERENCES public.documents(id)
+  CONSTRAINT vaccinations_certificate_document_id_fkey FOREIGN KEY (certificate_document_id) REFERENCES public.documents(id),
+  CONSTRAINT vaccinations_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );
 CREATE TABLE public.veterinarians (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -667,6 +824,9 @@ CREATE TABLE public.veterinarians (
   city text,
   zip_code text,
   country text,
+  hours text,
+  emergency_available boolean DEFAULT false,
+  vet_license_number character varying,
   CONSTRAINT veterinarians_pkey PRIMARY KEY (id),
   CONSTRAINT veterinarians_pet_id_fkey FOREIGN KEY (pet_id) REFERENCES public.pets(id)
 );

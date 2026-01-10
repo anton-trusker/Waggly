@@ -183,12 +183,6 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
     if (isPetProfile) {
       return (
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => setEditModalVisible(true)}>
-            <IconSymbol ios_icon_name="pencil" android_material_icon_name="edit" size={22} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => setShareModalVisible(true)}>
-            <IconSymbol ios_icon_name="square.and.arrow.up" android_material_icon_name="share" size={22} color="#fff" />
-          </TouchableOpacity>
           <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(tabs)/notifications')}>
             <IconSymbol ios_icon_name="bell.fill" android_material_icon_name="notifications" size={22} color="#fff" />
           </TouchableOpacity>

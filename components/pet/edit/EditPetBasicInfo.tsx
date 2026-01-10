@@ -5,6 +5,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import { Pet } from '@/types/index';
+import ModernSelect from '@/components/ui/ModernSelect';
 
 interface EditPetBasicInfoProps {
     data: Partial<Pet>;
@@ -13,6 +14,50 @@ interface EditPetBasicInfoProps {
 }
 
 export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPetBasicInfoProps) {
+    // Options
+    const SPECIES_OPTIONS = [
+        { label: 'Dog', value: 'Dog' },
+        { label: 'Cat', value: 'Cat' },
+        { label: 'Bird', value: 'Bird' },
+        { label: 'Other', value: 'Other' },
+    ];
+
+    const EYE_COLOR_OPTIONS = [
+        { label: 'Brown', value: 'Brown' },
+        { label: 'Blue', value: 'Blue' },
+        { label: 'Green', value: 'Green' },
+        { label: 'Hazel', value: 'Hazel' },
+        { label: 'Amber', value: 'Amber' },
+        { label: 'Heterochromia', value: 'Heterochromia' },
+        { label: 'Other', value: 'Other' },
+    ];
+
+    const COAT_TYPE_OPTIONS = [
+        { label: 'Short', value: 'Short' },
+        { label: 'Medium', value: 'Medium' },
+        { label: 'Long', value: 'Long' },
+        { label: 'Wire', value: 'Wire' },
+        { label: 'Curly', value: 'Curly' },
+        { label: 'Hairless', value: 'Hairless' },
+        { label: 'Double Coat', value: 'Double Coat' },
+    ];
+
+    const TAIL_LENGTH_OPTIONS = [
+        { label: 'Long', value: 'Long' },
+        { label: 'Short', value: 'Short' },
+        { label: 'Docked', value: 'Docked' },
+        { label: 'Bobtail', value: 'Bobtail' },
+        { label: 'Curled', value: 'Curled' },
+        { label: 'None', value: 'None' },
+    ];
+
+    const SIZE_OPTIONS = [
+        { label: 'Small', value: 'Small' },
+        { label: 'Medium', value: 'Medium' },
+        { label: 'Large', value: 'Large' },
+        { label: 'Giant', value: 'Giant' },
+    ];
+
     // Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
     const isoToDmy = (isoDate: string): string => {
         if (!isoDate) return '';
@@ -70,7 +115,7 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
                 <Text style={styles.label}>Pet's Name *</Text>
                 <TextInput
                     style={[styles.input, errors.name && styles.inputError]}
-                    value={data.name}
+                    value={data.name || ''}
                     onChangeText={(v) => onChange('name', v)}
                     placeholder="Enter name"
                     accessibilityLabel="Pet Name"
@@ -81,13 +126,12 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
 
             <View style={styles.row}>
                 <View style={[styles.formGroup, { flex: 1 }]}>
-                    <Text style={styles.label}>Species *</Text>
-                    <TextInput // Could be a dropdown in future
-                        style={[styles.input, errors.species && styles.inputError]}
-                        value={data.species}
-                        onChangeText={(v) => onChange('species', v)}
-                        placeholder="Dog, Cat..."
-                        accessibilityLabel="Species"
+                    <ModernSelect
+                        label="Species *"
+                        placeholder="Select species"
+                        value={data.species || ''}
+                        options={SPECIES_OPTIONS}
+                        onChange={(v) => onChange('species', v)}
                     />
                     {errors.species && <Text style={styles.errorText}>{errors.species}</Text>}
                 </View>
@@ -105,7 +149,7 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Sex / Gender</Text>
                 <View style={styles.genderRow}>
-                    {['male', 'female'].map((g) => (
+                    {['male', 'female', 'other'].map((g) => (
                         <TouchableOpacity
                             key={g}
                             style={[
@@ -115,7 +159,7 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
                             onPress={() => onChange('gender', g)}
                         >
                             <IconSymbol
-                                ios_icon_name={g === 'male' ? 'circle' : 'circle'} // SF symbol fallback
+                                ios_icon_name={g === 'male' ? 'circle' : g === 'female' ? 'circle' : 'circle'}
                                 android_material_icon_name={g}
                                 size={16}
                                 color={data.gender === g ? designSystem.colors.primary[500] : designSystem.colors.text.tertiary}
@@ -139,13 +183,70 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
                 placeholder="Select date"
             />
 
+            {/* Physical Attributes */}
             <View style={styles.formGroup}>
-                <Text style={styles.label}>Color & Markings</Text>
+                <Text style={[styles.label, { fontSize: 14, marginTop: 8 }]}>Physical Characteristics</Text>
+            </View>
+
+            <View style={styles.row}>
+                <View style={[styles.formGroup, { flex: 1 }]}>
+                    <Text style={styles.label}>Color</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={data.color || ''}
+                        onChangeText={(v) => onChange('color', v)}
+                        placeholder="e.g. Golden"
+                    />
+                </View>
+                <View style={[styles.formGroup, { flex: 1 }]}>
+                    <ModernSelect
+                        label="Eye Color"
+                        placeholder="Select color"
+                        value={data.eye_color || ''}
+                        options={EYE_COLOR_OPTIONS}
+                        onChange={(v) => onChange('eye_color', v)}
+                    />
+                </View>
+            </View>
+
+            <View style={styles.row}>
+                <View style={[styles.formGroup, { flex: 1 }]}>
+                    <ModernSelect
+                        label="Coat Type"
+                        placeholder="Select type"
+                        value={data.coat_type || ''}
+                        options={COAT_TYPE_OPTIONS}
+                        onChange={(v) => onChange('coat_type', v)}
+                    />
+                </View>
+                <View style={[styles.formGroup, { flex: 1 }]}>
+                    <ModernSelect
+                        label="Tail Length"
+                        placeholder="Select length"
+                        value={data.tail_length || ''}
+                        options={TAIL_LENGTH_OPTIONS}
+                        onChange={(v) => onChange('tail_length', v)}
+                    />
+                </View>
+            </View>
+
+            <View style={styles.formGroup}>
+                <Text style={styles.label}>Fur Description</Text>
                 <TextInput
                     style={styles.input}
-                    value={data.color || ''}
-                    onChangeText={(v) => onChange('color', v)}
-                    placeholder="e.g. Golden, Spotted"
+                    value={data.fur_description || ''}
+                    onChangeText={(v) => onChange('fur_description', v)}
+                    placeholder="e.g. Curly, Soft"
+                />
+            </View>
+
+            <View style={styles.formGroup}>
+                <Text style={styles.label}>Distinguishing Marks</Text>
+                <TextInput
+                    style={styles.input}
+                    value={data.distinguishing_marks || ''}
+                    onChangeText={(v) => onChange('distinguishing_marks', v)}
+                    placeholder="e.g. White patch on chest"
                 />
             </View>
         </View>

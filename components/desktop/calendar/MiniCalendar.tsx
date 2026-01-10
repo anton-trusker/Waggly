@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 interface MiniCalendarProps {
     selectedDate: Date;
     onDateSelect: (date: Date) => void;
-    events?: Array<{ date: Date; type: string }>;
+    events?: { date: Date; type: string }[];
 }
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect, events = [] }) => {

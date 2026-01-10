@@ -139,7 +139,6 @@ export default function AlbumTab() {
               horizontal
               showsHorizontalScrollIndicator={false}
               style={styles.filtersScroll}
-              style={styles.filtersScroll}
               contentContainerStyle={styles.filtersContainer}
             >
               {['all', 'photos', 'videos', 'favorites'].map((filter) => {

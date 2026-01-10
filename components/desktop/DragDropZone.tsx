@@ -10,11 +10,6 @@ interface DragDropZoneProps {
 export default function DragDropZone({ onDrop, children }: DragDropZoneProps) {
     const [isDragging, setIsDragging] = useState(false);
 
-    // Only enable on web
-    if (Platform.OS !== 'web') {
-        return <>{children}</>;
-    }
-
     const handleDragEnter = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -45,6 +40,11 @@ export default function DragDropZone({ onDrop, children }: DragDropZoneProps) {
         },
         [onDrop]
     );
+
+    // Only enable on web
+    if (Platform.OS !== 'web') {
+        return <>{children}</>;
+    }
 
     return (
         <div
