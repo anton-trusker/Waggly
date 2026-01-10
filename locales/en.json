@@ -573,6 +573,8 @@
     "login_link": "Log In",
     "hero_title": "Welcome back to Pawzly",
     "hero_subtitle": "Your pet's health and happiness, all in one place. Sign in to access your dashboard and manage your furry friends.",
+    "hero_signup_title": "Join Pawzly Today",
+    "hero_signup_subtitle": "Start managing your pet's health and happiness in one place. Join thousands of pet parents already using Pawzly.",
     "reset_title": "Reset Password",
     "reset_subtitle": "Enter your email and we'll send you a link to reset your password",
     "send_reset_link": "Send Reset Link",

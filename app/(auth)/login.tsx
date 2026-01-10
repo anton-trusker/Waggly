@@ -28,7 +28,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const { width } = useWindowDimensions();
-  const isDesktop = width >= 768;
+  const isDesktop = width >= 1024; // Changed from 768 to hide hero on tablet
   const { t } = useLocale();
 
   const handleLogin = async () => {

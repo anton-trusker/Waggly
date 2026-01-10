@@ -389,6 +389,14 @@ export const designSystem = Object.freeze({
   },
 
 
+  // Responsive Breakpoints
+  breakpoints: {
+    mobile: 640,
+    tablet: 768,
+    desktop: 1024,
+    wide: 1440,
+  },
+
   // Component-specific tokens
   components: {
     button: {

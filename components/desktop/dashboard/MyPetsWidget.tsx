@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,9 +33,20 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
         setShareModalVisible(true);
     };
 
+    // Responsive grid columns
+    const getColumns = (screenWidth: number) => {
+        if (screenWidth < 640) return 1;      // Mobile: 1 column
+        if (screenWidth < 1024) return 2;     // Tablet: 2 columns
+        if (screenWidth < 1440) return 3;     // Desktop: 3 columns
+        return 4;                             // Wide: 4 columns
+    };
+
+    const columns = getColumns(width);
+    const useGrid = width >= 768; // Use grid on tablet and above
+
     const cardGap = 12;
     const horizontalPadding = 16;
-    const cardWidth = isMobile ? (width - (horizontalPadding * 2 + cardGap)) / 2 : 360;
+    const cardWidth = isMobile ? (width - (horizontalPadding * 2 + cardGap)) / 2 : useGrid ? ((width - (horizontalPadding * 2) - (cardGap * (columns - 1))) / columns) : 360;
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const slideSize = cardWidth + cardGap;
@@ -84,61 +95,91 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
 
     return (
         <View style={styles.container}>
-            <ScrollView
-                horizontal
-                pagingEnabled={false} // Disable standard paging for partial slides
-                showsHorizontalScrollIndicator={false}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                contentContainerStyle={[
-                    styles.scrollContent,
-                    { paddingHorizontal: horizontalPadding },
-                    !isMobile && { paddingRight: 24, gap: 24 }
-                ]}
-                snapToInterval={cardWidth + cardGap}
-                snapToAlignment="start"
-                decelerationRate="fast"
-            >
-                {pets.map((pet, index) => (
-                    <View
-                        key={pet.id}
-                        style={[
-                            styles.cardWrapper,
-                            {
-                                width: cardWidth,
-                                marginRight: index === pets.length - 1 ? 0 : cardGap
-                            }
+            {useGrid ? (
+                /* Desktop/Tablet: Grid Layout */
+                <FlatList
+                    data={pets}
+                    numColumns={columns}
+                    key={`grid-${columns}`} // Force re-render when columns change
+                    showsVerticalScrollIndicator={false}
+                    scrollEnabled={false} // Disable scroll, parent handles it
+                    contentContainerStyle={[
+                        styles.gridContent,
+                        { paddingHorizontal: horizontalPadding }
+                    ]}
+                    columnWrapperStyle={columns > 1 ? { gap: cardGap, marginBottom: cardGap } : undefined}
+                    renderItem={({ item: pet }) => (
+                        <View style={{ flex: 1 / columns, maxWidth: cardWidth }}>
+                            <PetPassportCard
+                                pet={pet}
+                                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+                                onQrPress={() => handleQrPress(pet)}
+                                alerts={events.filter(e => e.petId === pet.id)}
+                                cardWidth={cardWidth}
+                            />
+                        </View>
+                    )}
+                    keyExtractor={(pet) => pet.id}
+                />
+            ) : (
+                /* Mobile: Horizontal Scroll */
+                <>
+                    <ScrollView
+                        horizontal
+                        pagingEnabled={false}
+                        showsHorizontalScrollIndicator={false}
+                        onScroll={handleScroll}
+                        scrollEventThrottle={16}
+                        contentContainerStyle={[
+                            styles.scrollContent,
+                            { paddingHorizontal: horizontalPadding },
                         ]}
+                        snapToInterval={cardWidth + cardGap}
+                        snapToAlignment="start"
+                        decelerationRate="fast"
                     >
-                        <PetPassportCard
-                            pet={pet}
-                            onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
-                            onQrPress={() => handleQrPress(pet)}
-                            alerts={events.filter(e => e.petId === pet.id)}
-                            cardWidth={cardWidth}
-                        />
-                    </View>
-                ))}
-            </ScrollView>
+                        {pets.map((pet, index) => (
+                            <View
+                                key={pet.id}
+                                style={[
+                                    styles.cardWrapper,
+                                    {
+                                        width: cardWidth,
+                                        marginRight: index === pets.length - 1 ? 0 : cardGap
+                                    }
+                                ]}
+                            >
+                                <PetPassportCard
+                                    pet={pet}
+                                    onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+                                    onQrPress={() => handleQrPress(pet)}
+                                    alerts={events.filter(e => e.petId === pet.id)}
+                                    cardWidth={cardWidth}
+                                />
+                            </View>
+                        ))}
+                    </ScrollView>
 
-            {/* Pagination Dots */}
-            {isMobile && pets.length > 2 && (
-                <View style={styles.pagination}>
-                    {pets.map((_, index) => (
-                        <View
-                            key={index}
-                            style={[
-                                styles.dot,
-                                {
-                                    backgroundColor: index === activeIndex
-                                        ? designSystem.colors.primary[500]
-                                        : 'rgba(0,0,0,0.1)',
-                                    width: index === activeIndex ? 20 : 6
-                                }
-                            ]}
-                        />
-                    ))}
-                </View>
+                    {/* Pagination Dots */}
+                    {pets.length > 2 && (
+                        <View style={styles.pagination}>
+                            {pets.map((_, index) => (
+                                <View
+                                    key={index}
+                                    style={[
+                                        styles.dot,
+                                        {
+                                            backgroundColor: index === activeIndex
+                                                ? designSystem.colors.primary[500]
+                                                : 'rgba(0,0,0,0.1)',
+                                            width: index === activeIndex ? 20 : 6
+                                        }
+                                    ]}
+                                />
+                            ))}
+                        </View>
+                    )}
+                </>
             )}
 
             {selectedPetForShare && (
@@ -162,7 +203,10 @@ const styles = StyleSheet.create({
     scrollContent: {
         alignItems: 'center',
         paddingBottom: 8,
-        justifyContent: 'center', // Center cards horizontally
+        justifyContent: 'center',
+    },
+    gridContent: {
+        paddingBottom: 8,
     },
     cardWrapper: {
         // marginRight managed dynamically via cardGap

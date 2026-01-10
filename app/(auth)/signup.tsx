@@ -29,7 +29,7 @@ export default function SignupScreen() {
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
   const { width } = useWindowDimensions();
-  const isDesktop = width >= 768;
+  const isDesktop = width >= 1024; // Changed from 768 to hide hero on tablet
   const { t } = useLocale();
 
   const handleSignup = async () => {
@@ -191,9 +191,12 @@ export default function SignupScreen() {
       <View style={styles.desktopContainer}>
         {/* Left Side - Hero Panel (50%) */}
         <View style={styles.desktopHeroContainer}>
-          <AuthHeroPanel />
+          <AuthHeroPanel
+            title={t('auth.hero_signup_title')}
+            subtitle={t('auth.hero_signup_subtitle')}
+          />
         </View>
-        
+
         {/* Right Side - Form (50%) */}
         <View style={styles.desktopFormPanel}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>

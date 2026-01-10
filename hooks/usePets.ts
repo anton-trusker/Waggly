@@ -118,7 +118,10 @@ export function usePets() {
         breed: data.breed,
       })).catch(() => { });
 
-      await fetchPets();
+      // OPTIMISTIC UPDATE: Immediately add the pet to local state
+      const newPet = { ...data, role: 'owner' } as Pet;
+      setPets(prevPets => [newPet, ...prevPets]);
+
       return { error: null, data: data as Pet };
     } catch (error) {
       console.error('Error adding pet:', error);
@@ -128,6 +131,13 @@ export function usePets() {
 
   const updatePet = async (petId: string, petData: Partial<Pet>) => {
     try {
+      // OPTIMISTIC UPDATE: Update local state immediately
+      setPets(prevPets =>
+        prevPets.map(pet =>
+          pet.id === petId ? { ...pet, ...petData } : pet
+        )
+      );
+
       const { error } = await (supabase
         .from('pets') as any)
         .update(petData)
@@ -135,6 +145,8 @@ export function usePets() {
 
       if (error) {
         console.error('Error updating pet:', error);
+        // Revert optimistic update on error
+        await fetchPets();
         return { error };
       }
 
@@ -144,16 +156,20 @@ export function usePets() {
         updated_fields: Object.keys(petData),
       })).catch(() => { });
 
-      await fetchPets();
       return { error: null };
     } catch (error) {
       console.error('Error updating pet:', error);
+      // Revert optimistic update on error
+      await fetchPets();
       return { error };
     }
   };
 
   const deletePet = async (petId: string) => {
     try {
+      // OPTIMISTIC UPDATE: Remove from local state immediately
+      setPets(prevPets => prevPets.filter(pet => pet.id !== petId));
+
       const { error } = await supabase
         .from('pets')
         .delete()
@@ -161,6 +177,8 @@ export function usePets() {
 
       if (error) {
         console.error('Error deleting pet:', error);
+        // Revert optimistic update on error
+        await fetchPets();
         return { error };
       }
 
@@ -169,10 +187,11 @@ export function usePets() {
         pet_id: petId,
       })).catch(() => { });
 
-      await fetchPets();
       return { error: null };
     } catch (error) {
       console.error('Error deleting pet:', error);
+      // Revert optimistic update on error
+      await fetchPets();
       return { error };
     }
   };

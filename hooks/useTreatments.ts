@@ -2,10 +2,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Treatment } from '@/types';
+import { usePostHog } from 'posthog-react-native';
 
 export function useTreatments(petId: string | null) {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [loading, setLoading] = useState(true);
+  const posthog = usePostHog();
 
   const fetchTreatments = useCallback(async () => {
     if (!petId) {
@@ -57,7 +59,9 @@ export function useTreatments(petId: string | null) {
         treatment_name: data.treatment_name,
       });
 
-      await fetchTreatments();
+      // OPTIMISTIC UPDATE: Immediately add to local state
+      setTreatments(prev => [data, ...prev]);
+
       return { data, error: null };
     } catch (error) {
       console.error('Error adding treatment:', error);
@@ -67,6 +71,11 @@ export function useTreatments(petId: string | null) {
 
   const updateTreatment = async (treatmentId: string, treatmentData: Partial<Treatment>) => {
     try {
+      // OPTIMISTIC UPDATE: Update local state immediately
+      setTreatments(prev =>
+        prev.map(t => t.id === treatmentId ? { ...t, ...treatmentData } : t)
+      );
+
       const { data, error } = await (supabase
         .from('treatments') as any)
         .update(treatmentData)
@@ -76,6 +85,8 @@ export function useTreatments(petId: string | null) {
 
       if (error) {
         console.error('Error updating treatment:', error);
+        // Revert on error
+        await fetchTreatments();
         return { error };
       }
 
@@ -84,16 +95,19 @@ export function useTreatments(petId: string | null) {
         treatment_id: treatmentId,
       });
 
-      await fetchTreatments();
       return { data, error: null };
     } catch (error) {
       console.error('Error updating treatment:', error);
+      await fetchTreatments();
       return { error };
     }
   };
 
   const deleteTreatment = async (treatmentId: string) => {
     try {
+      // OPTIMISTIC UPDATE: Remove from local state immediately
+      setTreatments(prev => prev.filter(t => t.id !== treatmentId));
+
       const { error } = await supabase
         .from('treatments')
         .delete()
@@ -101,6 +115,8 @@ export function useTreatments(petId: string | null) {
 
       if (error) {
         console.error('Error deleting treatment:', error);
+        // Revert on error
+        await fetchTreatments();
         return { error };
       }
 
@@ -109,10 +125,10 @@ export function useTreatments(petId: string | null) {
         treatment_id: treatmentId,
       });
 
-      await fetchTreatments();
       return { error: null };
     } catch (error) {
       console.error('Error deleting treatment:', error);
+      await fetchTreatments();
       return { error };
     }
   };

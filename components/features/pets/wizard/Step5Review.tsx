@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Platform, ActivityIndicator } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { Step1Data } from './Step1BasicInfo';
@@ -141,7 +141,10 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
-                        <Text style={styles.submitButtonText}>{t('add_pet.step5.creating_profile')}</Text>
+                        <>
+                            <ActivityIndicator size="small" color={designSystem.colors.neutral[0]} />
+                            <Text style={styles.submitButtonText}>{t('add_pet.step5.creating_profile')}</Text>
+                        </>
                     ) : (
                         <>
                             <Text style={styles.submitButtonText}>{t('add_pet.step5.create_profile')}</Text>

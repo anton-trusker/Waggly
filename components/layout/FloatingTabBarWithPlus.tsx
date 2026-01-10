@@ -227,7 +227,8 @@ const styles = StyleSheet.create({
   tabsSection: {
     flexDirection: 'row',
     flex: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly', // Changed from space-around for better spacing
+    paddingHorizontal: 8, // Added padding to prevent edge crowding
   },
   tab: {
     flex: 1,

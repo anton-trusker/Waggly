@@ -79,7 +79,7 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress, alerts = [
                     {/* Pet Info */}
                     <View style={styles.infoColumn}>
                         <Text style={styles.name} numberOfLines={1}>{pet.name}</Text>
-                        <Text style={styles.breed} numberOfLines={1}>
+                        <Text style={styles.breed}>
                             {pet.breed || pet.species || t('passport.unknown_breed')}
                         </Text>
                         <View style={styles.statsRow}>

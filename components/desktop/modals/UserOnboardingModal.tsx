@@ -229,8 +229,8 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
 
             {/* Form Fields */}
             <View style={styles.form}>
-              <View style={styles.row}>
-                <View style={{ flex: 1 }}>
+              <View style={[styles.row, width < 425 && styles.rowMobile]}>
+                <View style={[styles.inputWrapper, width < 425 && styles.inputWrapperMobile]}>
                   <Input
                     label="First Name"
                     placeholder="Jane"
@@ -244,8 +244,8 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
                     containerStyle={{ backgroundColor: '#fff' }}
                   />
                 </View>
-                <View style={{ width: 16 }} />
-                <View style={{ flex: 1 }}>
+                <View style={[styles.rowSpacer, width < 425 && { width: 0, height: 12 }]} />
+                <View style={[styles.inputWrapper, width < 425 && styles.inputWrapperMobile]}>
                   <Input
                     label="Last Name"
                     placeholder="Doe"
@@ -353,18 +353,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   container: {
     width: '100%',
+    height: '100%',
     backgroundColor: '#fff',
-    borderRadius: 24,
+    borderRadius: 0,
     overflow: 'hidden',
-    maxHeight: '90%',
   },
   containerDesktop: {
     maxWidth: 500,
     maxHeight: 700,
+    height: 'auto',
+    borderRadius: 24,
   },
   content: {
     padding: 24,
@@ -418,6 +419,19 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+  },
+  rowMobile: {
+    flexDirection: 'column',
+  },
+  rowSpacer: {
+    width: 16,
+  },
+  inputWrapper: {
+    flex: 1,
+  },
+  inputWrapperMobile: {
+    flex: 0,
+    width: '100%',
   },
   footer: {
     gap: 12,

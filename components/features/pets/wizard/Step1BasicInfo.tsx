@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     speciesBox: {
-        width: 48,
-        height: 48,
+        width: 60,
+        height: 60,
         backgroundColor: designSystem.colors.neutral[0],
         borderWidth: 2,
         borderColor: designSystem.colors.neutral[200],

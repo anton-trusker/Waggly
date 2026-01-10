@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     },
     progressBar: {
         flexDirection: 'row',
-        height: 6,
+        height: 8, // Increased from 6 for better visibility on mobile
         gap: 8,
         width: '100%',
     },

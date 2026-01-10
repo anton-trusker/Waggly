@@ -95,8 +95,11 @@ export function useAllergies(petId: string | null) {
         type: data.type,
       });
 
-      await fetchAllergies();
-      return { data: normalizeAllergy(data), error: null };
+      // OPTIMISTIC UPDATE: Immediately add to local state
+      const normalizedData = normalizeAllergy(data);
+      setAllergies(prev => [normalizedData, ...prev]);
+
+      return { data: normalizedData, error: null };
     } catch (error: any) {
       console.error('Error adding allergy:', error);
       return { error: { message: error.message || 'Unknown error' } };
@@ -105,6 +108,11 @@ export function useAllergies(petId: string | null) {
 
   const updateAllergy = async (allergyId: string, allergyData: Partial<Allergy>) => {
     try {
+      // OPTIMISTIC UPDATE: Update local state immediately
+      setAllergies(prev =>
+        prev.map(a => a.id === allergyId ? { ...a, ...allergyData } : a)
+      );
+
       // STRICT Payload: Do not send pet_id. Do not send ghost columns.
       const payload = {
         allergen: allergyData.allergen || allergyData.allergen_name || allergyData.name,
@@ -128,19 +136,25 @@ export function useAllergies(petId: string | null) {
 
       if (error) {
         console.error('Error updating allergy:', error);
+        // Revert on error
+        await fetchAllergies();
         return { error };
       }
 
-      await fetchAllergies();
       return { data: normalizeAllergy(data), error: null };
     } catch (error: any) {
       console.error('Error updating allergy:', error);
+      // Revert on error
+      await fetchAllergies();
       return { error: { message: error.message || 'Unknown error' } };
     }
   };
 
   const deleteAllergy = async (allergyId: string) => {
     try {
+      // OPTIMISTIC UPDATE: Remove from local state immediately
+      setAllergies(prev => prev.filter(a => a.id !== allergyId));
+
       const { error } = await supabase
         .from('allergies')
         .delete()
@@ -148,13 +162,16 @@ export function useAllergies(petId: string | null) {
 
       if (error) {
         console.error('Error deleting allergy:', error);
+        // Revert on error
+        await fetchAllergies();
         return { error };
       }
 
-      await fetchAllergies();
       return { error: null };
     } catch (error: any) {
       console.error('Error deleting allergy:', error);
+      // Revert on error
+      await fetchAllergies();
       return { error: { message: error.message || 'Unknown error' } };
     }
   };

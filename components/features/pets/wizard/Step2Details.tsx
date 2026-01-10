@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     },
     compactInput: {
         flex: 1,
-        maxWidth: 80,
+        maxWidth: 100,
         textAlign: 'center',
     },
     dropdownTrigger: {
@@ -420,8 +420,8 @@ const styles = StyleSheet.create({
         borderRadius: 12, paddingHorizontal: 12, height: 44, gap: 8
     },
     searchInput: { flex: 1, fontSize: 16, color: designSystem.colors.text.primary, height: '100%' },
-    closeButton: { padding: 4 },
-    closeText: { ...(designSystem.typography.body.medium as any), color: designSystem.colors.primary[500] },
+    closeButton: { paddingHorizontal: 8, paddingVertical: 4, marginLeft: 4 }, // Added margin to prevent edge placement
+    closeText: { ...(designSystem.typography.body.medium as any), color: designSystem.colors.primary[500], fontWeight: '600' },
     breedItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: designSystem.colors.neutral[100] },
     breedText: { ...(designSystem.typography.body.large as any), color: designSystem.colors.text.primary }
 });

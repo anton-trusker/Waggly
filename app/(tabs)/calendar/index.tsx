@@ -18,6 +18,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 export default function CalendarPage() {
     const { width } = useWindowDimensions();
     const isMobile = width < 1024;
+    const isDesktop = width >= 1024;
     const { t } = useLocale();
     const router = useRouter();
 
@@ -143,19 +144,19 @@ export default function CalendarPage() {
                             <View style={{ marginBottom: 16, paddingHorizontal: 16 }}>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
+                                        style={[styles.periodBtn, period === '3m' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
                                         onPress={() => setPeriod('3m')}
                                     >
                                         <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
+                                        style={[styles.periodBtn, period === '1y' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
                                         onPress={() => setPeriod('1y')}
                                     >
                                         <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
+                                        style={[styles.periodBtn, period === 'all' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
                                         onPress={() => setPeriod('all')}
                                     >
                                         <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
@@ -355,6 +356,10 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         paddingHorizontal: 12,
         borderRadius: 8,
+    },
+    periodBtnDesktop: {
+        paddingVertical: 10,
+        paddingHorizontal: 16,
     },
     periodBtnActive: {
         backgroundColor: '#fff',

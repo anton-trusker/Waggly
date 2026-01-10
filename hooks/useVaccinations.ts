@@ -69,7 +69,9 @@ export function useVaccinations(petId: string | null) {
         vaccine_name: data.vaccine_name,
       });
 
-      await fetchVaccinations();
+      // OPTIMISTIC UPDATE: Immediately add to local state
+      setVaccinations(prev => [data, ...prev]);
+
       return { data, error: null };
     } catch (error) {
       console.error('Error adding vaccination:', error);
@@ -79,6 +81,11 @@ export function useVaccinations(petId: string | null) {
 
   const updateVaccination = async (vaccinationId: string, vaccinationData: Partial<VaccinationUpdate>) => {
     try {
+      // OPTIMISTIC UPDATE: Update local state immediately
+      setVaccinations(prev =>
+        prev.map(v => v.id === vaccinationId ? { ...v, ...vaccinationData } : v)
+      );
+
       const { data, error } = await (supabase
         .from('vaccinations') as any)
         .update({
@@ -91,6 +98,8 @@ export function useVaccinations(petId: string | null) {
 
       if (error) {
         console.error('Error updating vaccination:', error);
+        // Revert on error
+        await fetchVaccinations();
         return { error };
       }
 
@@ -99,16 +108,19 @@ export function useVaccinations(petId: string | null) {
         vaccination_id: vaccinationId,
       });
 
-      await fetchVaccinations();
       return { data, error: null };
     } catch (error) {
       console.error('Error updating vaccination:', error);
+      await fetchVaccinations();
       return { error: error as Error };
     }
   };
 
   const deleteVaccination = async (vaccinationId: string) => {
     try {
+      // OPTIMISTIC UPDATE: Remove from local state immediately
+      setVaccinations(prev => prev.filter(v => v.id !== vaccinationId));
+
       const { error } = await supabase
         .from('vaccinations')
         .delete()
@@ -116,6 +128,8 @@ export function useVaccinations(petId: string | null) {
 
       if (error) {
         console.error('Error deleting vaccination:', error);
+        // Revert on error
+        await fetchVaccinations();
         return { error };
       }
 
@@ -124,10 +138,10 @@ export function useVaccinations(petId: string | null) {
         vaccination_id: vaccinationId,
       });
 
-      await fetchVaccinations();
       return { error: null };
     } catch (error) {
       console.error('Error deleting vaccination:', error);
+      await fetchVaccinations();
       return { error };
     }
   };

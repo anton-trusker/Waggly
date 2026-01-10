@@ -137,7 +137,17 @@ export function useDocuments(petId?: string) {
         file_name: fileName,
       });
 
-      await fetchDocuments();
+      // OPTIMISTIC UPDATE: Immediately add to local state
+      const formattedDoc = {
+        ...data,
+        name: data.file_name,
+        url: data.file_url,
+        uploadedAt: new Date(data.created_at).toLocaleDateString()
+      };
+      if (isMountedRef.current) {
+        setDocuments(prev => [formattedDoc, ...prev]);
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error('Error uploading document:', error);
@@ -173,6 +183,11 @@ export function useDocuments(petId?: string) {
         document_id: documentId,
       });
 
+      // OPTIMISTIC UPDATE: Remove from local state immediately
+      if (isMountedRef.current) {
+        setDocuments(prev => prev.filter(d => d.id !== documentId));
+      }
+
       // 2. Delete from Storage (extract path from URL)
       // URL format: .../storage/v1/object/public/pet-documents/path/to/file
       const path = fileUrl.split('/pet-documents/')[1];
@@ -184,7 +199,6 @@ export function useDocuments(petId?: string) {
         if (storageError) console.error('Error deleting file from storage:', storageError);
       }
 
-      await fetchDocuments();
       return { error: null };
     } catch (error) {
       console.error('Error deleting document:', error);
