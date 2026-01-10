@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import { CompactPetCard } from '@/components/pet/CompactPetCard'; // Added import
 import { PetCardSkeleton } from '@/components/skeletons/PetCardSkeleton';
 import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
 import { useLocale } from '@/hooks/useLocale';
@@ -18,7 +19,6 @@ export default function PetsListPage() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
 
       {loading ? (
         <View style={[styles.grid, isMobile && styles.gridMobile]}>
@@ -38,10 +38,37 @@ export default function PetsListPage() {
             <Text style={styles.addButtonText}>{t('my_pets_page.add_first_pet')}</Text>
           </TouchableOpacity>
         </View>
+      ) : isMobile ? (
+        // Mobile View: Horizontal Scroll
+        <View style={styles.mobileContainer}>
+          <Text style={styles.sectionTitle}>{t('my_pets_page.title')}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalList}
+          >
+            {pets.map((pet) => (
+              <CompactPetCard
+                key={pet.id}
+                pet={pet}
+                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+              />
+            ))}
+            {/* Add button at the end of the scroll */}
+            <TouchableOpacity
+              style={styles.addCardCompact}
+              onPress={() => router.push('/(tabs)/pets/new' as any)}
+            >
+              <Ionicons name="add" size={24} color="#6366F1" />
+              <Text style={styles.addCardText}>{t('action.add')}</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
       ) : (
-        <View style={[styles.grid, isMobile && styles.gridMobile]}>
+        // Desktop View: Grid
+        <View style={styles.grid}>
           {pets.map((pet) => (
-            <View key={pet.id} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
+            <View key={pet.id} style={styles.cardWrapper}>
               <PetPassportCard
                 pet={pet}
                 onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
@@ -84,4 +111,37 @@ const styles = StyleSheet.create({
   cardActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
   secondaryButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#fff' },
   secondaryButtonText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+
+  // Mobile Horizontal List Styles
+  mobileContainer: {
+    paddingVertical: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  horizontalList: {
+    paddingHorizontal: 16,
+    paddingBottom: 24, // Space for shadow
+  },
+  addCardCompact: {
+    width: 60,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: '#EEF2FF',
+    borderWidth: 2,
+    borderColor: '#C7D2FE',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  addCardText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6366F1',
+  },
 });

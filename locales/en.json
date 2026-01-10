@@ -521,8 +521,8 @@
       "vet_clinic_label": "VET CLINIC",
       "vet_label": "Vet:",
       "emergency_label": "EMERGENCY",
-      "creating_profile": "Creating Profile...",
-      "create_profile": "Create Profile"
+      "creating_profile": "Adding Pet...",
+      "create_profile": "Add Pet"
     },
     "wizard": {
       "cancel": "Cancel",

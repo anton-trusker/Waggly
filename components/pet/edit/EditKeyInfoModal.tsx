@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Platform, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, TextInput, Text } from 'react-native';
 import FormModal from '@/components/ui/FormModal';
 import { usePets } from '@/hooks/usePets';
 import { Pet } from '@/types';
 import { designSystem } from '@/constants/designSystem';
-import DatePickerWeb from '@/components/ui/DatePickerWeb';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface EditKeyInfoModalProps {
     visible: boolean;
@@ -24,13 +22,30 @@ const BLOOD_TYPES = [
     { label: 'Unknown', value: 'Unknown' },
 ];
 
+// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
+const isoToDmy = (isoDate: string): string => {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    const [year, month, day] = parts;
+    return `${day}-${month}-${year}`;
+};
+
+// Convert DD-MM-YYYY back to ISO
+const dmyToIso = (dmyDate: string): string => {
+    if (!dmyDate) return '';
+    const parts = dmyDate.split('-');
+    if (parts.length !== 3) return dmyDate;
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+};
+
 export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInfoModalProps) {
     const { pets, updatePet } = usePets();
     const pet = pets.find(p => p.id === petId);
 
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Pet>>({});
-    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
         if (pet && visible) {
@@ -61,11 +76,6 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
         } finally {
             setLoading(false);
         }
-    };
-
-    const formatDate = (dateStr?: string | null) => {
-        if (!dateStr) return 'Select Date';
-        return new Date(dateStr).toLocaleDateString();
     };
 
     return (
@@ -123,38 +133,11 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
                     </View>
 
                     {/* Date of Birth */}
-                    {Platform.OS === 'web' ? (
-                        <DatePickerWeb
-                            label="Date of Birth"
-                            value={formData.date_of_birth || ''}
-                            onChange={(v) => handleChange('date_of_birth', v)}
-                            placeholder="Select Date"
-                        />
-                    ) : (
-                        <View style={styles.formGroup}>
-                            <Text style={styles.label}>Date of Birth</Text>
-                            <TouchableOpacity
-                                style={styles.dateInput}
-                                onPress={() => setShowDatePicker(true)}
-                            >
-                                <Text style={formData.date_of_birth ? styles.inputText : styles.placeholderText}>
-                                    {formatDate(formData.date_of_birth)}
-                                </Text>
-                                <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-
-                    {/* Mobile Date Picker Modal */}
-                    <CustomDatePicker
-                        visible={showDatePicker}
-                        date={formData.date_of_birth ? new Date(formData.date_of_birth) : new Date()}
-                        onClose={() => setShowDatePicker(false)}
-                        onConfirm={(date) => {
-                            handleChange('date_of_birth', date.toISOString().split('T')[0]);
-                            setShowDatePicker(false);
-                        }}
-                        title="Date of Birth"
+                    <EnhancedDatePicker
+                        label="Date of Birth"
+                        value={isoToDmy(formData.date_of_birth || '')}
+                        onChange={(dmyDate) => handleChange('date_of_birth', dmyToIso(dmyDate))}
+                        placeholder="Select Date"
                     />
                 </View>
             )}
@@ -175,11 +158,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16, paddingVertical: 12, fontSize: 16,
         color: designSystem.colors.text.primary, backgroundColor: '#fff'
     },
-    dateInput: {
-        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        borderWidth: 1, borderColor: designSystem.colors.neutral[200], borderRadius: 12,
-        paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff'
-    },
-    inputText: { fontSize: 16, color: designSystem.colors.text.primary },
-    placeholderText: { fontSize: 16, color: designSystem.colors.text.tertiary },
 });

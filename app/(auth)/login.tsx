@@ -48,7 +48,9 @@ export default function LoginScreen() {
 
   const handleGoogleLogin = async () => {
     try {
-      const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+      const redirectTo = typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/callback`
+        : undefined;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -133,13 +135,13 @@ export default function LoginScreen() {
           onPress={handleGoogleLogin}
           activeOpacity={0.7}
         >
-          <Image 
-            source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }} 
-            style={{ width: 20, height: 20 }} 
+          <Image
+            source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
+            style={{ width: 20, height: 20 }}
           />
           {/* Fallback to text if image fails or for simplicity in RN without SVG support */}
           <View style={[styles.googleIcon, { display: 'none' }]}>
-             <Text style={styles.googleIconText}>G</Text>
+            <Text style={styles.googleIconText}>G</Text>
           </View>
           <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
         </TouchableOpacity>

@@ -31,18 +31,15 @@ export default function EnhancedDatePicker({
 }: EnhancedDatePickerProps) {
   const { t } = useLocale();
   const [modalVisible, setModalVisible] = useState(false);
-  
+
   // Parse initial date for calendar
   const initialDate = value ? new Date(value.split('-').reverse().join('-')) : new Date();
   const [viewYear, setViewYear] = useState(initialDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(initialDate.getMonth());
   const [selectedIso, setSelectedIso] = useState(value ? value.split('-').reverse().join('-') : '');
-  
-  // Year selection mode
-  const [yearSelectionMode, setYearSelectionMode] = useState(false);
 
-  // Parse value to display format (DD-MM-YYYY -> locale friendly or just keep DD-MM-YYYY)
-  // The input value is DD-MM-YYYY. Let's keep it consistent.
+  // Selection mode: 'none' | 'year' | 'month'
+  const [selectionMode, setSelectionMode] = useState<'none' | 'year' | 'month'>('none');
 
   const handleDaySelect = (isoDate: string) => {
     // isoDate is YYYY-MM-DD
@@ -59,17 +56,22 @@ export default function EnhancedDatePicker({
 
   const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 50 + i); // 50 years back, 50 forward
 
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
         {!hideIcon && icon && (
-           <IconSymbol
-             ios_icon_name={icon as any}
-             android_material_icon_name={icon as any}
-             size={16}
-             color={designSystem.colors.text.secondary}
-             style={styles.labelIcon}
-           />
+          <IconSymbol
+            ios_icon_name={icon as any}
+            android_material_icon_name={icon as any}
+            size={16}
+            color={designSystem.colors.text.secondary}
+            style={styles.labelIcon}
+          />
         )}
         <Text style={styles.label}>
           {label}
@@ -87,18 +89,17 @@ export default function EnhancedDatePicker({
         disabled={disabled}
       >
         <Text style={[
-          styles.valueText, 
+          styles.valueText,
           !value && styles.placeholderText,
           disabled && styles.disabledText
         ]}>
           {value || t(placeholder || 'Select date', { defaultValue: placeholder || 'Select date' })}
         </Text>
-        {/* Only show chevron/icon if not hidden, or maybe always show chevron for dropdown feel? User said "without Calendar icon". Chevron is fine. */}
-        <IconSymbol 
-            ios_icon_name="chevron.down" 
-            android_material_icon_name="keyboard-arrow-down" 
-            size={20} 
-            color={getColor('text.secondary')} 
+        <IconSymbol
+          ios_icon_name="calendar"
+          android_material_icon_name="event"
+          size={20}
+          color={designSystem.colors.primary[500]}
         />
       </TouchableOpacity>
 
@@ -110,70 +111,95 @@ export default function EnhancedDatePicker({
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <TouchableOpacity 
-            style={styles.modalOverlay} 
-            activeOpacity={1} 
-            onPress={() => setModalVisible(false)}
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalVisible(false)}
         >
-            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-                {/* Header with Year/Month Selector */}
-                <View style={styles.header}>
-                    {!yearSelectionMode ? (
-                        <>
-                            <TouchableOpacity onPress={() => changeMonth(-1)} style={styles.navButton}>
-                                <IconSymbol ios_icon_name="chevron.left" android_material_icon_name="chevron-left" size={24} color={getColor('text.primary')} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setYearSelectionMode(true)}>
-                                <Text style={styles.monthLabel}>
-                                    {new Date(viewYear, viewMonth).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => changeMonth(1)} style={styles.navButton}>
-                                <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={24} color={getColor('text.primary')} />
-                            </TouchableOpacity>
-                        </>
-                    ) : (
-                         <View style={styles.yearHeader}>
-                            <Text style={styles.yearTitle}>{t('date.select_year', { defaultValue: 'Select Year' })}</Text>
-                            <TouchableOpacity onPress={() => setYearSelectionMode(false)} style={styles.closeYearButton}>
-                                <IconSymbol ios_icon_name="xmark" android_material_icon_name="close" size={20} color={getColor('text.primary')} />
-                            </TouchableOpacity>
-                         </View>
-                    )}
+          <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+            {/* Header with Year/Month Selector */}
+            <View style={styles.header}>
+              {selectionMode === 'none' ? (
+                <>
+                  <TouchableOpacity onPress={() => changeMonth(-1)} style={styles.navButton}>
+                    <IconSymbol ios_icon_name="chevron.left" android_material_icon_name="chevron-left" size={24} color={getColor('text.primary')} />
+                  </TouchableOpacity>
+                  <View style={styles.headerCenter}>
+                    <TouchableOpacity onPress={() => setSelectionMode('month')} style={styles.monthButton}>
+                      <Text style={styles.monthLabel}>
+                        {new Date(viewYear, viewMonth).toLocaleDateString('default', { month: 'long' })}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setSelectionMode('year')} style={styles.yearButton}>
+                      <Text style={styles.yearLabel}>{viewYear}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity onPress={() => changeMonth(1)} style={styles.navButton}>
+                    <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={24} color={getColor('text.primary')} />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <View style={styles.yearHeader}>
+                  <Text style={styles.yearTitle}>
+                    {selectionMode === 'year'
+                      ? t('date.select_year', { defaultValue: 'Select Year' })
+                      : t('date.select_month', { defaultValue: 'Select Month' })}
+                  </Text>
+                  <TouchableOpacity onPress={() => setSelectionMode('none')} style={styles.closeYearButton}>
+                    <IconSymbol ios_icon_name="xmark" android_material_icon_name="close" size={20} color={getColor('text.primary')} />
+                  </TouchableOpacity>
                 </View>
-
-                {yearSelectionMode ? (
-                    <View style={styles.yearListContainer}>
-                         <ScrollView showsVerticalScrollIndicator={false}>
-                             <View style={styles.yearGrid}>
-                                 {years.map(year => (
-                                     <TouchableOpacity 
-                                        key={year} 
-                                        style={[styles.yearItem, year === viewYear && styles.yearItemSelected]}
-                                        onPress={() => {
-                                            setViewYear(year);
-                                            setYearSelectionMode(false);
-                                        }}
-                                     >
-                                         <Text style={[styles.yearText, year === viewYear && styles.yearTextSelected]}>{year}</Text>
-                                     </TouchableOpacity>
-                                 ))}
-                             </View>
-                         </ScrollView>
-                    </View>
-                ) : (
-                    <CalendarMonthView
-                        year={viewYear}
-                        month={viewMonth}
-                        selected={selectedIso}
-                        onSelect={handleDaySelect}
-                    />
-                )}
-                
-                <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                    <Text style={styles.cancelText}>{t('common.cancel', { defaultValue: 'Cancel' })}</Text>
-                </TouchableOpacity>
+              )}
             </View>
+
+            {/* Calendar content with fixed height */}
+            <View style={styles.calendarContainer}>
+              {selectionMode === 'year' ? (
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={styles.yearGrid}>
+                    {years.map(year => (
+                      <TouchableOpacity
+                        key={year}
+                        style={[styles.yearItem, year === viewYear && styles.yearItemSelected]}
+                        onPress={() => {
+                          setViewYear(year);
+                          setSelectionMode('none');
+                        }}
+                      >
+                        <Text style={[styles.yearText, year === viewYear && styles.yearTextSelected]}>{year}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              ) : selectionMode === 'month' ? (
+                <View style={styles.monthGrid}>
+                  {months.map((month, index) => (
+                    <TouchableOpacity
+                      key={month}
+                      style={[styles.monthItem, index === viewMonth && styles.monthItemSelected]}
+                      onPress={() => {
+                        setViewMonth(index);
+                        setSelectionMode('none');
+                      }}
+                    >
+                      <Text style={[styles.monthText, index === viewMonth && styles.monthTextSelected]}>{month}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <CalendarMonthView
+                  year={viewYear}
+                  month={viewMonth}
+                  selected={selectedIso}
+                  onSelect={handleDaySelect}
+                />
+              )}
+            </View>
+
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancelText}>{t('common.cancel', { defaultValue: 'Cancel' })}</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </Modal>
     </View>
@@ -253,11 +279,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
     paddingHorizontal: 10,
   },
+  headerCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  monthButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: designSystem.colors.neutral[100],
+  },
+  yearButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: designSystem.colors.neutral[100],
+  },
   monthLabel: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '700',
+    color: designSystem.colors.text.primary,
+  },
+  yearLabel: {
+    fontSize: 16,
     fontWeight: '700',
     color: designSystem.colors.text.primary,
   },
@@ -277,6 +325,9 @@ const styles = StyleSheet.create({
   },
   closeYearButton: {
     padding: 4,
+  },
+  calendarContainer: {
+    minHeight: 300,
   },
   yearListContainer: {
     height: 300,
@@ -305,6 +356,34 @@ const styles = StyleSheet.create({
     color: designSystem.colors.text.primary,
   },
   yearTextSelected: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  monthGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  monthItem: {
+    width: '30%',
+    paddingVertical: 16,
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: designSystem.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: designSystem.colors.border.primary,
+  },
+  monthItemSelected: {
+    backgroundColor: designSystem.colors.primary[500],
+    borderColor: designSystem.colors.primary[500],
+  },
+  monthText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: designSystem.colors.text.primary,
+  },
+  monthTextSelected: {
     color: '#fff',
     fontWeight: '700',
   },

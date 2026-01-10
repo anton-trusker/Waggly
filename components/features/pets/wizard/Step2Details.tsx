@@ -4,7 +4,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { useBreeds } from '@/hooks/useBreeds';
 import { formatAge } from '@/utils/dateUtils';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -102,42 +102,24 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                         </View>
                     )}
 
-                    {/* Date of Birth */}
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{t('add_pet.step2.dob_label')}</Text>
-                        <View style={styles.dateInputContainer}>
-                            <TextInput
-                                style={styles.dateInput}
-                                placeholder="MM/DD/YYYY"
-                                placeholderTextColor={designSystem.colors.text.tertiary}
-                                value={dateOfBirth ? dateOfBirth.toLocaleDateString(locale === 'en' ? 'en-US' : locale) : ''}
-                                onChangeText={(text) => {
-                                    if (text === '') {
-                                        setDateOfBirth(undefined);
-                                        return;
-                                    }
-                                    const parsed = new Date(text);
-                                    if (!isNaN(parsed.getTime())) {
-                                        setDateOfBirth(parsed);
-                                    }
-                                }}
-                            />
-                            <TouchableOpacity
-                                style={styles.calendarButton}
-                                onPress={() => setShowDatePicker(true)}
-                            >
-                                <IconSymbol
-                                    ios_icon_name="calendar"
-                                    android_material_icon_name="event"
-                                    size={20}
-                                    color={designSystem.colors.primary[500]}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        {dateOfBirth && (
-                            <Text style={styles.hint}>{t('add_pet.step2.age_hint', { age: formatAge(dateOfBirth, t) })}</Text>
-                        )}
-                    </View>
+                    {/* Date of Birth - Using EnhancedDatePicker with calendar */}
+                    <EnhancedDatePicker
+                        label={t('add_pet.step2.dob_label')}
+                        value={dateOfBirth ? `${dateOfBirth.getDate().toString().padStart(2, '0')}-${(dateOfBirth.getMonth() + 1).toString().padStart(2, '0')}-${dateOfBirth.getFullYear()}` : ''}
+                        onChange={(dateStr) => {
+                            if (!dateStr) {
+                                setDateOfBirth(undefined);
+                                return;
+                            }
+                            // EnhancedDatePicker returns DD-MM-YYYY format
+                            const [day, month, year] = dateStr.split('-');
+                            const parsed = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                            if (!isNaN(parsed.getTime())) {
+                                setDateOfBirth(parsed);
+                            }
+                        }}
+                        placeholder="Select date of birth"
+                    />
 
                     {/* Weight and Height on one row */}
                     <View style={styles.row}>
@@ -145,12 +127,13 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             <Text style={styles.label}>{t('add_pet.step2.weight_label')}</Text>
                             <View style={styles.inputWithUnit}>
                                 <TextInput
-                                    style={[styles.input, { flex: 1 }]}
-                                    placeholder="0.0"
+                                    style={[styles.input, styles.compactInput]}
+                                    placeholder="0"
                                     keyboardType="numeric"
                                     value={weight}
                                     onChangeText={setWeight}
                                     placeholderTextColor={designSystem.colors.text.tertiary}
+                                    maxLength={3}
                                 />
                                 <View style={styles.toggle}>
                                     <TouchableOpacity
@@ -173,12 +156,13 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             <Text style={styles.label}>{t('add_pet.step2.height_label')}</Text>
                             <View style={styles.inputWithUnit}>
                                 <TextInput
-                                    style={[styles.input, { flex: 1 }]}
-                                    placeholder="0.0"
+                                    style={[styles.input, styles.compactInput]}
+                                    placeholder="0"
                                     keyboardType="numeric"
                                     value={height}
                                     onChangeText={setHeight}
                                     placeholderTextColor={designSystem.colors.text.tertiary}
+                                    maxLength={3}
                                 />
                                 <View style={styles.toggle}>
                                     <TouchableOpacity
@@ -226,14 +210,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                     />
                 </TouchableOpacity>
             </View>
-
-            {/* Date Picker Modal */}
-            <CustomDatePicker
-                visible={showDatePicker}
-                date={dateOfBirth || new Date()}
-                onClose={() => setShowDatePicker(false)}
-                onConfirm={onDateConfirm}
-            />
 
             {/* Breed Selector Modal */}
             <Modal
@@ -302,14 +278,17 @@ const styles = StyleSheet.create({
     col: { flex: 1, gap: 8 },
     inputWithUnit: {
         flexDirection: 'row',
-        gap: 8,
+        gap: 6,
         alignItems: 'center',
     },
     toggle: {
         flexDirection: 'row',
         backgroundColor: designSystem.colors.neutral[100],
-        borderRadius: 8,
-        overflow: 'hidden',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        padding: 4,
+        gap: 4,
     },
     toggleOption: {
         paddingHorizontal: 12,
@@ -317,13 +296,18 @@ const styles = StyleSheet.create({
         minWidth: 44,
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
     toggleSelected: {
         backgroundColor: designSystem.colors.primary[500],
+        borderColor: designSystem.colors.primary[600],
+        ...designSystem.shadows.sm,
     },
     toggleText: {
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: '700',
         color: designSystem.colors.text.secondary,
     },
     toggleTextSelected: {
@@ -335,6 +319,11 @@ const styles = StyleSheet.create({
         backgroundColor: designSystem.colors.neutral[0], borderWidth: 1, borderColor: designSystem.colors.neutral[200],
         borderRadius: 12, paddingHorizontal: 16, paddingVertical: 16, fontSize: 16, color: designSystem.colors.text.primary,
         ...designSystem.shadows.sm,
+    },
+    compactInput: {
+        flex: 1,
+        maxWidth: 80,
+        textAlign: 'center',
     },
     dropdownTrigger: {
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
@@ -362,6 +351,26 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         fontSize: 16,
         color: designSystem.colors.text.primary,
+    },
+    dateDisplayButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: designSystem.colors.neutral[0],
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        ...designSystem.shadows.sm,
+    },
+    dateText: {
+        fontSize: 16,
+        color: designSystem.colors.text.primary,
+    },
+    datePlaceholder: {
+        fontSize: 16,
+        color: designSystem.colors.text.tertiary,
     },
     calendarButton: {
         paddingHorizontal: 16,
@@ -397,7 +406,7 @@ const styles = StyleSheet.create({
     footer: {
         position: 'absolute', bottom: 0, left: 0, right: 0, padding: 16,
         backgroundColor: designSystem.colors.background.primary, borderTopWidth: 1, borderTopColor: designSystem.colors.neutral[100],
-        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+        paddingBottom: 16,
     },
     continueButton: {
         backgroundColor: designSystem.colors.primary[500], flexDirection: 'row', alignItems: 'center', justifyContent: 'center',

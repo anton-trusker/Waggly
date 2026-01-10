@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -85,53 +85,37 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                             <Text style={styles.cardTitle}>{t('add_pet.step3.microchip_title')}</Text>
                         </View>
 
-                        {/* Microchip Number and Implantation Date on one row */}
-                        <View style={styles.row}>
-                            <View style={styles.col}>
-                                <Text style={styles.label}>{t('add_pet.step3.microchip_label')}</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={t('add_pet.step3.microchip_placeholder')}
-                                    placeholderTextColor={designSystem.colors.text.tertiary}
-                                    keyboardType="number-pad"
-                                    value={microchipNumber}
-                                    onChangeText={setMicrochipNumber}
-                                />
-                            </View>
-
-                            <View style={styles.col}>
-                                <Text style={styles.label}>{t('add_pet.step3.implantation_date_label')}</Text>
-                                <View style={styles.dateInputContainer}>
-                                    <TextInput
-                                        style={styles.dateInput}
-                                        placeholder="MM/DD/YYYY"
-                                        placeholderTextColor={designSystem.colors.text.tertiary}
-                                        value={implantationDate ? implantationDate.toLocaleDateString(locale === 'en' ? 'en-US' : locale) : ''}
-                                        onChangeText={(text) => {
-                                            if (text === '') {
-                                                setImplantationDate(undefined);
-                                                return;
-                                            }
-                                            const parsed = new Date(text);
-                                            if (!isNaN(parsed.getTime())) {
-                                                setImplantationDate(parsed);
-                                            }
-                                        }}
-                                    />
-                                    <TouchableOpacity
-                                        style={styles.calendarButton}
-                                        onPress={() => setShowDateModal(true)}
-                                    >
-                                        <IconSymbol
-                                            ios_icon_name="calendar"
-                                            android_material_icon_name="event"
-                                            size={20}
-                                            color={designSystem.colors.primary[500]}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                        {/* Microchip Number and Implantation Date stacked vertically */}
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>{t('add_pet.step3.microchip_label')}</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={t('add_pet.step3.microchip_placeholder')}
+                                placeholderTextColor={designSystem.colors.text.tertiary}
+                                keyboardType="number-pad"
+                                value={microchipNumber}
+                                onChangeText={setMicrochipNumber}
+                            />
                         </View>
+
+                        {/* Implantation Date - Using EnhancedDatePicker */}
+                        <EnhancedDatePicker
+                            label={t('add_pet.step3.implantation_date_label')}
+                            value={implantationDate ? `${implantationDate.getDate().toString().padStart(2, '0')}-${(implantationDate.getMonth() + 1).toString().padStart(2, '0')}-${implantationDate.getFullYear()}` : ''}
+                            onChange={(dateStr) => {
+                                if (!dateStr) {
+                                    setImplantationDate(undefined);
+                                    return;
+                                }
+                                // EnhancedDatePicker returns DD-MM-YYYY format
+                                const [day, month, year] = dateStr.split('-');
+                                const parsed = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                                if (!isNaN(parsed.getTime())) {
+                                    setImplantationDate(parsed);
+                                }
+                            }}
+                            placeholder="Select implantation date"
+                        />
                     </View>
 
                     {/* --- Emergency Contact Card --- */}
@@ -207,13 +191,6 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                 </TouchableOpacity>
             </View>
 
-            <CustomDatePicker
-                visible={showDateModal}
-                date={implantationDate || new Date()}
-                onClose={() => setShowDateModal(false)}
-                onConfirm={onDateConfirm}
-                title={t('add_pet.step3.modal_title')}
-            />
         </View>
     );
 }
@@ -270,14 +247,14 @@ const styles = StyleSheet.create({
     },
     dateInput: {
         flex: 1,
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        fontSize: 16,
+        paddingHorizontal: 14,
+        paddingVertical: 14,
+        fontSize: 15,
         color: designSystem.colors.text.primary,
     },
     calendarButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 14,
     },
     row: { flexDirection: 'row', gap: 12 },
     toggle: {
@@ -323,7 +300,7 @@ const styles = StyleSheet.create({
     footer: {
         position: 'absolute', bottom: 0, left: 0, right: 0, padding: 16,
         backgroundColor: designSystem.colors.background.primary, borderTopWidth: 1, borderTopColor: designSystem.colors.neutral[100],
-        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+        paddingBottom: 16,
     },
     continueButton: {
         backgroundColor: designSystem.colors.primary[500], flexDirection: 'row', alignItems: 'center', justifyContent: 'center',

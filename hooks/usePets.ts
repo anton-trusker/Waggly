@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Pet, CoOwner, CoOwnerPermissions } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
+import { getPostHog } from '@/lib/posthog';
 
 export function usePets() {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -110,11 +111,12 @@ export function usePets() {
         return { error, data: null };
       }
 
-      posthog.capture('pet_created', {
+      // Track event (fire and forget - don't await to avoid blocking)
+      getPostHog().then(ph => ph?.capture('pet_created', {
         pet_id: data.id,
         species: data.species,
         breed: data.breed,
-      });
+      })).catch(() => { });
 
       await fetchPets();
       return { error: null, data: data as Pet };
@@ -136,10 +138,11 @@ export function usePets() {
         return { error };
       }
 
-      posthog.capture('pet_updated', {
+      // Track event (fire and forget)
+      getPostHog().then(ph => ph?.capture('pet_updated', {
         pet_id: petId,
         updated_fields: Object.keys(petData),
-      });
+      })).catch(() => { });
 
       await fetchPets();
       return { error: null };
@@ -161,9 +164,10 @@ export function usePets() {
         return { error };
       }
 
-      posthog.capture('pet_deleted', {
+      // Track event (fire and forget)
+      getPostHog().then(ph => ph?.capture('pet_deleted', {
         pet_id: petId,
-      });
+      })).catch(() => { });
 
       await fetchPets();
       return { error: null };

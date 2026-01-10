@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Switch, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Switch } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
-import DatePickerWeb from '@/components/ui/DatePickerWeb';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
 import { Pet } from '@/types/index';
 
@@ -36,14 +35,6 @@ const DecimalInput = ({ value, onChange, placeholder, style, error }: any) => {
         setLocalValue(text);
         const floatVal = parseFloat(text);
         if (!isNaN(floatVal) && text.trim() !== '') {
-            // Only update parent if it's a valid number
-            // But if text ends in '.' or '.0', we wait?
-            // Actually, best to just update parent with valid numbers, ignoring trailing format
-            // but keep localValue for display.
-
-            // If text is "12.", parseFloat is 12. Parent gets 12. 
-            // If parent updates back, it sends 12. 
-            // useEffect sees 12 === 12, so it doesn't reset localValue "12." -> Correct!
             onChange(floatVal);
         } else if (text === '') {
             onChange(null);
@@ -61,6 +52,24 @@ const DecimalInput = ({ value, onChange, placeholder, style, error }: any) => {
     );
 };
 
+// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
+const isoToDmy = (isoDate: string): string => {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    const [year, month, day] = parts;
+    return `${day}-${month}-${year}`;
+};
+
+// Convert DD-MM-YYYY back to ISO
+const dmyToIso = (dmyDate: string): string => {
+    if (!dmyDate) return '';
+    const parts = dmyDate.split('-');
+    if (parts.length !== 3) return dmyDate;
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+};
+
 export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHealthProps) {
     const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg');
     const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>('cm');
@@ -69,12 +78,11 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
     const getDisplayValue = (metricValue: number | null | undefined, unit: 'kg' | 'lb' | 'cm' | 'in') => {
         if (metricValue === null || metricValue === undefined) return '';
 
-        // Return string to avoid small float errors in display
         switch (unit) {
             case 'kg': return metricValue.toString();
-            case 'lb': return (metricValue * 2.20462).toFixed(1); // 1 kg = 2.20462 lb
+            case 'lb': return (metricValue * 2.20462).toFixed(1);
             case 'cm': return metricValue.toString();
-            case 'in': return (metricValue / 2.54).toFixed(1);    // 1 in = 2.54 cm
+            case 'in': return (metricValue / 2.54).toFixed(1);
         }
     };
 
@@ -89,7 +97,6 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
         if (unit === 'lb') metricValue = displayValue / 2.20462;
         if (unit === 'in') metricValue = displayValue * 2.54;
 
-        // Round to 2 decimals for cleaner DB storage
         onChange(field, parseFloat(metricValue.toFixed(2)));
     };
 
@@ -125,27 +132,12 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                     </View>
                 </View>
 
-                {Platform.OS === 'web' ? (
-                    <DatePickerWeb
-                        label="Implantation Date"
-                        value={data.microchip_implantation_date || ''}
-                        onChange={(v) => onChange('microchip_implantation_date', v)}
-                        placeholder="Select Date"
-                    />
-                ) : (
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Implantation Date</Text>
-                        <TouchableOpacity
-                            style={styles.dateInput}
-                            onPress={() => setDatePickerMode('implant')}
-                        >
-                            <Text style={data.microchip_implantation_date ? styles.inputText : styles.placeholderText}>
-                                {formatDate(data.microchip_implantation_date)}
-                            </Text>
-                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                        </TouchableOpacity>
-                    </View>
-                )}
+                <EnhancedDatePicker
+                    label="Implantation Date"
+                    value={isoToDmy(data.microchip_implantation_date || '')}
+                    onChange={(dmyDate) => onChange('microchip_implantation_date', dmyToIso(dmyDate))}
+                    placeholder="Select Date"
+                />
             </View>
 
             {/* --- Physical Metrics --- */}
@@ -223,27 +215,12 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
 
                 {data.is_spayed_neutered && (
                     <View style={{ marginTop: 8 }}>
-                        {Platform.OS === 'web' ? (
-                            <DatePickerWeb
-                                label="Procedure Date"
-                                value={data.sterilization_date || ''}
-                                onChange={(v) => onChange('sterilization_date', v)}
-                                placeholder="Select Date"
-                            />
-                        ) : (
-                            <View style={styles.formGroup}>
-                                <Text style={styles.label}>Procedure Date</Text>
-                                <TouchableOpacity
-                                    style={styles.dateInput}
-                                    onPress={() => setDatePickerMode('sterilization')}
-                                >
-                                    <Text style={data.sterilization_date ? styles.inputText : styles.placeholderText}>
-                                        {formatDate(data.sterilization_date)}
-                                    </Text>
-                                    <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
+                        <EnhancedDatePicker
+                            label="Procedure Date"
+                            value={isoToDmy(data.sterilization_date || '')}
+                            onChange={(dmyDate) => onChange('sterilization_date', dmyToIso(dmyDate))}
+                            placeholder="Select Date"
+                        />
                     </View>
                 )}
             </View>
@@ -255,26 +232,6 @@ export default function EditPetHealth({ data, onChange, errors = {} }: EditPetHe
                     Allergies and Conditions are managed in the comprehensive Medical Records section for detailed tracking.
                 </Text>
             </View>
-
-            {/* Date Pickers - Mobile Only */}
-            {Platform.OS !== 'web' && (
-                <CustomDatePicker
-                    visible={!!datePickerMode}
-                    date={
-                        datePickerMode === 'implant' && data.microchip_implantation_date ? new Date(data.microchip_implantation_date) :
-                            datePickerMode === 'sterilization' && data.sterilization_date ? new Date(data.sterilization_date) :
-                                new Date()
-                    }
-                    onClose={() => setDatePickerMode(null)}
-                    onConfirm={(date) => {
-                        const isoDate = date.toISOString().split('T')[0];
-                        if (datePickerMode === 'implant') onChange('microchip_implantation_date', isoDate);
-                        if (datePickerMode === 'sterilization') onChange('sterilization_date', isoDate);
-                        setDatePickerMode(null);
-                    }}
-                    title={datePickerMode === 'implant' ? "Implantation Date" : "Procedure Date"}
-                />
-            )}
         </View>
     );
 }
@@ -300,13 +257,6 @@ const styles = StyleSheet.create({
         color: designSystem.colors.error[500],
         marginTop: 4,
     },
-    dateInput: {
-        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        borderWidth: 1, borderColor: designSystem.colors.neutral[200], borderRadius: 12,
-        paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff'
-    },
-    inputText: { fontSize: 16, color: designSystem.colors.text.primary },
-    placeholderText: { fontSize: 16, color: designSystem.colors.text.tertiary },
     unitInput: {
         flexDirection: 'row', alignItems: 'center',
         borderWidth: 1, borderColor: designSystem.colors.neutral[200], borderRadius: 12,

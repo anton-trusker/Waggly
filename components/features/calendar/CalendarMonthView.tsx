@@ -32,7 +32,9 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
     for (let i = 0; i < grid.length; i += 7) arr.push(grid.slice(i, i + 7));
     return arr;
   }, [grid]);
-  const todayISO = new Date().toISOString().slice(0, 10);
+  const today = new Date();
+  // Use local date parts to avoid timezone issues
+  const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const header = useMemo(() => {
     const base = new Date(2020, 10, 1); // arbitrary Sunday
     return Array.from({ length: 7 }).map((_, i) => {
@@ -63,25 +65,26 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
         <View key={wi} style={styles.weekRow as ViewStyle}>
           {week.map((date, di) => {
             if (!date) return <View key={di} style={styles.cell as ViewStyle} />;
-            const iso = date.toISOString().slice(0, 10);
-            const isToday = iso === todayISO;
-            const isSelected = selected === iso;
-            const dots = markers[iso] || [];
+            // Use local date parts to avoid timezone issues (toISOString converts to UTC which shifts the date)
+            const localIso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            const isToday = localIso === todayISO;
+            const isSelected = selected === localIso;
+            const dots = markers[localIso] || [];
             const dotsToShow = dots.slice(0, 3);
-            const eventsForDay = eventsByDay[iso] || [];
+            const eventsForDay = eventsByDay[localIso] || [];
             return (
               <TouchableOpacity
                 key={di}
                 style={[styles.cell, isSelected && styles.cellSelected, isToday && styles.cellToday] as ViewStyle}
                 onPress={() => {
-                  onSelect(iso);
-                  onDayPress?.(iso);
+                  onSelect(localIso);
+                  onDayPress?.(localIso);
                 }}
                 accessibilityRole="button"
-                accessibilityLabel={`Select ${iso}. ${dots.length > 0 ? 'Has events' : 'No events'}`}
+                accessibilityLabel={`Select ${localIso}. ${dots.length > 0 ? 'Has events' : 'No events'}`}
                 {...(Platform.OS === 'web'
                   ? {
-                    onMouseEnter: () => safeSetHover(iso),
+                    onMouseEnter: () => safeSetHover(localIso),
                     onMouseLeave: () => safeSetHover(null),
                   }
                   : {})}
@@ -94,7 +97,7 @@ export default function CalendarMonthView({ year, month, selected, onSelect, mar
                     ))}
                   </View>
                 )}
-                {Platform.OS === 'web' && hoveredIso === iso && eventsForDay.length > 0 && (
+                {Platform.OS === 'web' && hoveredIso === localIso && eventsForDay.length > 0 && (
                   <View style={styles.tooltip}>
                     {eventsForDay.slice(0, 4).map((ev, idx) => (
                       <View key={idx} style={styles.tooltipRow}>

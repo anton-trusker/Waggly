@@ -65,36 +65,21 @@ export default function MyPetsWidget() {
             borderColor: theme.colors.border.primary,
             backgroundColor: theme.colors.background.primary
         }]}>
-            {isLargeScreen ? (
-                // Desktop: Vertical Stack of Cards (no add button if pets exist)
-                <View style={styles.desktopStack}>
-                    {pets.map((pet) => (
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                {pets.map((pet) => (
+                    <View key={pet.id} style={styles.cardWrapper}>
                         <PetPassportCard
-                            key={pet.id}
                             pet={pet}
                             onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
                             onQrPress={() => handleQrPress(pet)}
                         />
-                    ))}
-                </View>
-            ) : (
-                // Mobile: Horizontal Scroll (no add button if pets exist)
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    {pets.map((pet) => (
-                        <View key={pet.id} style={styles.cardWrapper}>
-                            <PetPassportCard
-                                pet={pet}
-                                onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
-                                onQrPress={() => handleQrPress(pet)}
-                            />
-                        </View>
-                    ))}
-                </ScrollView>
-            )}
+                    </View>
+                ))}
+            </ScrollView>
 
             {/* Share Modal */}
             {selectedPetForShare && (
@@ -149,22 +134,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
     },
-    desktopStack: {
-        gap: 4,
-        alignItems: 'center', // Center the cards
-    },
-    desktopAddButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        padding: 16,
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderRadius: 20,
-    },
-    desktopAddText: {
-        fontSize: 15,
+    addText: {
+        fontSize: 13,
         fontWeight: '600',
         fontFamily: 'Plus Jakarta Sans',
     },

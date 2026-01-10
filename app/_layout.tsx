@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { designSystem } from '@/constants/designSystem';
 import * as Linking from 'expo-linking';
 import { supabase } from '@/lib/supabase';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { DesignSystemProvider } from '@/design-system/DesignSystemProvider';
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -87,6 +87,23 @@ function RootLayoutNav() {
       subscription.remove();
     };
   }, [user, isMounted]);
+
+  // Handle OAuth callback on web
+  useEffect(() => {
+    if (!isMounted || Platform.OS !== 'web') return;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // When OAuth completes, Supabase will fire SIGNED_IN event
+      if (event === 'SIGNED_IN' && session) {
+        console.log('OAuth sign-in detected, redirecting to dashboard');
+        router.replace('/(tabs)/(home)');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [isMounted]);
 
   useEffect(() => {
     if (!isMounted) return; // Don't navigate before mount

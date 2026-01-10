@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
         backgroundColor: designSystem.colors.background.primary,
         borderTopWidth: 1,
         borderTopColor: designSystem.colors.neutral[100],
-        paddingBottom: Platform.OS === 'ios' ? 34 : 16,
+        paddingBottom: 16,
     },
     submitButton: {
         backgroundColor: designSystem.colors.primary[500],

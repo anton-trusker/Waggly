@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     View,
     Text,
@@ -21,6 +21,7 @@ interface AddressComponent {
 export interface Place {
     place_id: string;
     formatted_address: string;
+    name?: string; // Business/place name
     lat: number;
     lng: number;
     street?: string;
@@ -29,6 +30,15 @@ export interface Place {
     country?: string;
     postal_code?: string;
     country_code?: string;
+}
+
+interface Prediction {
+    place_id: string;
+    description: string;
+    structured_formatting?: {
+        main_text: string;
+        secondary_text: string;
+    };
 }
 
 interface PlacesAutocompleteProps {
@@ -40,6 +50,75 @@ interface PlacesAutocompleteProps {
     error?: string;
 }
 
+// For web, we'll use the Google Places JavaScript SDK
+declare global {
+    interface Window {
+        google?: {
+            maps: {
+                places: {
+                    AutocompleteService: new () => {
+                        getPlacePredictions: (
+                            request: any,
+                            callback: (predictions: any[], status: string) => void
+                        ) => void;
+                    };
+                    PlacesService: new (attrContainer: HTMLDivElement) => {
+                        getDetails: (
+                            request: any,
+                            callback: (result: any, status: string) => void
+                        ) => void;
+                    };
+                    PlacesServiceStatus: {
+                        OK: string;
+                    };
+                };
+            };
+        };
+        initGooglePlaces?: () => void;
+    }
+}
+
+// Load Google Maps Script (web only)
+const loadGoogleMapsScript = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        if (typeof window === 'undefined') {
+            reject(new Error('Not in browser environment'));
+            return;
+        }
+
+        // Already loaded
+        if (window.google?.maps?.places) {
+            resolve();
+            return;
+        }
+
+        // Check if script is already loading
+        const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existingScript) {
+            existingScript.addEventListener('load', () => resolve());
+            existingScript.addEventListener('error', () => reject(new Error('Failed to load Google Maps')));
+            return;
+        }
+
+        const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+            reject(new Error('Google Maps API key not configured'));
+            return;
+        }
+
+        window.initGooglePlaces = () => {
+            resolve();
+        };
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGooglePlaces`;
+        script.async = true;
+        script.defer = true;
+        script.onerror = () => reject(new Error('Failed to load Google Maps'));
+        document.head.appendChild(script);
+    });
+};
+
 export default function PlacesAutocomplete({
     value,
     onSelect,
@@ -49,16 +128,109 @@ export default function PlacesAutocomplete({
     error,
 }: PlacesAutocompleteProps) {
     const [query, setQuery] = useState(value);
-    const [predictions, setPredictions] = useState<any[]>([]);
+    const [predictions, setPredictions] = useState<Prediction[]>([]);
     const [loading, setLoading] = useState(false);
     const [showPredictions, setShowPredictions] = useState(false);
+    const [mapsLoaded, setMapsLoaded] = useState(false);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+    const autocompleteService = useRef<any>(null);
+    const placesService = useRef<any>(null);
+    const placesContainerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         setQuery(value);
     }, [value]);
 
-    const searchPlaces = async (text: string) => {
+    // Load Google Maps for web
+    useEffect(() => {
+        if (Platform.OS === 'web') {
+            loadGoogleMapsScript()
+                .then(() => {
+                    // Create services
+                    autocompleteService.current = new window.google!.maps.places.AutocompleteService();
+
+                    // Create a hidden div for PlacesService (required)
+                    if (!placesContainerRef.current) {
+                        placesContainerRef.current = document.createElement('div');
+                        placesContainerRef.current.style.display = 'none';
+                        document.body.appendChild(placesContainerRef.current);
+                    }
+                    placesService.current = new window.google!.maps.places.PlacesService(placesContainerRef.current);
+
+                    setMapsLoaded(true);
+                })
+                .catch((err) => {
+                    console.error('Failed to load Google Maps:', err);
+                });
+        }
+
+        return () => {
+            // Cleanup
+            if (placesContainerRef.current) {
+                document.body.removeChild(placesContainerRef.current);
+                placesContainerRef.current = null;
+            }
+        };
+    }, []);
+
+    const searchPlacesWeb = useCallback(async (text: string) => {
+        if (!text || text.length < 3 || !autocompleteService.current) {
+            setPredictions([]);
+            setShowPredictions(false);
+            return;
+        }
+
+        setLoading(true);
+
+        const request: any = {
+            input: text,
+        };
+
+        // Map types to Google's format
+        // Note: 'establishment' cannot be mixed with other types
+        if (types.length > 0) {
+            // Filter out 'establishment' if there are other types (can't be mixed)
+            let googleTypes = types.filter(t =>
+                ['address', 'geocode', 'establishment', 'regions', 'cities'].includes(t) ||
+                t.includes('_') // specific place types like 'veterinary_care'
+            );
+
+            // If we have 'establishment' mixed with other types, use only the first non-establishment type
+            const hasEstablishment = googleTypes.includes('establishment');
+            const otherTypes = googleTypes.filter(t => t !== 'establishment');
+
+            if (hasEstablishment && otherTypes.length > 0) {
+                // Can't mix establishment with other types - use only other types
+                googleTypes = otherTypes;
+            }
+
+            // Only pass first type if multiple (Google only accepts one type with establishment restriction)
+            if (googleTypes.length > 0) {
+                request.types = [googleTypes[0]];
+            }
+        }
+
+        autocompleteService.current.getPlacePredictions(
+            request,
+            (results: any[], status: string) => {
+                setLoading(false);
+                if (status === window.google?.maps.places.PlacesServiceStatus.OK && results) {
+                    setPredictions(results.map((r: any) => ({
+                        place_id: r.place_id,
+                        description: r.description,
+                        structured_formatting: r.structured_formatting,
+                    })));
+                    setShowPredictions(true);
+                } else {
+                    setPredictions([]);
+                    setShowPredictions(false);
+                }
+            }
+        );
+    }, [types]);
+
+    const searchPlacesNative = async (text: string) => {
+        // For native platforms, we can use the REST API (no CORS issues)
         if (!text || text.length < 3) {
             setPredictions([]);
             setShowPredictions(false);
@@ -105,11 +277,64 @@ export default function PlacesAutocomplete({
         }
 
         debounceTimer.current = setTimeout(() => {
-            searchPlaces(text);
+            if (Platform.OS === 'web' && mapsLoaded) {
+                searchPlacesWeb(text);
+            } else if (Platform.OS !== 'web') {
+                searchPlacesNative(text);
+            }
         }, 300);
     };
 
-    const selectPlace = async (placeId: string, description: string) => {
+    const selectPlaceWeb = useCallback(async (placeId: string, description: string, mainText?: string) => {
+        if (!placesService.current) return;
+
+        setLoading(true);
+
+        placesService.current.getDetails(
+            {
+                placeId,
+                fields: ['name', 'formatted_address', 'address_components', 'geometry'],
+            },
+            (result: any, status: string) => {
+                setLoading(false);
+                if (status === window.google?.maps.places.PlacesServiceStatus.OK && result) {
+                    const addressComponents: AddressComponent[] = result.address_components || [];
+
+                    const getComponent = (type: string) => {
+                        const component = addressComponents.find((c) => c.types.includes(type));
+                        return component?.long_name || '';
+                    };
+
+                    const getShortComponent = (type: string) => {
+                        const component = addressComponents.find((c) => c.types.includes(type));
+                        return component?.short_name || '';
+                    };
+
+                    const place: Place = {
+                        place_id: placeId,
+                        name: result.name || mainText || description.split(',')[0],
+                        formatted_address: result.formatted_address || description,
+                        lat: result.geometry?.location?.lat() || 0,
+                        lng: result.geometry?.location?.lng() || 0,
+                        street: `${getComponent('street_number')} ${getComponent('route')}`.trim(),
+                        city: getComponent('locality') || getComponent('sublocality'),
+                        state: getComponent('administrative_area_level_1'),
+                        country: getComponent('country'),
+                        postal_code: getComponent('postal_code'),
+                        country_code: getShortComponent('country'),
+                    };
+
+                    onSelect(place);
+                    // Use the business name in the input field
+                    setQuery(place.name || result.formatted_address || description);
+                    setPredictions([]);
+                    setShowPredictions(false);
+                }
+            }
+        );
+    }, [onSelect]);
+
+    const selectPlaceNative = async (placeId: string, description: string, mainText?: string) => {
         try {
             setLoading(true);
             const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -119,7 +344,7 @@ export default function PlacesAutocomplete({
                 return;
             }
 
-            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}&fields=formatted_address,address_components,geometry`;
+            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}&fields=name,formatted_address,address_components,geometry`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -139,6 +364,7 @@ export default function PlacesAutocomplete({
 
                 const place: Place = {
                     place_id: placeId,
+                    name: result.name || mainText || description.split(',')[0],
                     formatted_address: result.formatted_address || description,
                     lat: result.geometry?.location?.lat || 0,
                     lng: result.geometry?.location?.lng || 0,
@@ -151,7 +377,8 @@ export default function PlacesAutocomplete({
                 };
 
                 onSelect(place);
-                setQuery(result.formatted_address || description);
+                // Use the business name in the input field
+                setQuery(place.name || result.formatted_address || description);
                 setPredictions([]);
                 setShowPredictions(false);
             }
@@ -161,6 +388,17 @@ export default function PlacesAutocomplete({
             setLoading(false);
         }
     };
+
+    const selectPlace = (placeId: string, description: string, mainText?: string) => {
+        if (Platform.OS === 'web' && mapsLoaded) {
+            selectPlaceWeb(placeId, description, mainText);
+        } else {
+            selectPlaceNative(placeId, description, mainText);
+        }
+    };
+
+    // Show loading state while Google Maps loads on web
+    const isInitializing = Platform.OS === 'web' && !mapsLoaded;
 
     return (
         <View style={styles.container}>
@@ -180,10 +418,11 @@ export default function PlacesAutocomplete({
                     style={[styles.input, error && styles.inputError]}
                     value={query}
                     onChangeText={handleTextChange}
-                    placeholder={placeholder}
+                    placeholder={isInitializing ? 'Loading...' : placeholder}
                     placeholderTextColor={colors.textTertiary}
                     autoCapitalize="none"
                     autoCorrect={false}
+                    editable={!isInitializing}
                 />
 
                 {loading && (
@@ -213,40 +452,42 @@ export default function PlacesAutocomplete({
 
             {error && <Text style={styles.errorText}>{error}</Text>}
 
-            <View style={styles.predictionsContainer}>
-                <FlashList
-                    data={predictions}
-                    keyExtractor={(item) => item.place_id}
-                    estimatedItemSize={62}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.predictionItem}
-                            onPress={() => selectPlace(item.place_id, item.description)}
-                        >
-                            <IconSymbol
-                                ios_icon_name="mappin.circle"
-                                android_material_icon_name="place"
-                                size={16}
-                                color={colors.primary}
-                                style={styles.predictionIcon}
-                            />
-                            <View style={styles.predictionTextContainer}>
-                                <Text style={styles.predictionMainText}>
-                                    {item.structured_formatting?.main_text || item.description}
-                                </Text>
-                                {item.structured_formatting?.secondary_text && (
-                                    <Text style={styles.predictionSecondaryText}>
-                                        {item.structured_formatting.secondary_text}
+            {showPredictions && predictions.length > 0 && (
+                <View style={styles.predictionsContainer}>
+                    <FlashList
+                        data={predictions}
+                        keyExtractor={(item) => item.place_id}
+                        estimatedItemSize={62}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={styles.predictionItem}
+                                onPress={() => selectPlace(item.place_id, item.description, item.structured_formatting?.main_text)}
+                            >
+                                <IconSymbol
+                                    ios_icon_name="mappin.circle"
+                                    android_material_icon_name="place"
+                                    size={16}
+                                    color={colors.primary}
+                                    style={styles.predictionIcon}
+                                />
+                                <View style={styles.predictionTextContainer}>
+                                    <Text style={styles.predictionMainText}>
+                                        {item.structured_formatting?.main_text || item.description}
                                     </Text>
-                                )}
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                    style={styles.predictionsList}
-                    keyboardShouldPersistTaps="handled"
-                    nestedScrollEnabled
-                />
-            </View>
+                                    {item.structured_formatting?.secondary_text && (
+                                        <Text style={styles.predictionSecondaryText}>
+                                            {item.structured_formatting.secondary_text}
+                                        </Text>
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        style={styles.predictionsList}
+                        keyboardShouldPersistTaps="handled"
+                        nestedScrollEnabled
+                    />
+                </View>
+            )}
         </View>
     );
 }
@@ -312,6 +553,9 @@ const styles = StyleSheet.create({
             },
             android: {
                 elevation: 5,
+            },
+            web: {
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             },
         }),
     },

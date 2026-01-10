@@ -194,7 +194,12 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         return errors;
     };
 
-    const handlePlaceSelect = (place: Place, formState: FormState<VisitFormData>) => {
+    const handlePlaceSelect = (place: Place & { name?: string }, formState: FormState<VisitFormData>) => {
+        // Set business name from place (use name if available, or formatted address)
+        if (place.name) {
+            formState.updateField('business_name', place.name);
+        }
+        // Set address
         formState.updateField('business_address', place.formatted_address);
         formState.updateField('business_place_id', place.place_id);
     };
@@ -317,37 +322,32 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 onChange={(text) => formState.updateField('date', text)}
                             />
 
-                            {/* Business Name */}
-                            <View style={styles.fieldGroup}>
-                                <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.business_name')}</Text>
-                                <TextInput
-                                    style={[
+                            {/* Business Name - Places Search */}
+                            <PlacesAutocomplete
+                                value={formState.data.business_name}
+                                onSelect={(place) => handlePlaceSelect(place, formState)}
+                                placeholder={t('visit_form.business_name_placeholder', { type: selectedProvider ? t(`visit_form.provider_types.${selectedProvider.labelKey}`).toLowerCase() : '' })}
+                                types={['establishment']}
+                                label={t('visit_form.business_name')}
+                                error={formState.errors.business_name}
+                            />
+
+                            {/* Business Address - Read-only, auto-filled */}
+                            {formState.data.business_address && (
+                                <View style={styles.fieldGroup}>
+                                    <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.address_label')}</Text>
+                                    <View style={[
                                         styles.input,
                                         {
                                             backgroundColor: theme.colors.background.tertiary,
-                                            color: theme.colors.text.primary,
-                                            borderColor: formState.errors.business_name ? theme.colors.status.error[500] : theme.colors.border.primary
+                                            borderColor: theme.colors.border.primary,
+                                            opacity: 0.8
                                         }
-                                    ]}
-                                    placeholder={t('visit_form.business_name_placeholder', { type: selectedProvider ? t(`visit_form.provider_types.${selectedProvider.labelKey}`).toLowerCase() : '' })}
-                                    placeholderTextColor={theme.colors.text.tertiary}
-                                    value={formState.data.business_name}
-                                    onChangeText={(text) => formState.updateField('business_name', text)}
-                                />
-                                {formState.errors.business_name && (
-                                    <Text style={{ color: theme.colors.status.error[500], fontSize: 12, marginTop: -8 }}>
-                                        {formState.errors.business_name}
-                                    </Text>
-                                )}
-                            </View>
-
-                            <PlacesAutocomplete
-                                value={formState.data.business_address}
-                                onSelect={(place) => handlePlaceSelect(place, formState)}
-                                placeholder={t('visit_form.address_placeholder')}
-                                types={['veterinary_care', 'establishment']}
-                                label={t('visit_form.address_label')}
-                            />
+                                    ]}>
+                                        <Text style={{ color: theme.colors.text.primary, fontSize: 14 }}>{formState.data.business_address}</Text>
+                                    </View>
+                                </View>
+                            )}
 
                             <View style={styles.row}>
                                 <View style={styles.flex1}>

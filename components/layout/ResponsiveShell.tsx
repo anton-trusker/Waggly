@@ -39,6 +39,9 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
     const isAuthPage = pathname?.startsWith('/(auth)') || pathname?.startsWith('/(onboarding)');
     const showShell = session && !isAuthPage;
 
+    // Hide bottom navigation during wizard flows
+    const isWizardRoute = pathname?.includes('/pets/new') || pathname?.includes('/add-pet');
+
     if (!showShell) {
         return <View style={styles.fullScreen}>{children}</View>;
     }
@@ -81,7 +84,7 @@ export default function ResponsiveShell({ children }: ResponsiveShellProps) {
                     {children}
                 </View>
 
-                {!isDesktop && (
+                {!isDesktop && !isWizardRoute && (
                     <FloatingTabBarWithPlus
                         tabs={mobileTabs}
                         onPlusPress={() => setQuickActionVisible(true)}

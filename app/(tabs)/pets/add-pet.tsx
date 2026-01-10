@@ -143,7 +143,7 @@ export default function AddPetScreen() {
                   {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
                 </View>
               </View>
-              {/* Pet Type Selection - Compact Cards */}
+              {/* Pet Type Selection - Enhanced Cards */}
               <View>
                 <Text style={styles.label}>Species</Text>
                 <View style={styles.petTypeRow}>
@@ -154,18 +154,17 @@ export default function AddPetScreen() {
                   ].map((type) => (
                     <TouchableOpacity
                       key={type.id}
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      style={[
+                        styles.petTypeCard,
+                        species === type.id && styles.petTypeCardSelected
+                      ]}
                       onPress={() => {
                         setSpecies(type.id as any);
                         setBreed(''); // Reset breed when species changes
                       }}
+                      activeOpacity={0.7}
                     >
-                      <View style={[
-                        styles.petTypeCard,
-                        species === type.id && styles.petTypeCardSelected
-                      ]}>
-                        <Text style={styles.petTypeIcon}>{type.icon}</Text>
-                      </View>
+                      <Text style={styles.petTypeIcon}>{type.icon}</Text>
                       <Text style={[
                         styles.petTypeLabel,
                         species === type.id && styles.petTypeLabelSelected
@@ -390,8 +389,8 @@ export default function AddPetScreen() {
               )}
             </View>
 
-            {/* Spacer for bottom button */}
-            <View style={{ height: Platform.OS === 'web' ? 100 : 160 }} />
+            {/* Spacer for bottom button - increased to account for tab bar */}
+            <View style={{ height: 120 }} />
           </ScrollView>
         </TouchableWithoutFeedback>
 
@@ -400,7 +399,7 @@ export default function AddPetScreen() {
           onPrimary={handleAddPet}
           primaryLabel="Add Pet"
           disabled={loading}
-          bottomOffset={Platform.OS === 'ios' ? 0 : 20}
+          bottomOffset={Platform.OS === 'ios' ? 80 : Platform.OS === 'web' ? 80 : 70}
         />
 
         <LoadingOverlay visible={loading} message="Saving pet..." />
@@ -509,36 +508,50 @@ const styles = StyleSheet.create({
   },
   petTypeRow: {
     flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
+    gap: 12,
+    justifyContent: 'space-between',
+    marginTop: 4,
   },
   petTypeCard: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 25,
-    height: 25,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
     backgroundColor: colors.background,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: colors.border,
-    borderRadius: 6,
+    borderRadius: 12,
+    minHeight: 80,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   petTypeCardSelected: {
     backgroundColor: colors.primaryBackground,
     borderColor: colors.primary,
-    borderWidth: 2,
+    borderWidth: 2.5,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   petTypeIcon: {
-    fontSize: 16,
-    lineHeight: 16,
+    fontSize: 32,
+    lineHeight: 32,
+    marginBottom: 8,
   },
   petTypeLabel: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.textSecondary,
-    marginLeft: 6,
+    textAlign: 'center',
   },
   petTypeLabelSelected: {
     color: colors.primary,
+    fontWeight: '700',
   },
   collapsibleHeader: {
     flexDirection: 'row',

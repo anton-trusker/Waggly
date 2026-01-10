@@ -48,7 +48,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     storage: ExpoSecureStoreAdapter as any,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false, // Security: prevent URL session injection
+    // Enable OAuth callback detection on web, disable on native for security
+    detectSessionInUrl: Platform.OS === 'web',
   },
   global: {
     headers: {
@@ -63,11 +64,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 // Helper to get authenticated client with fresh token
 export async function getAuthenticatedClient() {
   const { data: { session } } = await supabase.auth.getSession();
-  
+
   if (!session) {
     throw new Error('User not authenticated');
   }
-  
+
   return {
     supabase,
     session,
@@ -75,4 +76,4 @@ export async function getAuthenticatedClient() {
   };
 }
 
-export {};
+export { };

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Alert, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import FormModal from '@/components/ui/FormModal';
 import { designSystem } from '@/constants/designSystem';
 import { usePets } from '@/hooks/usePets';
 import { Pet } from '@/types/components';
-import DatePickerWeb from '@/components/ui/DatePickerWeb';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 
 interface EditKeyInfoModalProps {
     visible: boolean;
@@ -14,12 +12,29 @@ interface EditKeyInfoModalProps {
     petId: string;
 }
 
+// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
+const isoToDmy = (isoDate: string): string => {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    const [year, month, day] = parts;
+    return `${day}-${month}-${year}`;
+};
+
+// Convert DD-MM-YYYY back to ISO
+const dmyToIso = (dmyDate: string): string => {
+    if (!dmyDate) return '';
+    const parts = dmyDate.split('-');
+    if (parts.length !== 3) return dmyDate;
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+};
+
 export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInfoModalProps) {
     const { pets, updatePet } = usePets();
     const pet = pets.find(p => p.id === petId);
 
     const [loading, setLoading] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false);
     const [formData, setFormData] = useState({
         microchip_number: '',
         species: '',
@@ -133,43 +148,14 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
                         </View>
 
                         <View style={[styles.formGroup, { flex: 1 }]}>
-                            {Platform.OS === 'web' ? (
-                                <DatePickerWeb
-                                    label="Date of Birth"
-                                    value={formData.date_of_birth}
-                                    onChange={(v) => updateField('date_of_birth', v)}
-                                    placeholder="YYYY-MM-DD"
-                                />
-                            ) : (
-                                <>
-                                    <Text style={styles.label}>Date of Birth</Text>
-                                    <TouchableOpacity
-                                        style={styles.dateInput}
-                                        onPress={() => setShowDatePicker(true)}
-                                    >
-                                        <Text style={formData.date_of_birth ? styles.inputText : styles.placeholderText}>
-                                            {formData.date_of_birth ? new Date(formData.date_of_birth).toLocaleDateString() : 'Select Date'}
-                                        </Text>
-                                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={20} color={designSystem.colors.text.tertiary} />
-                                    </TouchableOpacity>
-                                </>
-                            )}
+                            <EnhancedDatePicker
+                                label="Date of Birth"
+                                value={isoToDmy(formData.date_of_birth)}
+                                onChange={(dmyDate) => updateField('date_of_birth', dmyToIso(dmyDate))}
+                                placeholder="Select Date"
+                            />
                         </View>
                     </View>
-
-                    {/* Mobile Date Picker */}
-                    {Platform.OS !== 'web' && (
-                        <CustomDatePicker
-                            visible={showDatePicker}
-                            date={formData.date_of_birth ? new Date(formData.date_of_birth) : new Date()}
-                            onClose={() => setShowDatePicker(false)}
-                            onConfirm={(date) => {
-                                updateField('date_of_birth', date.toISOString().split('T')[0]);
-                                setShowDatePicker(false);
-                            }}
-                            title="Date of Birth"
-                        />
-                    )}
                 </View>
             )}
         </FormModal>
@@ -202,24 +188,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: designSystem.colors.text.primary,
         backgroundColor: '#fff',
-    },
-    dateInput: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: designSystem.colors.border.primary,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#fff',
-    },
-    inputText: {
-        fontSize: 15,
-        color: designSystem.colors.text.primary,
-    },
-    placeholderText: {
-        fontSize: 15,
-        color: designSystem.colors.text.tertiary,
     },
 });

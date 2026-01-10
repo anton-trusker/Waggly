@@ -154,7 +154,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                     // setVetClinicName(place.name || vetClinicName);
                                 }}
                                 placeholder={t('add_pet.step4.address_placeholder')}
-                                types={['veterinary_care', 'establishment', 'address']}
+                                types={['establishment']}
                                 label={t('add_pet.step4.address_label')}
                             />
 

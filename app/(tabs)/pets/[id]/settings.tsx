@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -10,6 +10,7 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import ManageAccessModal from '@/components/pet/settings/ManageAccessModal';
 import PrivacySettingsModal from '@/components/pet/settings/PrivacySettingsModal';
 import NotificationSettingsModal from '@/components/pet/settings/NotificationSettingsModal';
+import DeletePetModal from '@/components/pet/settings/DeletePetModal';
 
 export default function SettingsTab() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,33 +25,19 @@ export default function SettingsTab() {
   const [showManageAccess, setShowManageAccess] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleDeletePet = () => {
-    Alert.alert(
-      t('pet_profile.settings.alerts.delete.title'),
-      t('pet_profile.settings.alerts.delete.message', { name: pet?.name }),
-      [
-        {
-          text: t('pet_profile.settings.alerts.delete.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('pet_profile.settings.alerts.delete.confirm'),
-          style: 'destructive',
-          onPress: async () => {
-            setIsDeleting(true);
-            try {
-              await deletePet(id);
-              router.replace('/(tabs)/pets');
-            } catch (error) {
-              console.error('Failed to delete pet:', error);
-              Alert.alert(t('pet_profile.settings.alerts.error.title'), t('pet_profile.settings.alerts.error.delete_failed'));
-              setIsDeleting(false);
-            }
-          },
-        },
-      ]
-    );
+  const handleDeletePet = async () => {
+    setIsDeleting(true);
+    try {
+      await deletePet(id);
+      setShowDeleteModal(false);
+      router.replace('/(tabs)/pets');
+    } catch (error) {
+      console.error('Failed to delete pet:', error);
+      setIsDeleting(false);
+      // Optional: keep modal open or show error toast
+    }
   };
 
   return (
@@ -65,7 +52,7 @@ export default function SettingsTab() {
           onPress={() => setShowManageAccess(true)}
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>
-            <IconSymbol android_material_icon_name="diversity_1" size={24} color={theme.colors.text.primary} />
+            <IconSymbol android_material_icon_name="group" size={24} color={theme.colors.text.primary} />
           </View>
           <View style={styles.settingContent}>
             <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>{t('pet_profile.settings.items.transfer.title')}</Text>
@@ -73,12 +60,12 @@ export default function SettingsTab() {
               {t('pet_profile.settings.items.transfer.desc')}
             </Text>
           </View>
-          <IconSymbol android_material_icon_name="chevron_right" size={20} color={theme.colors.text.secondary} />
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color={theme.colors.text.secondary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.settingItem, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}
-          onPress={handleDeletePet}
+          onPress={() => setShowDeleteModal(true)}
           disabled={isDeleting}
         >
           <View style={[styles.settingIcon, { backgroundColor: '#FEE2E2' }]}>
@@ -86,13 +73,13 @@ export default function SettingsTab() {
           </View>
           <View style={styles.settingContent}>
             <Text style={[styles.settingTitle, { color: '#B91C1C' }]}>
-              {isDeleting ? t('pet_profile.settings.items.delete.deleting') : t('pet_profile.settings.items.delete.title')}
+              {t('pet_profile.settings.items.delete.title')}
             </Text>
             <Text style={[styles.settingDescription, { color: '#EF4444' }]}>
               {t('pet_profile.settings.items.delete.desc')}
             </Text>
           </View>
-          <IconSymbol android_material_icon_name="chevron_right" size={20} color="#EF4444" />
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color="#EF4444" />
         </TouchableOpacity>
       </View>
 
@@ -113,7 +100,7 @@ export default function SettingsTab() {
               {t('pet_profile.settings.items.privacy_settings.desc')}
             </Text>
           </View>
-          <IconSymbol android_material_icon_name="chevron_right" size={20} color={theme.colors.text.secondary} />
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color={theme.colors.text.secondary} />
         </TouchableOpacity>
       </View>
 
@@ -134,7 +121,7 @@ export default function SettingsTab() {
               {t('pet_profile.settings.items.notifications.desc')}
             </Text>
           </View>
-          <IconSymbol android_material_icon_name="chevron_right" size={20} color={theme.colors.text.secondary} />
+          <IconSymbol android_material_icon_name="chevron-right" size={20} color={theme.colors.text.secondary} />
         </TouchableOpacity>
       </View>
 
@@ -156,6 +143,14 @@ export default function SettingsTab() {
       />
       <PrivacySettingsModal visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
       <NotificationSettingsModal visible={showNotifications} onClose={() => setShowNotifications(false)} />
+
+      <DeletePetModal
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeletePet}
+        petName={pet?.name}
+        loading={isDeleting}
+      />
 
     </ScrollView>
   );

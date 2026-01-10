@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, TouchableOpacity, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, TouchableOpacity, Image } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { designSystem } from '@/constants/designSystem';
@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import CountrySelect from '@/components/ui/CountrySelect';
-import CustomDatePicker from '@/components/ui/CustomDatePicker';
+import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 
 interface UserOnboardingModalProps {
   visible: boolean;
@@ -24,6 +24,24 @@ const GENDERS = [
   { value: 'non_binary', label: 'Non-binary', icon: 'transgender' },
   { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: 'lock-closed' },
 ] as const;
+
+// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
+const isoToDmy = (isoDate: string): string => {
+  if (!isoDate) return '';
+  const parts = isoDate.split('-');
+  if (parts.length !== 3) return isoDate;
+  const [year, month, day] = parts;
+  return `${day}-${month}-${year}`;
+};
+
+// Convert DD-MM-YYYY back to ISO
+const dmyToIso = (dmyDate: string): string => {
+  if (!dmyDate) return '';
+  const parts = dmyDate.split('-');
+  if (parts.length !== 3) return dmyDate;
+  const [day, month, year] = parts;
+  return `${year}-${month}-${day}`;
+};
 
 export default function UserOnboardingModal({ visible, onClose, onComplete }: UserOnboardingModalProps) {
   const { user } = useAuth();
@@ -41,7 +59,6 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
   const [photo, setPhoto] = useState<string | null>(null);
   const [gender, setGender] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const hasPrefilled = useRef(false);
 
@@ -71,10 +88,10 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
   useEffect(() => {
     if (user?.user_metadata && !hasPrefilled.current) {
       const { full_name, first_name, last_name, avatar_url } = user.user_metadata;
-      
+
       if (first_name) setFirstName(first_name);
       if (last_name) setLastName(last_name);
-      
+
       // Fallback if split names aren't available but full_name is
       if (!first_name && !last_name && full_name) {
         const parts = full_name.split(' ');
@@ -86,7 +103,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
       if (avatar_url && !photo) {
         // We don't set 'photo' state directly with remote URL to avoid re-upload logic confusion
       }
-      
+
       hasPrefilled.current = true;
     }
   }, [user]);
@@ -139,7 +156,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
       setErrors(newErrors);
       return;
     }
-    
+
     setLoading(true);
 
     try {
@@ -185,7 +202,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
       <View style={styles.overlay}>
         <View style={[styles.container, isDesktop && styles.containerDesktop]}>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-            
+
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.title}>Welcome to Pawzly!</Text>
@@ -198,7 +215,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
                 {photo ? (
                   <Image source={{ uri: photo }} style={styles.avatar} />
                 ) : user?.user_metadata?.avatar_url ? (
-                   <Image source={{ uri: user.user_metadata.avatar_url }} style={styles.avatar} />
+                  <Image source={{ uri: user.user_metadata.avatar_url }} style={styles.avatar} />
                 ) : (
                   <View style={styles.avatarPlaceholder}>
                     <Ionicons name="camera" size={24} color={designSystem.colors.text.tertiary} />
@@ -218,7 +235,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
                     value={firstName}
                     onChangeText={(text) => {
                       setFirstName(text);
-                      if (errors.firstName) setErrors({...errors, firstName: ''});
+                      if (errors.firstName) setErrors({ ...errors, firstName: '' });
                     }}
                     error={errors.firstName}
                     required
@@ -233,7 +250,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
                     value={lastName}
                     onChangeText={(text) => {
                       setLastName(text);
-                      if (errors.lastName) setErrors({...errors, lastName: ''});
+                      if (errors.lastName) setErrors({ ...errors, lastName: '' });
                     }}
                     error={errors.lastName}
                     required
@@ -244,116 +261,70 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
 
               {/* Country and Phone */}
               <View style={[styles.row, { marginTop: 16, zIndex: 20 }]}>
-                 <View style={{ flex: 1 }}>
-                    <CountrySelect 
-                      value={countryCode} 
-                      onChange={(code) => {
-                        setCountryCode(code);
-                        if (errors.countryCode) setErrors({...errors, countryCode: ''});
-                      }}
-                      label="Country"
-                      error={errors.countryCode}
-                      containerStyle={{ backgroundColor: '#fff' }}
-                    />
-                 </View>
-                 <View style={{ width: 16 }} />
-                 <View style={{ flex: 1 }}>
-                    <Input
-                      label="Phone (Optional)"
-                      placeholder="+1 555..."
-                      value={phone}
-                      onChangeText={setPhone}
-                      keyboardType="phone-pad"
-                      containerStyle={{ backgroundColor: '#fff' }}
-                    />
-                 </View>
+                <View style={{ flex: 1 }}>
+                  <CountrySelect
+                    value={countryCode}
+                    onChange={(code) => {
+                      setCountryCode(code);
+                      if (errors.countryCode) setErrors({ ...errors, countryCode: '' });
+                    }}
+                    label="Country"
+                    error={errors.countryCode}
+                    containerStyle={{ backgroundColor: '#fff' }}
+                  />
+                </View>
+                <View style={{ width: 16 }} />
+                <View style={{ flex: 1 }}>
+                  <Input
+                    label="Phone (Optional)"
+                    placeholder="+1 555..."
+                    value={phone}
+                    onChangeText={setPhone}
+                    keyboardType="phone-pad"
+                    containerStyle={{ backgroundColor: '#fff' }}
+                  />
+                </View>
               </View>
 
               {/* Gender and DOB */}
               <View style={[styles.row, { marginTop: 16 }]}>
-                 <View style={{ flex: 1 }}>
-                    <Text style={styles.label}>Gender</Text>
-                    <View style={styles.genderContainer}>
-                      {GENDERS.map((g) => (
-                        <TouchableOpacity
-                          key={g.value}
-                          style={[
-                            styles.genderChip,
-                            gender === g.value && styles.genderChipActive,
-                            { paddingHorizontal: 10, justifyContent: 'center' }
-                          ]}
-                          onPress={() => setGender(g.value)}
-                        >
-                          <Ionicons 
-                            name={g.icon as any} 
-                            size={20} 
-                            color={gender === g.value ? designSystem.colors.primary[500] : designSystem.colors.text.secondary} 
-                          />
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                    {gender ? (
-                      <Text style={[styles.genderText, { marginTop: 4, fontSize: 12 }]}>
-                        {GENDERS.find(g => g.value === gender)?.label}
-                      </Text>
-                    ) : null}
-                 </View>
-                 <View style={{ width: 16 }} />
-                 <View style={{ flex: 1 }}>
-                     <Text style={styles.label}>Date of Birth</Text>
-                     {Platform.OS === 'web' ? (
-                       <View style={styles.dateInput}>
-                         <Ionicons name="calendar-outline" size={20} color={designSystem.colors.text.tertiary} />
-                         <input
-                           type="date"
-                           value={dateOfBirth}
-                           onChange={(e) => setDateOfBirth(e.target.value)}
-                           max={new Date().toISOString().split('T')[0]}
-                           style={{
-                             flex: 1,
-                             height: '100%',
-                             width: '100%',
-                             border: 'none',
-                             outline: 'none',
-                             backgroundColor: 'transparent',
-                             fontSize: 16,
-                             color: designSystem.colors.text.primary,
-                             fontFamily: 'inherit',
-                             padding: 0,
-                             margin: 0,
-                           }}
-                         />
-                       </View>
-                     ) : (
-                       <TouchableOpacity
-                         style={styles.dateInput}
-                         onPress={() => setShowDatePicker(true)}
-                       >
-                         <Ionicons name="calendar-outline" size={20} color={designSystem.colors.text.tertiary} />
-                         <Text style={[
-                           styles.dateText,
-                           !dateOfBirth && styles.placeholderText,
-                           { fontSize: 14 }
-                         ]} numberOfLines={1}>
-                           {dateOfBirth || 'Select Date'}
-                         </Text>
-                       </TouchableOpacity>
-                     )}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.label}>Gender</Text>
+                  <View style={styles.genderContainer}>
+                    {GENDERS.map((g) => (
+                      <TouchableOpacity
+                        key={g.value}
+                        style={[
+                          styles.genderChip,
+                          gender === g.value && styles.genderChipActive,
+                          { paddingHorizontal: 10, justifyContent: 'center' }
+                        ]}
+                        onPress={() => setGender(g.value)}
+                      >
+                        <Ionicons
+                          name={g.icon as any}
+                          size={20}
+                          color={gender === g.value ? designSystem.colors.primary[500] : designSystem.colors.text.secondary}
+                        />
+                      </TouchableOpacity>
+                    ))}
                   </View>
-               </View>
-
-               {Platform.OS !== 'web' && (
-                 <CustomDatePicker
-                    visible={showDatePicker}
-                    date={dateOfBirth ? new Date(dateOfBirth) : new Date()}
-                    onClose={() => setShowDatePicker(false)}
-                    onConfirm={(date) => {
-                      setDateOfBirth(date.toISOString().split('T')[0]);
-                      setShowDatePicker(false);
-                    }}
-                    title="Select Date of Birth"
-                 />
-               )}
+                  {gender ? (
+                    <Text style={[styles.genderText, { marginTop: 4, fontSize: 12 }]}>
+                      {GENDERS.find(g => g.value === gender)?.label}
+                    </Text>
+                  ) : null}
+                </View>
+                <View style={{ width: 16 }} />
+                <View style={{ flex: 1 }}>
+                  <EnhancedDatePicker
+                    label="Date of Birth"
+                    value={isoToDmy(dateOfBirth)}
+                    onChange={(dmyDate) => setDateOfBirth(dmyToIso(dmyDate))}
+                    placeholder="Select Date"
+                  />
+                </View>
+              </View>
 
             </View>
 
@@ -479,27 +450,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: designSystem.colors.text.secondary,
     fontWeight: '500',
-  },
-  genderTextActive: {
-    color: designSystem.colors.primary[500],
-    fontWeight: '600',
-  },
-  dateInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 48,
-    borderWidth: 1,
-    borderColor: designSystem.colors.border.primary,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    gap: 10,
-    backgroundColor: '#fff',
-  },
-  dateText: {
-    fontSize: 16,
-    color: designSystem.colors.text.primary,
-  },
-  placeholderText: {
-    color: designSystem.colors.text.tertiary,
   },
 });
