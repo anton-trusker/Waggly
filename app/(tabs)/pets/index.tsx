@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
-import { PetPassportCard } from '@/components/pet/PetPassportCard';
+import { PetDetailedCard } from '@/components/pet/PetDetailedCard';
 import { PetCardSkeleton } from '@/components/skeletons/PetCardSkeleton';
+import ShareModal from '@/components/desktop/modals/ShareModal';
+import { Pet } from '@/types';
 
 import { useLocale } from '@/hooks/useLocale';
 
@@ -15,6 +17,13 @@ export default function PetsListPage() {
   const isMobile = width < 768;
   const { t } = useLocale();
 
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [selectedPetForShare, setSelectedPetForShare] = useState<Pet | null>(null);
+
+  const handleQrPress = (pet: Pet) => {
+    setSelectedPetForShare(pet);
+    setShareModalVisible(true);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -48,9 +57,10 @@ export default function PetsListPage() {
         <View style={[styles.grid, isMobile && styles.gridMobile]}>
           {pets.map((pet) => (
             <View key={pet.id} style={[styles.cardWrapper, isMobile && styles.cardWrapperMobile]}>
-              <PetPassportCard
+              <PetDetailedCard
                 pet={pet}
                 onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
+                onQrPress={() => handleQrPress(pet)}
               />
 
             </View>
@@ -59,6 +69,18 @@ export default function PetsListPage() {
       )}
 
       {isMobile && <View style={{ height: 80 }} />}
+
+      {/* Share Modal */}
+      {selectedPetForShare && (
+        <ShareModal
+          visible={shareModalVisible}
+          onClose={() => {
+            setShareModalVisible(false);
+            setSelectedPetForShare(null);
+          }}
+          petId={selectedPetForShare.id}
+        />
+      )}
 
     </ScrollView>
   );

@@ -1,37 +1,52 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocale } from '@/hooks/useLocale';
 import { Pet } from '@/types';
+import { usePetHealthScore } from '@/hooks/usePetHealthScore';
+import { differenceInYears, differenceInMonths, format } from 'date-fns';
+import { designSystem } from '@/constants/designSystem';
+import { CalendarEvent } from '@/hooks/useEvents';
 
 interface PetPassportCardProps {
     pet: Pet;
     onPress?: () => void;
     onQrPress?: () => void;
+    alerts?: CalendarEvent[];
+    cardWidth?: number;
 }
 
-import { usePetHealthScore } from '@/hooks/usePetHealthScore';
-
-// ...
-
-// Memoized for performance
-export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassportCardProps) => {
+export const PetPassportCard = React.memo(({ pet, onPress, onQrPress, alerts = [], cardWidth }: PetPassportCardProps) => {
     const { t } = useLocale();
     const { width } = useWindowDimensions();
-    const isMobile = width < 768; // Mobile breakpoint
+    const isMobile = width < 768;
     const { score, loading: scoreLoading } = usePetHealthScore(pet);
 
-    // Generate a consistent color theme based on pet id or index? 
-    // For now, let's use a nice default passport blue/purple gradient.
-    const gradientColors = ['#4F46E5', '#818CF8'] as const;
+    const gradientColors = ['#5B21B6', '#7C3AED'] as const; // Richer purple gradient
 
-    // Health Score Color
     const getScoreColor = (s: number) => {
-        if (s >= 80) return '#10B981'; // Emerald
-        if (s >= 50) return '#F59E0B'; // Amber
-        return '#EF4444'; // Red
+        if (s >= 80) return '#10B981';
+        if (s >= 50) return '#F59E0B';
+        return '#EF4444';
     };
+
+    const ageLabel = useMemo(() => {
+        if (!pet.date_of_birth) return '--';
+        const dob = new Date(pet.date_of_birth);
+        const years = differenceInYears(new Date(), dob);
+        if (years > 0) {
+            return years === 1 ? `1 ${t('common.year', { defaultValue: 'year' })}` : `${years} ${t('common.years', { defaultValue: 'years' })}`;
+        }
+        const months = differenceInMonths(new Date(), dob);
+        return months === 1 ? `1 ${t('common.month', { defaultValue: 'month' })}` : `${months} ${t('common.months', { defaultValue: 'months' })}`;
+    }, [pet.date_of_birth, t]);
+
+    const urgentAlerts = useMemo(() => {
+        return alerts
+            .filter(a => a.priority === 'high')
+            .slice(0, 1);
+    }, [alerts]);
 
     return (
         <TouchableOpacity
@@ -42,322 +57,150 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress }: PetPassp
             <LinearGradient
                 colors={gradientColors}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0.5 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.gradientBackground}
             >
-                {/* Header Row */}
-                <View style={styles.headerRow}>
-                    <View style={styles.passportLabelContainer}>
-                        {pet.microchip_number && (
-                            <View style={styles.microchipContainer}>
-                                <IconSymbol
-                                    ios_icon_name="memorychip"
-                                    android_material_icon_name="memory"
-                                    size={14}
-                                    color="rgba(255,255,255,0.9)"
-                                />
-                                <Text style={styles.microchipText}>
-                                    {pet.microchip_number}
-                                </Text>
+                {/* Horizontal Layout: Photo Left, Info Right */}
+                <View style={styles.cardContent}>
+                    {/* Pet Photo */}
+                    <View style={styles.photoWrapper}>
+                        {pet.photo_url ? (
+                            <Image source={{ uri: pet.photo_url }} style={styles.avatar} />
+                        ) : (
+                            <View style={styles.avatarPlaceholder}>
+                                <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="rgba(255,255,255,0.5)" />
                             </View>
                         )}
-                    </View>
-
-                    <View style={styles.headerRight}>
-                        <TouchableOpacity style={styles.qrButton} onPress={onQrPress}>
-                            <IconSymbol
-                                ios_icon_name="qrcode"
-                                android_material_icon_name="qr-code-scanner"
-                                size={20}
-                                color="#fff"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Main Content - New Layout */}
-                <View style={styles.contentContainer}>
-                    {/* Top Row: Photo + Name/Breed - Always Visible */}
-                    <View style={styles.topRow}>
-                        {/* Photo */}
-                        <View style={styles.photoContainer}>
-                            {pet.photo_url ? (
-                                <Image source={{ uri: pet.photo_url }} style={styles.photo} />
-                            ) : (
-                                <View style={styles.photoPlaceholder}>
-                                    <IconSymbol
-                                        ios_icon_name="pawprint.fill"
-                                        android_material_icon_name="pets"
-                                        size={32}
-                                        color="#C7D2FE"
-                                    />
-                                </View>
-                            )}
-                            <View style={styles.verifiedBadge}>
-                                <IconSymbol
-                                    ios_icon_name="checkmark.circle.fill"
-                                    android_material_icon_name="verified"
-                                    size={16}
-                                    color="#10B981"
-                                />
-                            </View>
-                        </View>
-
-                        {/* Name & Breed */}
-                        <View style={styles.nameSection}>
-                            <View style={styles.nameRow}>
-                                <Text style={styles.nameText}>{pet.name}</Text>
-                                <View style={styles.genderBadge}>
-                                    <IconSymbol
-                                        ios_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                        android_material_icon_name={pet.gender === 'female' ? "female" : "male"}
-                                        size={14}
-                                        color={pet.gender === 'female' ? '#EC4899' : '#3B82F6'}
-                                    />
-                                </View>
-                            </View>
-                            <Text style={styles.breedText}>{pet.breed || pet.species || t('passport.unknown_breed')}</Text>
-                            {pet.registration_id && (
-                                <Text style={styles.regText}>{t('passport.reg')}: {pet.registration_id}</Text>
-                            )}
+                        <View style={styles.statusBadge}>
+                            <IconSymbol ios_icon_name="checkmark.seal.fill" android_material_icon_name="verified" size={8} color="#10B981" />
                         </View>
                     </View>
 
-
-                    {/* Details Table */}
-                    <View style={styles.detailsTable}>
-                        <View style={styles.tableRow}>
-                            <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>{t('passport.dob')}</Text>
-                                <Text style={styles.tableCellValue}>
-                                    {pet.date_of_birth
-                                        ? new Date(pet.date_of_birth).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })
-                                        : '--'}
-                                </Text>
-                            </View>
-                            <View style={styles.tableCellDivider} />
-                            <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>{t('passport.weight')}</Text>
-                                <Text style={styles.tableCellValue}>
-                                    {pet.weight ? `${pet.weight} kg` : '--'}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={styles.tableRowDivider} />
-                        <View style={styles.tableRow}>
-                            <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>Health Score</Text>
-                                <Text
-                                    style={[
-                                        styles.tableCellValue,
-                                        { color: getScoreColor(score), fontWeight: '800' }
-                                    ]}
-                                    numberOfLines={1}
-                                >
-                                    {scoreLoading ? '--' : `${score}/100`}
-                                </Text>
-                            </View>
-                            <View style={styles.tableCellDivider} />
-                            <View style={styles.tableCell}>
-                                <Text style={styles.tableCellLabel}>{t('passport.blood_type')}</Text>
-                                <Text style={styles.tableCellValue}>
-                                    {pet.blood_type || '--'}
+                    {/* Pet Info */}
+                    <View style={styles.infoColumn}>
+                        <Text style={styles.name} numberOfLines={1}>{pet.name}</Text>
+                        <Text style={styles.breed} numberOfLines={1}>
+                            {pet.breed || pet.species || t('passport.unknown_breed')}
+                        </Text>
+                        <View style={styles.statsRow}>
+                            <View style={styles.statItem}>
+                                <View style={[styles.scoreDot, { backgroundColor: getScoreColor(score) }]} />
+                                <Text style={[styles.statValue, { color: getScoreColor(score) }]}>
+                                    {scoreLoading ? '--' : `${score}%`}
                                 </Text>
                             </View>
                         </View>
                     </View>
                 </View>
 
-                {/* Decorative Elements */}
-                <View style={styles.watermarkContainer}>
-                    <IconSymbol
-                        ios_icon_name="pawprint.fill"
-                        android_material_icon_name="pets"
-                        size={120}
-                        color="rgba(255,255,255,0.05)"
-                    />
+                {/* Decorative Paw */}
+                <View style={styles.pawWatermark}>
+                    <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={70} color="rgba(255,255,255,0.03)" />
                 </View>
             </LinearGradient>
         </TouchableOpacity>
     );
 });
 
-
 const styles = StyleSheet.create({
     cardContainer: {
-        borderRadius: 20,
+        borderRadius: 40, // High radius for pill/rounded effect
         overflow: 'hidden',
-        shadowColor: '#4F46E5',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
-        shadowRadius: 16,
-        elevation: 8,
-        minWidth: 320,
-        marginVertical: 8,
+        ...designSystem.shadows.md,
+        marginVertical: 4,
+        height: 80, // Compact height
+        width: 160, // Wider for horizontal layout
     },
     gradientBackground: {
-        padding: 20,
-        minHeight: 220,
+        padding: 8,
+        flex: 1,
     },
-    headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    passportLabelContainer: {
+    cardContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
+        gap: 10,
+        flex: 1,
     },
-    passportLabel: {
-        color: '#fff',
-        fontWeight: '700',
-        fontSize: 10,
-        letterSpacing: 1,
-    },
-    microchipContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    microchipText: {
-        color: '#fff',
-        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-        fontSize: 14,
-        fontWeight: '700',
-    },
-    headerRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    qrButton: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
-    },
-    contentContainer: {
-        zIndex: 10,
-    },
-    topRow: {
-        flexDirection: 'row',
-        gap: 16,
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    photoContainer: {
+    photoWrapper: {
         position: 'relative',
     },
-    photo: {
-        width: 72,
-        height: 72,
-        borderRadius: 12,
+    avatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25, // Fully circular
         borderWidth: 2,
         borderColor: 'rgba(255,255,255,0.5)',
     },
-    photoPlaceholder: {
-        width: 72,
-        height: 72,
-        borderRadius: 12,
-        backgroundColor: 'rgba(255,255,255,0.1)',
+    avatarPlaceholder: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderWidth: 2,
-        borderColor: 'rgba(255,255,255,0.3)',
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderColor: 'rgba(255,255,255,0.25)',
     },
-    verifiedBadge: {
+    statusBadge: {
         position: 'absolute',
-        bottom: -4,
-        right: -4,
+        bottom: 0,
+        right: 0,
         backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 2,
-    },
-    nameSection: {
-        flex: 1,
-    },
-    nameRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 4,
-    },
-    nameText: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: '#fff',
-        letterSpacing: -0.5,
-    },
-    genderBadge: {
-        backgroundColor: '#fff',
-        width: 20,
-        height: 20,
-        borderRadius: 10,
+        width: 14,
+        height: 14,
+        borderRadius: 7,
         alignItems: 'center',
         justifyContent: 'center',
+        ...designSystem.shadows.sm,
     },
-    breedText: {
-        fontSize: 13,
-        color: 'rgba(255,255,255,0.8)',
-        fontWeight: '500',
-    },
-    regText: {
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.6)',
-        marginTop: 4,
-        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    },
-    detailsTable: {
-        backgroundColor: 'rgba(0,0,0,0.15)',
-        borderRadius: 12,
-        overflow: 'hidden',
-    },
-    tableRow: {
-        flexDirection: 'row',
-    },
-    tableRowDivider: {
-        height: 1,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-    },
-    tableCell: {
+    infoColumn: {
         flex: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 14,
+        justifyContent: 'center',
     },
-    tableCellDivider: {
+    statsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 3,
+    },
+    statItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 3,
+    },
+    statDivider: {
         width: 1,
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        height: 10,
+        backgroundColor: 'rgba(255,255,255,0.3)',
     },
-    tableCellLabel: {
-        fontSize: 9,
-        color: 'rgba(255,255,255,0.5)',
-        fontWeight: '700',
-        letterSpacing: 0.5,
-        marginBottom: 4,
+    scoreDot: {
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
     },
-    tableCellValue: {
-        fontSize: 13,
+    statValue: {
+        fontSize: 11,
         color: '#fff',
-        fontWeight: '600',
+        fontWeight: '800',
     },
-    watermarkContainer: {
+    name: {
+        fontSize: 15,
+        fontWeight: '900',
+        color: '#fff',
+        letterSpacing: -0.3,
+    },
+    breed: {
+        fontSize: 10,
+        color: 'rgba(255,255,255,0.75)',
+        fontWeight: '600',
+        marginTop: 1,
+    },
+    pawWatermark: {
         position: 'absolute',
-        right: -20,
-        bottom: -20,
-        opacity: 0.5,
+        bottom: -8,
+        right: -8,
         transform: [{ rotate: '-15deg' }],
         zIndex: 0,
+        opacity: 0.8,
     },
 });

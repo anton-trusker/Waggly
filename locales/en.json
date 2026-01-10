@@ -37,7 +37,12 @@
     "load_more_results": "Load more results",
     "skip": "Skip for now",
     "finish": "Finish",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "pet": "Pet",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "notes": "Notes"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -582,14 +587,6 @@
     "verify_email": "Please check your email to verify your account.",
     "reset_sent": "Password reset email sent! Please check your inbox."
   },
-  "calendar": {
-    "filter_filters": "Filters",
-    "filter_done": "Done",
-    "period_3m": "3 Months",
-    "period_6m": "6 Months",
-    "period_1y": "Year",
-    "period_all": "All Upcoming"
-  },
   "documents": {
     "title": "Documents",
     "subtitle_count": "{{count}} documents stored",
@@ -716,6 +713,9 @@
     "past_events": "Past Events",
     "today": "Today",
     "tomorrow": "Tomorrow",
+    "event_details": "Event Details",
+    "birthday_title": "{{name}}'s Birthday",
+    "birthday_notes": "Turns {{age}} years old!",
     "event_types": {
       "vaccination": "Vaccination",
       "treatment": "Treatment",

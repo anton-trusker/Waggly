@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
 import { format, isToday, isTomorrow, isThisWeek, isPast } from 'date-fns';
@@ -55,72 +55,93 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
     const renderEvent = (event: Event & { date: Date }) => {
         const config = EVENT_TYPE_CONFIG[event.type] || EVENT_TYPE_CONFIG.other;
         const isPastEvent = isPast(event.date) && !isToday(event.date);
+        const scaleAnim = new Animated.Value(1);
+
+        const handlePressIn = () => {
+            Animated.spring(scaleAnim, {
+                toValue: 0.98,
+                useNativeDriver: true,
+            }).start();
+        };
+
+        const handlePressOut = () => {
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                useNativeDriver: true,
+            }).start();
+        };
 
         return (
-            <TouchableOpacity
+            <Animated.View
                 key={event.id}
-                style={[styles.eventCard, isPastEvent && styles.eventCardPast]}
-                onPress={() => onEventClick?.(event)}
-                activeOpacity={0.7}
+                style={{ transform: [{ scale: scaleAnim }] }}
             >
-                <View style={[styles.eventIndicator, { backgroundColor: config.color }]} />
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPressIn={handlePressIn}
+                    onPressOut={handlePressOut}
+                    onPress={() => onEventClick?.(event)}
+                    style={[styles.eventCard, isPastEvent && styles.eventCardPast]}
+                >
+                    <View style={[styles.eventIndicator, { backgroundColor: config.color }]} />
 
-                <View style={styles.eventContent}>
-                    <View style={styles.eventHeader}>
-                        <View style={styles.eventTitleRow}>
-                            <IconSymbol
-                                ios_icon_name="calendar"
-                                android_material_icon_name="event"
-                                size={16}
-                                color={config.color}
-                            />
-                            <Text style={[styles.eventTitle, isPastEvent && styles.textMuted]}>
-                                {event.title}
-                            </Text>
-                        </View>
-                        <View style={[styles.typeBadge, { backgroundColor: `${config.color}15` }]}>
-                            <Text style={[styles.typeBadgeText, { color: config.color }]}>
-                                {t(`calendar.event_types.${config.labelKey}`)}
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.eventDetails}>
-                        <View style={styles.eventDetailRow}>
-                            <IconSymbol
-                                ios_icon_name="clock"
-                                android_material_icon_name="schedule"
-                                size={14}
-                                color={designSystem.colors.text.tertiary}
-                            />
-                            <Text style={[styles.eventDetailText, isPastEvent && styles.textMuted]}>
-                                {getDateLabel(event.date)}
-                                {event.time && ` • ${event.time}`}
-                            </Text>
+                    <View style={styles.eventContent}>
+                        <View style={styles.eventHeader}>
+                            <View style={styles.eventTitleRow}>
+                                <IconSymbol
+                                    ios_icon_name="calendar"
+                                    android_material_icon_name="event"
+                                    size={16}
+                                    color={config.color}
+                                />
+                                <Text style={[styles.eventTitle, isPastEvent && styles.textMuted]}>
+                                    {event.title}
+                                </Text>
+                            </View>
+                            <View style={[styles.typeBadge, { backgroundColor: `${config.color}15` }]}>
+                                <Text style={[styles.typeBadgeText, { color: config.color }]}>
+                                    {t(`calendar.event_types.${config.labelKey}`)}
+                                </Text>
+                            </View>
                         </View>
 
-                        {event.petName && (
+                        <View style={styles.eventDetails}>
                             <View style={styles.eventDetailRow}>
                                 <IconSymbol
-                                    ios_icon_name="pawprint"
-                                    android_material_icon_name="pets"
+                                    ios_icon_name="clock"
+                                    android_material_icon_name="schedule"
                                     size={14}
                                     color={designSystem.colors.text.tertiary}
                                 />
                                 <Text style={[styles.eventDetailText, isPastEvent && styles.textMuted]}>
-                                    {event.petName}
+                                    {getDateLabel(event.date)}
+                                    {event.time && ` • ${event.time}`}
                                 </Text>
                             </View>
+
+                            {event.petName && (
+                                <View style={styles.eventDetailRow}>
+                                    <IconSymbol
+                                        ios_icon_name="pawprint"
+                                        android_material_icon_name="pets"
+                                        size={14}
+                                        color={designSystem.colors.text.tertiary}
+                                    />
+                                    <Text style={[styles.eventDetailText, isPastEvent && styles.textMuted]}>
+                                        {event.petName}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+
+                        {(event.notes || event.description) && (
+                            <Text style={[styles.eventDescription, isPastEvent && styles.textMuted]} numberOfLines={2}>
+                                {event.notes || event.description}
+                            </Text>
                         )}
                     </View>
-
-                    {(event.notes || event.description) && (
-                        <Text style={[styles.eventDescription, isPastEvent && styles.textMuted]} numberOfLines={2}>
-                            {event.notes || event.description}
-                        </Text>
-                    )}
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+            </Animated.View>
         );
     };
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,19 +7,22 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
 import ShareModal from '@/components/desktop/modals/ShareModal';
 import { Pet } from '@/types';
-
+import * as Haptics from 'expo-haptics';
+import { CalendarEvent } from '@/hooks/useEvents';
+import { designSystem } from '@/constants/designSystem';
 
 interface MyPetsWidgetProps {
     pets: Pet[];
     loading?: boolean;
+    events?: CalendarEvent[];
 }
 
-export default function MyPetsWidget({ pets, loading = false }: MyPetsWidgetProps) {
+export default function MyPetsWidget({ pets, loading = false, events = [] }: MyPetsWidgetProps) {
     const router = useRouter();
     const { theme } = useAppTheme();
     const { width } = useWindowDimensions();
-    const isLargeScreen = width >= 1024;
-
+    const isMobile = width < 768;
+    const [activeIndex, setActiveIndex] = useState(0);
     const [shareModalVisible, setShareModalVisible] = useState(false);
     const [selectedPetForShare, setSelectedPetForShare] = useState<Pet | null>(null);
 
@@ -30,7 +33,23 @@ export default function MyPetsWidget({ pets, loading = false }: MyPetsWidgetProp
         setShareModalVisible(true);
     };
 
-    // Empty State Banner
+    const cardGap = 12;
+    const horizontalPadding = 16;
+    const cardWidth = isMobile ? (width - (horizontalPadding * 2 + cardGap)) / 2 : 360;
+
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const slideSize = cardWidth + cardGap;
+        const index = event.nativeEvent.contentOffset.x / slideSize;
+        const roundIndex = Math.round(index);
+
+        if (roundIndex !== activeIndex && roundIndex >= 0 && roundIndex < pets.length) {
+            setActiveIndex(roundIndex);
+            if (Platform.OS !== 'web') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+        }
+    };
+
     if (!hasPets && !loading) {
         return (
             <View style={styles.container}>
@@ -64,27 +83,64 @@ export default function MyPetsWidget({ pets, loading = false }: MyPetsWidgetProp
     }
 
     return (
-        <View style={[styles.container, {
-            borderColor: theme.colors.border.primary,
-            backgroundColor: theme.colors.background.primary
-        }]}>
+        <View style={styles.container}>
             <ScrollView
                 horizontal
+                pagingEnabled={false} // Disable standard paging for partial slides
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingHorizontal: horizontalPadding },
+                    !isMobile && { paddingRight: 24, gap: 24 }
+                ]}
+                snapToInterval={cardWidth + cardGap}
+                snapToAlignment="start"
+                decelerationRate="fast"
             >
-                {pets.map((pet) => (
-                    <View key={pet.id} style={styles.cardWrapper}>
+                {pets.map((pet, index) => (
+                    <View
+                        key={pet.id}
+                        style={[
+                            styles.cardWrapper,
+                            {
+                                width: cardWidth,
+                                marginRight: index === pets.length - 1 ? 0 : cardGap
+                            }
+                        ]}
+                    >
                         <PetPassportCard
                             pet={pet}
                             onPress={() => router.push(`/(tabs)/pets/${pet.id}` as any)}
                             onQrPress={() => handleQrPress(pet)}
+                            alerts={events.filter(e => e.petId === pet.id)}
+                            cardWidth={cardWidth}
                         />
                     </View>
                 ))}
             </ScrollView>
 
-            {/* Share Modal */}
+            {/* Pagination Dots */}
+            {isMobile && pets.length > 2 && (
+                <View style={styles.pagination}>
+                    {pets.map((_, index) => (
+                        <View
+                            key={index}
+                            style={[
+                                styles.dot,
+                                {
+                                    backgroundColor: index === activeIndex
+                                        ? designSystem.colors.primary[500]
+                                        : 'rgba(0,0,0,0.1)',
+                                    width: index === activeIndex ? 20 : 6
+                                }
+                            ]}
+                        />
+                    ))}
+                </View>
+            )}
+
             {selectedPetForShare && (
                 <ShareModal
                     visible={shareModalVisible}
@@ -101,52 +157,31 @@ export default function MyPetsWidget({ pets, loading = false }: MyPetsWidgetProp
 
 const styles = StyleSheet.create({
     container: {
-        // No marginBottom - grid gap handles spacing
+        marginBottom: 8,
     },
-
     scrollContent: {
-        gap: 16,
-        paddingRight: 16,
-        justifyContent: 'center', // Center cards on mobile
-        flexGrow: 1, // Allow centering when content is smaller than viewport
+        alignItems: 'center',
+        paddingBottom: 8,
+        justifyContent: 'center', // Center cards horizontally
     },
     cardWrapper: {
-        // width: 'auto',
+        // marginRight managed dynamically via cardGap
     },
-    addCard: {
-        width: 140, // Match horizontal card width roughly or smaller
-        height: 72, // Match horizontal card height roughly (40 + padding)
-        borderRadius: 16,
-        borderWidth: 1,
-        borderStyle: 'dashed',
+    pagination: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
-    },
-    addIconContainer: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: 'rgba(0,0,0,0.05)',
         alignItems: 'center',
-        justifyContent: 'center',
+        marginTop: 12,
+        gap: 6,
     },
-    addText: {
-        fontSize: 13,
-        fontWeight: '600',
-        fontFamily: 'Plus Jakarta Sans',
+    dot: {
+        height: 6,
+        borderRadius: 3,
     },
-    addText: {
-        fontSize: 13,
-        fontWeight: '600',
-        fontFamily: 'Plus Jakarta Sans',
-    },
-    // Empty State Styles
     emptyBanner: {
-        borderRadius: 20,
-        padding: 24,
-        overflow: 'hidden',
+        borderRadius: 24,
+        padding: 32,
+        ...designSystem.shadows.md,
     },
     emptyContent: {
         alignItems: 'center',

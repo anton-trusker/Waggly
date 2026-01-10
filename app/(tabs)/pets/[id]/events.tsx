@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, ScrollView, Text, Pressable, TouchableOpacity, StyleSheet, useWindowDimensions, Animated } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { useEvents } from '@/hooks/useEvents';
@@ -85,36 +85,63 @@ export default function EventsTab() {
               <View className="space-y-3">
                 {upcomingEvents.map((event) => {
                   const daysUntil = Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                  const scaleAnim = new Animated.Value(1);
+
+                  const handlePressIn = () => {
+                    Animated.spring(scaleAnim, {
+                      toValue: 0.98,
+                      useNativeDriver: true,
+                    }).start();
+                  };
+
+                  const handlePressOut = () => {
+                    Animated.spring(scaleAnim, {
+                      toValue: 1,
+                      useNativeDriver: true,
+                    }).start();
+                  };
+
                   return (
-                    <View key={event.id} className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50">
-                      <View className="flex items-center gap-4">
-                        <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
-                          <IconSymbol name={getEventIcon(event.type)} size={24} />
-                        </View>
-                        <View className="flex-1">
-                          <View className="flex justify-between items-start">
-                            <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
-                            <Text className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                              {daysUntil === 0 ? t('common.today') : daysUntil === 1 ? t('common.tomorrow') : t('common.in_x_days', { count: daysUntil })}
-                            </Text>
+                    <Animated.View
+                      key={event.id}
+                      style={{ transform: [{ scale: scaleAnim }] }}
+                    >
+                      <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPressIn={handlePressIn}
+                        onPressOut={handlePressOut}
+                        onPress={() => router.push(`/events/${event.id}`)}
+                        className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50"
+                      >
+                        <View className="flex items-center gap-4">
+                          <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
+                            <IconSymbol name={getEventIcon(event.type)} size={24} />
                           </View>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                            <IconSymbol android_material_icon_name="calendar_today" size={14} color="#6B7280" />
-                            <Text style={styles.eventTimeText}>{formatDate(event.date)}</Text>
-                            <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
-                            <Text style={styles.eventTimeText}>
-                              {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
-                            </Text>
+                          <View className="flex-1">
+                            <View className="flex justify-between items-start">
+                              <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
+                              <Text className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                                {daysUntil === 0 ? t('common.today') : daysUntil === 1 ? t('common.tomorrow') : t('common.in_x_days', { count: daysUntil })}
+                              </Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                              <IconSymbol android_material_icon_name="calendar_today" size={14} color="#6B7280" />
+                              <Text style={styles.eventTimeText}>{formatDate(event.date)}</Text>
+                              <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                              <Text style={styles.eventTimeText}>
+                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                              </Text>
+                            </View>
+                            {event.location && (
+                              <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
+                            )}
+                            {event.notes && (
+                              <Text className="text-sm text-text-light dark:text-text-dark mt-2">{event.notes}</Text>
+                            )}
                           </View>
-                          {event.location && (
-                            <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
-                          )}
-                          {event.notes && (
-                            <Text className="text-sm text-text-light dark:text-text-dark mt-2">{event.notes}</Text>
-                          )}
                         </View>
-                      </View>
-                    </View>
+                      </TouchableOpacity>
+                    </Animated.View>
                   );
                 })}
               </View>
@@ -129,33 +156,62 @@ export default function EventsTab() {
                 <Text style={styles.sectionTitle}>{t('pet_profile.events.sections.past')}</Text>
               </View>
               <View className="space-y-3">
-                {pastEvents.map((event) => (
-                  <View key={event.id} className="bg-card-light dark:bg-card-dark rounded-xl p-4 border border-border-light dark:border-border-dark">
-                    <View className="flex items-center gap-4">
-                      <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
-                        <IconSymbol name={getEventIcon(event.type)} size={24} />
-                      </View>
-                      <View className="flex-1">
-                        <View className="flex justify-between items-start">
-                          <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
-                          <Text className="text-sm text-muted-light dark:text-muted-dark">{formatDate(event.date)}</Text>
+                {pastEvents.map((event) => {
+                  const scaleAnim = new Animated.Value(1);
+
+                  const handlePressIn = () => {
+                    Animated.spring(scaleAnim, {
+                      toValue: 0.98,
+                      useNativeDriver: true,
+                    }).start();
+                  };
+
+                  const handlePressOut = () => {
+                    Animated.spring(scaleAnim, {
+                      toValue: 1,
+                      useNativeDriver: true,
+                    }).start();
+                  };
+
+                  return (
+                    <Animated.View
+                      key={event.id}
+                      style={{ transform: [{ scale: scaleAnim }] }}
+                    >
+                      <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPressIn={handlePressIn}
+                        onPressOut={handlePressOut}
+                        onPress={() => router.push(`/events/${event.id}`)}
+                        className="bg-card-light dark:bg-card-dark rounded-xl p-4 border border-border-light dark:border-border-dark"
+                      >
+                        <View className="flex items-center gap-4">
+                          <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
+                            <IconSymbol name={getEventIcon(event.type)} size={24} />
+                          </View>
+                          <View className="flex-1">
+                            <View className="flex justify-between items-start">
+                              <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
+                              <Text className="text-sm text-muted-light dark:text-muted-dark">{formatDate(event.date)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                              <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                              <Text style={styles.eventTimeText}>
+                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                              </Text>
+                            </View>
+                            {event.location && (
+                              <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
+                            )}
+                            {event.notes && (
+                              <Text className="text-sm text-text-light dark:text-text-dark mt-2">{event.notes}</Text>
+                            )}
+                          </View>
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                          <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
-                          <Text style={styles.eventTimeText}>
-                            {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
-                          </Text>
-                        </View>
-                        {event.location && (
-                          <Text className="text-sm text-muted-light dark:text-muted-dark">{event.location}</Text>
-                        )}
-                        {event.notes && (
-                          <Text className="text-sm text-text-light dark:text-text-dark mt-2">{event.notes}</Text>
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                ))}
+                      </TouchableOpacity>
+                    </Animated.View>
+                  );
+                })}
               </View>
             </View>
           )}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { View, StyleSheet, useWindowDimensions, Modal, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, Modal, TouchableOpacity, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarGridDesktop from '@/components/desktop/calendar/CalendarGridDesktop';
 import CalendarFilters from '@/components/desktop/calendar/CalendarFilters';
@@ -102,14 +102,27 @@ export default function CalendarPage() {
         setSelectedDate(date);
     };
 
-    const handleEventClick = (event: any) => {
-        console.log('Event clicked:', event);
+    const [navigating, setNavigating] = useState(false);
+
+    const handleEventClick = async (event: any) => {
+        if (!event.id) return;
+        setNavigating(true);
+        // Small delay to ensure the visual feedback is seen
+        setTimeout(() => {
+            router.push(`/events/${event.id}`);
+            setNavigating(false);
+        }, 100);
     };
 
     const hasActiveFilters = selectedPets.length > 0 || selectedTypes.length > 0;
 
     return (
         <View style={styles.container}>
+            {navigating && (
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255,255,255,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 999 }]}>
+                    <ActivityIndicator size="large" color={designSystem.colors.primary[500]} />
+                </View>
+            )}
             {/* Mobile Header */}
             {isMobile && (
                 <MobileCalendarHeader

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -159,17 +159,42 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
                                             {day}
                                         </Text>
                                         <View style={styles.eventsList}>
-                                            {dayEvents.slice(0, 3).map((event, idx) => (
-                                                <TouchableOpacity
-                                                    key={event.id}
-                                                    style={[styles.eventPill, { backgroundColor: event.color || '#6366F1' }]}
-                                                    onPress={() => onEventClick?.(event)}
-                                                >
-                                                    <Text style={styles.eventText} numberOfLines={1}>
-                                                        {event.title}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
+                                            {dayEvents.slice(0, 3).map((event, idx) => {
+                                                const scaleAnim = new Animated.Value(1);
+
+                                                const handlePressIn = () => {
+                                                    Animated.spring(scaleAnim, {
+                                                        toValue: 0.98,
+                                                        useNativeDriver: true,
+                                                    }).start();
+                                                };
+
+                                                const handlePressOut = () => {
+                                                    Animated.spring(scaleAnim, {
+                                                        toValue: 1,
+                                                        useNativeDriver: true,
+                                                    }).start();
+                                                };
+
+                                                return (
+                                                    <Animated.View
+                                                        key={event.id}
+                                                        style={{ transform: [{ scale: scaleAnim }] }}
+                                                    >
+                                                        <TouchableOpacity
+                                                            activeOpacity={0.9}
+                                                            style={[styles.eventPill, { backgroundColor: event.color || '#6366F1' }]}
+                                                            onPressIn={handlePressIn}
+                                                            onPressOut={handlePressOut}
+                                                            onPress={() => onEventClick?.(event)}
+                                                        >
+                                                            <Text style={styles.eventText} numberOfLines={1}>
+                                                                {event.title}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    </Animated.View>
+                                                );
+                                            })}
                                             {dayEvents.length > 3 && (
                                                 <Text style={styles.moreEvents}>{t('calendar.grid.more_events', { count: dayEvents.length - 3 })}</Text>
                                             )}

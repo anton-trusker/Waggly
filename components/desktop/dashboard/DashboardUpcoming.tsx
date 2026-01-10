@@ -82,7 +82,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                                 <TouchableOpacity
                                     key={event.id}
                                     style={[styles.card, { borderColor: theme.colors.border.secondary }]}
-                                    onPress={() => router.push('/(tabs)/calendar' as any)}
+                                    onPress={() => router.push(`/events/${event.id}` as any)}
                                 >
                                     <View style={styles.cardHeader}>
                                         <View style={styles.headerLeftContent}>

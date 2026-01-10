@@ -123,7 +123,7 @@ export default function DashboardPage() {
                         {/* Mobile Layout - Direct vertical stack */}
                         {!isLargeScreen && (
                             <View style={styles.mobileStack}>
-                                <MyPetsWidget pets={pets} loading={loading} />
+                                <MyPetsWidget pets={pets} loading={loading} events={events} />
                                 {/* Quick Actions hidden on mobile/tablet */}
                                 {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
                                 <DashboardUpcoming events={events} />
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                             <View style={styles.gridLarge}>
                                 {/* Left Column (Main) */}
                                 <View style={styles.colMain}>
-                                    <MyPetsWidget pets={pets} loading={loading} />
+                                    <MyPetsWidget pets={pets} loading={loading} events={events} />
                                     <QuickActionsGrid onActionPress={handleQuickAction} />
                                     {pets.length > 0 && <PetStatusRow pet={pets[0]} />}
                                 </View>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     content: {
-        padding: 24,
+        padding: 16, // Reduced from 24 for less spacing
         maxWidth: 1200,
         width: '100%',
         alignSelf: 'center',
