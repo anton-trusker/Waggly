@@ -81,7 +81,7 @@ export default function FormToggle({
                             backgroundColor: trackColor,
                             opacity: disabled ? 0.5 : 1,
                         },
-                    ]}
+                    ] as any}
                 >
                     <Animated.View
                         style={[
@@ -90,7 +90,7 @@ export default function FormToggle({
                                 backgroundColor: effectiveColors.thumb,
                                 transform: [{ translateX: thumbPosition }],
                             },
-                        ]}
+                        ] as any}
                     />
                 </View>
 
@@ -101,7 +101,7 @@ export default function FormToggle({
                             color: effectiveColors.textSecondary,
                             opacity: disabled ? 0.5 : 1,
                         },
-                    ]}
+                    ] as any}
                 >
                     {value ? 'Yes' : 'No'}
                 </Text>

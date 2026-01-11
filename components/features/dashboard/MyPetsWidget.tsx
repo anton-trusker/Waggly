@@ -67,7 +67,7 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
 
     const AddPetCard = () => (
         <TouchableOpacity
-            style={[styles.addCard, { width: isMobile ? cardWidth : '100%', height: isMobile ? undefined : 180 }]}
+            style={[styles.addCard, { width: isMobile ? cardWidth : '100%', height: isMobile ? undefined : 180 }] as any}
             onPress={() => router.push('/(tabs)/pets/new')}
         >
             <View style={styles.addCardContent}>
@@ -128,7 +128,7 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                         contentContainerStyle={[
                             styles.scrollContent,
                             { paddingHorizontal: horizontalPadding },
-                        ]}
+                        ] as any}
                         decelerationRate="fast"
                         snapToInterval={cardWidth + cardGap}
                     >
@@ -141,7 +141,7 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                                         width: cardWidth,
                                         marginRight: cardGap
                                     }
-                                ]}
+                                ] as any}
                             >
                                 <DashboardPetCard
                                     pet={pet}

@@ -129,14 +129,14 @@ export default function NotificationsPage() {
                         style={[
                             styles.filterChip,
                             selectedFilter === key && styles.filterChipActive,
-                        ]}
+                        ] as any}
                         onPress={() => setSelectedFilter(key)}
                     >
                         <Text
                             style={[
                                 styles.filterChipText,
                                 selectedFilter === key && styles.filterChipTextActive,
-                            ]}
+                            ] as any}
                         >
                             {t(`notifications.filter_${key}`)}
                         </Text>
@@ -170,7 +170,7 @@ export default function NotificationsPage() {
                                     style={[
                                         styles.notificationCard,
                                         !notif.is_read && styles.notificationCardUnread,
-                                    ]}
+                                    ] as any}
                                     onPress={() => !notif.is_read && markAsRead(notif.id)}
                                     onLongPress={() => confirmDelete(notif.id)}
                                 >

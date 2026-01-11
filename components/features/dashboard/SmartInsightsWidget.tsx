@@ -105,7 +105,7 @@ export default function SmartInsightsWidget({
                                 width: isMobile ? width - 80 : 320,
                                 marginRight: index === insights.length - 1 ? 0 : 16,
                             },
-                        ]}
+                        ] as any}
                         onPress={() => handleInsightAction(insight)}
                         activeOpacity={0.8}
                     >
@@ -159,7 +159,7 @@ export default function SmartInsightsWidget({
 
                         {/* Action button */}
                         <TouchableOpacity
-                            style={[styles.actionButton, { backgroundColor: insight.color }]}
+                            style={[styles.actionButton, { backgroundColor: insight.color }] as any}
                             onPress={() => handleInsightAction(insight)}
                         >
                             <Text style={styles.actionButtonText}>{insight.actionLabel}</Text>
@@ -178,7 +178,7 @@ export default function SmartInsightsWidget({
                             style={[
                                 styles.paginationDot,
                                 index === 0 && styles.paginationDotActive,
-                            ]}
+                            ] as any}
                         />
                     ))}
                 </View>

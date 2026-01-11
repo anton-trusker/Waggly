@@ -160,7 +160,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                                 ios_icon_name="tag"
                                 android_material_icon_name="sell"
                                 size={20}
-                                color={designSystem.colors.primary[500]}
+                                color={designSystem.colors.primary[500] as any}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -186,7 +186,7 @@ export default function Step3Identification({ initialData, onNext }: Step3Props)
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
             </View>

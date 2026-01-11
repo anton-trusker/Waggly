@@ -38,7 +38,7 @@ export default function FormInput({
                     isFocused && styles.inputFocused,
                     error && styles.inputError,
                     style,
-                ]}
+                ] as any}
                 placeholderTextColor={formColors.inputPlaceholder}
                 onFocus={(e) => {
                     setIsFocused(true);

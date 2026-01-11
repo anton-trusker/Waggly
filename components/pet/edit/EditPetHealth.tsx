@@ -43,7 +43,7 @@ const DecimalInput = ({ value, onChange, placeholder, style, error }: any) => {
 
     return (
         <TextInput
-            style={[style, error && styles.inputError]}
+            style={[style, error && styles.inputError] as any}
             value={localValue}
             onChangeText={handleChange}
             placeholder={placeholder}

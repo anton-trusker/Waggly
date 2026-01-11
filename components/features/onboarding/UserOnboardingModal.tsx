@@ -300,7 +300,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
                           styles.genderChip,
                           gender === g.value && styles.genderChipActive,
                           { paddingHorizontal: 10, justifyContent: 'center' }
-                        ]}
+                        ] as any}
                         onPress={() => setGender(g.value)}
                       >
                         <Ionicons

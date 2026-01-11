@@ -367,7 +367,7 @@ export default function OverviewTab() {
                     treatments.filter(t => t.is_active && t.category === 'Medication').slice(0, 3).map((treatment) => (
                       <TouchableOpacity
                         key={treatment.id}
-                        style={[styles.medCard, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }]}
+                        style={[styles.medCard, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }] as any}
                         onPress={() => {
                           setSelectedTreatment(treatment);
                           setTreatmentOpen(true);

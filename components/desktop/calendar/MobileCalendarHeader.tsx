@@ -34,7 +34,7 @@ export default function MobileCalendarHeader({
                             styles.viewButton,
                             styles.viewButtonLeft,
                             currentView === 'timeline' && styles.viewButtonActive
-                        ]}
+                        ] as any}
                         onPress={() => onViewChange('timeline')}
                     >
                         <IconSymbol
@@ -49,7 +49,7 @@ export default function MobileCalendarHeader({
                             styles.viewButton,
                             styles.viewButtonRight,
                             currentView === 'calendar' && styles.viewButtonActive
-                        ]}
+                        ] as any}
                         onPress={() => onViewChange('calendar')}
                     >
                         <IconSymbol
@@ -63,7 +63,7 @@ export default function MobileCalendarHeader({
 
                 {/* Filter Button */}
                 <TouchableOpacity
-                    style={[styles.filterButton, hasActiveFilters && styles.filterButtonActive]}
+                    style={[styles.filterButton, hasActiveFilters && styles.filterButtonActive] as any}
                     onPress={onFilterPress}
                 >
                     <IconSymbol
@@ -85,7 +85,7 @@ export default function MobileCalendarHeader({
                             ios_icon_name="plus"
                             android_material_icon_name="add"
                             size={20}
-                            color={designSystem.colors.neutral[0]}
+                            color={designSystem.colors.neutral[0] as any}
                         />
                     </TouchableOpacity>
                 )}

@@ -86,7 +86,7 @@ const UpcomingCarePanel: React.FC<UpcomingCarePanelProps> = ({ petId }) => {
                             styles.filterTab,
                             { backgroundColor: theme.colors.background.tertiary },
                             activeFilter === filter && { backgroundColor: theme.colors.primary[500] }
-                        ]}
+                        ] as any}
                         onPress={() => setActiveFilter(filter)}
                     >
                         <Text style={[
@@ -118,7 +118,7 @@ const UpcomingCarePanel: React.FC<UpcomingCarePanelProps> = ({ petId }) => {
                                         backgroundColor: theme.colors.background.secondary,
                                         borderColor: theme.colors.border.primary
                                     }
-                                ]}
+                                ] as any}
                                 onPress={() => router.push('/(tabs)/calendar' as any)}
                             >
                                 {/* Date Badge */}

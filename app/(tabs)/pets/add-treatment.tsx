@@ -163,7 +163,7 @@ export default function AddTreatmentScreen() {
               {pets.map(pet => (
                 <TouchableOpacity
                   key={pet.id}
-                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                   onPress={() => setSelectedPetId(pet.id)}
                 >
                   <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -234,7 +234,7 @@ export default function AddTreatmentScreen() {
 
             <Text style={styles.inputLabel}>Instructions / Notes</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[styles.input, styles.textArea] as any}
               value={instructions}
               onChangeText={setInstructions}
               placeholder="Special instructions..."

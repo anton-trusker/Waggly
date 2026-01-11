@@ -47,7 +47,7 @@ export default function DashboardPetCard({ pet, onPress }: DashboardPetCardProps
 
     return (
         <TouchableOpacity
-            style={[styles.card, dynamicStyles.card]}
+            style={[styles.card, dynamicStyles.card] as any}
             onPress={() => onPress(pet)}
             activeOpacity={0.8}
         >

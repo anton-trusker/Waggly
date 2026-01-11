@@ -58,7 +58,7 @@ export default function SignupScreen() {
 
       Alert.alert(t('auth.signup_failed'), message);
     } else {
-      Alert.alert('Success', t('auth.verify_email'));
+      Alert.alert('Success', t('auth.verify_email') || 'Please check your email to verify your account.');
       router.replace('/(auth)/login');
     }
   };

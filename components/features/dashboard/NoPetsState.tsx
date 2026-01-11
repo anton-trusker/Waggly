@@ -32,7 +32,7 @@ export default function NoPetsState() {
             </Text>
 
             <TouchableOpacity
-                style={[styles.button, dynamicStyles.button]}
+                style={[styles.button, dynamicStyles.button] as any}
                 onPress={() => router.push('/(tabs)/pets/add-pet-wizard')}
                 activeOpacity={0.9}
             >

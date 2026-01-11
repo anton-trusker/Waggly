@@ -57,7 +57,7 @@ export default function PetCardCompact({
     if (variant === 'large') {
         return (
             <TouchableOpacity
-                style={[styles.largeContainer, { backgroundColor: themeColor }]}
+                style={[styles.largeContainer, { backgroundColor: themeColor }] as any}
                 onPress={handlePress}
                 activeOpacity={0.8}
             >
@@ -92,7 +92,7 @@ export default function PetCardCompact({
     if (variant === 'horizontal') {
         return (
             <TouchableOpacity
-                style={[styles.horizontalContainer, { backgroundColor: themeColor }]}
+                style={[styles.horizontalContainer, { backgroundColor: themeColor }] as any}
                 onPress={handlePress}
                 activeOpacity={0.8}
             >

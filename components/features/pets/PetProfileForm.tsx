@@ -151,7 +151,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
       </View>
       <View style={styles.inputWrapper}>
         <TextInput
-          style={[styles.input, multiline && styles.textArea]}
+          style={[styles.input, multiline && styles.textArea] as any}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={value}
@@ -370,14 +370,14 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
           {/* Action Buttons */}
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              style={[styles.button, styles.cancelButton] as any}
               onPress={handleCancel}
               disabled={loading}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.saveButton]}
+              style={[styles.button, styles.saveButton] as any}
               onPress={handleSave}
               disabled={loading}
             >

@@ -63,7 +63,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                     style={[
                         styles.tab,
                         activeTab === tab && styles.activeTab
-                    ]}
+                    ] as any}
                     onPress={() => setActiveTab(tab)}
                 >
                     <Text style={[
@@ -100,7 +100,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                             ios_icon_name="calendar.badge.exclamationmark"
                             android_material_icon_name="event-busy"
                             size={32}
-                            color={designSystem.colors.neutral[300]}
+                            color={designSystem.colors.neutral[300] as any}
                         />
                         <Text style={styles.emptyText}>
                             {activeTab === 'all'
@@ -120,7 +120,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                             return (
                                 <TouchableOpacity
                                     key={event.id}
-                                    style={[styles.eventRow, !isLast && styles.eventBorder]}
+                                    style={[styles.eventRow, !isLast && styles.eventBorder] as any}
                                     onPress={() => router.push(`/events/${event.id}` as any)}
                                     activeOpacity={0.7}
                                 >
@@ -162,7 +162,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                                         ios_icon_name="chevron.right"
                                         android_material_icon_name="chevron-right"
                                         size={20}
-                                        color={designSystem.colors.neutral[300]}
+                                        color={designSystem.colors.neutral[300] as any}
                                     />
                                 </TouchableOpacity>
                             );
@@ -178,7 +178,7 @@ export default function DashboardUpcoming({ events }: DashboardUpcomingProps) {
                                     android_material_icon_name="expand-more"
                                     ios_icon_name="chevron.down"
                                     size={16}
-                                    color={designSystem.colors.primary[500]}
+                                    color={designSystem.colors.primary[500] as any}
                                 />
                             </TouchableOpacity>
                         )}

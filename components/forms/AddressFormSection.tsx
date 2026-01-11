@@ -38,7 +38,7 @@ export default function AddressFormSection({
         <Text style={styles.label}>Vet Name / Clinic</Text>
         <View style={styles.searchContainer}>
           <TextInput
-            style={[styles.input, styles.searchInput]}
+            style={[styles.input, styles.searchInput] as any}
             value={locationName}
             onChangeText={setLocationName}
             placeholder="Search for a clinic or provider"

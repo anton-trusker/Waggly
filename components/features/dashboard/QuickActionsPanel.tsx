@@ -82,7 +82,7 @@ export function QuickActionsPanel() {
         {quickActions.map((action) => (
           <TouchableOpacity
             key={action.id}
-            style={[styles.actionCard, dynamicStyles.card]}
+            style={[styles.actionCard, dynamicStyles.card] as any}
             onPress={() => handleActionPress(action.route)}
             activeOpacity={0.7}
           >

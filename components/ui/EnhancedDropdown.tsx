@@ -118,7 +118,7 @@ export default function EnhancedDropdown({
           index === 0 && styles.optionItemFirst,
           index === filteredOptions.length - 1 && styles.optionItemLast,
           isSelected && styles.optionItemSelected,
-        ]}
+        ] as any}
         onPress={() => handleSelect(item.value)}
         accessibilityRole="button"
         accessibilityLabel={item.label}
@@ -138,7 +138,7 @@ export default function EnhancedDropdown({
           <Text style={[
             styles.optionLabel,
             isSelected && styles.optionLabelSelected,
-          ]}>
+          ] as any}>
             {item.label}
           </Text>
         </View>
@@ -147,7 +147,7 @@ export default function EnhancedDropdown({
             ios_icon_name="checkmark"
             android_material_icon_name="check"
             size={20}
-            color={designSystem.colors.primary[500]}
+            color={designSystem.colors.primary[500] as any}
           />
         )}
       </TouchableOpacity>
@@ -156,7 +156,7 @@ export default function EnhancedDropdown({
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>{t(emptyText, { defaultValue: emptyText })}</Text>
+      <Text style={styles.emptyText as any}>{t(emptyText, { defaultValue: emptyText })}</Text>
     </View>
   );
 
@@ -183,7 +183,7 @@ export default function EnhancedDropdown({
           styles.dropdownButton,
           error && styles.dropdownButtonError,
           disabled && styles.dropdownButtonDisabled,
-        ]}
+        ] as any}
         onPress={handleOpen}
         disabled={disabled}
         accessibilityRole="button"
@@ -219,7 +219,7 @@ export default function EnhancedDropdown({
           style={[
             styles.dropdownArrow,
             isVisible && styles.dropdownArrowOpen,
-          ]}
+          ] as any}
         />
       </TouchableOpacity>
 
@@ -307,7 +307,7 @@ export default function EnhancedDropdown({
               contentContainerStyle={[
                 styles.optionsContent,
                 filteredOptions.length === 0 && styles.optionsContentEmpty,
-              ]}
+              ] as any}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={renderEmptyState}

@@ -127,7 +127,7 @@ export default function AllergyForm({
                                     ios_icon_name="exclamationmark.triangle"
                                     android_material_icon_name="warning"
                                     size={24}
-                                    color={designSystem.colors.status.warning[500]}
+                                    color={designSystem.colors.status.warning[500] as any}
                                     style={styles.headerIcon}
                                 />
                                 <Text style={[styles.title, { color: effectiveColors.text }]}>

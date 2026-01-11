@@ -29,7 +29,7 @@ export default function Toast({ toasts, onDismiss }: ToastProps) {
                     pointerEvents: 'box-none' as any,
                 },
                 !isMobile && styles.desktopPosition
-            ]}
+            ] as any}
         >
             {toasts.map((toast) => (
                 <ToastItem key={toast.id} toast={toast} onDismiss={onDismiss} />
@@ -109,7 +109,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastMessage; onDismiss: (id: 
                     opacity,
                     transform: [{ translateY }]
                 }
-            ]}
+            ] as any}
         >
             <View style={styles.content}>
                 <Ionicons name={getIcon()} size={24} color={getColor()} style={styles.icon} />

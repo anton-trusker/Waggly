@@ -58,7 +58,7 @@ export default function HomeHeader() {
             </View>
 
             <TouchableOpacity
-                style={[styles.notificationButton, dynamicStyles.notificationButton]}
+                style={[styles.notificationButton, dynamicStyles.notificationButton] as any}
                 onPress={() => router.push('/(tabs)/notifications')}
             >
                 <IconSymbol

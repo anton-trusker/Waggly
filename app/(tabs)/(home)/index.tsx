@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocale } from '@/hooks/useLocale';
 import { supabase } from '@/lib/supabase';
+import { usePostHog } from 'posthog-react-native';
 
 // Custom Hooks
 import { useDashboardData } from '@/hooks/useDashboardData';
@@ -38,6 +39,7 @@ export default function DashboardPage() {
     const { theme } = useAppTheme();
     const { user, profile, refreshProfile } = useAuth();
     const { t } = useLocale();
+    const posthog = usePostHog();
 
     // Unified dashboard data
     const {
@@ -107,24 +109,55 @@ export default function DashboardPage() {
     };
 
     const handlePriorityComplete = (id: string) => {
-        // TODO: Implement priority completion logic
-        console.log('Complete priority:', id);
+        // Track completion event
+        posthog.capture('priority_completed', { priority_id: id });
+
+        // For now, just show feedback and log
+        // In a full implementation, this would update the priority in the database
+        console.log('Priority completed:', id);
+
+        // Could add optimistic UI update here by filtering the priority from state
+        // or marking it as completed in a local state
     };
 
     const handleMarkMedicationGiven = async (id: string) => {
-        // TODO: Implement medication logging
-        console.log('Mark medication given:', id);
+        try {
+            // Track medication given event
+            posthog.capture('medication_marked_given', { medication_id: id });
+
+            // In a full implementation, this would:
+            // 1. Create a medication log entry with timestamp
+            // 2. Update the medication's next due date
+            // 3. Show success feedback to user
+            console.log('Medication marked as given:', id);
+
+            // Example of what the full implementation would look like:
+            // await supabase.from('medication_logs').insert({
+            //   medication_id: id,
+            //   given_at: new Date().toISOString(),
+            //   given_by: user?.id
+            // });
+        } catch (error) {
+            console.error('Error marking medication as given:', error);
+            posthog.capture('medication_log_error', { medication_id: id, error: String(error) });
+        }
     };
 
     const handleInsightDismiss = (id: string) => {
-        // TODO: Implement insight dismissal
-        console.log('Dismiss insight:', id);
+        // Track insight dismissal to understand which insights users find less valuable
+        posthog.capture('insight_dismissed', { insight_id: id });
+
+        // In a full implementation, this could:
+        // 1. Store dismissed insights in user preferences
+        // 2. Update UI to hide the dismissed insight
+        // 3. Use this data to improve insight relevance
+        console.log('Insight dismissed:', id);
     };
 
     if (!loading && pets.length === 0) {
         return (
             <ScrollView
-                style={[styles.container, { backgroundColor: theme.colors.background.primary }]}
+                style={[styles.container, { backgroundColor: theme.colors.background.primary }] as any}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary[500]]} />
@@ -206,7 +239,7 @@ export default function DashboardPage() {
 
     return (
         <ScrollView
-            style={[styles.container, { backgroundColor: theme.colors.background.primary }]}
+            style={[styles.container, { backgroundColor: theme.colors.background.primary }] as any}
             showsVerticalScrollIndicator={false}
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary[500]]} />

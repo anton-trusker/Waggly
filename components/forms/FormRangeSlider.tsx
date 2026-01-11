@@ -114,7 +114,7 @@ export default function FormRangeSlider({
                     style={[
                         styles.track,
                         { backgroundColor: effectiveColors.track },
-                    ]}
+                    ] as any}
                     onLayout={(e) => setSliderWidth(e.nativeEvent.layout.width)}
                 >
                     <View
@@ -125,7 +125,7 @@ export default function FormRangeSlider({
                                 left: `${minPosition}%`,
                                 right: `${100 - maxPosition}%`,
                             },
-                        ]}
+                        ] as any}
                     />
                 </View>
 
@@ -139,7 +139,7 @@ export default function FormRangeSlider({
                             left: `${minPosition}%`,
                             opacity: disabled ? 0.5 : 1,
                         },
-                    ]}
+                    ] as any}
                 />
 
                 {/* Max Thumb */}
@@ -152,17 +152,17 @@ export default function FormRangeSlider({
                             left: `${maxPosition}%`,
                             opacity: disabled ? 0.5 : 1,
                         },
-                    ]}
+                    ] as any}
                 />
             </View>
 
             <View style={styles.valuesContainer}>
                 <Text style={[styles.valueText, { color: effectiveColors.textSecondary }]}>
-                    {values[0]}
+                    {values[0] as any}
                     {unit}
                 </Text>
                 <Text style={[styles.valueText, { color: effectiveColors.textSecondary }]}>
-                    {values[1]}
+                    {values[1] as any}
                     {unit}
                 </Text>
             </View>

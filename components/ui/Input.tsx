@@ -25,7 +25,7 @@ export default function Input({ label, error, required, style, containerStyle, p
         borderColor: error ? colors.status.error[500] : colors.border.primary,
       }, containerStyle]}>
         <TextInput
-          style={[styles.input, { color: colors.text.primary }, style]}
+          style={[styles.input, { color: colors.text.primary }, style] as any}
           placeholderTextColor={colors.text.tertiary}
           placeholder={placeholder ? t(placeholder, { defaultValue: placeholder }) : undefined}
           secureTextEntry={isPassword ? isSecure : props.secureTextEntry}

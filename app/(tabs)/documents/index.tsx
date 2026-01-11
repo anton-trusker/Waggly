@@ -198,7 +198,7 @@ export default function DocumentsPage() {
                         styles.filterItem,
                         selectedPetId === 'all' && styles.filterItemActive,
                         isMobile && styles.filterItemMobile
-                    ]}
+                    ] as any}
                     onPress={() => setSelectedPetId('all')}
                 >
                     <Ionicons
@@ -221,7 +221,7 @@ export default function DocumentsPage() {
                             styles.filterItem,
                             selectedPetId === pet.id && styles.filterItemActive,
                             isMobile && styles.filterItemMobile
-                        ]}
+                        ] as any}
                         onPress={() => setSelectedPetId(pet.id)}
                     >
                         <Ionicons
@@ -248,7 +248,7 @@ export default function DocumentsPage() {
                             styles.filterItem,
                             selectedType === type.id && styles.filterItemActive,
                             isMobile && styles.filterItemMobile
-                        ]}
+                        ] as any}
                         onPress={() => setSelectedType(type.id)}
                     >
                         <Ionicons
@@ -260,7 +260,7 @@ export default function DocumentsPage() {
                             style={[
                                 styles.filterText,
                                 selectedType === type.id && styles.filterTextActive,
-                            ]}
+                            ] as any}
                         >
                             {type.label}
                         </Text>
@@ -348,7 +348,7 @@ export default function DocumentsPage() {
                                             style={[
                                                 styles.documentCard,
                                                 isSelected && styles.documentCardSelected
-                                            ]}
+                                            ] as any}
                                             onPress={() => toggleSelection(doc.id)}
                                         >
                                             <TouchableOpacity

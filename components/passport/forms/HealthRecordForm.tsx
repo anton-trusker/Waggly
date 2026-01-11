@@ -147,7 +147,7 @@ export default function HealthRecordForm({
                                     ios_icon_name="heart.text.square"
                                     android_material_icon_name="health-and-safety"
                                     size={24}
-                                    color={designSystem.colors.primary[500]}
+                                    color={designSystem.colors.primary[500] as any}
                                     style={styles.headerIcon}
                                 />
                                 <Text style={[styles.title, { color: effectiveColors.text }]}>
@@ -193,7 +193,7 @@ export default function HealthRecordForm({
                                         control={control}
                                         name="weightUnit"
                                         label="Unit"
-                                        options={[{ label: 'kg', value: 'kg' }, { label: 'lb', value: 'lb' }]}
+                                        options={[{ label: 'kg', value: 'kg' }, { label: 'lb', value: 'lb' }] as any}
                                     />
                                 </View>
                             </View>
@@ -214,7 +214,7 @@ export default function HealthRecordForm({
                                         control={control}
                                         name="temperatureUnit"
                                         label="Unit"
-                                        options={[{ label: '°C', value: 'C' }, { label: '°F', value: 'F' }]}
+                                        options={[{ label: '°C', value: 'C' }, { label: '°F', value: 'F' }] as any}
                                     />
                                 </View>
                             </View>

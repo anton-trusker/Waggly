@@ -55,7 +55,7 @@ export default function FormField<T extends FieldValues>({
                                 multiline && { height: rows * 20 + 24 },
                                 error && styles.inputError,
                                 type === 'password' && { paddingRight: 40 } // Add space for icon
-                            ]}
+                            ] as any}
                             value={value?.toString() || ''}
                             onChangeText={(text) => {
                                 if (type === 'number') {

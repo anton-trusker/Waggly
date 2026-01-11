@@ -82,7 +82,7 @@ export default function ShareTab() {
                         <QRCode
                             value={url}
                             size={100}
-                            color={designSystem.colors.primary[500]}
+                            color={designSystem.colors.primary[500] as any}
                             backgroundColor="white"
                         />
                     </View>
@@ -168,7 +168,7 @@ export default function ShareTab() {
                                 <QRCode
                                     value={getShareUrl(selectedLinkForQR.token)}
                                     size={200}
-                                    color={designSystem.colors.primary[500]}
+                                    color={designSystem.colors.primary[500] as any}
                                     backgroundColor="white"
                                 />
                             </View>

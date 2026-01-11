@@ -108,7 +108,7 @@ export default function MedicationTrackerWidget({
                                 style={[
                                     styles.medicationCard,
                                     isOverdue(med.next_dose_date) && styles.medicationCardOverdue,
-                                ]}
+                                ] as any}
                                 onPress={() => onMedicationPress?.(med)}
                                 activeOpacity={0.7}
                             >
@@ -135,7 +135,7 @@ export default function MedicationTrackerWidget({
                                             style={[
                                                 styles.nextDoseText,
                                                 isOverdue(med.next_dose_date) && styles.nextDoseTextOverdue,
-                                            ]}
+                                            ] as any}
                                         >
                                             Next dose: {formatNextDose(med.next_dose_date)}
                                         </Text>

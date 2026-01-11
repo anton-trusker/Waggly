@@ -49,7 +49,7 @@ export function FormRow({ children, columns = 2, gap, style }: FormRowProps) {
                     gap: actualGap,
                 },
                 style,
-            ]}
+            ] as any}
         >
             {children}
         </View>
@@ -83,7 +83,7 @@ export function FormGrid({ children, columns = 2, gap, style }: FormGridProps) {
                     gap: actualGap,
                 },
                 style,
-            ]}
+            ] as any}
         >
             {React.Children.map(children, (child) => (
                 <View

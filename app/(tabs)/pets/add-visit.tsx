@@ -158,7 +158,7 @@ export default function AddVisitScreen() {
       </View>
       <View style={styles.inputWrapper}>
         <TextInput
-          style={[styles.input, multiline && styles.textArea]}
+          style={[styles.input, multiline && styles.textArea] as any}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={value}
@@ -204,7 +204,7 @@ export default function AddVisitScreen() {
               {pets.map(pet => (
                 <TouchableOpacity
                   key={pet.id}
-                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                   onPress={() => setSelectedPetId(pet.id)}
                 >
                   <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>

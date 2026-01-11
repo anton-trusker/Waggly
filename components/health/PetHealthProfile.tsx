@@ -51,7 +51,7 @@ export function PetHealthProfile({ petId }: PetHealthProfileProps) {
             contentContainerStyle={[
                 styles.contentContainer,
                 isMobile && styles.contentMobile
-            ]}
+            ] as any}
             showsVerticalScrollIndicator={false}
         >
             <View style={styles.grid}>

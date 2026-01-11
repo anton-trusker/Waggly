@@ -106,7 +106,7 @@ export default function AlbumTab() {
               <TouchableOpacity key={album.id} style={styles.albumCard}>
                 <Image source={{ uri: album.cover }} style={styles.albumCover} />
                 <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.7)']}
+                  colors={['transparent', 'rgba(0,0,0,0.7)'] as any}
                   style={styles.albumOverlay}
                 />
                 <View style={styles.albumInfo}>
@@ -147,7 +147,7 @@ export default function AlbumTab() {
                   <TouchableOpacity
                     key={filter}
                     onPress={() => setSelectedFilter(filter)}
-                    style={[styles.filterChip, isActive && styles.filterChipActive]}
+                    style={[styles.filterChip, isActive && styles.filterChipActive] as any}
                   >
                     <Text style={[styles.filterText, isActive && styles.filterTextActive]}>
                       {t(`pet_profile.album.filters.${filter}` as any)}
@@ -161,7 +161,7 @@ export default function AlbumTab() {
               <Text style={styles.sortLabel}>{t('pet_profile.album.sort.label')}</Text>
               <TouchableOpacity style={styles.sortButton}>
                 <Text style={styles.sortButtonText}>{t(`pet_profile.album.sort.${sortBy}` as any)}</Text>
-                <IconSymbol android_material_icon_name="expand_more" size={16} color="#374151" />
+                <IconSymbol android_material_icon_name="expand-more" size={16} color="#374151" />
               </TouchableOpacity>
             </View>
           </View>
@@ -174,7 +174,7 @@ export default function AlbumTab() {
                 style={[
                   styles.gridItem,
                   { width: isMobile ? '48%' : isLargeScreen ? '23%' : '31%' } // Approx percentages accounting for gap
-                ]}
+                ] as any}
               >
                 <Image source={{ uri: photo.url }} style={styles.gridImage} />
 

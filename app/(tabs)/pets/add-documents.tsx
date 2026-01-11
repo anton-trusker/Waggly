@@ -107,7 +107,7 @@ export default function AddDocumentsScreen() {
                         {pets.map(pet => (
                             <TouchableOpacity
                                 key={pet.id}
-                                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                                 onPress={() => setSelectedPetId(pet.id)}
                             >
                                 <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -165,7 +165,7 @@ export default function AddDocumentsScreen() {
                                     style={[
                                         styles.typeOption,
                                         type === docType.id && styles.typeOptionActive
-                                    ]}
+                                    ] as any}
                                     onPress={() => setType(docType.id)}
                                 >
                                     <Ionicons
@@ -187,7 +187,7 @@ export default function AddDocumentsScreen() {
                     <View style={styles.inputContainer}>
                         <Text style={styles.inputLabel}>Notes (Optional)</Text>
                         <TextInput
-                            style={[styles.input, styles.textArea]}
+                            style={[styles.input, styles.textArea] as any}
                             value={notes}
                             onChangeText={setNotes}
                             placeholder="Add any details..."

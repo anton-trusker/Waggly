@@ -54,7 +54,7 @@ export default function DatePickerWeb({
             <Text style={styles.label}>{label}</Text>
 
             <TouchableOpacity
-                style={[styles.inputWrapper, error && styles.inputWrapperError]}
+                style={[styles.inputWrapper, error && styles.inputWrapperError] as any}
                 onPress={handleClick}
                 activeOpacity={0.7}
             >
@@ -72,7 +72,7 @@ export default function DatePickerWeb({
                         ios_icon_name="calendar"
                         android_material_icon_name="event"
                         size={20}
-                        color={designSystem.colors.primary[500]}
+                        color={designSystem.colors.primary[500] as any}
                     />
                 </TouchableOpacity>
 
@@ -82,7 +82,7 @@ export default function DatePickerWeb({
                     type="date"
                     value={value || ''}
                     onChange={(e) => onChange(e.target.value)}
-                    max={maxDate || new Date().toISOString().split('T')[0]}
+                    max={maxDate || new Date().toISOString().split('T')[0] as any}
                     min={minDate}
                     style={{
                         position: 'absolute',

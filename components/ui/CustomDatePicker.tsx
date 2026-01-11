@@ -66,7 +66,7 @@ export default function CustomDatePicker({ visible, date, onClose, onConfirm, ti
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={(e) => e.stopPropagation()}
-                        style={[styles.container, { maxWidth: 400, alignSelf: 'center', marginTop: '20%' }]}
+                        style={[styles.container, { maxWidth: 400, alignSelf: 'center', marginTop: '20%' }] as any}
                     >
                         <View style={styles.header}>
                             <TouchableOpacity onPress={onClose}>

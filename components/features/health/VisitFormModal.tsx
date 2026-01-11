@@ -234,7 +234,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                         backgroundColor: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.background.tertiary,
                                                         borderColor: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.border.primary
                                                     }
-                                                ]}
+                                                ] as any}
                                             >
                                                 <Ionicons
                                                     name={provider.icon as any}
@@ -246,7 +246,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                 style={[
                                                     styles.providerLabel,
                                                     { color: formState.data.provider_type === provider.type ? theme.colors.primary[500] : theme.colors.text.secondary }
-                                                ]}
+                                                ] as any}
                                             >
                                                 {t(`visit_form.provider_types.${provider.labelKey}`)}
                                             </Text>
@@ -270,7 +270,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                 backgroundColor: formState.data.urgency === level.value ? `${level.color}20` : 'transparent',
                                                 borderColor: formState.data.urgency === level.value ? level.color : theme.colors.border.primary
                                             }
-                                        ]}
+                                        ] as any}
                                     >
                                         <Text style={[styles.urgencyText, { color: formState.data.urgency === level.value ? level.color : theme.colors.text.secondary }]}>
                                             {t(`visit_form.urgency.${level.labelKey}`)}
@@ -292,7 +292,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                                     styles.categoryChip,
                                                     { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.tertiary },
                                                     formState.data.service_category === category && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
-                                                ]}
+                                                ] as any}
                                             >
                                                 <Text style={[
                                                     styles.categoryChipText,
@@ -318,7 +318,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 value={formState.data.business_name}
                                 onSelect={(place) => handlePlaceSelect(place, formState)}
                                 placeholder={t('visit_form.business_name_placeholder', { type: selectedProvider ? t(`visit_form.provider_types.${selectedProvider.labelKey}`).toLowerCase() : '' })}
-                                types={['establishment']}
+                                types={['establishment'] as any}
                                 label={t('visit_form.business_name')}
                                 error={formState.errors.business_name}
                             />
@@ -344,7 +344,7 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
                                 <View style={styles.flex1}>
                                     <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('visit_form.total_cost')}</Text>
                                     <TextInput
-                                        style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                        style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }] as any}
                                         placeholder="0.00"
                                         placeholderTextColor={theme.colors.text.tertiary}
                                         keyboardType="numeric"

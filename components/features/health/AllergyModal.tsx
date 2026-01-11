@@ -194,7 +194,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                         color: theme.colors.text.primary,
                                         borderColor: formState.errors.name ? theme.colors.status.error[500] : theme.colors.border.primary
                                     }
-                                ]}
+                                ] as any}
                                 placeholder="e.g. Peanuts, Bee Stings"
                                 placeholderTextColor={theme.colors.text.tertiary}
                                 value={formState.data.name}
@@ -218,7 +218,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                             styles.severityButton,
                                             { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary },
                                             formState.data.type === type.id && { borderColor: theme.colors.primary[500], backgroundColor: 'rgba(37, 99, 235, 0.1)' }
-                                        ]}
+                                        ] as any}
                                     >
                                         <Ionicons
                                             name={type.icon as any}
@@ -245,7 +245,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                                             styles.severityButton,
                                             { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary },
                                             formState.data.severity === level.id && { borderColor: level.color, backgroundColor: `${level.color}20` }
-                                        ]}
+                                        ] as any}
                                     >
                                         <Text style={[styles.severityText, { color: formState.data.severity === level.id ? level.color : theme.colors.text.secondary }]}>
                                             {t(`allergy_form.${level.id}`)}
@@ -258,7 +258,7 @@ export default function AllergyModal({ visible, onClose, petId: initialPetId, ex
                         <View style={styles.fieldGroup}>
                             <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('allergy_form.reaction')}</Text>
                             <TextInput
-                                style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }] as any}
                                 placeholder="e.g. Swelling, Hives"
                                 placeholderTextColor={theme.colors.text.tertiary}
                                 value={formState.data.reaction}

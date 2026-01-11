@@ -41,7 +41,7 @@ export default function LanguageStep({ onNext }: LanguageStepProps) {
                             style={[
                                 styles.card,
                                 locale === lang.code && styles.cardSelected
-                            ]}
+                            ] as any}
                             onPress={() => handleSelect(lang.code)}
                         >
                             <View style={styles.cardContent}>
@@ -68,7 +68,7 @@ export default function LanguageStep({ onNext }: LanguageStepProps) {
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
                 <Text style={styles.terms}>

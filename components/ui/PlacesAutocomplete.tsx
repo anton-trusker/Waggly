@@ -415,7 +415,7 @@ export default function PlacesAutocomplete({
                 </View>
 
                 <TextInput
-                    style={[styles.input, error && styles.inputError]}
+                    style={[styles.input, error && styles.inputError] as any}
                     value={query}
                     onChangeText={handleTextChange}
                     placeholder={isInitializing ? 'Loading...' : placeholder}

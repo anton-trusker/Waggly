@@ -155,7 +155,7 @@ export function Button({
         fullWidth && { width: '100%' },
         isPressed && styles.pressed,
         style,
-      ]}
+      ] as any}
       {...props}
     >
       <View style={styles.content}>

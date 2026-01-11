@@ -88,7 +88,7 @@ export function ConfirmationModal({
                             style={[
                                 styles.buttonConfirm,
                                 { backgroundColor: variantStyles.color }
-                            ]}
+                            ] as any}
                             onPress={onConfirm}
                         >
                             <Text style={styles.buttonConfirmText}>{confirmText}</Text>

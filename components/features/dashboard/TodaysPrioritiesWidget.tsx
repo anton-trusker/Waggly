@@ -63,7 +63,7 @@ export default function TodaysPrioritiesWidget({
     if (priorities.length === 0) {
         return (
             <LinearGradient
-                colors={[designSystem.colors.neutral[0], designSystem.colors.neutral[50]]}
+                colors={[designSystem.colors.neutral[0], designSystem.colors.neutral[50]] as any}
                 style={styles.container}
             >
                 <View style={styles.emptyState}>
@@ -86,7 +86,7 @@ export default function TodaysPrioritiesWidget({
                 <View style={styles.header}>
                     <View style={styles.headerLeft}>
                         <LinearGradient
-                            colors={[designSystem.colors.primary[400], designSystem.colors.primary[600]]}
+                            colors={[designSystem.colors.primary[400], designSystem.colors.primary[600]] as any}
                             style={styles.iconBadge}
                         >
                             <Text style={styles.headerIcon}>🎯</Text>
@@ -99,7 +99,7 @@ export default function TodaysPrioritiesWidget({
                     <View style={styles.headerRight}>
                         {priorities.length > 0 && (
                             <LinearGradient
-                                colors={[designSystem.colors.status.error[400], designSystem.colors.status.error[600]]}
+                                colors={[designSystem.colors.status.error[400], designSystem.colors.status.error[600]] as any}
                                 style={styles.badge}
                             >
                                 <Text style={styles.badgeText}>{priorities.length}</Text>
@@ -113,7 +113,7 @@ export default function TodaysPrioritiesWidget({
                                 <Ionicons
                                     name={collapsed ? 'chevron-down' : 'chevron-up'}
                                     size={20}
-                                    color={designSystem.colors.neutral[500]}
+                                    color={designSystem.colors.neutral[500] as any}
                                 />
                             </TouchableOpacity>
                         )}
@@ -150,7 +150,7 @@ export default function TodaysPrioritiesWidget({
                                             style={[
                                                 styles.checkboxInner,
                                                 priority.completed && styles.checkboxChecked,
-                                            ]}
+                                            ] as any}
                                         >
                                             {priority.completed && (
                                                 <Ionicons name="checkmark" size={16} color="#fff" />

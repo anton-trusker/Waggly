@@ -136,7 +136,7 @@ export default function EventDetailsScreen() {
                         ios_icon_name="exclamationmark.circle"
                         android_material_icon_name="error-outline"
                         size={48}
-                        color={designSystem.colors.error[500]}
+                        color={designSystem.colors.error[500] as any}
                     />
                     <Text style={styles.errorText}>{error || 'Failed to load event details'}</Text>
                     <TouchableOpacity style={styles.retryButton} onPress={fetchEventDetails}>

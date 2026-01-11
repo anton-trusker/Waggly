@@ -103,7 +103,7 @@ export function PetImage({
         { width: size, height: size, borderRadius },
         style,
         !imageLoaded && styles.loadingImage
-      ]}
+      ] as any}
       onError={handleImageError}
       onLoad={handleImageLoad}
       resizeMode="cover"

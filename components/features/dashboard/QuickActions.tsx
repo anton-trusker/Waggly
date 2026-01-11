@@ -62,8 +62,8 @@ export function QuickActions() {
           >
             <MaterialCommunityIcons
               name={action.iconName}
-              size={designSystem.spacing[8]}
-              color={designSystem.colors.primary[500]}
+              size={designSystem.spacing[8] as any}
+              color={designSystem.colors.primary[500] as any}
             />
             <Text style={styles.label}>{t(action.label, { defaultValue: action.label })}</Text>
           </TouchableOpacity>

@@ -87,7 +87,7 @@ export default function WeightTrackingModal({ visible, onClose, petId, currentWe
                         </View>
 
                         <TouchableOpacity
-                            style={[styles.fullWidthButton, submitting && styles.disabledButton]}
+                            style={[styles.fullWidthButton, submitting && styles.disabledButton] as any}
                             onPress={handleAdd}
                             disabled={submitting}
                         >

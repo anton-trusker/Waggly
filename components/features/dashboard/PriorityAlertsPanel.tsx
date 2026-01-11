@@ -18,7 +18,7 @@ const PriorityAlertsPanel: React.FC = () => {
                         android_material_icon_name="warning"
                         ios_icon_name="exclamationmark.triangle"
                         size={20}
-                        color={theme.colors.status.warning[500]}
+                        color={theme.colors.status.warning[500] as any}
                     />
                     <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Priority Alerts</Text>
                 </View>
@@ -35,7 +35,7 @@ const PriorityAlertsPanel: React.FC = () => {
                         android_material_icon_name="check-circle"
                         ios_icon_name="checkmark.circle"
                         size={20}
-                        color={theme.colors.status.success[500]}
+                        color={theme.colors.status.success[500] as any}
                     />
                     <Text style={[styles.heading, { color: theme.colors.text.primary }]}>All Clear</Text>
                 </View>
@@ -59,7 +59,7 @@ const PriorityAlertsPanel: React.FC = () => {
                     android_material_icon_name="warning"
                     ios_icon_name="exclamationmark.triangle"
                     size={20}
-                    color={theme.colors.status.warning[500]}
+                    color={theme.colors.status.warning[500] as any}
                 />
                 <Text style={[styles.heading, { color: theme.colors.text.primary }]}>Priority Alerts</Text>
             </View>
@@ -74,7 +74,7 @@ const PriorityAlertsPanel: React.FC = () => {
                                 backgroundColor: theme.colors.background.tertiary,
                                 borderColor: theme.colors.border.primary
                             }
-                        ]}
+                        ] as any}
                     >
                         <View style={styles.alertHeader}>
                             <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(alert.severity) }]} />
@@ -90,7 +90,7 @@ const PriorityAlertsPanel: React.FC = () => {
                             </View>
                         </View>
                         <TouchableOpacity
-                            style={[styles.actionButton, { backgroundColor: theme.colors.primary[500] }]}
+                            style={[styles.actionButton, { backgroundColor: theme.colors.primary[500] }] as any}
                             onPress={() => router.push(alert.actionUrl as any)}
                         >
                             <Text style={[styles.actionButtonText, { color: theme.colors.text.inverse }]}>{alert.actionLabel}</Text>

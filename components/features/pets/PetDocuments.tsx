@@ -15,15 +15,17 @@ export default function PetDocuments({ petId }: Props) {
   const [showUpload, setShowUpload] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [selectedDocType, setSelectedDocType] = useState<string>('other');
 
   const docTypes = ['all', 'medical', 'prescription', 'lab_result', 'other'];
+  const uploadDocTypes = ['medical', 'prescription', 'lab_result', 'vaccination', 'insurance', 'other'];
 
   const handleUpload = async (uri: string, mimeType?: string, name?: string, size?: number) => {
     const fileName = name || `doc_${Date.now()}`;
-    // TODO: Allow selecting type during upload. For now default to 'other' or prompt.
-    // Assuming 'other' for simplicity as per existing code.
-    await uploadDocument(uri, 'other', fileName, { size_bytes: size }, mimeType);
+    // Use selected document type from dropdown
+    await uploadDocument(uri, selectedDocType as any, fileName, { size_bytes: size }, mimeType);
     setShowUpload(false);
+    setSelectedDocType('other'); // Reset to default
   };
 
   const handleDelete = (id: string, url: string) => {
@@ -50,6 +52,20 @@ export default function PetDocuments({ petId }: Props) {
     <View style={styles.container}>
       {showUpload ? (
         <View style={styles.uploadContainer}>
+          <Text style={styles.uploadLabel}>Select Document Type:</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeSelector}>
+            {uploadDocTypes.map((type) => (
+              <TouchableOpacity
+                key={type}
+                style={[styles.typeChip, selectedDocType === type && styles.typeChipActive] as any}
+                onPress={() => setSelectedDocType(type)}
+              >
+                <Text style={[styles.typeText, selectedDocType === type && styles.typeText Active]}>
+                  {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           <DocumentUpload onSelect={handleUpload} label="Select Document" />
           <TouchableOpacity onPress={() => setShowUpload(false)} style={styles.cancelBtn}>
             <Text style={styles.cancelText}>Cancel</Text>
@@ -62,7 +78,7 @@ export default function PetDocuments({ petId }: Props) {
               {docTypes.map((type) => (
                 <TouchableOpacity
                   key={type}
-                  style={[styles.filterChip, filter === type && styles.filterChipActive]}
+                  style={[styles.filterChip, filter === type && styles.filterChipActive] as any}
                   onPress={() => setFilter(type)}
                 >
                   <Text style={[styles.filterText, filter === type && styles.filterTextActive]}>
@@ -75,17 +91,17 @@ export default function PetDocuments({ petId }: Props) {
 
           <View style={styles.list}>
             {filteredDocuments.map(doc => (
-              <TouchableOpacity 
-                key={doc.id} 
+              <TouchableOpacity
+                key={doc.id}
                 style={styles.card}
                 onPress={() => openPreview(doc.file_url, doc.mime_type)}
               >
                 <View style={styles.iconBox}>
-                  <IconSymbol 
-                    ios_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'doc.fill'} 
-                    android_material_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'description'} 
-                    size={24} 
-                    color={colors.primary} 
+                  <IconSymbol
+                    ios_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'doc.fill'}
+                    android_material_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'description'}
+                    size={24}
+                    color={colors.primary}
                   />
                 </View>
                 <View style={styles.content}>
@@ -134,6 +150,35 @@ const styles = StyleSheet.create({
   },
   uploadContainer: {
     marginBottom: 20,
+  },
+  uploadLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  typeSelector: {
+    marginBottom: 16,
+  },
+  typeChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: 8,
+  },
+  typeChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  typeText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+  },
+  typeTextActive: {
+    color: '#fff',
   },
   filterRow: {
     marginBottom: 16,

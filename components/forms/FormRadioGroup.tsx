@@ -57,7 +57,7 @@ export default function FormRadioGroup({
                 style={[
                     styles.optionsContainer,
                     direction === 'horizontal' && styles.horizontalContainer,
-                ]}
+                ] as any}
             >
                 {options.map((option) => {
                     const isSelected = value === option.value;
@@ -80,7 +80,7 @@ export default function FormRadioGroup({
                                         : 'transparent',
                                     opacity: disabled ? 0.5 : 1,
                                 },
-                            ]}
+                            ] as any}
                         >
                             <View
                                 style={[
@@ -90,7 +90,7 @@ export default function FormRadioGroup({
                                             ? effectiveColors.activeBorder
                                             : effectiveColors.border,
                                     },
-                                ]}
+                                ] as any}
                             >
                                 {isSelected && (
                                     <View
@@ -99,7 +99,7 @@ export default function FormRadioGroup({
                                             {
                                                 backgroundColor: effectiveColors.activeBorder,
                                             },
-                                        ]}
+                                        ] as any}
                                     />
                                 )}
                             </View>
@@ -112,7 +112,7 @@ export default function FormRadioGroup({
                                             : effectiveColors.textSecondary,
                                         fontWeight: isSelected ? '600' : '400',
                                     },
-                                ]}
+                                ] as any}
                             >
                                 {option.label}
                             </Text>

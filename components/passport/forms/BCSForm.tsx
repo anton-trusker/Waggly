@@ -123,7 +123,7 @@ export default function BCSForm({ visible, onClose, onSubmit }: BCSFormProps) {
                                                 style={[
                                                     styles.scoreButton,
                                                     score === val && { backgroundColor: getColor(val) }
-                                                ]}
+                                                ] as any}
                                                 onPress={() => setValue('score', val)}
                                             >
                                                 <Text style={[

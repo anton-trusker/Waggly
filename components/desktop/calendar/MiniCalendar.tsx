@@ -125,7 +125,7 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
                             !day ? styles.dayCellEmpty : undefined,
                             (day && isToday(day)) ? styles.dayCellToday : undefined,
                             (day && isSelected(day)) ? styles.dayCellSelected : undefined,
-                        ]}
+                        ] as any}
                         onPress={() => {
                             if (day) {
                                 const year = currentMonth.getFullYear();

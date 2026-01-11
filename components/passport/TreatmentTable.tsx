@@ -88,7 +88,7 @@ export default function TreatmentTableWidget({
             <View style={[styles.filterRow, isMobile && styles.filterRowMobile]}>
                 <View style={styles.filterButtons}>
                     <TouchableOpacity
-                        style={[styles.filterButton, filter === 'active' && styles.filterButtonActive]}
+                        style={[styles.filterButton, filter === 'active' && styles.filterButtonActive] as any}
                         onPress={() => setFilter('active')}
                     >
                         <Text style={[styles.filterText, filter === 'active' && styles.filterTextActive]}>
@@ -97,7 +97,7 @@ export default function TreatmentTableWidget({
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
+                        style={[styles.filterButton, filter === 'all' && styles.filterButtonActive] as any}
                         onPress={() => setFilter('all')}
                     >
                         <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
@@ -132,7 +132,7 @@ export default function TreatmentTableWidget({
                             style={[
                                 styles.treatmentCard,
                                 !treatment.isActive && styles.treatmentCardInactive,
-                            ]}
+                            ] as any}
                         >
                             <View style={styles.treatmentHeader}>
                                 <View style={styles.treatmentInfo}>

@@ -131,7 +131,7 @@ export default function FloatingTabBar({
       ]}>
         <BlurView
           intensity={80}
-          style={[dynamicStyles.blurContainer, { borderRadius }]}
+          style={[dynamicStyles.blurContainer, { borderRadius }] as any}
         >
           <View style={dynamicStyles.background} />
           <View style={[dynamicStyles.indicator, indicatorStyle]} />
@@ -159,7 +159,7 @@ export default function FloatingTabBar({
                         styles.tabLabel,
                         { color: theme.dark ? '#98989D' : '#8E8E93' },
                         isActive && { color: theme.colors.primary, fontWeight: '600' },
-                      ]}
+                      ] as any}
                     >
                       {tab.label}
                     </Text>

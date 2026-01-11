@@ -50,7 +50,7 @@ export default function SearchableSelect({
     <View style={styles.container}>
       {label && <Text style={styles.label}>{t(label, { defaultValue: label })}</Text>}
       <TouchableOpacity
-        style={[styles.input, error ? { borderColor: colors.statusError } : {}, containerStyle]}
+        style={[styles.input, error ? { borderColor: colors.statusError } : {}, containerStyle] as any}
         onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={t('open_selector', { defaultValue: `Open ${label} selector`, label })}

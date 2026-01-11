@@ -143,7 +143,7 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
                                     styles.dayCell,
                                     !day ? styles.dayCellEmpty : null,
                                     (day && isToday(day)) ? styles.dayCellToday : null,
-                                ]}
+                                ] as any}
                                 onPress={() => {
                                     if (day && onDateClick) {
                                         const year = currentDate.getFullYear();
@@ -183,7 +183,7 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
                                                     >
                                                         <TouchableOpacity
                                                             activeOpacity={0.9}
-                                                            style={[styles.eventPill, { backgroundColor: event.color || '#6366F1' }]}
+                                                            style={[styles.eventPill, { backgroundColor: event.color || '#6366F1' }] as any}
                                                             onPressIn={handlePressIn}
                                                             onPressOut={handlePressOut}
                                                             onPress={() => onEventClick?.(event)}

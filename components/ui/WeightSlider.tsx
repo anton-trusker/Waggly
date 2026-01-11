@@ -101,7 +101,7 @@ const WeightSlider: React.FC<WeightSliderProps> = ({
                 width: `${sliderPosition}%`,
                 backgroundColor: getColor('primary.500'),
               },
-            ]}
+            ] as any}
           />
         </View>
         <Animated.View
@@ -116,7 +116,7 @@ const WeightSlider: React.FC<WeightSliderProps> = ({
                 { scale: isEditing ? 1.2 : 1 },
               ],
             },
-          ]}
+          ] as any}
         />
       </View>
 
@@ -129,7 +129,7 @@ const WeightSlider: React.FC<WeightSliderProps> = ({
               borderColor: getColor('border.default'),
               backgroundColor: getColor('background.primary'),
             },
-          ]}
+          ] as any}
           keyboardType="numeric"
           value={inputValue}
           onChangeText={handleInputChange}

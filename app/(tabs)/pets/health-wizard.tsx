@@ -182,7 +182,7 @@ export default function HealthWizardScreen() {
       <Text style={styles.stepTitle}>What would you like to add?</Text>
       
       <TouchableOpacity
-        style={[styles.typeCard, type === 'vaccination' && styles.typeCardActive]}
+        style={[styles.typeCard, type === 'vaccination' && styles.typeCardActive] as any}
         onPress={() => setType('vaccination')}
         accessibilityRole="button"
         accessibilityLabel="Select vaccination"
@@ -203,7 +203,7 @@ export default function HealthWizardScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.typeCard, type === 'treatment' && styles.typeCardActive]}
+        style={[styles.typeCard, type === 'treatment' && styles.typeCardActive] as any}
         onPress={() => setType('treatment')}
         accessibilityRole="button"
         accessibilityLabel="Select treatment"
@@ -224,7 +224,7 @@ export default function HealthWizardScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.typeCard, type === 'visit' && styles.typeCardActive]}
+        style={[styles.typeCard, type === 'visit' && styles.typeCardActive] as any}
         onPress={() => setType('visit')}
         accessibilityRole="button"
         accessibilityLabel="Select medical visit"
@@ -344,7 +344,7 @@ export default function HealthWizardScreen() {
       <View style={styles.inputContainer}>
         <Text style={commonStyles.inputLabel}>Notes</Text>
         <TextInput
-          style={[commonStyles.input, styles.textArea]}
+          style={[commonStyles.input, styles.textArea] as any}
           value={notes}
           onChangeText={setNotes}
           multiline
@@ -410,7 +410,7 @@ export default function HealthWizardScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[buttonStyles.primary, loading && styles.disabledBtn]}
+          style={[buttonStyles.primary, loading && styles.disabledBtn] as any}
           onPress={() => {
             if (step < 3) setStep(step + 1);
             else handleSubmit();

@@ -41,7 +41,7 @@ export default function FormTextarea({
                     isFocused && styles.inputFocused,
                     error && styles.inputError,
                     style,
-                ]}
+                ] as any}
                 placeholderTextColor={formColors.inputPlaceholder}
                 multiline
                 textAlignVertical="top"

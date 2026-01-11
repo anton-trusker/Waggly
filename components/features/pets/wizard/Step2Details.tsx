@@ -122,7 +122,7 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                             <Text style={styles.label}>{t('add_pet.step2.weight_label')}</Text>
                             <View style={styles.inputWithUnit}>
                                 <TextInput
-                                    style={[styles.input, styles.compactInput]}
+                                    style={[styles.input, styles.compactInput] as any}
                                     placeholder="0"
                                     keyboardType="numeric"
                                     value={weight}
@@ -132,13 +132,13 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                                 />
                                 <View style={styles.toggle}>
                                     <TouchableOpacity
-                                        style={[styles.toggleOption, weightUnit === 'kg' && styles.toggleSelected]}
+                                        style={[styles.toggleOption, weightUnit === 'kg' && styles.toggleSelected] as any}
                                         onPress={() => setWeightUnit('kg')}
                                     >
                                         <Text style={[styles.toggleText, weightUnit === 'kg' && styles.toggleTextSelected]}>KG</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.toggleOption, weightUnit === 'lbs' && styles.toggleSelected]}
+                                        style={[styles.toggleOption, weightUnit === 'lbs' && styles.toggleSelected] as any}
                                         onPress={() => setWeightUnit('lbs')}
                                     >
                                         <Text style={[styles.toggleText, weightUnit === 'lbs' && styles.toggleTextSelected]}>LBS</Text>
@@ -172,7 +172,7 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
             </View>

@@ -52,14 +52,14 @@ export default function AlbumTab({ onNewAlbum, onAddMedia }: AlbumTabProps) {
                 {/* Header Actions (Mobile Only - Desktop has header via shell/nav but we can keep inline actions if needed) */}
                 <View style={styles.headerActions}>
                     <TouchableOpacity
-                        style={[styles.btnSecondary, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary }]}
+                        style={[styles.btnSecondary, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary }] as any}
                         onPress={onNewAlbum}
                     >
                         <IconSymbol android_material_icon_name="create-new-folder" size={20} color={theme.colors.text.secondary} />
                         <Text style={[styles.btnTextSecondary, { color: theme.colors.text.secondary }]}>New Album</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.btnPrimary, { backgroundColor: theme.colors.primary[500] }]}
+                        style={[styles.btnPrimary, { backgroundColor: theme.colors.primary[500] }] as any}
                         onPress={onAddMedia}
                     >
                         <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#fff" />
@@ -84,7 +84,7 @@ export default function AlbumTab({ onNewAlbum, onAddMedia }: AlbumTabProps) {
                             <TouchableOpacity key={album.id} style={[styles.albumCard, { backgroundColor: theme.colors.background.secondary }]}>
                                 <Image source={{ uri: album.cover }} style={styles.albumCover} />
                                 <LinearGradient
-                                    colors={['transparent', 'rgba(0,0,0,0.7)']}
+                                    colors={['transparent', 'rgba(0,0,0,0.7)'] as any}
                                     style={styles.albumOverlay}
                                 />
                                 <View style={styles.albumInfo}>
@@ -113,7 +113,7 @@ export default function AlbumTab({ onNewAlbum, onAddMedia }: AlbumTabProps) {
                                         style={[
                                             styles.filterChip,
                                             isActive ? { backgroundColor: theme.colors.primary[500] } : { backgroundColor: theme.colors.background.secondary, borderWidth: 1, borderColor: theme.colors.border.secondary }
-                                        ]}
+                                        ] as any}
                                     >
                                         <Text style={[styles.filterText, isActive ? { color: '#fff' } : { color: theme.colors.text.secondary }]}>{filter}</Text>
                                     </TouchableOpacity>
@@ -135,7 +135,7 @@ export default function AlbumTab({ onNewAlbum, onAddMedia }: AlbumTabProps) {
                                             : '47%', // ~2 cols on mobile
                                         backgroundColor: theme.colors.background.secondary
                                     }
-                                ]}
+                                ] as any}
                             >
                                 <Image source={{ uri: photo.url }} style={styles.gridImage} />
 

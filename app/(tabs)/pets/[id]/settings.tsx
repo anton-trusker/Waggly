@@ -48,7 +48,7 @@ export default function SettingsTab() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.management')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }]}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowManageAccess(true)}
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>
@@ -64,7 +64,7 @@ export default function SettingsTab() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}
+          style={[styles.settingItem, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }] as any}
           onPress={() => setShowDeleteModal(true)}
           disabled={isDeleting}
         >
@@ -88,7 +88,7 @@ export default function SettingsTab() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.privacy')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }]}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowPrivacy(true)} // Open modal (mock for now)
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>
@@ -109,7 +109,7 @@ export default function SettingsTab() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.notifications')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }]}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowNotifications(true)} // Open modal (mock for now)
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>

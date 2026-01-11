@@ -32,7 +32,7 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
                 <LinearGradient
                     colors={isDark
                         ? ['rgba(30, 64, 175, 0.3)', 'transparent']
-                        : ['#EFF6FF', 'transparent']}
+                        : ['#EFF6FF', 'transparent'] as any}
                     style={StyleSheet.absoluteFill}
                     start={{ x: 0.5, y: 0 }}
                     end={{ x: 0.5, y: 1 }}
@@ -42,7 +42,7 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
             {/* Navigation Bar */}
             <View style={styles.navBar}>
                 <TouchableOpacity
-                    style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
+                    style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }] as any}
                     onPress={() => router.back()}
                 >
                     <IconSymbol ios_icon_name="chevron.left" android_material_icon_name="arrow-back-ios-new" size={20} color={theme.colors.text.primary} />
@@ -52,7 +52,7 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
                 <View style={styles.rightActions}>
                     {onShare && (
                         <TouchableOpacity
-                            style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
+                            style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }] as any}
                             onPress={onShare}
                         >
                             <IconSymbol ios_icon_name="square.and.arrow.up" android_material_icon_name="share" size={20} color={colors.primary} />
@@ -60,7 +60,7 @@ export default function PetProfileHeader({ pet, onEdit, onShare }: PetProfileHea
                     )}
 
                     <TouchableOpacity
-                        style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }]}
+                        style={[styles.navButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }] as any}
                         onPress={onEdit}
                     >
                         <IconSymbol ios_icon_name="pencil" android_material_icon_name="edit" size={20} color={colors.primary} />

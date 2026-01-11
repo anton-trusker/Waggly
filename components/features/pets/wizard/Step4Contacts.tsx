@@ -102,11 +102,11 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                 ios_icon_name="person.fill"
                                 android_material_icon_name="person"
                                 size={20}
-                                color={colors.error[500]}
+                                color={colors.error[500] as any}
                                 style={styles.inputIcon}
                             />
                             <TextInput
-                                style={[styles.input, dynamicStyles.input]}
+                                style={[styles.input, dynamicStyles.input] as any}
                                 placeholder={t('add_pet.step3.contact_name_placeholder')}
                                 placeholderTextColor={dynamicStyles.placeholder}
                                 value={emergencyContactName}
@@ -126,7 +126,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
 
                     {/* Veterinarian Section - SECOND, COLLAPSIBLE */}
                     <TouchableOpacity
-                        style={[styles.sectionHeader, { marginTop: 24 }, dynamicStyles.sectionHeader]}
+                        style={[styles.sectionHeader, { marginTop: 24 }, dynamicStyles.sectionHeader] as any}
                         onPress={() => setShowVet(!showVet)}
                         activeOpacity={0.7}
                     >
@@ -154,7 +154,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                     // setVetClinicName(place.name || vetClinicName);
                                 }}
                                 placeholder={t('add_pet.step4.address_placeholder')}
-                                types={['establishment']}
+                                types={['establishment'] as any}
                                 label={t('add_pet.step4.address_label')}
                             />
 
@@ -163,7 +163,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                 <View style={styles.inputContainer}>
                                     <IconSymbol ios_icon_name="building.2" android_material_icon_name="domain" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
                                     <TextInput
-                                        style={[styles.input, dynamicStyles.input]}
+                                        style={[styles.input, dynamicStyles.input] as any}
                                         placeholder={t('add_pet.step4.clinic_name_placeholder')}
                                         placeholderTextColor={dynamicStyles.placeholder}
                                         value={vetClinicName}
@@ -178,7 +178,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                                     <View style={styles.inputContainer}>
                                         <IconSymbol ios_icon_name="person.fill" android_material_icon_name="person" size={20} color={designSystem.colors.primary[500]} style={styles.inputIcon} />
                                         <TextInput
-                                            style={[styles.input, dynamicStyles.input]}
+                                            style={[styles.input, dynamicStyles.input] as any}
                                             placeholder={t('add_pet.step4.vet_name_placeholder')}
                                             placeholderTextColor={dynamicStyles.placeholder}
                                             value={vetName}
@@ -213,7 +213,7 @@ export default function Step4Contacts({ initialData, onNext }: Step4Props) {
                         ios_icon_name="checkmark.circle.fill"
                         android_material_icon_name="check"
                         size={20}
-                        color={colors.neutral[0]}
+                        color={colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
             </View>

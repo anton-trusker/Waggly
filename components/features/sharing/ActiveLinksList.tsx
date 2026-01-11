@@ -65,19 +65,19 @@ export default function ActiveLinksList({ petId, refreshTrigger }: ActiveLinksLi
       </View>
       <View style={styles.actionsContainer}>
         <Pressable
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed] as any}
           onPress={() => handleViewDetails(item)}
         >
           <IconSymbol android_material_icon_name="visibility" size={20} color={designSystem.colors.primary[500]} />
         </Pressable>
         <Pressable
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed] as any}
           onPress={() => handleCopy(item.token)}
         >
           <IconSymbol android_material_icon_name="content-copy" size={20} color={designSystem.colors.text.secondary} />
         </Pressable>
         <Pressable
-          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed] as any}
           onPress={() => handleRevoke(item.id)}
         >
           <IconSymbol android_material_icon_name="delete-outline" size={20} color={designSystem.colors.status.error[500]} />

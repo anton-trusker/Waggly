@@ -40,7 +40,7 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
                 styles.card,
                 isMobile && styles.cardMobile,
                 hovered && styles.cardHover
-            ]}
+            ] as any}
         >
             {/* Pet Photo */}
             <View style={[styles.photoContainer, isMobile && styles.photoContainerMobile]}>

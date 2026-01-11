@@ -114,7 +114,7 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Pet's Name *</Text>
                 <TextInput
-                    style={[styles.input, errors.name && styles.inputError]}
+                    style={[styles.input, errors.name && styles.inputError] as any}
                     value={data.name || ''}
                     onChangeText={(v) => onChange('name', v)}
                     placeholder="Enter name"
@@ -155,7 +155,7 @@ export default function EditPetBasicInfo({ data, onChange, errors = {} }: EditPe
                             style={[
                                 styles.genderButton,
                                 data.gender === g && styles.genderButtonActive
-                            ]}
+                            ] as any}
                             onPress={() => onChange('gender', g)}
                         >
                             <IconSymbol

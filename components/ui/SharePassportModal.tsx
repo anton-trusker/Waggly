@@ -102,7 +102,7 @@ export default function SharePassportModal({
                             backgroundColor: effectiveColors.background,
                             borderColor: effectiveColors.border,
                         },
-                    ]}
+                    ] as any}
                 >
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: effectiveColors.border }]}>
@@ -135,7 +135,7 @@ export default function SharePassportModal({
                                 style={[
                                     styles.qrContainer,
                                     { backgroundColor: effectiveColors.qrBackground },
-                                ]}
+                                ] as any}
                             >
                                 <QRCode
                                     value={shareUrl}
@@ -165,10 +165,10 @@ export default function SharePassportModal({
                                         backgroundColor: effectiveColors.card,
                                         borderColor: effectiveColors.border,
                                     },
-                                ]}
+                                ] as any}
                             >
                                 <Text
-                                    style={[styles.linkText, { color: effectiveColors.textSecondary }]}
+                                    style={[styles.linkText, { color: effectiveColors.textSecondary }] as any}
                                     numberOfLines={1}
                                 >
                                     {shareUrl}
@@ -178,11 +178,11 @@ export default function SharePassportModal({
                                     style={[
                                         styles.copyButton,
                                         { backgroundColor: designSystem.colors.primary[500] },
-                                    ]}
+                                    ] as any}
                                 >
                                     <IconSymbol
                                         ios_icon_name="doc.on.doc"
-                                        android_material_icon_name="content_copy"
+                                        android_material_icon_name="content-copy"
                                         size={16}
                                         color="#FFFFFF"
                                     />
@@ -197,7 +197,7 @@ export default function SharePassportModal({
                                 ios_icon_name="info.circle"
                                 android_material_icon_name="info"
                                 size={20}
-                                color={designSystem.colors.primary[500]}
+                                color={designSystem.colors.primary[500] as any}
                             />
                             <Text style={[styles.infoText, { color: effectiveColors.textSecondary }]}>
                                 Anyone with this link can view {petName}'s passport without signing in
@@ -212,7 +212,7 @@ export default function SharePassportModal({
                             style={[
                                 styles.shareButton,
                                 { backgroundColor: designSystem.colors.primary[500] },
-                            ]}
+                            ] as any}
                         >
                             <IconSymbol
                                 ios_icon_name="square.and.arrow.up"

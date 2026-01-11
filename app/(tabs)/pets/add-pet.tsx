@@ -137,7 +137,7 @@ export default function AddPetScreen() {
                 <View style={styles.col}>
                   <Text style={styles.label}>Name <Text style={styles.required}>*</Text></Text>
                   <TextInput
-                    style={[styles.input, errors.name && styles.inputError]}
+                    style={[styles.input, errors.name && styles.inputError] as any}
                     placeholder="Pet's name"
                     placeholderTextColor={colors.textTertiary}
                     value={name}
@@ -160,7 +160,7 @@ export default function AddPetScreen() {
                       style={[
                         styles.petTypeCard,
                         species === type.id && styles.petTypeCardSelected
-                      ]}
+                      ] as any}
                       onPress={() => {
                         setSpecies(type.id as any);
                         setBreed(''); // Reset breed when species changes
@@ -208,7 +208,7 @@ export default function AddPetScreen() {
                     options={[
                       { id: 'male', label: 'Male', icon: 'mars' },
                       { id: 'female', label: 'Female', icon: 'venus' }
-                    ]}
+                    ] as any}
                     onSelect={(opt) => setGender(opt.id as any)}
                     placeholder="Gender"
                     icon="person.fill"
@@ -243,7 +243,7 @@ export default function AddPetScreen() {
                       { id: 'small', label: 'Small' },
                       { id: 'medium', label: 'Medium' },
                       { id: 'large', label: 'Large' }
-                    ]}
+                    ] as any}
                     onSelect={(opt) => setSize(opt.id as any)}
                     placeholder="Size"
                     icon="scalemass"

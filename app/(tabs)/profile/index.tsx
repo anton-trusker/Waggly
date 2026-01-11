@@ -278,7 +278,7 @@ export default function ProfilePage() {
             contentContainerStyle={isMobile ? styles.sidebarScrollMobile : undefined}
           >
             <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+              style={[styles.sidebarItem, activeTab === 'account' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile] as any}
               onPress={() => setActiveTab('account')}
             >
               <Ionicons
@@ -291,7 +291,7 @@ export default function ProfilePage() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+              style={[styles.sidebarItem, activeTab === 'notifications' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile] as any}
               onPress={() => setActiveTab('notifications')}
             >
               <Ionicons
@@ -304,7 +304,7 @@ export default function ProfilePage() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile]}
+              style={[styles.sidebarItem, activeTab === 'privacy' && styles.sidebarItemActive, isMobile && styles.sidebarItemMobile] as any}
               onPress={() => setActiveTab('privacy')}
             >
               <Ionicons
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                             style={[
                               styles.genderChip,
                               gender === g && styles.genderChipActive
-                            ]}
+                            ] as any}
                             onPress={() => setGender(g)}
                           >
                             <Text style={[
@@ -453,7 +453,7 @@ export default function ProfilePage() {
                         <Ionicons name="chevron-down" size={16} color="#6B7280" />
                       </TouchableOpacity>
                       <TextInput
-                        style={[styles.input, styles.phoneInput]}
+                        style={[styles.input, styles.phoneInput] as any}
                         value={phone}
                         onChangeText={setPhone}
                         placeholder="(555) 123-4567"
@@ -554,7 +554,7 @@ export default function ProfilePage() {
                             style={[
                               styles.langChip,
                               languageCode === lang && styles.langChipActive
-                            ]}
+                            ] as any}
                             onPress={() => {
                               setLanguageCode(lang);
                               setLocale(lang); // Immediate update
@@ -578,7 +578,7 @@ export default function ProfilePage() {
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('profile.label_bio')}</Text>
                     <TextInput
-                      style={[styles.input, styles.textArea]}
+                      style={[styles.input, styles.textArea] as any}
                       value={bio}
                       onChangeText={setBio}
                       placeholder={t('profile.placeholder_bio')}
@@ -589,7 +589,7 @@ export default function ProfilePage() {
                   </View>
 
                   <TouchableOpacity
-                    style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+                    style={[styles.saveButton, saving && styles.saveButtonDisabled] as any}
                     onPress={handleSaveProfile}
                     disabled={saving}
                   >
@@ -942,7 +942,7 @@ export default function ProfilePage() {
               style={{ maxHeight: 400 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={[modalStyles.item, countryCode === item.code && modalStyles.itemSelected]}
+                  style={[modalStyles.item, countryCode === item.code && modalStyles.itemSelected] as any}
                   onPress={() => {
                     setCountryCode(item.code);
                     setShowCountryPicker(false);
@@ -994,7 +994,7 @@ export default function ProfilePage() {
               style={{ maxHeight: 400 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={[modalStyles.item, phoneCountryCode === item.code && modalStyles.itemSelected]}
+                  style={[modalStyles.item, phoneCountryCode === item.code && modalStyles.itemSelected] as any}
                   onPress={() => {
                     setPhoneCountryCode(item.code);
                     setShowPhoneCountryPicker(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, useWindowDimensions, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
@@ -135,13 +135,13 @@ export default function DocumentsTab() {
                 <View style={styles.docFooter}>
                   <View style={styles.docClinic}>
                     <IconSymbol android_material_icon_name="attach-file" size={12} color="#9CA3AF" />
-                    <Text style={styles.docClinicText} numberOfLines={1}>{doc.mime_type || t('common.unknown')}</Text>
+                    <Text style={styles.docClinicText} numberOfLines={1}>{doc.file_type || t('common.unknown')}</Text>
                   </View>
-                  {typeof doc.size_bytes === 'number' && (
+                  {typeof doc.file_size === 'number' && (
                     <Text style={styles.docSize}>
-                      {doc.size_bytes >= 1024 * 1024
-                        ? `${(doc.size_bytes / 1024 / 1024).toFixed(2)} MB`
-                        : `${(doc.size_bytes / 1024).toFixed(0)} KB`}
+                      {doc.file_size >= 1024 * 1024
+                        ? `${(doc.file_size / 1024 / 1024).toFixed(2)} MB`
+                        : `${(doc.file_size / 1024).toFixed(0)} KB`}
                     </Text>
                   )}
                 </View>

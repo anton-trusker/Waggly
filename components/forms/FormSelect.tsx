@@ -57,7 +57,7 @@ export default function FormSelect<T extends FieldValues>({
                                 styles.button,
                                 isDark && styles.buttonDark,
                                 error && styles.buttonError,
-                            ]}
+                            ] as any}
                             onPress={() => setShowModal(true)}
                         >
                             <Text style={[
@@ -115,7 +115,7 @@ export default function FormSelect<T extends FieldValues>({
                                                 style={[
                                                     styles.option,
                                                     item.value === value && styles.optionSelected,
-                                                ]}
+                                                ] as any}
                                                 onPress={() => {
                                                     onChange(item.value);
                                                     setShowModal(false);
@@ -133,7 +133,7 @@ export default function FormSelect<T extends FieldValues>({
                                                         ios_icon_name="checkmark"
                                                         android_material_icon_name="check"
                                                         size={20}
-                                                        color={designSystem.colors.primary[500]}
+                                                        color={designSystem.colors.primary[500] as any}
                                                     />
                                                 )}
                                             </TouchableOpacity>

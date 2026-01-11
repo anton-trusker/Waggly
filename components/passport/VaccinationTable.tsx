@@ -108,7 +108,7 @@ export default function VaccinationTableWidget({
             <View style={[styles.filterRow, isMobile && styles.filterRowMobile]}>
                 <View style={styles.filterButtons}>
                     <TouchableOpacity
-                        style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
+                        style={[styles.filterButton, filter === 'all' && styles.filterButtonActive] as any}
                         onPress={() => setFilter('all')}
                     >
                         <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
@@ -117,7 +117,7 @@ export default function VaccinationTableWidget({
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.filterButton, filter === 'core' && styles.filterButtonActive]}
+                        style={[styles.filterButton, filter === 'core' && styles.filterButtonActive] as any}
                         onPress={() => setFilter('core')}
                     >
                         <Text style={[styles.filterText, filter === 'core' && styles.filterTextActive]}>
@@ -126,7 +126,7 @@ export default function VaccinationTableWidget({
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.filterButton, filter === 'non-core' && styles.filterButtonActive]}
+                        style={[styles.filterButton, filter === 'non-core' && styles.filterButtonActive] as any}
                         onPress={() => setFilter('non-core')}
                     >
                         <Text style={[styles.filterText, filter === 'non-core' && styles.filterTextActive]}>
@@ -161,7 +161,7 @@ export default function VaccinationTableWidget({
                             style={[
                                 styles.vaccinationCard,
                                 { borderLeftColor: getStatusColor(vaccination) },
-                            ]}
+                            ] as any}
                         >
                             <View style={styles.vaccinationHeader}>
                                 <View style={styles.vaccinationInfo}>

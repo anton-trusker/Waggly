@@ -23,7 +23,7 @@ const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
         <View style={styles.container}>
             <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
             <LinearGradient
-                colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.3)", "transparent"]}
+                colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.3)", "transparent"] as any}
                 start={{ x: 0.5, y: 1 }}
                 end={{ x: 0.5, y: 0 }}
                 style={styles.overlay}

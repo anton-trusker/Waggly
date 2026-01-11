@@ -42,7 +42,7 @@ export default function ModernSelect({ label, placeholder, value, options, onCha
                     ios_icon_name="chevron.down"
                     android_material_icon_name="expand-more"
                     size={20}
-                    color={designSystem.colors.primary[500]}
+                    color={designSystem.colors.primary[500] as any}
                 />
             </TouchableOpacity>
 

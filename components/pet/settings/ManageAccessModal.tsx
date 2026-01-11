@@ -102,7 +102,7 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
                             backgroundColor: theme.colors.background.card,
                             color: theme.colors.text.primary,
                             borderColor: theme.colors.border.primary
-                        }]}
+                        }] as any}
                         placeholder="Enter email address"
                         placeholderTextColor={theme.colors.text.tertiary}
                         value={email}
@@ -111,7 +111,7 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
                         keyboardType="email-address"
                     />
                     <TouchableOpacity
-                        style={[styles.inviteBtn, { backgroundColor: theme.colors.primary[500], opacity: inviting ? 0.7 : 1 }]}
+                        style={[styles.inviteBtn, { backgroundColor: theme.colors.primary[500], opacity: inviting ? 0.7 : 1 }] as any}
                         onPress={handleInvite}
                         disabled={inviting}
                     >

@@ -133,7 +133,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
             {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+                    style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled] as any}
                     onPress={onSubmit}
                     disabled={isSubmitting}
                 >
@@ -149,7 +149,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                                 ios_icon_name="plus"
                                 android_material_icon_name="add"
                                 size={20}
-                                color={designSystem.colors.neutral[0]}
+                                color={designSystem.colors.neutral[0] as any}
                             />
                         </>
                     )}

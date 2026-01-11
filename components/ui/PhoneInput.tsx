@@ -102,7 +102,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
                 <View style={[styles.divider, dynamicStyles.divider]} />
 
                 <TextInput
-                    style={[styles.input, dynamicStyles.input]}
+                    style={[styles.input, dynamicStyles.input] as any}
                     placeholder={t('common.phone_input.placeholder')}
                     placeholderTextColor={dynamicStyles.placeholder}
                     keyboardType="phone-pad"
@@ -128,7 +128,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
                     <View style={[styles.searchContainer, dynamicStyles.searchContainer]}>
                         <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={20} color={colors.text.tertiary} />
                         <TextInput
-                            style={[styles.searchInput, dynamicStyles.searchInput]}
+                            style={[styles.searchInput, dynamicStyles.searchInput] as any}
                             placeholder={t('common.phone_input.search_placeholder')}
                             placeholderTextColor={dynamicStyles.placeholder}
                             value={searchQuery}
@@ -148,7 +148,7 @@ export default function PhoneInput({ value, onChangeText, defaultCountryCode = '
                         keyboardShouldPersistTaps="handled"
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                style={[styles.countryItem, dynamicStyles.countryItem]}
+                                style={[styles.countryItem, dynamicStyles.countryItem] as any}
                                 onPress={() => handleCountrySelect(item)}
                             >
                                 <Text style={styles.itemFlag}>{item.flag}</Text>

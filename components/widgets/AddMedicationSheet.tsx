@@ -7,6 +7,7 @@ import { FormField, FormDatePicker } from '@/components/forms';
 import BottomSheet from '@/components/navigation/BottomSheet';
 import { Button } from '@/components/base';
 import { designSystem } from '@/constants/designSystem';
+import { supabase } from '@/lib/supabase';
 
 interface AddMedicationSheetProps {
     petId: string;
@@ -41,11 +42,24 @@ export default function AddMedicationSheet({ petId, onSuccess }: AddMedicationSh
 
     const onSubmit = async (data: Medication) => {
         try {
-            // TODO: Add to database via Supabase
-            console.log('Adding medication:', { ...data, petId });
+            // Add medication to database via Supabase
+            const { data: medication, error } = await supabase
+                .from('medications')
+                .insert({
+                    pet_id: petId,
+                    name: data.name,
+                    dosage: data.dosage,
+                    frequency: data.frequency,
+                    start_date: data.startDate.toISOString(),
+                    end_date: data.endDate?.toISOString(),
+                    prescribed_by: data.prescribedBy,
+                    notes: data.notes,
+                    reminder_enabled: data.reminderEnabled,
+                })
+                .select()
+                .single();
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 500));
+            if (error) throw error;
 
             Alert.alert(
                 'Success',
@@ -54,11 +68,12 @@ export default function AddMedicationSheet({ petId, onSuccess }: AddMedicationSh
                     text: 'OK', onPress: () => {
                         reset();
                         close();
-                        onSuccess?.(data);
+                        onSuccess?.(medication as any);
                     }
                 }]
             );
         } catch (error) {
+            console.error('Error adding medication:', error);
             Alert.alert('Error', 'Failed to add medication. Please try again.');
         }
     };
@@ -80,7 +95,7 @@ export default function AddMedicationSheet({ petId, onSuccess }: AddMedicationSh
                 visible={visible}
                 onClose={handleClose}
                 title="Add Medication"
-                snapPoints={['75%', '95%']}
+                snapPoints={['75%', '95%'] as any}
             >
                 <ScrollView
                     style={styles.form}

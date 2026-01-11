@@ -110,7 +110,7 @@ export default function PetProfileHeader({ pet }: PetProfileHeaderProps) {
                         </Button>
                     )}
                     <Button
-                        onPress={() => {/* TODO: Share modal */ }}
+                        onPress={() => router.push(`/(tabs)/pets/${pet.id}/share` as any)}
                         style={styles.shareButton}
                     >
                         <Text style={styles.shareButtonText}>Share Profile</Text>
@@ -123,7 +123,7 @@ export default function PetProfileHeader({ pet }: PetProfileHeaderProps) {
                 {tabs.map((tab) => (
                     <TouchableOpacity
                         key={tab.key}
-                        style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+                        style={[styles.tab, activeTab === tab.key && styles.tabActive] as any}
                         onPress={() => router.push(tab.path as any)}
                     >
                         <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>

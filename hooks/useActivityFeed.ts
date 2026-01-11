@@ -72,7 +72,7 @@ export const useActivityFeed = (limit: number = 10, petId?: string) => {
                         type: getActivityType(log.action_type),
                         petId: log.pet_id || '',
                         petName: pet?.name || 'Unknown Pet',
-                        petPhotoUrl: pet?.photo_url || undefined,
+                        petPhotoUrl: pet?.avatar_url || undefined,
                         title: getActivityTitle(log.action_type, details),
                         description: getActivityDescription(log.action_type, details, pet?.name),
                         timestamp: log.created_at,

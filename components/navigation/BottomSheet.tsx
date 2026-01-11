@@ -83,11 +83,11 @@ export default function BottomSheet({
             backgroundStyle={[
                 styles.background,
                 { backgroundColor: isDark ? designSystem.colors.background.secondary : designSystem.colors.neutral[0] },
-            ]}
+            ] as any}
             handleIndicatorStyle={[
                 styles.indicator,
                 { backgroundColor: isDark ? designSystem.colors.neutral[600] : designSystem.colors.neutral[300] },
-            ]}
+            ] as any}
         >
             <BottomSheetView style={styles.content}>
                 {/* Header */}

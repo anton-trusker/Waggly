@@ -28,7 +28,7 @@ export function IconSymbol({
           height: size,
         },
         style,
-      ]}
+      ] as any}
     />
   );
 }

@@ -11,7 +11,7 @@ interface PetHealthStatusWidgetProps {
 export default function PetHealthStatusWidget({ nextVaccineDue }: PetHealthStatusWidgetProps) {
     return (
         <LinearGradient
-            colors={['#6366F1', '#9333EA']}
+            colors={['#6366F1', '#9333EA'] as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{

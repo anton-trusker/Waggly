@@ -48,7 +48,7 @@ export default function CollapsibleSection({
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                style={[styles.header, { borderBottomColor: expanded ? effectiveColors.border : 'transparent' }]}
+                style={[styles.header, { borderBottomColor: expanded ? effectiveColors.border : 'transparent' }] as any}
                 onPress={toggleExpand}
                 activeOpacity={0.7}
             >

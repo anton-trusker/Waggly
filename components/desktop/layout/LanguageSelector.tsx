@@ -49,7 +49,7 @@ export function LanguageSelector() {
                                     style={[
                                         styles.item,
                                         locale === lang.code && styles.itemSelected
-                                    ]}
+                                    ] as any}
                                     onPress={() => handleSelect(lang.code)}
                                 >
                                     <Text style={styles.flag}>{lang.flag}</Text>

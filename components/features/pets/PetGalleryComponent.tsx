@@ -116,7 +116,7 @@ export default function PetGallery({ petId, gallery }: Props) {
 
   const renderImageItem = ({ item, index }: { item: string; index: number }) => (
     <TouchableOpacity
-      style={[styles.imageContainer, { width: imageSize, height: imageSize }]}
+      style={[styles.imageContainer, { width: imageSize, height: imageSize }] as any}
       onPress={() => handleImagePress(index)}
       activeOpacity={0.8}
     >
@@ -135,7 +135,7 @@ export default function PetGallery({ petId, gallery }: Props) {
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => handleDeletePhoto(index)}
-        disabled={imageLoading[index]}
+        disabled={imageLoading[index] as any}
       >
         <IconSymbol ios_icon_name="xmark.circle.fill" android_material_icon_name="close" size={16} color={colors.error} />
       </TouchableOpacity>
@@ -192,14 +192,14 @@ export default function PetGallery({ petId, gallery }: Props) {
             <>
               <Image
                 source={{ uri: images[selectedImageIndex] }}
-                style={[styles.modalImage, { width: screenWidth * 0.9, height: screenWidth * 0.9 }]}
+                style={[styles.modalImage, { width: screenWidth * 0.9, height: screenWidth * 0.9 }] as any}
                 resizeMode="contain"
               />
 
               {/* Navigation arrows */}
               {selectedImageIndex > 0 && (
                 <TouchableOpacity
-                  style={[styles.modalNavButton, styles.modalPrevButton]}
+                  style={[styles.modalNavButton, styles.modalPrevButton] as any}
                   onPress={handlePrevImage}
                 >
                   <IconSymbol ios_icon_name="chevron.left" android_material_icon_name="chevron-left" size={20} color="#fff" />
@@ -208,7 +208,7 @@ export default function PetGallery({ petId, gallery }: Props) {
 
               {selectedImageIndex < images.length - 1 && (
                 <TouchableOpacity
-                  style={[styles.modalNavButton, styles.modalNextButton]}
+                  style={[styles.modalNavButton, styles.modalNextButton] as any}
                   onPress={handleNextImage}
                 >
                   <IconSymbol ios_icon_name="chevron.right" android_material_icon_name="chevron-right" size={20} color="#fff" />

@@ -132,7 +132,7 @@ export default function FloatingTabBarWithPlus({
                           styles.tabLabel,
                           { color: theme.dark ? '#98989D' : '#8E8E93' },
                           isActive && { color: theme.colors.primary, fontWeight: '600' },
-                        ]}
+                        ] as any}
                       >
                         {t(tab.label, { defaultValue: tab.label })}
                       </Text>
@@ -185,7 +185,7 @@ export default function FloatingTabBarWithPlus({
                           styles.tabLabel,
                           { color: theme.dark ? '#98989D' : '#8E8E93' },
                           isActive && { color: theme.colors.primary, fontWeight: '600' },
-                        ]}
+                        ] as any}
                       >
                         {t(tab.label, { defaultValue: tab.label })}
                       </Text>

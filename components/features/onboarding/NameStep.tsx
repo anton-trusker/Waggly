@@ -73,7 +73,7 @@ export default function NameStep({ initialFirstName, initialLastName, onNext, on
 
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.button, !isValid && styles.buttonDisabled]}
+                    style={[styles.button, !isValid && styles.buttonDisabled] as any}
                     onPress={() => isValid && onNext(firstName, lastName)}
                     disabled={!isValid}
                 >
@@ -82,7 +82,7 @@ export default function NameStep({ initialFirstName, initialLastName, onNext, on
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
             </View>

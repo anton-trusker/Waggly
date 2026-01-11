@@ -21,7 +21,7 @@ export default function RichTextInput({
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, { minHeight }]}
+        style={[styles.input, { minHeight }] as any}
         placeholder={placeholder}
         placeholderTextColor={formColors.inputPlaceholder}
         multiline

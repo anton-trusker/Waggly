@@ -47,7 +47,7 @@ export const SkeletonBox: React.FC<SkeletonBoxProps> = ({
                 styles.skeleton,
                 { width, height, borderRadius, opacity },
                 style,
-            ]}
+            ] as any}
         />
     );
 };

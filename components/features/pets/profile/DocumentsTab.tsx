@@ -123,7 +123,7 @@ export default function DocumentsTab({ documents = [], isLoading = false, onUplo
                         <View style={[styles.searchBox, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary }]}>
                             <IconSymbol android_material_icon_name="search" size={20} color={theme.colors.text.tertiary} />
                             <TextInput
-                                style={[styles.searchInput, { color: theme.colors.text.primary }]}
+                                style={[styles.searchInput, { color: theme.colors.text.primary }] as any}
                                 placeholder="Search documents..."
                                 placeholderTextColor={theme.colors.text.tertiary}
                                 value={searchQuery}
@@ -141,7 +141,7 @@ export default function DocumentsTab({ documents = [], isLoading = false, onUplo
                                         style={[
                                             styles.filterChip,
                                             isActive ? { backgroundColor: theme.colors.text.primary } : { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary, borderWidth: 1 }
-                                        ]}
+                                        ] as any}
                                         onPress={() => setSelectedType(key === 'all' ? 'All' : key)}
                                     >
                                         <Text style={[styles.filterChipText, { color: isActive ? theme.colors.background.primary : theme.colors.text.secondary }]}>
@@ -172,7 +172,7 @@ export default function DocumentsTab({ documents = [], isLoading = false, onUplo
                                 return (
                                     <TouchableOpacity
                                         key={doc.id}
-                                        style={[styles.docCard, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary }]}
+                                        style={[styles.docCard, { backgroundColor: theme.colors.background.primary, borderColor: theme.colors.border.secondary }] as any}
                                         onPress={() => handlePreview(doc)}
                                     >
                                         <View style={[styles.docIcon, { backgroundColor: typeConfig.bg }]}>
@@ -191,7 +191,7 @@ export default function DocumentsTab({ documents = [], isLoading = false, onUplo
                                         </View>
 
                                         <TouchableOpacity
-                                            style={[styles.actionBtn, { backgroundColor: theme.colors.background.secondary }]}
+                                            style={[styles.actionBtn, { backgroundColor: theme.colors.background.secondary }] as any}
                                             onPress={() => handleDelete(doc)}
                                         >
                                             <IconSymbol android_material_icon_name="delete-outline" size={20} color={theme.colors.status.error as string} />

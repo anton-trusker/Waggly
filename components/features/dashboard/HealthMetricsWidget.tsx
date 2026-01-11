@@ -84,7 +84,7 @@ export default function HealthMetricsWidget({ metrics, loading = false }: Health
                                     width: `${metrics.vaccinations.percentage}%`,
                                     backgroundColor: vaccinationStatus.color,
                                 },
-                            ]}
+                            ] as any}
                         />
                     </View>
                     <Text style={[styles.metricStatus, { color: vaccinationStatus.color }]}>

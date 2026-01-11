@@ -82,7 +82,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                                 ios_icon_name="plus"
                                 android_material_icon_name="add"
                                 size={20}
-                                color={designSystem.colors.neutral[0]}
+                                color={designSystem.colors.neutral[0] as any}
                             />
                         </View>
                     </TouchableOpacity>
@@ -133,7 +133,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                         <Text style={styles.label}>{t('add_pet.step1.gender_label')}</Text>
                         <View style={styles.genderRow}>
                             <TouchableOpacity
-                                style={[styles.genderCard, gender === 'male' && styles.genderCardSelected]}
+                                style={[styles.genderCard, gender === 'male' && styles.genderCardSelected] as any}
                                 onPress={() => setGender('male')}
                                 activeOpacity={0.7}
                             >
@@ -148,7 +148,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.genderCard, gender === 'female' && styles.genderCardSelected]}
+                                style={[styles.genderCard, gender === 'female' && styles.genderCardSelected] as any}
                                 onPress={() => setGender('female')}
                                 activeOpacity={0.7}
                             >
@@ -171,7 +171,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
             {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.continueButton, !name.trim() && styles.continueButtonDisabled]}
+                    style={[styles.continueButton, !name.trim() && styles.continueButtonDisabled] as any}
                     onPress={handleNext}
                     disabled={!name.trim()}
                 >
@@ -180,7 +180,7 @@ export default function Step1BasicInfo({ initialData, onNext }: Step1Props) {
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
             </View>

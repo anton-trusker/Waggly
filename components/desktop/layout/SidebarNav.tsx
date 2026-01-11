@@ -38,7 +38,7 @@ const SidebarNav: React.FC = () => {
                 {navItems.map((item) => (
                     <TouchableOpacity
                         key={item.path}
-                        style={[styles.navItem, isActive(item.path) && styles.navItemActive]}
+                        style={[styles.navItem, isActive(item.path) && styles.navItemActive] as any}
                         onPress={() => router.push(item.path as any)}
                     >
                         <Ionicons

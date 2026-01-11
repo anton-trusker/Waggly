@@ -161,7 +161,7 @@ export default function DropdownSearchList({ items, placeholder = 'Search', load
             >
               {showCustomOption && (
                 <TouchableOpacity
-                  style={[styles.itemRow, styles.customOption]}
+                  style={[styles.itemRow, styles.customOption] as any}
                   onPress={() => { onSelect(query); setShowList(false); }}
                 >
                   <View style={styles.itemLeft}>

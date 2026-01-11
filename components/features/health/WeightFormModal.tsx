@@ -99,7 +99,7 @@ export default function WeightFormModal({ visible, onClose, petId: initialPetId,
                             <View style={styles.flex1}>
                                 <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('weight_form.weight_label') || "Weight (kg)"}</Text>
                                 <TextInput
-                                    style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                    style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }] as any}
                                     placeholder="0.00"
                                     keyboardType="numeric"
                                     placeholderTextColor={theme.colors.text.tertiary}

@@ -15,6 +15,8 @@ export interface PetShareToken {
     last_accessed_at?: string;
 }
 
+export type ShareToken = PetShareToken;
+
 export interface SharedPetData {
     // Basic info (always included)
     id: string;
@@ -102,6 +104,7 @@ export function usePetSharing(petId?: string) {
             try {
                 if (typeof window === 'undefined') {
                     // Only try to import posthog-react-native on native
+                    // @ts-ignore
                     const { default: PostHog } = await import('posthog-react-native');
                     const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
                     if (ph) {
@@ -171,6 +174,7 @@ export function usePetSharing(petId?: string) {
             // Track revocation
             try {
                 if (typeof window === 'undefined') {
+                    // @ts-ignore
                     const { default: PostHog } = await import('posthog-react-native');
                     const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
                     if (ph) {
@@ -208,6 +212,7 @@ export function usePetSharing(petId?: string) {
             // Track deletion
             try {
                 if (typeof window === 'undefined') {
+                    // @ts-ignore
                     const { default: PostHog } = await import('posthog-react-native');
                     const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
                     if (ph) {

@@ -156,7 +156,7 @@ export default function FloatingTabBar({
                           styles.tabLabel,
                           { color: theme.dark ? '#98989D' : '#8E8E93' },
                           isActive && { color: theme.colors.primary, fontWeight: '600' },
-                        ]}
+                        ] as any}
                       >
                         {tab.label}
                       </Text>

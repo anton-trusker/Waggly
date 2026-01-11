@@ -74,7 +74,7 @@ export default function PhotoStep({ onNext, onBack, isSubmitting }: PhotoStepPro
 
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                    style={[styles.button, isSubmitting && styles.buttonDisabled] as any}
                     onPress={() => onNext(photo)}
                     disabled={isSubmitting}
                 >
@@ -83,7 +83,7 @@ export default function PhotoStep({ onNext, onBack, isSubmitting }: PhotoStepPro
                         ios_icon_name="checkmark"
                         android_material_icon_name="check"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.skipButton} onPress={() => onNext(null)} disabled={isSubmitting}>

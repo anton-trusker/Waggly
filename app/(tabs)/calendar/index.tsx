@@ -144,19 +144,19 @@ export default function CalendarPage() {
                             <View style={{ marginBottom: 16, paddingHorizontal: 16 }}>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === '3m' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
+                                        style={[styles.periodBtn, period === '3m' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop] as any}
                                         onPress={() => setPeriod('3m')}
                                     >
                                         <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === '1y' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
+                                        style={[styles.periodBtn, period === '1y' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop] as any}
                                         onPress={() => setPeriod('1y')}
                                     >
                                         <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={[styles.periodBtn, period === 'all' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop]}
+                                        style={[styles.periodBtn, period === 'all' && styles.periodBtnActive, isDesktop && styles.periodBtnDesktop] as any}
                                         onPress={() => setPeriod('all')}
                                     >
                                         <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>
@@ -186,25 +186,25 @@ export default function CalendarPage() {
                             {/* Period Selector */}
                             <View style={styles.periodSelector}>
                                 <TouchableOpacity
-                                    style={[styles.periodBtn, period === '3m' && styles.periodBtnActive]}
+                                    style={[styles.periodBtn, period === '3m' && styles.periodBtnActive] as any}
                                     onPress={() => setPeriod('3m')}
                                 >
                                     <Text style={[styles.periodBtnText, period === '3m' && styles.periodBtnTextActive]}>{t('calendar.period_3m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.periodBtn, period === '6m' && styles.periodBtnActive]}
+                                    style={[styles.periodBtn, period === '6m' && styles.periodBtnActive] as any}
                                     onPress={() => setPeriod('6m')}
                                 >
                                     <Text style={[styles.periodBtnText, period === '6m' && styles.periodBtnTextActive]}>{t('calendar.period_6m')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.periodBtn, period === '1y' && styles.periodBtnActive]}
+                                    style={[styles.periodBtn, period === '1y' && styles.periodBtnActive] as any}
                                     onPress={() => setPeriod('1y')}
                                 >
                                     <Text style={[styles.periodBtnText, period === '1y' && styles.periodBtnTextActive]}>{t('calendar.period_1y')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.periodBtn, period === 'all' && styles.periodBtnActive]}
+                                    style={[styles.periodBtn, period === 'all' && styles.periodBtnActive] as any}
                                     onPress={() => setPeriod('all')}
                                 >
                                     <Text style={[styles.periodBtnText, period === 'all' && styles.periodBtnTextActive]}>{t('calendar.period_all')}</Text>

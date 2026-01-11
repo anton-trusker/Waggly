@@ -53,7 +53,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAdd
                 onPress={onViewPassport}
             >
                 <LinearGradient
-                    colors={[colors.primary[500] || '#4B62D6', '#60A5FA']}
+                    colors={[colors.primary[500] || '#4B62D6', '#60A5FA'] as any}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={StyleSheet.absoluteFill}
@@ -229,7 +229,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAdd
 
                             <View style={styles.vetActions}>
                                 <TouchableOpacity
-                                    style={[styles.vetActionBtn, { backgroundColor: colors.primary[500] }]}
+                                    style={[styles.vetActionBtn, { backgroundColor: colors.primary[500] }] as any}
                                     onPress={() => vet.phone && Linking.openURL(`tel:${vet.phone}`)}
                                 >
                                     <IconSymbol ios_icon_name="phone.fill" android_material_icon_name="call" size={18} color="#fff" />
@@ -237,7 +237,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAdd
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={[styles.vetActionBtn, { backgroundColor: theme.colors.background.primary, borderWidth: 1, borderColor: theme.colors.border.primary }]}
+                                    style={[styles.vetActionBtn, { backgroundColor: theme.colors.background.primary, borderWidth: 1, borderColor: theme.colors.border.primary }] as any}
                                     onPress={() => openMap(vet.location_lat, vet.location_lng, vet.address || vet.clinic_name)}
                                 >
                                     <IconSymbol ios_icon_name="map.fill" android_material_icon_name="map" size={18} color={theme.colors.text.primary} />

@@ -155,7 +155,7 @@ export default function EditPetModal({ visible, onClose, petId, initialTab = 0 }
                         {TABS.map(tab => (
                             <TouchableOpacity
                                 key={tab.key}
-                                style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+                                style={[styles.tab, activeTab === tab.key && styles.tabActive] as any}
                                 onPress={() => setActiveTab(tab.key)}
                             >
                                 <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>

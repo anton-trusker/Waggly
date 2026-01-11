@@ -84,7 +84,7 @@ export default function EnhancedDatePicker({
           styles.input,
           error && styles.inputError,
           disabled && styles.inputDisabled,
-        ]}
+        ] as any}
         onPress={() => !disabled && setModalVisible(true)}
         disabled={disabled}
       >
@@ -99,7 +99,7 @@ export default function EnhancedDatePicker({
           ios_icon_name="calendar"
           android_material_icon_name="event"
           size={20}
-          color={designSystem.colors.primary[500]}
+          color={designSystem.colors.primary[500] as any}
         />
       </TouchableOpacity>
 
@@ -160,7 +160,7 @@ export default function EnhancedDatePicker({
                     {years.map(year => (
                       <TouchableOpacity
                         key={year}
-                        style={[styles.yearItem, year === viewYear && styles.yearItemSelected]}
+                        style={[styles.yearItem, year === viewYear && styles.yearItemSelected] as any}
                         onPress={() => {
                           setViewYear(year);
                           setSelectionMode('none');
@@ -176,7 +176,7 @@ export default function EnhancedDatePicker({
                   {months.map((month, index) => (
                     <TouchableOpacity
                       key={month}
-                      style={[styles.monthItem, index === viewMonth && styles.monthItemSelected]}
+                      style={[styles.monthItem, index === viewMonth && styles.monthItemSelected] as any}
                       onPress={() => {
                         setViewMonth(index);
                         setSelectionMode('none');

@@ -128,7 +128,7 @@ export default function EditPetPage() {
                             <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.saveButton, loading && styles.saveButtonDisabled]}
+                            style={[styles.saveButton, loading && styles.saveButtonDisabled] as any}
                             onPress={handleSave}
                             disabled={loading}
                         >
@@ -171,7 +171,7 @@ export default function EditPetPage() {
                                         style={[
                                             styles.optionCard,
                                             formData.species === option.id && styles.optionCardSelected,
-                                        ]}
+                                        ] as any}
                                         onPress={() => updateField('species', option.id)}
                                     >
                                         <Text style={styles.optionIcon}>{option.icon}</Text>
@@ -254,14 +254,14 @@ export default function EditPetPage() {
                                             style={[
                                                 styles.segment,
                                                 formData.weight_unit === unit && styles.segmentSelected,
-                                            ]}
+                                            ] as any}
                                             onPress={() => updateField('weight_unit', unit)}
                                         >
                                             <Text
                                                 style={[
                                                     styles.segmentText,
                                                     formData.weight_unit === unit && styles.segmentTextSelected,
-                                                ]}
+                                                ] as any}
                                             >
                                                 {unit}
                                             </Text>
@@ -282,7 +282,7 @@ export default function EditPetPage() {
                                     style={[
                                         styles.toggleThumb,
                                         formData.is_spayed_neutered && styles.toggleThumbActive,
-                                    ]}
+                                    ] as any}
                                 />
                             </View>
                         </TouchableOpacity>
@@ -309,7 +309,7 @@ export default function EditPetPage() {
                         <Text style={styles.sectionTitle}>{t('pet_profile.edit.sections.notes')}</Text>
                         <View style={styles.inputGroup}>
                             <TextInput
-                                style={[styles.input, styles.textarea]}
+                                style={[styles.input, styles.textarea] as any}
                                 placeholder={t('pet_profile.edit.placeholders.notes')}
                                 multiline
                                 numberOfLines={6}

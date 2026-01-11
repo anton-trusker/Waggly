@@ -52,7 +52,7 @@ export default function GenderSelect({ value, onChange, label = 'Gender' }: Gend
                         {GENDERS.map((gender) => (
                             <TouchableOpacity
                                 key={gender.value}
-                                style={[styles.option, value === gender.value && styles.optionSelected]}
+                                style={[styles.option, value === gender.value && styles.optionSelected] as any}
                                 onPress={() => {
                                     onChange(gender.value);
                                     setShowDropdown(false);

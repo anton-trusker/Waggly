@@ -101,7 +101,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                                 borderColor: colors.border,
                                                 borderWidth: 1,
                                             }
-                                        ]}
+                                        ] as any}
                                     >
                                         <View style={styles.cardContent}>
                                             <View style={[styles.iconContainer, { backgroundColor: colors.bg }]}>
@@ -157,7 +157,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                                 borderColor: theme.colors.border.secondary,
                                                 borderWidth: 1,
                                             }
-                                        ]}
+                                        ] as any}
                                     >
                                         <View style={styles.cardContent}>
                                             <View style={[styles.iconContainer, { backgroundColor: colors.bg }]}>
@@ -198,7 +198,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                         <Text style={[styles.emptyDesc, { color: theme.colors.text.secondary }]}>Add events to track your pet's care schedule</Text>
                         <TouchableOpacity
                             onPress={() => router.push(`/(tabs)/pets/events/new?petId=${petId}` as any)}
-                            style={[styles.addButton, { backgroundColor: theme.colors.primary[500], marginTop: 16 }]}
+                            style={[styles.addButton, { backgroundColor: theme.colors.primary[500], marginTop: 16 }] as any}
                         >
                             <IconSymbol name="plus" android_material_icon_name="add" size={16} color="#fff" />
                             <Text style={styles.addButtonText}>Add First Event</Text>

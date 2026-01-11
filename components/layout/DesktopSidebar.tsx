@@ -46,7 +46,7 @@ export default function DesktopSidebar() {
                     return (
                         <TouchableOpacity
                             key={item.href}
-                            style={[styles.navItem, isActive && styles.navItemActive]}
+                            style={[styles.navItem, isActive && styles.navItemActive] as any}
                             onPress={() => handleNavigation(item.href)}
                         >
                             <Ionicons

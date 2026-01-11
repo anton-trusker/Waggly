@@ -62,7 +62,7 @@ export default function QuickActionsGrid({ onActionPress }: QuickActionsGridProp
                 {actions.map((action) => (
                     <TouchableOpacity
                         key={action.id}
-                        style={[styles.actionCard]}
+                        style={[styles.actionCard] as any}
                         onPress={() => onActionPress(action.id)}
                         activeOpacity={0.8}
                     >

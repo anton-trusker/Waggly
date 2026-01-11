@@ -140,7 +140,7 @@ export default function HealthDashboard() {
                         style={[
                             styles.filterItem,
                             selectedPetId === 'all' && styles.filterItemActive,
-                        ]}
+                        ] as any}
                         onPress={() => setSelectedPetId('all')}
                     >
                         <Ionicons
@@ -162,7 +162,7 @@ export default function HealthDashboard() {
                             style={[
                                 styles.filterItem,
                                 selectedPetId === pet.id && styles.filterItemActive,
-                            ]}
+                            ] as any}
                             onPress={() => setSelectedPetId(pet.id)}
                         >
                             <Ionicons

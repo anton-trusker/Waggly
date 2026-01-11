@@ -90,7 +90,7 @@ export default function EnhancedSelection({
           styles.selector,
           error && styles.selectorError,
           disabled && styles.selectorDisabled,
-        ]}
+        ] as any}
         onPress={() => !disabled && setModalVisible(true)}
         disabled={disabled}
       >
@@ -148,7 +148,7 @@ export default function EnhancedSelection({
                   style={[
                     styles.optionItem,
                     selectedOption?.id === item.id && styles.selectedOption
-                  ]}
+                  ] as any}
                   onPress={() => handleSelect(item)}
                 >
                   <View style={{ flex: 1 }}>

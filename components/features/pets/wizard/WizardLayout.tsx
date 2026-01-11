@@ -80,7 +80,7 @@ export default function WizardLayout({
                                 dynamicStyles.progressChunk,
                                 index < currentStep && styles.progressChunkActive,
                                 index === currentStep - 1 && styles.progressChunkCurrent,
-                            ]}
+                            ] as any}
                         />
                     ))}
                 </View>

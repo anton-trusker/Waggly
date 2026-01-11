@@ -84,7 +84,7 @@ export default function PublicShareScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.card}>
         <LinearGradient
-          colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
+          colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd] as any}
           style={styles.headerGradient}
         >
           <View style={styles.imageContainer}>

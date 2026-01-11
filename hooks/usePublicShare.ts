@@ -42,70 +42,11 @@ export function usePublicShare() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generateLink = useCallback(async (petId: string, preset: SharePreset) => {
-    setLoading(true);
-    setError(null);
-    try {
-      // Generate a unique token (simple implementation, could be better)
-      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-      const { data, error } = await supabase
-        .from('public_shares')
-        .insert({
-          pet_id: petId,
-          token: token,
-          settings: { preset },
-          created_by: (await supabase.auth.getUser()).data.user?.id
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as PublicShare;
-    } catch (e: any) {
-      setError(e.message);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const revokeLink = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { error } = await supabase
-        .from('public_shares')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-    } catch (e: any) {
-      setError(e.message);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const getActiveLinks = useCallback(async (petId: string) => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('public_shares')
-        .select('*')
-        .eq('pet_id', petId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data as PublicShare[];
-    } catch (e: any) {
-      setError(e.message);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  /* 
+   * generateLink, revokeLink, getActiveLinks are managed by usePetSharing hook 
+   * which uses the correct pet_share_tokens table.
+   * This hook is primarily for the public viewer side (fetching pet details).
+   */
 
   const getPublicPet = useCallback(async (token: string) => {
     setLoading(true);
@@ -126,9 +67,6 @@ export function usePublicShare() {
   }, []);
 
   return {
-    generateLink,
-    revokeLink,
-    getActiveLinks,
     getPublicPet,
     loading,
     error

@@ -165,7 +165,7 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
                                 style={[
                                     styles.filterChip,
                                     isActive ? { backgroundColor: theme.colors.primary[500] } : { backgroundColor: theme.colors.background.secondary }
-                                ]}
+                                ] as any}
                                 onPress={() => setFilter(opt.key)}
                             >
                                 <IconSymbol

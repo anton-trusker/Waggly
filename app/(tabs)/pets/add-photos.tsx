@@ -136,7 +136,7 @@ export default function AddPhotosScreen() {
                 {pets.map(pet => (
                     <TouchableOpacity 
                         key={pet.id} 
-                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                        style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                         onPress={() => setSelectedPetId(pet.id)}
                     >
                         <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>

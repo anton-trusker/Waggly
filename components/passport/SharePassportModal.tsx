@@ -156,7 +156,7 @@ export default function SharePassportModal({ visible, onClose, petId, petName }:
                                 </View>
 
                                 <TouchableOpacity
-                                    style={[styles.generateButton, loading && styles.disabledButton]}
+                                    style={[styles.generateButton, loading && styles.disabledButton] as any}
                                     onPress={handleGenerate}
                                     disabled={loading}
                                 >
@@ -173,7 +173,7 @@ export default function SharePassportModal({ visible, onClose, petId, petName }:
                                     <QRCode
                                         value={shareUrl}
                                         size={200}
-                                        color={designSystem.colors.primary[500]}
+                                        color={designSystem.colors.primary[500] as any}
                                         backgroundColor="white"
                                     />
                                 </View>
@@ -195,7 +195,7 @@ export default function SharePassportModal({ visible, onClose, petId, petName }:
                                 </View>
 
                                 <TouchableOpacity
-                                    style={[styles.actionButton, { width: '100%', marginBottom: 16 }]}
+                                    style={[styles.actionButton, { width: '100%', marginBottom: 16 }] as any}
                                     onPress={handleDownloadQR}
                                 >
                                     <Ionicons name="download-outline" size={20} color={designSystem.colors.primary[500]} />
@@ -219,7 +219,7 @@ export default function SharePassportModal({ visible, onClose, petId, petName }:
                                                 <QRCode
                                                     value={shareUrl}
                                                     size={180}
-                                                    color={designSystem.colors.primary[500]}
+                                                    color={designSystem.colors.primary[500] as any}
                                                     backgroundColor="white"
                                                 />
                                             </View>

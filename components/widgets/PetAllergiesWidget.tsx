@@ -54,7 +54,7 @@ export default function PetAllergiesWidget({ allergies, onAdd, onEdit, onRemove 
                             return (
                                 <Pressable
                                     key={allergy.id}
-                                    style={[styles.allergyTag, { backgroundColor: colors.bg, borderColor: colors.border }]}
+                                    style={[styles.allergyTag, { backgroundColor: colors.bg, borderColor: colors.border }] as any}
                                     onPress={() => onEdit?.(allergy)}
                                 >
                                     <View style={styles.tagHeader}>

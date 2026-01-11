@@ -64,7 +64,7 @@ export default function GenericFormModal({
                     {/* Content with ScrollView */}
                     <ScrollView
                         style={styles.scrollView}
-                        contentContainerStyle={[styles.content, { padding: getPadding() }]}
+                        contentContainerStyle={[styles.content, { padding: getPadding() }] as any}
                         showsVerticalScrollIndicator={false}
                     >
                         {children}
@@ -82,7 +82,7 @@ export default function GenericFormModal({
 
                         {onPrimaryAction && (
                             <TouchableOpacity
-                                style={[styles.primaryButton, loading && styles.primaryButtonDisabled]}
+                                style={[styles.primaryButton, loading && styles.primaryButtonDisabled] as any}
                                 onPress={onPrimaryAction}
                                 disabled={loading}
                             >

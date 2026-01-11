@@ -206,7 +206,7 @@ export default function HistoryTab() {
                             style={[
                                 styles.filterChip,
                                 filter === opt.key && styles.filterChipActive
-                            ]}
+                            ] as any}
                             onPress={() => setFilter(opt.key)}
                         >
                             <Ionicons

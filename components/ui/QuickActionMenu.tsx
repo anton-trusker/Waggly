@@ -233,7 +233,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
                 styles.actionItem,
                 index === 0 && styles.actionItemFirst,
                 index === quickActions.length - 1 && styles.actionItemLast,
-              ]}
+              ] as any}
               onPress={() => handleActionPress(action)}
             >
               <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
@@ -254,7 +254,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
                 android_material_icon_name="chevron-right"
                 ios_icon_name="chevron.right"
                 size={20}
-                color={designSystem.colors.neutral[400]}
+                color={designSystem.colors.neutral[400] as any}
               />
             </TouchableOpacity>
           ))}
@@ -277,7 +277,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
           style={[
             styles.modalOverlay,
             { opacity: fadeAnim },
-          ]}
+          ] as any}
         >
           <Pressable style={styles.backdropPressable} onPress={closeMenu} />
         </Animated.View>
@@ -296,7 +296,7 @@ export function QuickActionMenu({ visible, onClose }: QuickActionMenuProps) {
                 },
               ],
             },
-          ]}
+          ] as any}
         >
           {renderContent()}
         </Animated.View>

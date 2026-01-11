@@ -44,7 +44,7 @@ export default function DeletePetModal({
 
                     <View style={styles.actions}>
                         <TouchableOpacity
-                            style={[styles.button, styles.cancelButton]}
+                            style={[styles.button, styles.cancelButton] as any}
                             onPress={onClose}
                             disabled={loading}
                         >
@@ -52,7 +52,7 @@ export default function DeletePetModal({
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.button, styles.deleteButton]}
+                            style={[styles.button, styles.deleteButton] as any}
                             onPress={onConfirm}
                             disabled={loading}
                         >

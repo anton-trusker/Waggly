@@ -126,7 +126,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
               </View>
 
               <TouchableOpacity
-                style={[styles.eventCard, dynamicStyles.card]}
+                style={[styles.eventCard, dynamicStyles.card] as any}
                 onPress={() => {
                   if (e.relatedId) {
                     const routeMap: Record<string, string> = {

@@ -78,7 +78,7 @@ export default function FormSegmentedControl({
                         borderColor: effectiveColors.border,
                         opacity: disabled ? 0.5 : 1,
                     },
-                ]}
+                ] as any}
             >
                 <Animated.View
                     style={[
@@ -94,7 +94,7 @@ export default function FormSegmentedControl({
                                 },
                             ],
                         },
-                    ]}
+                    ] as any}
                 />
 
                 {options.map((option, index) => {
@@ -117,7 +117,7 @@ export default function FormSegmentedControl({
                                             : effectiveColors.textSecondary,
                                         fontWeight: isSelected ? '600' : '500',
                                     },
-                                ]}
+                                ] as any}
                             >
                                 {option}
                             </Text>

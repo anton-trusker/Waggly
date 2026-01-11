@@ -53,8 +53,8 @@ export default function EventsTab() {
     }
   };
 
-  const upcomingEvents = events?.filter(e => new Date(e.date) > new Date()) || [];
-  const pastEvents = events?.filter(e => new Date(e.date) <= new Date()) || [];
+  const upcomingEvents = events?.filter(e => new Date(e.dueDate) > new Date()) || [];
+  const pastEvents = events?.filter(e => new Date(e.dueDate) <= new Date()) || [];
 
   return (
     <ScrollView className="flex-1 bg-background-light dark:bg-background-dark">
@@ -84,7 +84,7 @@ export default function EventsTab() {
               </View>
               <View className="space-y-3">
                 {upcomingEvents.map((event) => {
-                  const daysUntil = Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                  const daysUntil = Math.ceil((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
                   const scaleAnim = new Animated.Value(1);
 
                   const handlePressIn = () => {
@@ -125,11 +125,11 @@ export default function EventsTab() {
                               </Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                              <IconSymbol android_material_icon_name="calendar_today" size={14} color="#6B7280" />
-                              <Text style={styles.eventTimeText}>{formatDate(event.date)}</Text>
-                              <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                              <IconSymbol android_material_icon_name="calendar-today" size={14} color="#6B7280" />
+                              <Text style={styles.eventTimeText}>{formatDate(event.dueDate)}</Text>
+                              <IconSymbol android_material_icon_name="access-time" size={14} color="#6B7280" />
                               <Text style={styles.eventTimeText}>
-                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
                               </Text>
                             </View>
                             {event.location && (
@@ -192,12 +192,12 @@ export default function EventsTab() {
                           <View className="flex-1">
                             <View className="flex justify-between items-start">
                               <Text className="font-bold text-text-light dark:text-text-dark">{event.title}</Text>
-                              <Text className="text-sm text-muted-light dark:text-muted-dark">{formatDate(event.date)}</Text>
+                              <Text className="text-sm text-muted-light dark:text-muted-dark">{formatDate(event.dueDate)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                              <IconSymbol android_material_icon_name="access_time" size={14} color="#6B7280" />
+                              <IconSymbol android_material_icon_name="access-time" size={14} color="#6B7280" />
                               <Text style={styles.eventTimeText}>
-                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.date)}
+                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
                               </Text>
                             </View>
                             {event.location && (
@@ -236,3 +236,74 @@ export default function EventsTab() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerText: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  btnPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#6366F1',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  btnTextPrimary: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  eventTimeText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 4,
+    marginRight: 8,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#374151',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateDesc: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+});

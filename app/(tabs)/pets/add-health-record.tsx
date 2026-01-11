@@ -158,7 +158,7 @@ export default function AddHealthRecordScreen() {
                 {options.map((opt) => (
                     <TouchableOpacity
                         key={opt}
-                        style={[styles.pill, selectedValue === opt && styles.pillSelected]}
+                        style={[styles.pill, selectedValue === opt && styles.pillSelected] as any}
                         onPress={() => onSelect(opt)}
                     >
                         <Text style={[styles.pillText, selectedValue === opt && styles.pillTextSelected]}>
@@ -192,7 +192,7 @@ export default function AddHealthRecordScreen() {
                             {pets.map(pet => (
                                 <TouchableOpacity
                                     key={pet.id}
-                                    style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                                    style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                                     onPress={() => setSelectedPetId(pet.id)}
                                 >
                                     <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -220,7 +220,7 @@ export default function AddHealthRecordScreen() {
                                 <Text style={styles.inputLabel}>Weight</Text>
                                 <View style={styles.inputGroup}>
                                     <TextInput
-                                        style={[styles.input, styles.inputLeft]}
+                                        style={[styles.input, styles.inputLeft] as any}
                                         placeholder="0.0"
                                         keyboardType="decimal-pad"
                                         value={weight}
@@ -238,7 +238,7 @@ export default function AddHealthRecordScreen() {
                                 <Text style={styles.inputLabel}>Temp</Text>
                                 <View style={styles.inputGroup}>
                                     <TextInput
-                                        style={[styles.input, styles.inputLeft]}
+                                        style={[styles.input, styles.inputLeft] as any}
                                         placeholder="--"
                                         keyboardType="decimal-pad"
                                         value={temperature}
@@ -294,7 +294,7 @@ export default function AddHealthRecordScreen() {
                                             backgroundColor: bcs.color + '10',
                                             borderColor: bcs.color,
                                         }
-                                    ]}
+                                    ] as any}
                                     onPress={() => setBodyConditionScore(bcs.score)}
                                 >
                                     <View style={styles.bcsVisualContainer}>
@@ -334,7 +334,7 @@ export default function AddHealthRecordScreen() {
                     <View style={styles.section}>
                         <Text style={styles.label}>Notes</Text>
                         <TextInput
-                            style={[styles.input, styles.textArea]}
+                            style={[styles.input, styles.textArea] as any}
                             placeholder="Any other observations..."
                             multiline
                             numberOfLines={4}

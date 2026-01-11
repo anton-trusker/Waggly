@@ -41,7 +41,7 @@ export default function BottomCTA({ onBack, onPrimary, primaryLabel, disabled = 
         <Text style={styles.backIcon}>‹</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[buttonStyles.primary, styles.primary, disabled && buttonStyles.disabled]}
+        style={[buttonStyles.primary, styles.primary, disabled && buttonStyles.disabled] as any}
         onPress={onPrimary}
         disabled={disabled}
         accessibilityRole="button"

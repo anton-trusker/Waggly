@@ -116,9 +116,9 @@ export default function AddNoteForm({
                             <View style={styles.headerContent}>
                                 <IconSymbol
                                     ios_icon_name="note.text"
-                                    android_material_icon_name="note_add"
+                                    android_material_icon_name="note-add"
                                     size={24}
-                                    color={designSystem.colors.primary[500]}
+                                    color={designSystem.colors.primary[500] as any}
                                     style={styles.headerIcon}
                                 />
                                 <Text style={[styles.title, { color: effectiveColors.text }]}>Add Note</Text>

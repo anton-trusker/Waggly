@@ -147,7 +147,7 @@ export default function FormImagePicker({
                         borderColor: error ? effectiveColors.error : effectiveColors.border,
                         backgroundColor: effectiveColors.background,
                     },
-                ]}
+                ] as any}
             >
                 {value ? (
                     <Image source={{ uri: value }} style={styles.image} />
@@ -155,12 +155,12 @@ export default function FormImagePicker({
                     <View style={styles.placeholderContainer}>
                         <IconSymbol
                             ios_icon_name="camera.fill"
-                            android_material_icon_name="photo_camera"
+                            android_material_icon_name="photo-camera"
                             size={40}
                             color={effectiveColors.placeholder}
                         />
                         <Text
-                            style={[styles.placeholderText, { color: effectiveColors.placeholder }]}
+                            style={[styles.placeholderText, { color: effectiveColors.placeholder }] as any}
                         >
                             {placeholder}
                         </Text>

@@ -166,7 +166,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
                                 style={[
                                     styles.typeOption,
                                     selectedPetId === pet.id && styles.typeOptionActive
-                                ]}
+                                ] as any}
                                 onPress={() => setSelectedPetId(pet.id)}
                             >
                                 <Ionicons
@@ -206,7 +206,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
                             style={[
                                 styles.typeOption,
                                 type === docType.id && styles.typeOptionActive
-                            ]}
+                            ] as any}
                             onPress={() => setType(docType.id)}
                         >
                             <Ionicons
@@ -228,7 +228,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
             <View style={styles.formGroup}>
                 <Text style={styles.label}>Notes</Text>
                 <TextInput
-                    style={[styles.input, styles.textArea]}
+                    style={[styles.input, styles.textArea] as any}
                     value={notes}
                     onChangeText={setNotes}
                     placeholder="Optional notes or details..."

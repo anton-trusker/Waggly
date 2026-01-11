@@ -148,7 +148,7 @@ export default function ConditionFormModal({ visible, onClose, petId: initialPet
                                     color: theme.colors.text.primary,
                                     borderColor: formState.errors.name ? theme.colors.status.error[500] : theme.colors.border.primary
                                 }
-                            ]}
+                            ] as any}
                             placeholder="e.g. Arthritis, Diabetes"
                             placeholderTextColor={theme.colors.text.tertiary}
                             value={formState.data.name}
@@ -170,7 +170,7 @@ export default function ConditionFormModal({ visible, onClose, petId: initialPet
                                         styles.chip,
                                         { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
                                         formState.data.status === status && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
-                                    ]}
+                                    ] as any}
                                 >
                                     <Text style={[
                                         styles.chipText,
@@ -193,7 +193,7 @@ export default function ConditionFormModal({ visible, onClose, petId: initialPet
                                         styles.chip,
                                         { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary },
                                         formState.data.severity === sev && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
-                                    ]}
+                                    ] as any}
                                 >
                                     <Text style={[
                                         styles.chipText,

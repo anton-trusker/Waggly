@@ -254,7 +254,7 @@ export default function FormModal<T = any>({
                         {/* Content */}
                         <ScrollView
                             style={styles.scrollView}
-                            contentContainerStyle={[styles.scrollContent, { paddingHorizontal: getContentPadding(), paddingTop: getContentPadding() }]}
+                            contentContainerStyle={[styles.scrollContent, { paddingHorizontal: getContentPadding(), paddingTop: getContentPadding() }] as any}
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps="handled"
                         >

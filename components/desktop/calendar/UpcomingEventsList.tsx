@@ -81,7 +81,7 @@ export default function UpcomingEventsList({ events, onEventClick }: UpcomingEve
                     onPressIn={handlePressIn}
                     onPressOut={handlePressOut}
                     onPress={() => onEventClick?.(event)}
-                    style={[styles.eventCard, isPastEvent && styles.eventCardPast]}
+                    style={[styles.eventCard, isPastEvent && styles.eventCardPast] as any}
                 >
                     <View style={[styles.eventIndicator, { backgroundColor: config.color }]} />
 

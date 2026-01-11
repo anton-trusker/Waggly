@@ -64,7 +64,7 @@ export default function WeightHistoryChart({
                             y1={y}
                             x2={width - padding}
                             y2={y}
-                            stroke={designSystem.colors.neutral[200]}
+                            stroke={designSystem.colors.neutral[200] as any}
                             strokeDasharray="4 4"
                         />
                     );
@@ -74,7 +74,7 @@ export default function WeightHistoryChart({
                 <Path
                     d={pathD}
                     fill="none"
-                    stroke={designSystem.colors.primary[500]}
+                    stroke={designSystem.colors.primary[500] as any}
                     strokeWidth="3"
                 />
 
@@ -86,7 +86,7 @@ export default function WeightHistoryChart({
                         cy={yScale(d.weight)}
                         r="4"
                         fill="white"
-                        stroke={designSystem.colors.primary[500]}
+                        stroke={designSystem.colors.primary[500] as any}
                         strokeWidth="2"
                     />
                 ))}

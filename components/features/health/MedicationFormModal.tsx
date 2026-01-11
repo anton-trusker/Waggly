@@ -182,7 +182,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                         color: theme.colors.text.primary,
                                         borderColor: formState.errors.name ? theme.colors.status.error[500] : theme.colors.border.primary
                                     }
-                                ]}
+                                ] as any}
                                 placeholder="e.g. Amoxicillin"
                                 placeholderTextColor={theme.colors.text.tertiary}
                                 value={formState.data.name}
@@ -195,7 +195,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                             <View style={[styles.flex1, { flex: 2 }]}>
                                 <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.dosage')}</Text>
                                 <TextInput
-                                    style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }]}
+                                    style={[styles.input, { backgroundColor: theme.colors.background.tertiary, color: theme.colors.text.primary, borderColor: theme.colors.border.primary }] as any}
                                     placeholder="e.g. 50"
                                     keyboardType="numeric"
                                     placeholderTextColor={theme.colors.text.tertiary}
@@ -227,7 +227,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                                                 styles.chip,
                                                 { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary },
                                                 formState.data.frequency === freq && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
-                                            ]}
+                                            ] as any}
                                         >
                                             <Text style={[
                                                 styles.chipText,

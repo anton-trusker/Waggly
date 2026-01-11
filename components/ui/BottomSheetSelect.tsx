@@ -83,7 +83,7 @@ export default function BottomSheetSelect({
                                 style={[
                                     styles.optionItem,
                                     value === option.value && styles.selectedOption
-                                ]}
+                                ] as any}
                                 onPress={() => handleSelect(option.value)}
                             >
                                 <Text style={[

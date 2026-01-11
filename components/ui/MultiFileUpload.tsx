@@ -153,7 +153,7 @@ export default function MultiFileUpload({
                     styles.dropZone,
                     isDragging && styles.dropZoneDragging,
                     error && styles.dropZoneError,
-                ]}
+                ] as any}
             >
                 <IconSymbol android_material_icon_name="cloud-upload" size={48} color="#9CA3AF" />
                 <Text style={styles.dropZoneText}>{helperText}</Text>

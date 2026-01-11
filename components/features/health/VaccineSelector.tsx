@@ -95,7 +95,7 @@ export default function VaccineSelector({
             <Text style={styles.label}>{label}</Text>
 
             <TouchableOpacity
-                style={[styles.selectorButton, error && styles.selectorButtonError]}
+                style={[styles.selectorButton, error && styles.selectorButtonError] as any}
                 onPress={() => setShowDropdown(!showDropdown)}
             >
                 <Ionicons name="search" size={18} color="#6B7280" />

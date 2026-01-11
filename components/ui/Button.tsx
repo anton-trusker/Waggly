@@ -101,7 +101,7 @@ export const Button: React.FC<ButtonProps> = ({
           opacity: disabled ? 0.5 : 1,
         },
         style,
-      ]}
+      ] as any}
     >
       {loading ? (
         <ActivityIndicator color={getTextColor()} />

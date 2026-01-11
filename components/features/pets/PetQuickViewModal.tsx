@@ -94,7 +94,7 @@ export default function PetQuickViewModal({ pet, visible, onClose }: Props) {
 
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[buttonStyles.secondary, styles.actionButton]}
+              style={[buttonStyles.secondary, styles.actionButton] as any}
               onPress={() => {
                 onClose();
                 router.push(`/(tabs)/pets/pet-edit?id=${pet.id}`);
@@ -105,7 +105,7 @@ export default function PetQuickViewModal({ pet, visible, onClose }: Props) {
               <Text style={buttonStyles.text}>{t('profile.edit_profile', { defaultValue: 'Edit profile' })}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[buttonStyles.secondary, styles.actionButton]}
+              style={[buttonStyles.secondary, styles.actionButton] as any}
               onPress={() => router.push(`/(tabs)/pets/add-vaccination?petId=${pet.id}`)}
               accessibilityRole="button"
               accessibilityLabel={t('calendar.add_event', { defaultValue: 'Add event' })}
@@ -113,7 +113,7 @@ export default function PetQuickViewModal({ pet, visible, onClose }: Props) {
               <Text style={buttonStyles.text}>{t('calendar.add_event', { defaultValue: 'Add event' })}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[buttonStyles.primary, styles.actionButton]}
+              style={[buttonStyles.primary, styles.actionButton] as any}
               onPress={() => router.push(`/(tabs)/pets/pet-detail?id=${pet.id}`)}
               accessibilityRole="button"
               accessibilityLabel={t('pets.view_full_profile', { defaultValue: 'View full profile' })}

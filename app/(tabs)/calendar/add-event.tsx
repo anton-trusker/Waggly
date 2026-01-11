@@ -90,7 +90,7 @@ export default function AddEventScreen() {
             {pets.map(pet => (
               <TouchableOpacity
                 key={pet.id}
-                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
+                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
                 onPress={() => setSelectedPetId(pet.id)}
               >
                 <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -106,7 +106,7 @@ export default function AddEventScreen() {
             {EVENT_TYPES.map(t => (
               <TouchableOpacity
                 key={t.id}
-                style={[styles.typeCard, type === t.id && styles.typeCardSelected]}
+                style={[styles.typeCard, type === t.id && styles.typeCardSelected] as any}
                 onPress={() => setType(t.id)}
               >
                 <IconSymbol
@@ -136,7 +136,7 @@ export default function AddEventScreen() {
           <DateInput value={date} onChange={setDate} label="Date" />
 
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[styles.input, styles.textArea] as any}
             placeholder="Notes / Description"
             placeholderTextColor={colors.textSecondary}
             value={description}
@@ -156,7 +156,7 @@ export default function AddEventScreen() {
         </View>
 
         <TouchableOpacity
-          style={[styles.saveButton, loading && styles.disabledButton]}
+          style={[styles.saveButton, loading && styles.disabledButton] as any}
           onPress={handleSave}
           disabled={loading}
         >

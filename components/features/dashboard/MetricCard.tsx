@@ -26,7 +26,7 @@ export default function MetricCard({ title, value, icon, iconColor, trend, onPre
                     <IconSymbol
                         android_material_icon_name={icon as any}
                         size={20}
-                        color={iconColor || theme.colors.primary[500]}
+                        color={iconColor || theme.colors.primary[500] as any}
                     />
                 </View>
                 {trend && (

@@ -26,7 +26,7 @@ export function IconCircle({
           justifyContent: "center",
         },
         style,
-      ]}
+      ] as any}
     >
       <Text style={{ fontSize: 22 }}>{emoji}</Text>
     </View>

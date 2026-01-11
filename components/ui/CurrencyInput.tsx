@@ -123,7 +123,7 @@ export default function CurrencyInput({
                             style={[
                                 styles.currencyOption,
                                 curr.code === currency && styles.currencyOptionSelected,
-                            ]}
+                            ] as any}
                             onPress={() => {
                                 onCurrencyChange(curr.code);
                                 setShowCurrencyPicker(false);

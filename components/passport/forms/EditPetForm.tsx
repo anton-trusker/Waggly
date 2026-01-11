@@ -32,7 +32,7 @@ const CompletePetSchema = z.object({
     breed: z.string().optional(),
     gender: z.enum(['male', 'female']),
     date_of_birth: z.date().optional(),
-    photo_url: z.string().optional(),
+    avatar_url: z.string().optional(),
 
     // Physical Characteristics
     size: z.enum(['small', 'medium', 'large']).optional(),
@@ -130,7 +130,7 @@ export default function EditPetForm({
                     <View style={styles.tabContent}>
                         <Controller
                             control={control}
-                            name="photo_url"
+                            name="avatar_url"
                             render={({ field: { value, onChange } }) => (
                                 <FormImagePicker
                                     label="Pet Photo"
@@ -162,7 +162,7 @@ export default function EditPetForm({
                                         { label: 'Rabbit', value: 'rabbit' },
                                         { label: 'Reptile', value: 'reptile' },
                                         { label: 'Other', value: 'other' },
-                                    ]}
+                                    ] as any}
                                     value={value}
                                     onChange={onChange}
                                     error={error?.message}
@@ -187,7 +187,7 @@ export default function EditPetForm({
                                     options={[
                                         { label: 'Male', value: 'male' },
                                         { label: 'Female', value: 'female' },
-                                    ]}
+                                    ] as any}
                                     value={value}
                                     onChange={onChange}
                                     error={error?.message}
@@ -223,7 +223,7 @@ export default function EditPetForm({
                             render={({ field: { value, onChange } }) => (
                                 <FormSegmentedControl
                                     label="Size"
-                                    options={['Small', 'Medium', 'Large']}
+                                    options={['Small', 'Medium', 'Large'] as any}
                                     value={value?.charAt(0).toUpperCase() + value?.slice(1) || 'Medium'}
                                     onChange={(v) => onChange(v.toLowerCase())}
                                 />
@@ -247,7 +247,7 @@ export default function EditPetForm({
                                     render={({ field: { value, onChange } }) => (
                                         <FormSegmentedControl
                                             label="Unit"
-                                            options={['kg', 'lbs']}
+                                            options={['kg', 'lbs'] as any}
                                             value={value}
                                             onChange={onChange}
                                         />
@@ -268,7 +268,7 @@ export default function EditPetForm({
                                             label="Ideal Weight Range"
                                             min={0}
                                             max={100}
-                                            values={[minValue || 0, maxValue || 50]}
+                                            values={[minValue || 0, maxValue || 50] as any}
                                             onChange={([min, max]) => {
                                                 onMinChange(min);
                                                 onMaxChange(max);
@@ -432,7 +432,7 @@ export default function EditPetForm({
                             style={[
                                 styles.tab,
                                 activeTab === index && styles.tabActive,
-                            ]}
+                            ] as any}
                         >
                             <Text
                                 style={[
@@ -443,7 +443,7 @@ export default function EditPetForm({
                                             : effectiveColors.tabInactive,
                                     },
                                     activeTab === index && styles.tabTextActive,
-                                ]}
+                                ] as any}
                             >
                                 {tab}
                             </Text>
@@ -452,7 +452,7 @@ export default function EditPetForm({
                                     style={[
                                         styles.tabIndicator,
                                         { backgroundColor: effectiveColors.tabActive },
-                                    ]}
+                                    ] as any}
                                 />
                             )}
                         </TouchableOpacity>

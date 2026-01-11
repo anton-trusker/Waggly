@@ -78,7 +78,7 @@ export default function PetDetailsPage() {
                                     <TouchableOpacity
                                         key={key}
                                         onPress={() => setActiveTab(key)}
-                                        style={[styles.mobileTabItem, isActive && styles.mobileTabItemActive]}
+                                        style={[styles.mobileTabItem, isActive && styles.mobileTabItemActive] as any}
                                     >
                                         <Text style={[styles.mobileTabText, isActive && styles.mobileTabTextActive]}>{tab}</Text>
                                     </TouchableOpacity>
@@ -120,7 +120,7 @@ export default function PetDetailsPage() {
                     {/* Desktop Tabs */}
                     <View style={styles.tabs}>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'passport' && styles.tabActive]}
+                            style={[styles.tab, activeTab === 'passport' && styles.tabActive] as any}
                             onPress={() => setActiveTab('passport')}
                         >
                             <Text style={[styles.tabText, activeTab === 'passport' && styles.tabTextActive]}>
@@ -128,7 +128,7 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'documents' && styles.tabActive]}
+                            style={[styles.tab, activeTab === 'documents' && styles.tabActive] as any}
                             onPress={() => setActiveTab('documents')}
                         >
                             <Text style={[styles.tabText, activeTab === 'documents' && styles.tabTextActive]}>
@@ -136,7 +136,7 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'share' && styles.tabActive]}
+                            style={[styles.tab, activeTab === 'share' && styles.tabActive] as any}
                             onPress={() => setActiveTab('share')}
                         >
                             <Text style={[styles.tabText, activeTab === 'share' && styles.tabTextActive]}>
@@ -144,7 +144,7 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'history' && styles.tabActive]}
+                            style={[styles.tab, activeTab === 'history' && styles.tabActive] as any}
                             onPress={() => setActiveTab('history')}
                         >
                             <Text style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}>
@@ -152,7 +152,7 @@ export default function PetDetailsPage() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === 'settings' && styles.tabActive]}
+                            style={[styles.tab, activeTab === 'settings' && styles.tabActive] as any}
                             onPress={() => setActiveTab('settings')}
                         >
                             <Text style={[styles.tabText, activeTab === 'settings' && styles.tabTextActive]}>

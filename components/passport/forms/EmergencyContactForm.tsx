@@ -123,7 +123,7 @@ export default function EmergencyContactForm({
                                     ios_icon_name="phone.fill"
                                     android_material_icon_name="phone"
                                     size={24}
-                                    color={designSystem.colors.primary[500]}
+                                    color={designSystem.colors.primary[500] as any}
                                     style={styles.headerIcon}
                                 />
                                 <Text style={[styles.title, { color: effectiveColors.text }]}>
@@ -214,7 +214,7 @@ export default function EmergencyContactForm({
                                             onValueChange={onChange}
                                             trackColor={{ false: designSystem.colors.neutral[200], true: designSystem.colors.primary[500] }}
                                             thumbColor="#ffffff"
-                                            ios_backgroundColor={designSystem.colors.neutral[200]}
+                                            ios_backgroundColor={designSystem.colors.neutral[200] as any}
                                         />
                                     </View>
                                 )}

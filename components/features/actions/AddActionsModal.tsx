@@ -123,7 +123,7 @@ export default function AddActionsModal({ visible, onClose }: Props) {
                     style={[
                       styles.petButton,
                       selectedPet?.id === pet.id && styles.petButtonSelected
-                    ]}
+                    ] as any}
                     onPress={() => setSelectedPet(pet)}
                     activeOpacity={0.7}
                   >

@@ -27,7 +27,7 @@ export function AuthTabs({ activeTab }: AuthTabsProps) {
             For now, simpler conditional styling. */}
 
                 <TouchableOpacity
-                    style={[styles.tab, activeTab === 'signin' && styles.activeTab]}
+                    style={[styles.tab, activeTab === 'signin' && styles.activeTab] as any}
                     onPress={() => handlePress('signin')}
                     activeOpacity={0.8}
                 >
@@ -37,7 +37,7 @@ export function AuthTabs({ activeTab }: AuthTabsProps) {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.tab, activeTab === 'signup' && styles.activeTab]}
+                    style={[styles.tab, activeTab === 'signup' && styles.activeTab] as any}
                     onPress={() => handlePress('signup')}
                     activeOpacity={0.8}
                 >

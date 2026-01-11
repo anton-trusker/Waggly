@@ -84,7 +84,7 @@ export default function PetIdentificationWidget({
                                         height: photoSize,
                                         borderColor: getBorderColor(),
                                     },
-                                ]}
+                                ] as any}
                             />
                         ) : (
                             <View style={[

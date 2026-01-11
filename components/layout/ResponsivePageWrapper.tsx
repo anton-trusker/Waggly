@@ -28,7 +28,7 @@ export default function ResponsivePageWrapper({
     const content = scrollable ? (
         <ScrollView
             style={styles.scrollView}
-            contentContainerStyle={[styles.content, { padding: containerPadding }, style]}
+            contentContainerStyle={[styles.content, { padding: containerPadding }, style] as any}
             showsVerticalScrollIndicator={false}
         >
             {children}

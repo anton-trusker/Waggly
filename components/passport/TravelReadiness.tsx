@@ -71,7 +71,7 @@ export const TravelReadiness: React.FC<TravelReadinessProps> = ({ passport }) =>
                             <Ionicons
                                 name={item.isComplete ? "checkmark-circle" : "alert-circle"}
                                 size={24}
-                                color={item.isComplete ? designSystem.colors.success[500] : designSystem.colors.warning[500]}
+                                color={item.isComplete ? designSystem.colors.success[500] : designSystem.colors.warning[500] as any}
                             />
                         </View>
                         <View style={styles.itemContent}>

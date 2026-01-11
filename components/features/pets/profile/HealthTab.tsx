@@ -88,7 +88,7 @@ export default function HealthTab({ pet, vaccinations = [], treatments = [], con
                                     return (
                                         <LinearGradient
                                             key={visit.id}
-                                            colors={[theme.colors.primary[500], theme.colors.primary[700]]}
+                                            colors={[theme.colors.primary[500], theme.colors.primary[700]] as any}
                                             style={styles.upcomingCard}
                                         >
                                             <View style={styles.upcomingHeader}>

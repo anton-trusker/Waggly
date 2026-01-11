@@ -55,7 +55,7 @@ export default function GenderStep({ initialGender, onNext, onBack }: GenderStep
                                 style={[
                                     styles.card,
                                     isSelected && styles.cardSelected
-                                ]}
+                                ] as any}
                                 onPress={() => setSelectedGender(item.id)}
                             >
                                 <View style={styles.cardLeft}>
@@ -80,7 +80,7 @@ export default function GenderStep({ initialGender, onNext, onBack }: GenderStep
 
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.button, !selectedGender && styles.buttonDisabled]}
+                    style={[styles.button, !selectedGender && styles.buttonDisabled] as any}
                     onPress={() => selectedGender && onNext(selectedGender)}
                     disabled={!selectedGender}
                 >
@@ -89,7 +89,7 @@ export default function GenderStep({ initialGender, onNext, onBack }: GenderStep
                         ios_icon_name="arrow.right"
                         android_material_icon_name="arrow-forward"
                         size={20}
-                        color={designSystem.colors.neutral[0]}
+                        color={designSystem.colors.neutral[0] as any}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.skipButton} onPress={() => onNext('')}>
