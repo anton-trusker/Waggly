@@ -1,4 +1,4 @@
-# PAWZLY SOCIAL NETWORK: 90-Day Implementation Roadmap & Action Items
+# WAGGLI SOCIAL NETWORK: 90-Day Implementation Roadmap & Action Items
 
 **Status:** Ready for Development  
 **Timeline:** Months 1-3 of social network launch  
@@ -8,7 +8,7 @@
 
 ## 🎯 EXECUTIVE SUMMARY
 
-**Mission:** Launch Pawzly Social Network (MVP) in 90 days with core features ready to compete with Instagram for pet owners.
+**Mission:** Launch Waggli Social Network (MVP) in 90 days with core features ready to compete with Instagram for pet owners.
 
 **Success Criteria:**
 - [ ] 500+ posts created in first 30 days
@@ -57,7 +57,7 @@
 **Frontend Architecture**
 - [ ] Setup React/Next.js project
 - [ ] Design component library structure
-- [ ] CSS system (use Pawzly design tokens)
+- [ ] CSS system (use Waggli design tokens)
 - [ ] State management (Redux/Zustand)
 - [ ] Testing framework setup (Jest, Cypress)
 - [ ] Mobile optimization approach
@@ -656,10 +656,10 @@ CREATE TABLE notifications (
 **Content & Marketing:**
 
 **Seed Content:**
-- [ ] Create 50 official "Pawzly" posts (team pets, lifestyle)
+- [ ] Create 50 official "Waggli" posts (team pets, lifestyle)
 - [ ] Create 20 sample creator accounts (realistic profiles)
 - [ ] Create 100+ posts across seed accounts
-- [ ] Create trending hashtags (#PawzlyLaunch, #MaxTheGolden, etc.)
+- [ ] Create trending hashtags (#WaggliLaunch, #MaxTheGolden, etc.)
 
 **Creator Onboarding:**
 - [ ] Recruit 100 creators (influencers, micro-influencers)
@@ -668,7 +668,7 @@ CREATE TABLE notifications (
 - [ ] Schedule launch posts (staggered over first 2 weeks)
 
 **Marketing Campaign:**
-- [ ] Email blast to 50K users (Pawzly members)
+- [ ] Email blast to 50K users (Waggli members)
 - [ ] Social media campaign (Instagram, TikTok)
 - [ ] Press release (pet tech media)
 - [ ] Influencer partnerships (co-promote)

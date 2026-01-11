@@ -1,9 +1,9 @@
-# PawHelp Platform: Pages & Content Structure
+# Waggli Platform: Pages & Content Structure
 
 ## Navigation & Global Elements
 
 ### Header Navigation
-- **Logo:** PawHelp (ПавХелп) with paw icon
+- **Logo:** Waggli (ПавХелп) with paw icon
 - **Location Selector:** "Томск ▼" - Dropdown for city selection
 - **Main Navigation:**
   - "Помощь животным" (Help Animals)
@@ -26,11 +26,11 @@
   - "Как помочь финансово" (How to help financially)
   - "Правила использования" (Rules of use)
 - **Contact Information:**
-  - Email: contact@pawhelp.ru
+  - Email: contact@waggli.ru
   - Social media icons
 - **Legal Information:**
   - Copyright text
-  - PawHelp logo
+  - Waggli logo
 
 ## Homepage (Main Landing Page)
 

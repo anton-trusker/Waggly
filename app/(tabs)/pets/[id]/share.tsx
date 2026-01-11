@@ -161,7 +161,7 @@ export default function ShareTab() {
                                     style={styles.qrLogo}
                                     resizeMode="contain"
                                 />
-                                <Text style={styles.qrBrandName}>Pawzly</Text>
+                                <Text style={styles.qrBrandName}>Waggli</Text>
                             </View>
                             <Text style={styles.qrPetName}>{pet.name}</Text>
                             <View style={styles.qrWrapper}>

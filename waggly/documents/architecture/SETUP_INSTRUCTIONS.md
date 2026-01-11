@@ -1,7 +1,7 @@
 
-# Pawzly - Setup Instructions
+# Waggli - Setup Instructions
 
-Welcome to Pawzly! This guide will help you set up the app with Supabase backend.
+Welcome to Waggli! This guide will help you set up the app with Supabase backend.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ Welcome to Pawzly! This guide will help you set up the app with Supabase backend
 1. Go to [https://supabase.com](https://supabase.com) and sign up/login
 2. Click "New Project"
 3. Fill in:
-   - **Project Name**: Pawzly
+   - **Project Name**: Waggli
    - **Database Password**: Choose a strong password (save it!)
    - **Region**: Choose closest to you
 4. Wait for the project to be created (takes ~2 minutes)

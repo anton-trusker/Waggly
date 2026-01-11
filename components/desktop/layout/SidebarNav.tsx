@@ -30,7 +30,7 @@ const SidebarNav: React.FC = () => {
             {/* Logo */}
             <View style={styles.logoContainer}>
                 <Image source={require('@/assets/images/logo.png')} style={styles.logoIcon} />
-                <Text style={styles.logoText}>Pawzly</Text>
+                <Text style={styles.logoText}>Waggli</Text>
             </View>
 
             {/* Navigation */}

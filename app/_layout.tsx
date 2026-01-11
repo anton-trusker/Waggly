@@ -37,7 +37,7 @@ function RootLayoutNav() {
     const handleDeepLink = async (event: { url: string }) => {
       const { path, queryParams } = Linking.parse(event.url);
 
-      // Check for Invite Token in URL (mypawzly://invite/TOKEN)
+      // Check for Invite Token in URL (mywaggli://invite/TOKEN)
       if (path && path.startsWith('invite/') && user) {
         const token = path.split('/')[1];
         if (token) {

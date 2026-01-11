@@ -1,8 +1,8 @@
-Here is a comprehensive, modern UI/UX design specification for PawHelp user-facing pages with detailed layouts, multi-role support, onboarding flows, and contemporary design patterns.pawhelp\_doc\_8\_permissions\_matrix.md+2​
+Here is a comprehensive, modern UI/UX design specification for Waggli user-facing pages with detailed layouts, multi-role support, onboarding flows, and contemporary design patterns.waggli\_doc\_8\_permissions\_matrix.md+2​
 
 ---
 
-# **PawHelp User Interface Design Specification**
+# **Waggli User Interface Design Specification**
 
 ## **Design System Foundation**
 
@@ -68,7 +68,7 @@ text
 
 **Components:**
 
-* **Logo** (120px width): PawHelp logo with paw \+ heart icon, clickable → home  
+* **Logo** (120px width): Waggli logo with paw \+ heart icon, clickable → home  
 * **Location Selector**: City name with dropdown; opens modal with search and recent cities  
 * **Universal Search Bar** (400px):  
   * Placeholder: "Search cases, services, or community..."  
@@ -161,7 +161,7 @@ text
 
 text  
 `┌──────────────────────────────────────────────┐`  
-`│              Join PawHelp                     │`  
+`│              Join Waggli                     │`  
 `│                                               │`  
 `│  ┌──────────────────────────────────────┐   │`  
 `│  │  Continue with Google    [G]         │   │`  
@@ -191,7 +191,7 @@ text
 
 text  
 `┌───────────────────────────────────────────────────────────┐`  
-`│               How will you use PawHelp?                    │`  
+`│               How will you use Waggli?                    │`  
 `│                                                            │`  
 `│  ┌───────────────┐  ┌───────────────┐  ┌──────────────┐ │`  
 `│  │   [🐕 Icon]   │  │   [❤️ Icon]   │  │  [🔧 Icon]   │ │`  
@@ -313,7 +313,7 @@ text
 
 text  
 `┌──────────────────────────────────────────────────────────┐`  
-`│  🎉 Welcome to PawHelp, [Name]!                           │`  
+`│  🎉 Welcome to Waggli, [Name]!                           │`  
 `├──────────────────────────────────────────────────────────┤`  
 `│                                                           │`  
 `│  Here's what you can do next:                             │`  
@@ -831,9 +831,9 @@ This design system prioritizes:
 ✅ Progressive disclosure to avoid overwhelming users  
 ✅ Contextual actions and smart defaults  
 ✅ Trust indicators throughout (verification badges, scores)  
-✅ Responsive layouts for all screen sizespawhelp\_doc\_5\_web\_platform\_spec.md+2​
+✅ Responsive layouts for all screen sizeswaggli\_doc\_5\_web\_platform\_spec.md+2​
 
-Continuing the detailed UI layouts for remaining key pages:pawhelp\_doc\_8\_permissions\_matrix.md+2​
+Continuing the detailed UI layouts for remaining key pages:waggli\_doc\_8\_permissions\_matrix.md+2​
 
 ---
 
@@ -1411,7 +1411,7 @@ text
 `│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │`  
 `│                                                              │`  
 `│ ☑ I agree to the cancellation policy                        │`  
-`│ ☑ I agree to PawHelp's Terms of Service                     │`  
+`│ ☑ I agree to Waggli's Terms of Service                     │`  
 `│                                                              │`  
 `│ 🔒 Your payment is secure and encrypted                     │`  
 `│                                                              │`  

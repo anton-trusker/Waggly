@@ -2,15 +2,15 @@
 
 # now create architecture solution how is better to develop such platform. should I use Microfronends, micro services, or one monorepo, as it will be also multi country, and also with additional many different features and modules. with Mobile app, and integrations.
 
-Based on the comprehensive Pawzly platform requirements (multi-country, mobile app, multiple features, integrations, social network, marketplace, admin panel), here's the optimal architecture solution:
+Based on the comprehensive Waggli platform requirements (multi-country, mobile app, multiple features, integrations, social network, marketplace, admin panel), here's the optimal architecture solution:
 
 ***
 
-# **PAWZLY - OPTIMAL ARCHITECTURE SOLUTION**
+# **WAGGLI - OPTIMAL ARCHITECTURE SOLUTION**
 
 ## **Executive Recommendation: Hybrid Monorepo with Module Federation**
 
-For Pawzly's requirements (multi-country, mobile app, complex features, integrations), the **best approach is a Turborepo-based monorepo with selective micro-frontends** for maximum flexibility while maintaining developer velocity and code sharing.
+For Waggli's requirements (multi-country, mobile app, complex features, integrations), the **best approach is a Turborepo-based monorepo with selective micro-frontends** for maximum flexibility while maintaining developer velocity and code sharing.
 
 ### **Why This Approach?**
 
@@ -27,7 +27,7 @@ For Pawzly's requirements (multi-country, mobile app, complex features, integrat
 ## **1. MONOREPO STRUCTURE (Turborepo)**
 
 ```
-pawzly/
+waggli/
 ├── apps/
 │   ├── web/                    # Next.js 14 - User-facing web app
 │   ├── admin/                  # Next.js 14 - Admin panel
@@ -236,15 +236,15 @@ module.exports = {
     localeDetection: true,
     domains: [
       {
-        domain: 'pawzly.com',
+        domain: 'waggli.com',
         defaultLocale: 'en-US',
       },
       {
-        domain: 'pawzly.de',
+        domain: 'waggli.de',
         defaultLocale: 'de-DE',
       },
       {
-        domain: 'pawzly.fr',
+        domain: 'waggli.fr',
         defaultLocale: 'fr-FR',
       },
     ],
@@ -316,8 +316,8 @@ module.exports = {
       new NextFederationPlugin({
         name: 'main_app',
         remotes: {
-          social_feed: `social_feed@https://social.pawzly.com/_next/static/chunks/remoteEntry.js`,
-          marketplace: `marketplace@https://marketplace.pawzly.com/_next/static/chunks/remoteEntry.js`,
+          social_feed: `social_feed@https://social.waggli.com/_next/static/chunks/remoteEntry.js`,
+          marketplace: `marketplace@https://marketplace.waggli.com/_next/static/chunks/remoteEntry.js`,
         },
         shared: {
           react: { singleton: true, requiredVersion: '^18.0.0' },
@@ -373,7 +373,7 @@ export function usePetProfile(petId: string) {
 }
 
 // apps/mobile/src/screens/PetProfileScreen.tsx
-import { usePetProfile } from '@pawzly/core';
+import { usePetProfile } from '@waggli/core';
 
 export function PetProfileScreen({ route }) {
   const { pet, isLoading } = usePetProfile(route.params.petId);
@@ -381,7 +381,7 @@ export function PetProfileScreen({ route }) {
 }
 
 // apps/web/src/app/pets/[id]/page.tsx
-import { usePetProfile } from '@pawzly/core';
+import { usePetProfile } from '@waggli/core';
 
 export default function PetProfilePage({ params }) {
   const { pet, isLoading } = usePetProfile(params.id);
@@ -420,7 +420,7 @@ export const Camera = isMobile
 ┌────────────────────────────────────────────────────────┐
 │                     PRODUCTION                         │
 ├────────────────────────────────────────────────────────┤
-│  Domain: pawzly.com, pawzly.de, pawzly.fr             │
+│  Domain: waggli.com, waggli.de, waggli.fr             │
 │  Database: Supabase Production (multi-region)         │
 │  CDN: Cloudflare (global)                             │
 │  Hosting: Vercel Production                           │
@@ -429,7 +429,7 @@ export const Camera = isMobile
 ┌────────────────────────────────────────────────────────┐
 │                      STAGING                           │
 ├────────────────────────────────────────────────────────┤
-│  Domain: staging.pawzly.com                           │
+│  Domain: staging.waggli.com                           │
 │  Database: Supabase Staging                           │
 │  Hosting: Vercel Preview (auto-deploy on PR)         │
 └────────────────────────────────────────────────────────┘
@@ -546,7 +546,7 @@ jobs:
 ## **9. RECOMMENDED FOLDER STRUCTURE**
 
 ```
-pawzly/
+waggli/
 ├── .github/
 │   └── workflows/
 │       ├── deploy.yml

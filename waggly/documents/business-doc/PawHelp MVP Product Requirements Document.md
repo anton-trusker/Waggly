@@ -1,12 +1,12 @@
 <img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
 
-# PawHelp MVP Product Requirements Document
+# Waggli MVP Product Requirements Document
 
 ## 1. Problem Statement
 
 Pet owners across Europe face significant challenges in accessing reliable, convenient, and comprehensive pet care services. The current fragmented market requires pet owners to use multiple platforms and services for different needs, creating inefficiencies and stress during critical pet care moments. With **91 million European households owning pets** and a **€121.02 billion market** projected by 2033[1], there is a clear opportunity to create a unified digital ecosystem that simplifies pet care access while ensuring trust and quality.
 
-The core problems PawHelp's MVP addresses include:
+The core problems Waggli's MVP addresses include:
 
 - **Service fragmentation**: Pet owners struggle to find and coordinate multiple service providers across different platforms
 - **Trust and verification gaps**: Lack of standardized vetting processes for service providers creates safety concerns[2]
@@ -160,7 +160,7 @@ The core problems PawHelp's MVP addresses include:
 
 **User Flow:**
 
-1. Pet owner opens PawHelp app and selects "Emergency Care" option
+1. Pet owner opens Waggli app and selects "Emergency Care" option
 2. System presents emergency checklist and immediate care instructions for chocolate poisoning
 3. Platform identifies available emergency veterinarians within 10km radius with real-time availability
 4. Owner can initiate video consultation within 2 minutes or book urgent in-person appointment
@@ -205,7 +205,7 @@ The core problems PawHelp's MVP addresses include:
 
 **User Flow:**
 
-1. Owner accesses pet health profile within PawHelp platform showing complete medical history
+1. Owner accesses pet health profile within Waggli platform showing complete medical history
 2. Vaccination records, medication schedules, and previous treatment notes displayed chronologically
 3. Digital health record sharing initiated with new veterinary clinic through secure transfer
 4. Veterinarian receives access to complete health profile before appointment
@@ -436,7 +436,7 @@ The core problems PawHelp's MVP addresses include:
 
 **Competitive and Market Assumptions:**
 
-- Current market fragmentation will persist long enough for PawHelp to establish market position[1]
+- Current market fragmentation will persist long enough for Waggli to establish market position[1]
 - Regulatory barriers to entry will remain manageable with proper legal compliance framework
 - Large technology companies will not rapidly enter and dominate European pet care marketplace
 - Economic conditions will support continued growth in discretionary pet care spending
@@ -675,9 +675,9 @@ The core problems PawHelp's MVP addresses include:
 
 **Product Strategy and Market Positioning:**
 
-- Should PawHelp initially focus on premium urban markets or attempt broader geographic coverage across European markets?
+- Should Waggli initially focus on premium urban markets or attempt broader geographic coverage across European markets?
 - What is the optimal balance between service breadth (multiple pet care categories) versus depth (specialization in specific services)?
-- How can PawHelp differentiate from established competitors like Rover while building sustainable competitive advantages?
+- How can Waggli differentiate from established competitors like Rover while building sustainable competitive advantages?
 - Should the platform prioritize B2C growth or develop B2B partnerships with veterinary chains and corporate clients?
 
 **Technology Architecture and Compliance:**
@@ -692,7 +692,7 @@ The core problems PawHelp's MVP addresses include:
 - What commission structure optimizes provider participation while maintaining platform profitability and competitive pricing?
 - How should pricing vary across European markets to account for different economic conditions and consumer spending patterns?
 - What premium features can drive subscription revenue without creating barriers to essential pet care access?
-- Should PawHelp pursue insurance partnerships or develop proprietary insurance products for comprehensive coverage?
+- Should Waggli pursue insurance partnerships or develop proprietary insurance products for comprehensive coverage?
 
 
 ## Risks
@@ -722,7 +722,7 @@ The core problems PawHelp's MVP addresses include:
 
 **Established Competitor Aggressive Response:**
 
-- **Risk**: Rover or other well-funded competitors launching targeted campaigns to prevent PawHelp market penetration
+- **Risk**: Rover or other well-funded competitors launching targeted campaigns to prevent Waggli market penetration
 - **Impact**: Increased customer acquisition costs, provider recruitment challenges, potential market exclusion in key geographic areas
 - **Mitigation Strategy**: Focus on differentiated value propositions, build exclusive provider relationships, and establish strong brand loyalty through superior service quality
 
@@ -759,11 +759,11 @@ The core problems PawHelp's MVP addresses include:
 - **Impact**: Funding requirements increase, profitability delays, investor confidence decline, and potential business model viability questions
 - **Mitigation Strategy**: Diversify acquisition channels, optimize conversion funnels, implement referral programs, and focus on organic growth through exceptional service quality
 
-This comprehensive MVP Product Requirements Document provides PawHelp with a strategic roadmap for entering the European pet care market with a focused, scalable platform that addresses real user needs while building sustainable competitive advantages through technology, trust, and superior user experience.
+This comprehensive MVP Product Requirements Document provides Waggli with a strategic roadmap for entering the European pet care market with a focused, scalable platform that addresses real user needs while building sustainable competitive advantages through technology, trust, and superior user experience.
 
 ---
 
-# PawHelp MVP Platform Product Requirements Document
+# Waggli MVP Platform Product Requirements Document
 
 ## 1. Problem Statement
 
@@ -935,17 +935,17 @@ Pet owners across Europe confront a **fragmented** pet-care ecosystem requiring 
 
 <div style="text-align: center">⁂</div>
 
-[^2_1]: pawhelp_doc_1_executive_summary.md
+[^2_1]: waggli_doc_1_executive_summary.md
 
-[^2_2]: pawhelp_doc_2_platform_features.md
+[^2_2]: waggli_doc_2_platform_features.md
 
-[^2_3]: pawhelp_doc_4_mobile_app_spec.md
+[^2_3]: waggli_doc_4_mobile_app_spec.md
 
-[^2_4]: pawhelp_doc_5_web_platform_spec.md
+[^2_4]: waggli_doc_5_web_platform_spec.md
 
-[^2_5]: pawhelp_doc_7_admin_panel_roles.md
+[^2_5]: waggli_doc_7_admin_panel_roles.md
 
-[^2_6]: pawhelp_doc_8_permissions_matrix.md
+[^2_6]: waggli_doc_8_permissions_matrix.md
 
-[^2_7]: Platform-PawHelp_-Complete-Solution-and-Implementa-2.md
+[^2_7]: Platform-Waggli_-Complete-Solution-and-Implementa-2.md
 

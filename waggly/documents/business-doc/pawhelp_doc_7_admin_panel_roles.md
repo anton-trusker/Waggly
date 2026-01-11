@@ -1,4 +1,4 @@
-**PawHelp Document 7: Admin Panel & End-to-End System Roles**
+**Waggli Document 7: Admin Panel & End-to-End System Roles**
 
 ---
 
@@ -110,5 +110,5 @@
 
 ---
 
-*The PawHelp admin panel ensures full platform oversight while supporting scalable, transparent, and role-appropriate participation for all user groups.*
+*The Waggli admin panel ensures full platform oversight while supporting scalable, transparent, and role-appropriate participation for all user groups.*
 

@@ -1,16 +1,16 @@
 
 
-# Platform PawHelp: Complete Solution and Implementation Guide
+# Platform Waggli: Complete Solution and Implementation Guide
 
 ## Executive Summary
 
-Platform PawHelp is envisioned as a comprehensive digital ecosystem that revolutionizes pet care by connecting pet owners, veterinarians, service providers, shelters, and businesses in a unified marketplace. The platform addresses the rapidly growing pet care market, which is projected to reach \$350 billion by 2027[^1_1], and the 85% of pet owners who consider their pets family members[^1_1]. This comprehensive solution combines the best practices from successful platforms like Rover, Chewy, and PetCloud while introducing innovative features for community engagement, emergency care, and AI-powered assistance.
+Platform Waggli is envisioned as a comprehensive digital ecosystem that revolutionizes pet care by connecting pet owners, veterinarians, service providers, shelters, and businesses in a unified marketplace. The platform addresses the rapidly growing pet care market, which is projected to reach \$350 billion by 2027[^1_1], and the 85% of pet owners who consider their pets family members[^1_1]. This comprehensive solution combines the best practices from successful platforms like Rover, Chewy, and PetCloud while introducing innovative features for community engagement, emergency care, and AI-powered assistance.
 
 ## Product Vision and Value Proposition
 
 ### Core Vision
 
-PawHelp aims to become the go-to platform for all pet-related needs, creating a transparent, trustworthy, and convenient ecosystem that ensures pets receive the best possible care while providing economic opportunities for service providers and businesses in the pet industry[^1_2][^1_3].
+Waggli aims to become the go-to platform for all pet-related needs, creating a transparent, trustworthy, and convenient ecosystem that ensures pets receive the best possible care while providing economic opportunities for service providers and businesses in the pet industry[^1_2][^1_3].
 
 ### Value Propositions
 
@@ -48,7 +48,7 @@ PawHelp aims to become the go-to platform for all pet-related needs, creating a 
 
 ### Technology Stack Recommendations
 
-Based on industry best practices for scalable platforms[^1_4][^1_5][^1_6], PawHelp should implement:
+Based on industry best practices for scalable platforms[^1_4][^1_5][^1_6], Waggli should implement:
 
 **Frontend Technologies:**
 
@@ -575,16 +575,16 @@ The platform should be built using microservices to ensure scalability and maint
 - **Social Impact** - Animal welfare advocacy and charitable giving platforms
 - **Pet Insurance** - Integrated insurance products and claims management
 
-Platform PawHelp represents a comprehensive solution for the modern pet care ecosystem, addressing the needs of all stakeholders while leveraging cutting-edge technology to create a sustainable, scalable business model. The platform's success will depend on careful execution of the implementation roadmap, strong focus on user experience, and continuous innovation to maintain market leadership in the rapidly growing pet care industry.
+Platform Waggli represents a comprehensive solution for the modern pet care ecosystem, addressing the needs of all stakeholders while leveraging cutting-edge technology to create a sustainable, scalable business model. The platform's success will depend on careful execution of the implementation roadmap, strong focus on user experience, and continuous innovation to maintain market leadership in the rapidly growing pet care industry.
 
 
 ---
 
-# European Pet Care Platform Market Analysis: PawHelp Startup Feasibility Study
+# European Pet Care Platform Market Analysis: Waggli Startup Feasibility Study
 
 ## Executive Summary
 
-The European pet care market presents exceptional opportunities for digital platform startups, with the industry valued at **€77.51 billion in 2024** and projected to reach **€121.02 billion by 2033**[^2_1]. With **91 million European households owning pets** (46% of all households) and **340 million pets** across the continent[^2_2], the market demonstrates strong fundamentals for a comprehensive platform like PawHelp.
+The European pet care market presents exceptional opportunities for digital platform startups, with the industry valued at **€77.51 billion in 2024** and projected to reach **€121.02 billion by 2033**[^2_1]. With **91 million European households owning pets** (46% of all households) and **340 million pets** across the continent[^2_2], the market demonstrates strong fundamentals for a comprehensive platform like Waggli.
 
 ## Market Size and Growth Potential
 
@@ -914,7 +914,7 @@ The European pet care ecosystem shows remarkable growth across multiple segments
 
 ## Conclusion and Strategic Recommendations
 
-The European pet care platform market presents a **€121 billion opportunity** with strong growth fundamentals and demonstrated investor interest. PawHelp can succeed by focusing on:
+The European pet care platform market presents a **€121 billion opportunity** with strong growth fundamentals and demonstrated investor interest. Waggli can succeed by focusing on:
 
 **Differentiation Strategy**: Build a comprehensive platform integrating healthcare, emergency services, and community features rather than competing solely on pet sitting services.
 
@@ -926,18 +926,18 @@ The European pet care platform market presents a **€121 billion opportunity** 
 
 **Technology Investment**: Build scalable, API-first architecture supporting real-time features, multi-language support, and third-party integrations.
 
-With proper execution, PawHelp could capture 5-10% market share within 5 years, representing a **€6-12 billion valuation opportunity** in Europe's rapidly growing pet economy.
+With proper execution, Waggli could capture 5-10% market share within 5 years, representing a **€6-12 billion valuation opportunity** in Europe's rapidly growing pet economy.
 
 
 ---
 
-# PawHelp Platform: Complete Business Plan and Implementation Guide
+# Waggli Platform: Complete Business Plan and Implementation Guide
 
 ## Executive Summary
 
-PawHelp represents a transformative opportunity in the rapidly expanding European pet care market, positioned to capture significant value from the **€121.02 billion market** projected by 2033[^3_1]. This comprehensive digital platform addresses the fragmented nature of current pet care services by providing an integrated ecosystem connecting **91 million European pet-owning households**[^3_1] with verified service providers, veterinary professionals, and essential pet care resources.
+Waggli represents a transformative opportunity in the rapidly expanding European pet care market, positioned to capture significant value from the **€121.02 billion market** projected by 2033[^3_1]. This comprehensive digital platform addresses the fragmented nature of current pet care services by providing an integrated ecosystem connecting **91 million European pet-owning households**[^3_1] with verified service providers, veterinary professionals, and essential pet care resources.
 
-The platform leverages cutting-edge technology including AI-powered matching algorithms, real-time GPS tracking, telemedicine capabilities, and comprehensive health record management to deliver superior value propositions across all stakeholder groups. With the European pet tech market growing at **20.7% CAGR from 2025-2034**[^3_1] and demonstrated investor appetite evidenced by **€2.89 billion in global pet tech investments**[^3_1], PawHelp is strategically positioned for substantial growth and profitability.
+The platform leverages cutting-edge technology including AI-powered matching algorithms, real-time GPS tracking, telemedicine capabilities, and comprehensive health record management to deliver superior value propositions across all stakeholder groups. With the European pet tech market growing at **20.7% CAGR from 2025-2034**[^3_1] and demonstrated investor appetite evidenced by **€2.89 billion in global pet tech investments**[^3_1], Waggli is strategically positioned for substantial growth and profitability.
 
 Our funding requirement of **€3-5 million for seed round** and **€15-25 million for Series A**[^3_1] aligns with successful European pet tech funding patterns, including recent rounds such as FirstVet's **€20 million Series C**[^3_1] and filu's **€5.1 million seed round**[^3_1]. The platform targets break-even by month 18 with projected annual revenues of **€150 million+ by year 5**[^3_1] through diversified revenue streams including commission-based transactions, subscription services, and strategic partnerships.
 
@@ -962,7 +962,7 @@ To become Europe's leading pet care ecosystem, seamlessly integrating all aspect
 
 ### Legal Structure and Compliance Framework
 
-PawHelp will be established as a European company with headquarters in the Netherlands, leveraging favorable business environment and proximity to major European markets. The corporate structure includes:
+Waggli will be established as a European company with headquarters in the Netherlands, leveraging favorable business environment and proximity to major European markets. The corporate structure includes:
 
 - **Primary Entity**: B.V. (Besloten Vennootschap) in Netherlands for EU operations
 - **Subsidiary Structure**: Local entities in key markets for regulatory compliance
@@ -1708,7 +1708,7 @@ Multi-currency operations across Europe create exposure to exchange rate fluctua
 - **Geographic Market Share**: Top 3 platform position in 80% of operating markets by Year 3
 - **Service Category Leadership**: \#1 or \#2 position in healthcare and emergency services
 - **Brand Recognition**: 70% unaided brand awareness among pet owners in primary markets
-- **Provider Preference**: 60% of service providers choosing PawHelp as primary platform
+- **Provider Preference**: 60% of service providers choosing Waggli as primary platform
 
 **Competitive Differentiation Metrics**:
 
@@ -1717,7 +1717,7 @@ Multi-currency operations across Europe create exposure to exchange rate fluctua
 - **Provider Retention**: 90% annual provider retention rate vs. 70% industry average
 - **Regulatory Compliance**: 100% compliance record across all operating jurisdictions
 
-This comprehensive business plan positions PawHelp for significant success in the European pet care market through strategic technology implementation, careful market expansion, and sustainable business model development. The platform's focus on comprehensive service integration, regulatory excellence, and community building creates multiple competitive advantages supporting long-term market leadership and substantial financial returns for investors and stakeholders.
+This comprehensive business plan positions Waggli for significant success in the European pet care market through strategic technology implementation, careful market expansion, and sustainable business model development. The platform's focus on comprehensive service integration, regulatory excellence, and community building creates multiple competitive advantages supporting long-term market leadership and substantial financial returns for investors and stakeholders.
 
 <div style="text-align: center">⁂</div>
 
@@ -1852,11 +1852,11 @@ This comprehensive business plan positions PawHelp for significant success in th
 
 ---
 
-# PawHelp Platform: Complete Product, Solution, Features, Platform, and Requirements Document
+# Waggli Platform: Complete Product, Solution, Features, Platform, and Requirements Document
 
 ## Executive Summary and Overview
 
-The PawHelp Platform represents a comprehensive digital ecosystem designed to revolutionize the European pet care industry through an integrated, technology-driven marketplace. This document provides complete specifications for building a scalable, GDPR-compliant platform serving **91 million European pet-owning households** within a projected **€121.02 billion market** by 2033.
+The Waggli Platform represents a comprehensive digital ecosystem designed to revolutionize the European pet care industry through an integrated, technology-driven marketplace. This document provides complete specifications for building a scalable, GDPR-compliant platform serving **91 million European pet-owning households** within a projected **€121.02 billion market** by 2033.
 
 The platform combines advanced technology including AI-powered matching algorithms, real-time GPS tracking, telemedicine capabilities, and comprehensive health record management to create a unified ecosystem connecting pet owners, service providers, veterinarians, shelters, and businesses across 27+ European markets.
 
@@ -1868,7 +1868,7 @@ To create Europe's most comprehensive, trusted, and innovative pet care platform
 
 ### 1.2 Product Vision
 
-PawHelp will become the definitive European pet care ecosystem, seamlessly integrating all aspects of pet ownership through cutting-edge technology, absolute trust, and vibrant community engagement, ultimately improving the lives of pets, their owners, and care providers across the continent[^4_3][^4_1].
+Waggli will become the definitive European pet care ecosystem, seamlessly integrating all aspects of pet ownership through cutting-edge technology, absolute trust, and vibrant community engagement, ultimately improving the lives of pets, their owners, and care providers across the continent[^4_3][^4_1].
 
 ### 1.3 Core Value Propositions
 
@@ -2609,7 +2609,7 @@ Users (Pet Owners, Service Providers, Veterinarians)
 - **Operations (6-10 people)**: Customer support, operations managers, financial analysts, legal counsel
 - **Leadership (3-5 people)**: CEO, CTO, CPO, head of business development, head of operations[^4_1]
 
-This comprehensive Product, Solution, Features, Platform, and Requirements Document provides the complete technical and business specifications needed to successfully develop, deploy, and scale the PawHelp platform across European markets. The document serves as the definitive guide for development teams, stakeholders, and investors, ensuring alignment on all aspects of the platform's design, functionality, and implementation strategy.
+This comprehensive Product, Solution, Features, Platform, and Requirements Document provides the complete technical and business specifications needed to successfully develop, deploy, and scale the Waggli platform across European markets. The document serves as the definitive guide for development teams, stakeholders, and investors, ensuring alignment on all aspects of the platform's design, functionality, and implementation strategy.
 
 <div style="text-align: center">⁂</div>
 
@@ -2696,9 +2696,9 @@ This comprehensive Product, Solution, Features, Platform, and Requirements Docum
 
 ---
 
-# PawHelp Comprehensive Product Solution Requirements Document
+# Waggli Comprehensive Product Solution Requirements Document
 
-Before diving into technical details, this document summarises how PawHelp will become the leading European pet-care ecosystem by offering a unified, regulation-ready platform that integrates health, services, community, and commerce at scale [^5_1][^5_2].
+Before diving into technical details, this document summarises how Waggli will become the leading European pet-care ecosystem by offering a unified, regulation-ready platform that integrates health, services, community, and commerce at scale [^5_1][^5_2].
 
 ## 1  Market Context
 
@@ -2712,7 +2712,7 @@ Pet owners juggle multiple apps for medical records, insurance, grooming, and tr
 
 ## 2  Product Vision
 
-PawHelp aims to create Europe’s most trusted one-stop ecosystem where owners, vets, service providers, and insurers collaborate seamlessly under a privacy-by-design framework [^5_16][^5_17].  The platform will deliver personalised care journeys via AI-driven insights, secure data exchange, and omni-channel services, ensuring every pet receives preventive, acute, and lifestyle support throughout its life [^5_18][^5_19].  Economic value is generated through commission-based transactions, tiered subscriptions, and high-margin value-added partnerships, balancing user affordability with strong unit economics [^5_6][^5_20].
+Waggli aims to create Europe’s most trusted one-stop ecosystem where owners, vets, service providers, and insurers collaborate seamlessly under a privacy-by-design framework [^5_16][^5_17].  The platform will deliver personalised care journeys via AI-driven insights, secure data exchange, and omni-channel services, ensuring every pet receives preventive, acute, and lifestyle support throughout its life [^5_18][^5_19].  Economic value is generated through commission-based transactions, tiered subscriptions, and high-margin value-added partnerships, balancing user affordability with strong unit economics [^5_6][^5_20].
 
 ## 3  Functional Requirements
 
@@ -2746,7 +2746,7 @@ End-to-end AES-256 encryption protects data in transit and at rest, complemented
 
 ## 5  Technical Architecture
 
-PawHelp adopts a cloud-native, event-driven microservices architecture with the following layers [^5_12][^5_28]:
+Waggli adopts a cloud-native, event-driven microservices architecture with the following layers [^5_12][^5_28]:
 
 * **API Gateway** – unified ingress with SSL termination and rate-limiting.
 * **Service Mesh** – mTLS, traffic routing, and observability.
@@ -2755,9 +2755,9 @@ PawHelp adopts a cloud-native, event-driven microservices architecture with the 
 * **Streaming** – Kafka for asynchronous event propagation and decoupling.
 * **DevOps** – CI/CD pipelines with blue-green deployments, IaC via Terraform, automated testing achieving ≥80% code coverage.
 
-![PawHelp microservices architecture overview.](https://pplx-res.cloudinary.com/image/upload/v1750991351/gpt4o_images/prrndnran1aocdryjaic.png)
+![Waggli microservices architecture overview.](https://pplx-res.cloudinary.com/image/upload/v1750991351/gpt4o_images/prrndnran1aocdryjaic.png)
 
-PawHelp microservices architecture overview.
+Waggli microservices architecture overview.
 
 ## 6  Integration Ecosystem
 
@@ -2784,9 +2784,9 @@ The IoT Gateway ingests telemetry from smart collars monitoring HRV, temperature
 
 By year 3 the baseline forecast targets €45 million annual revenue, distributed across three major streams [^5_20][^5_6].
 
-![Projected Year-3 revenue mix for PawHelp.](https://pplx-res.cloudinary.com/image/upload/v1750991277/pplx_code_interpreter/41a6f95d_z1nkjm.jpg)
+![Projected Year-3 revenue mix for Waggli.](https://pplx-res.cloudinary.com/image/upload/v1750991277/pplx_code_interpreter/41a6f95d_z1nkjm.jpg)
 
-Projected Year-3 revenue mix for PawHelp.
+Projected Year-3 revenue mix for Waggli.
 
 ## 9  Implementation Roadmap
 
@@ -2808,7 +2808,7 @@ Projected Year-3 revenue mix for PawHelp.
 
 ## 11  Conclusion
 
-PawHelp is positioned to capture a multi-billion-euro opportunity by fusing marketplace convenience with regulated healthcare, data-driven insight, and resilient cloud architecture [^5_1][^5_3].  By adhering to rigorous security standards, embracing privacy-by-design, and orchestrating modular microservices, the platform can achieve rapid European scale while meeting the diverse needs of owners, professionals, and partners [^5_16][^5_12].  Executing the phased roadmap will deliver sustainable revenue, defensible moats, and measurable improvements in pet wellbeing across the continent [^5_29][^5_18].
+Waggli is positioned to capture a multi-billion-euro opportunity by fusing marketplace convenience with regulated healthcare, data-driven insight, and resilient cloud architecture [^5_1][^5_3].  By adhering to rigorous security standards, embracing privacy-by-design, and orchestrating modular microservices, the platform can achieve rapid European scale while meeting the diverse needs of owners, professionals, and partners [^5_16][^5_12].  Executing the phased roadmap will deliver sustainable revenue, defensible moats, and measurable improvements in pet wellbeing across the continent [^5_29][^5_18].
 
 <div style="text-align: center">⁂</div>
 
@@ -2935,11 +2935,11 @@ PawHelp is positioned to capture a multi-billion-euro opportunity by fusing mark
 
 ---
 
-## PawHelp Platform Solution Document
+## Waggli Platform Solution Document
 
 ### **1. Executive Summary**
 
-PawHelp is a community-driven digital ecosystem connecting pet owners in need with donors, volunteers, and veterinary partners. The platform facilitates financial aid, blood donations, and physical assistance for animals through geo-targeted, multi-language/multi-currency capabilities. Designed for scalability and trust, it integrates medical verification, transparent fundraising, and social engagement to address the €77B+ European pet care market.
+Waggli is a community-driven digital ecosystem connecting pet owners in need with donors, volunteers, and veterinary partners. The platform facilitates financial aid, blood donations, and physical assistance for animals through geo-targeted, multi-language/multi-currency capabilities. Designed for scalability and trust, it integrates medical verification, transparent fundraising, and social engagement to address the €77B+ European pet care market.
 
 ### **2. Platform Identity**
 
@@ -3065,7 +3065,7 @@ PawHelp is a community-driven digital ecosystem connecting pet owners in need wi
 #### **6.2 Global UI Elements**
 
 - **Header**: Location selector, "Give Hope" CTA, language toggle.
-- **Footer**: Contact (contact@pawhelp.ru), social links, legal info.
+- **Footer**: Contact (contact@waggli.ru), social links, legal info.
 
 
 ### **7. Multi-Currency/Language Implementation**
@@ -3097,7 +3097,7 @@ PawHelp is a community-driven digital ecosystem connecting pet owners in need wi
 
 ### **10. Conclusion**
 
-PawHelp’s architecture balances community-driven assistance with enterprise-grade security and scalability. By prioritizing verified medical needs, multi-region adaptability, and intuitive UX, the platform creates a sustainable ecosystem for pet welfare. Phase-based deployment ensures iterative validation while targeting €45M ARR by Year 3 through diversified monetization (commissions, subscriptions, partnerships).
+Waggli’s architecture balances community-driven assistance with enterprise-grade security and scalability. By prioritizing verified medical needs, multi-region adaptability, and intuitive UX, the platform creates a sustainable ecosystem for pet welfare. Phase-based deployment ensures iterative validation while targeting €45M ARR by Year 3 through diversified monetization (commissions, subscriptions, partnerships).
 
 ---
 **Document Control**
@@ -3108,18 +3108,18 @@ PawHelp’s architecture balances community-driven assistance with enterprise-gr
 
 <div style="text-align: center">⁂</div>
 
-[^6_1]: Pasted-PawHelp-Platform-Documentation-Executive-Summary-PawHelp-is-a-comprehensive-mobile-web-pl.txt
+[^6_1]: Pasted-Waggli-Platform-Documentation-Executive-Summary-Waggli-is-a-comprehensive-mobile-web-pl.txt
 
-[^6_2]: Pasted-PawHelp-Platform-Pages-Overview-Main-Pages-Homepage-Main-landing-page-with-platform-intro.txt
+[^6_2]: Pasted-Waggli-Platform-Pages-Overview-Main-Pages-Homepage-Main-landing-page-with-platform-intro.txt
 
-[^6_3]: Pasted-PawHelp-Platform-Pages-Content-Structure-Navigation-Global-Elements-Header-Navigatio-1747.txt
+[^6_3]: Pasted-Waggli-Platform-Pages-Content-Structure-Navigation-Global-Elements-Header-Navigatio-1747.txt
 
 
 ---
 
-# PawHelp Platform Documentation Suite
+# Waggli Platform Documentation Suite
 
-Below you will find two deliverables that together constitute a complete high-level specification set for the PawHelp startup.
+Below you will find two deliverables that together constitute a complete high-level specification set for the Waggli startup.
 
 1. **General Product Functional Document** – a concise blueprint of the product vision, core modules, technical stack, and non-functional expectations.
 2. **Detailed User Flows \& Use-Case Specification** – exhaustive tabular breakdowns of every flow, field, and capability required for the initial release and near-term roadmap.
@@ -3414,7 +3414,7 @@ Each use case includes Actors, Pre-conditions, Main Flow, Alternate Flows, and P
 # Appendix D. API Specification
 
 The full OpenAPI 3.1 YAML specification is available at:
-https://api.pawhelp.eu/openapi/v1/pawhelp-api-3.1.yaml
+https://api.waggli.eu/openapi/v1/waggli-api-3.1.yaml
 
 # Appendix E. Glossary \& Enums
 
@@ -3440,7 +3440,7 @@ https://api.pawhelp.eu/openapi/v1/pawhelp-api-3.1.yaml
 
 ---
 
-# PawHelp Appendix Package
+# Waggli Appendix Package
 
 The complete specification set you requested is now available as five separate markdown documents, one for each appendix .
 
@@ -3471,7 +3471,7 @@ Below is a quick index of the deliverables; download or open each file to read t
 
 ## Comprehensive Use-Case Specification Delivered
 
-The full, detailed catalogue of all seventy-five use cases for the PawHelp platform has been packaged as a standalone document.
+The full, detailed catalogue of all seventy-five use cases for the Waggli platform has been packaged as a standalone document.
 
 <div style="text-align: center">⁂</div>
 
@@ -3482,7 +3482,7 @@ The full, detailed catalogue of all seventy-five use cases for the PawHelp platf
 
 # create all usecases
 
-Below is a comprehensive, detailed list of all use cases for the PawHelp platform MVP and scale-up roadmap. Each use case is formatted with:
+Below is a comprehensive, detailed list of all use cases for the Waggli platform MVP and scale-up roadmap. Each use case is formatted with:
 
 - **ID \& Title**
 - **Actors**
@@ -3493,7 +3493,7 @@ Below is a comprehensive, detailed list of all use cases for the PawHelp platfor
 - **Postconditions**
 
 
-# PawHelp Platform Use Case Catalogue
+# Waggli Platform Use Case Catalogue
 
 ## 1. User Management \& Authentication
 
@@ -4286,16 +4286,16 @@ Main:
 3. Recovery steps executed
 Post: Drill results logged
 
-**This catalogue covers the full breadth of user and system interactions for MVP and scalable growth of the PawHelp platform.**
+**This catalogue covers the full breadth of user and system interactions for MVP and scalable growth of the Waggli platform.**
 For each use case, detailed user stories, acceptance criteria, and wireflows can be derived by product, design, and engineering teams[^11_1][^11_2][^11_3].
 
 <div style="text-align: center">⁂</div>
 
 [^11_1]: help-to-create-full-solution-a-ZeIRkxvJTtm8RkqN0ra59Q.md
 
-[^11_2]: Pasted-PawHelp-Platform-Documentation-Executive-Summary-PawHelp-is-a-comprehensive-mobile-web-pl.txt
+[^11_2]: Pasted-Waggli-Platform-Documentation-Executive-Summary-Waggli-is-a-comprehensive-mobile-web-pl.txt
 
-[^11_3]: Pasted-PawHelp-Platform-Pages-Overview-Main-Pages-Homepage-Main-landing-page-with-platform-intro.txt
+[^11_3]: Pasted-Waggli-Platform-Pages-Overview-Main-Pages-Homepage-Main-landing-page-with-platform-intro.txt
 
-[^11_4]: Pasted-PawHelp-Platform-Pages-Content-Structure-Navigation-Global-Elements-Header-Navigatio-1747.txt
+[^11_4]: Pasted-Waggli-Platform-Pages-Content-Structure-Navigation-Global-Elements-Header-Navigatio-1747.txt
 

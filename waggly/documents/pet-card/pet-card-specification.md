@@ -1,4 +1,4 @@
-# 🐾 PAWZLY PET CARD COMPONENT SPECIFICATION
+# 🐾 WAGGLI PET CARD COMPONENT SPECIFICATION
 
 **Document Version:** 1.0  
 **Created:** January 10, 2026  
@@ -9,7 +9,7 @@
 
 ## 📋 EXECUTIVE SUMMARY
 
-The **Pet Card Component** is the primary way users view their pets on the Pawzly dashboard and pet list pages. It displays the most critical health information at a glance, enabling users to quickly assess pet status and take action.
+The **Pet Card Component** is the primary way users view their pets on the Waggli dashboard and pet list pages. It displays the most critical health information at a glance, enabling users to quickly assess pet status and take action.
 
 ### Key Objectives:
 ✅ **Quick Information Access** - 3-5 seconds to understand pet's status  
@@ -654,7 +654,7 @@ function getHealthCategory(score: number): {
 
 ### 8.1 Data Sources
 
-**From Pawzly Core Database:**
+**From Waggli Core Database:**
 - Pet identification (name, breed, DOB, gender)
 - Pet photo URL
 - Weight tracking (latest entry)
@@ -1065,7 +1065,7 @@ When in "edit mode," cards show:
 Before launching Pet Card component:
 
 - [ ] All three view formats implemented (grid, list, mobile)
-- [ ] Color coding matches Pawzly design system
+- [ ] Color coding matches Waggli design system
 - [ ] Alert priority logic tested
 - [ ] Health score calculation verified
 - [ ] Responsive design tested on 5+ devices

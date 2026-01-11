@@ -1,4 +1,4 @@
-# PAWZLY - TECHNICAL ARCHITECTURE
+# WAGGLI - TECHNICAL ARCHITECTURE
 
 ## Architecture Overview
 
@@ -107,7 +107,7 @@
 ## Monorepo Structure
 
 ```
-pawzly/
+waggli/
 ├── apps/
 │   ├── web/                    # Next.js 14 - User Platform
 │   │   ├── app/
@@ -170,7 +170,7 @@ pawzly/
 │   │   ├── src/
 │   │   │   ├── components/
 │   │   │   │   ├── ui/         # Shadcn base components
-│   │   │   │   └── custom/     # Pawzly-specific components
+│   │   │   │   └── custom/     # Waggli-specific components
 │   │   │   ├── hooks/
 │   │   │   └── lib/
 │   │   └── package.json
@@ -607,12 +607,12 @@ const environments = {
     payments: 'Stripe Test Mode',
   },
   staging: {
-    url: 'https://staging.pawzly.com',
+    url: 'https://staging.waggli.com',
     database: 'Supabase Staging',
     payments: 'Stripe Test Mode',
   },
   production: {
-    url: 'https://pawzly.com',
+    url: 'https://waggli.com',
     database: 'Supabase Production',
     payments: 'Stripe Live Mode',
   },

@@ -382,7 +382,7 @@ serve(async (req) => {
     const messages = [
       {
         role: 'system',
-        content: `You are PawAI, an intelligent pet health assistant for the Pawzly app.
+        content: `You are PawAI, an intelligent pet health assistant for the Waggli app.
 
 CAPABILITIES:
 - Answer questions about pet health records (vaccinations, medications, vet visits)
@@ -779,4 +779,4 @@ export function AIChatAssistant({ petId }: { petId?: string }) {
 
 ---
 
-This AI Assistant will transform Pawzly into an intelligent, proactive pet care companion that anticipates needs and makes pet health management effortless.
+This AI Assistant will transform Waggli into an intelligent, proactive pet care companion that anticipates needs and makes pet health management effortless.

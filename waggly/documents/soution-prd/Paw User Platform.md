@@ -1,8 +1,8 @@
-Based on comprehensive analysis of PawHelp platform documentation, user roles, and permissions, here is the complete User Platform Specification Document for all user roles:Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+3​
+Based on comprehensive analysis of Waggli platform documentation, user roles, and permissions, here is the complete User Platform Specification Document for all user roles:Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+3​
 
 ---
 
-# **PawHelp User Platform Specification Document**
+# **Waggli User Platform Specification Document**
 
 ## **Comprehensive Multi-Role Feature Specification**
 
@@ -10,9 +10,9 @@ Based on comprehensive analysis of PawHelp platform documentation, user roles, a
 
 ## **Executive Summary**
 
-PawHelp is a comprehensive digital ecosystem connecting pet owners, service providers, veterinarians, shelters, businesses, sponsors, and animal welfare supporters across Europe. This document provides detailed specifications for the user-facing platform serving all role types, outlining features, workflows, interfaces, and technical requirements for a scalable, GDPR-compliant pet care marketplace targeting the €121B European market.pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+Waggli is a comprehensive digital ecosystem connecting pet owners, service providers, veterinarians, shelters, businesses, sponsors, and animal welfare supporters across Europe. This document provides detailed specifications for the user-facing platform serving all role types, outlining features, workflows, interfaces, and technical requirements for a scalable, GDPR-compliant pet care marketplace targeting the €121B European market.waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
-The platform serves 91 million European households with pets through web and mobile applications, providing emergency care coordination, service marketplace, healthcare management, community engagement, and charitable fundraising capabilities.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+The platform serves 91 million European households with pets through web and mobile applications, providing emergency care coordination, service marketplace, healthcare management, community engagement, and charitable fundraising capabilities.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
 ---
 
@@ -105,7 +105,7 @@ The platform serves 91 million European households with pets through web and mob
 * Progressive Web App (PWA) capabilities  
 * Offline functionality for critical features  
 * Server-side rendering for SEO (Next.js)  
-* Browser support: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+pawhelp\_doc\_8\_permissions\_matrix.md+1​
+* Browser support: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+waggli\_doc\_8\_permissions\_matrix.md+1​
 
 **Mobile Applications**
 
@@ -115,7 +115,7 @@ The platform serves 91 million European households with pets through web and mob
 * Deep linking support  
 * Push notifications  
 * Camera and GPS integration  
-* Offline mode for viewing saved contentpawhelp\_doc\_5\_web\_platform\_spec.md+1​
+* Offline mode for viewing saved contentwaggli\_doc\_5\_web\_platform\_spec.md+1​
 
 ## **2.2 Technical Stack**
 
@@ -128,7 +128,7 @@ The platform serves 91 million European households with pets through web and mob
 * React Query for data fetching and caching  
 * Styled Components for consistent UI  
 * React Hook Form \+ Yup for form validation  
-* Axios for API communicationpawhelp\_doc\_8\_permissions\_matrix.md+1​
+* Axios for API communicationwaggli\_doc\_8\_permissions\_matrix.md+1​
 
 **Backend Services**
 
@@ -137,7 +137,7 @@ The platform serves 91 million European households with pets through web and mob
 * GraphQL for complex queries  
 * RESTful APIs for standard operations  
 * WebSocket for real-time features  
-* API Gateway for routing and authenticationpawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+* API Gateway for routing and authenticationwaggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 **Database**
 
@@ -145,7 +145,7 @@ The platform serves 91 million European households with pets through web and mob
 * MongoDB for document storage (profiles, reviews, content)  
 * Redis for caching and session management  
 * InfluxDB for time-series data (IoT, analytics)  
-* Elasticsearch for search functionalityPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+* Elasticsearch for search functionalityPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
 **Cloud Infrastructure**
 
@@ -154,7 +154,7 @@ The platform serves 91 million European households with pets through web and mob
 * Multi-availability zone deployment  
 * CDN for global content delivery (CloudFlare)  
 * Load balancers for high availability  
-* Auto-scaling groups for demand fluctuationpawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+* Auto-scaling groups for demand fluctuationwaggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -175,7 +175,7 @@ The platform serves 91 million European households with pets through web and mob
    * Password creation (min 8 chars, uppercase, number, special char)  
    * Email verification code sent  
    * Code entry (6-digit, 10-minute expiration)  
-   * Account activatedpawhelp\_doc\_5\_web\_platform\_spec.md​  
+   * Account activatedwaggli\_doc\_5\_web\_platform\_spec.md​  
 2. **Social Login**  
    * Google OAuth  
    * Facebook OAuth  
@@ -183,7 +183,7 @@ The platform serves 91 million European households with pets through web and mob
    * VK (Vkontakte) for Russian market  
    * Odnoklassniki (OK) for Russian market  
    * Auto-fill profile from social data  
-   * Email confirmation still requiredpawhelp\_doc\_5\_web\_platform\_spec.md​  
+   * Email confirmation still requiredwaggli\_doc\_5\_web\_platform\_spec.md​  
 3. **Phone Number Registration** (Alternative)  
    * Phone number with country code  
    * SMS verification code  
@@ -242,7 +242,7 @@ The platform serves 91 million European households with pets through web and mob
 4. User clicks link, redirected to reset page  
 5. New password entry (with strength indicator)  
 6. Confirmation and auto-login  
-7. Email notification of password changepawhelp\_doc\_5\_web\_platform\_spec.md​
+7. Email notification of password changewaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Password Requirements**
 
@@ -262,7 +262,7 @@ The platform serves 91 million European households with pets through web and mob
 
 **Header (Global)**
 
-* PawHelp logo (clickable → Homepage)  
+* Waggli logo (clickable → Homepage)  
 * Location selector: "Your City" dropdown  
 * Main navigation menu:  
   * Help Animals (cases listing)  
@@ -280,7 +280,7 @@ The platform serves 91 million European households with pets through web and mob
   * My Bookings  
   * Messages  
   * Settings  
-  * Logoutpawhelp\_doc\_8\_permissions\_matrix.md+1​
+  * Logoutwaggli\_doc\_8\_permissions\_matrix.md+1​
 
 **Hero Section**
 
@@ -290,7 +290,7 @@ The platform serves 91 million European households with pets through web and mob
   * "Give Hope" (Donate) → Cases listing  
   * "Get Help" (Create case) → Login/Signup if guest  
   * "Find Services" → Service marketplace  
-* Quick stats: Total raised, Animals helped, Active providerspawhelp\_doc\_5\_web\_platform\_spec.md​
+* Quick stats: Total raised, Animals helped, Active providerswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Featured Urgent Cases**
 
@@ -302,14 +302,14 @@ The platform serves 91 million European households with pets through web and mob
   * Amount raised / Goal  
   * Urgency badge (red "URGENT" or "EMERGENCY")  
   * "Help Now" button  
-* "View All Cases" linkpawhelp\_doc\_5\_web\_platform\_spec.md​
+* "View All Cases" linkwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Where to Start** (3-Step Guide)
 
 1. "Choose a case" \- Browse animals needing help  
 2. "Decide how to help" \- Donate, volunteer, share  
 3. "Make a difference" \- Track impact  
-* Visual illustrations for each steppawhelp\_doc\_5\_web\_platform\_spec.md​
+* Visual illustrations for each stepwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Heroes Nearby** (Donor Recognition)
 
@@ -318,7 +318,7 @@ The platform serves 91 million European households with pets through web and mob
   * Name or "Anonymous Hero"  
   * Donation amount or "Helped X cases"  
   * Location (city)  
-* Recognition badges for top contributorspawhelp\_doc\_5\_web\_platform\_spec.md​
+* Recognition badges for top contributorswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Service Categories** (Marketplace Preview)
 
@@ -336,7 +336,7 @@ The platform serves 91 million European households with pets through web and mob
 * Recent forum discussions (3 threads)  
 * Upcoming events  
 * Success stories carousel  
-* "Join Community" CTApawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Join Community" CTAwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Educational Content Preview**
 
@@ -350,10 +350,10 @@ The platform serves 91 million European households with pets through web and mob
 
 **Footer (Global)**
 
-* Contact information: Email (contact@pawhelp.eu), Phone  
+* Contact information: Email (contact@waggli.eu), Phone  
 * Social media links: Facebook, Instagram, Twitter, VK  
 * Links:  
-  * About PawHelp  
+  * About Waggli  
   * How It Works  
   * FAQ  
   * Terms of Service  
@@ -363,7 +363,7 @@ The platform serves 91 million European households with pets through web and mob
 * Newsletter signup: Email input \+ Subscribe button  
 * Language selector (duplicate from header)  
 * Copyright notice  
-* PawHelp logopawhelp\_doc\_5\_web\_platform\_spec.md​
+* Waggli logowaggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **4.2 Role-Specific Dashboards**
 
@@ -474,21 +474,21 @@ The platform serves 91 million European households with pets through web and mob
    * Gender: Radio buttons (Male, Female, Unknown)  
    * Age: Number input \+ Unit dropdown (Years, Months)  
    * Weight: Number input \+ Unit dropdown (kg, lbs)  
-   * "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​  
+   * "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​  
 3. **Breed Selection**  
    * Search and select from breed list (predefined)  
    * Options:  
      * No specific breed / Mixed  
      * Common breeds (dropdown by species)  
      * "Other" with custom text input  
-   * Breed affects service recommendations and blood donation matchingpawhelp\_doc\_5\_web\_platform\_spec.md​  
+   * Breed affects service recommendations and blood donation matchingwaggli\_doc\_5\_web\_platform\_spec.md​  
 4. **Pet Photos**  
    * Primary photo upload (required)  
    * Additional photos (up to 5 total)  
    * Drag-and-drop or click to upload  
    * Image requirements: Min 200x200px, Max 10MB, JPG/PNG  
    * Photo order rearrangement (drag-and-drop)  
-   * Crop/rotate toolspawhelp\_doc\_5\_web\_platform\_spec.md​  
+   * Crop/rotate toolswaggli\_doc\_5\_web\_platform\_spec.md​  
 5. **Health Information**  
    * Microchip ID: Text input (optional)  
    * Spayed/Neutered: Yes/No toggle  
@@ -547,7 +547,7 @@ The platform serves 91 million European households with pets through web and mob
   * File type: Diagnosis, Treatment plan, Invoice, X-ray, Lab result, Certificate  
   * Add notes: Text area  
   * Automatic OCR for text extraction (admin verification)  
-  * Watermark with "PawHelp \- Verified" after admin reviewpawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Watermark with "Waggli \- Verified" after admin reviewwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Pet Profile Actions**
 
@@ -596,7 +596,7 @@ The platform serves 91 million European households with pets through web and mob
   * "I need physical assistance" → Community help request  
   * Can select multiple types  
 * Illustration for each option  
-* "Continue" buttonpawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Continue" buttonwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 2: Pet Selection**
 
@@ -616,7 +616,7 @@ The platform serves 91 million European households with pets through web and mob
   * Character counter  
 * Tags: Searchable tags for categorization (auto-suggestions)  
   * Examples: Surgery, Cancer, Accident, Chronic condition  
-* "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 4: Medical Documentation**
 
@@ -629,7 +629,7 @@ The platform serves 91 million European households with pets through web and mob
 * Document preview with "Example" watermark (removed after admin verification)  
 * Document type selection per file: Diagnosis, Treatment plan, Invoice, Vet letter  
 * "Skip for now" option (but required for approval)  
-* "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 5: Fundraising Goal** (if financial help selected)
 
@@ -642,7 +642,7 @@ The platform serves 91 million European households with pets through web and mob
   * Add more items (+ button)  
   * Total calculated automatically  
 * Example breakdowns shown for guidance  
-* "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 6: Photos & Media**
 
@@ -655,7 +655,7 @@ The platform serves 91 million European households with pets through web and mob
   * Max size: 5MB per photo  
 * Photo order rearrangement (drag-and-drop)  
 * Set primary photo (displayed on cards)  
-* "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 7: Contact & Visibility**
 
@@ -669,7 +669,7 @@ The platform serves 91 million European households with pets through web and mob
   * "Allow direct messages": Toggle (recommended)  
 * Case visibility:  
   * "Display my location": Toggle (City level, exact address hidden)  
-* "Back" and "Continue" buttonspawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" and "Continue" buttonswaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Step 8: Review & Publish**
 
@@ -682,11 +682,11 @@ The platform serves 91 million European households with pets through web and mob
 * Edit buttons for each section  
 * Legal agreements:  
   * "I confirm this information is true and accurate" (checkbox required)  
-  * "I agree to PawHelp's Terms of Service" (checkbox required, link to terms)  
+  * "I agree to Waggli's Terms of Service" (checkbox required, link to terms)  
   * "I understand donations are non-refundable once the goal is met" (checkbox required)  
 * "Submit for Review" button (cases go to admin approval first)  
 * "Save as Draft" button  
-* "Back" buttonpawhelp\_doc\_5\_web\_platform\_spec.md​
+* "Back" buttonwaggli\_doc\_5\_web\_platform\_spec.md​
 
 **Post-Submission**
 
@@ -780,7 +780,7 @@ The platform serves 91 million European households with pets through web and mob
   * Fundraising progress bar  
   * Amount raised / Goal amount  
   * "X supporters" count  
-  * "Help Now" buttonpawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * "Help Now" buttonwaggli\_doc\_5\_web\_platform\_spec.md​  
 * Case cards (list view):  
   * Same info as grid but horizontal layout  
   * Includes brief description excerpt  
@@ -797,14 +797,14 @@ The platform serves 91 million European households with pets through web and mob
   * Urgency badge (if applicable)  
   * Location (city, distance from user)  
   * "Verified" badge (if medical docs verified by admin)  
-  * Created datepawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Created datewaggli\_doc\_5\_web\_platform\_spec.md​  
 * **Fundraising Progress** (prominent):  
   * Large circular progress indicator (% funded)  
   * Amount raised: €3,500  
   * Goal: €15,000  
   * Donors count: 47 supporters  
   * "I Want to Help" button (primary CTA)  
-  * "Share with Friends" button (secondary)pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * "Share with Friends" button (secondary)waggli\_doc\_5\_web\_platform\_spec.md​  
 * **Tabs**:  
   * **Story Tab** (default):  
     * Full case description  
@@ -869,7 +869,7 @@ The platform serves 91 million European households with pets through web and mob
   * Preset buttons: €10, €25, €50, €100  
   * "Other amount" button → Custom input field  
   * Selected amount highlighted  
-  * Currency displayed (user's preference)pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Currency displayed (user's preference)waggli\_doc\_5\_web\_platform\_spec.md​  
 * **Personal Information**:  
   * Name: Text input (pre-filled if logged in)  
   * Email: Text input (pre-filled if logged in)  
@@ -884,7 +884,7 @@ The platform serves 91 million European households with pets through web and mob
     * Bank card (Visa, Mastercard logos)  
     * PayPal  
     * SEPA Direct Debit (EU)  
-    * Local methods (iDEAL, Giropay, SOFORT, SBP)pawhelp\_doc\_5\_web\_platform\_spec.md​  
+    * Local methods (iDEAL, Giropay, SOFORT, SBP)waggli\_doc\_5\_web\_platform\_spec.md​  
   * Selected method expanded to show input fields  
 * **Card Payment Fields** (if card selected):  
   * Card number: Input with card type detection  
@@ -895,7 +895,7 @@ The platform serves 91 million European households with pets through web and mob
 * **Agreement Checkboxes**:  
   * "I understand donations are final and non-refundable" (required)  
   * "Send me updates about this case" (optional, checked by default)  
-  * "I agree to PawHelp's Terms and Privacy Policy" (required, links)  
+  * "I agree to Waggli's Terms and Privacy Policy" (required, links)  
 * **Payment Summary**:  
   * Donation amount: €50.00  
   * Platform fee (optional tip): Dropdown (€0, €2, €5, Custom)  
@@ -1304,7 +1304,7 @@ The platform serves 91 million European households with pets through web and mob
   * "Save card for future bookings" checkbox  
 * **Agreement**:  
   * "I agree to the cancellation policy" (checkbox)  
-  * "I agree to PawHelp's Terms and Booking Agreement" (checkbox with link)  
+  * "I agree to Waggli's Terms and Booking Agreement" (checkbox with link)  
 * **"Confirm & Pay" Button** (large, primary)  
 * "Back" button
 
@@ -1584,7 +1584,7 @@ The platform serves 91 million European households with pets through web and mob
 * Preview all information  
 * Edit buttons for each section  
 * Agreement:  
-  * "I agree to PawHelp's Provider Terms" (checkbox with link)  
+  * "I agree to Waggli's Provider Terms" (checkbox with link)  
   * "I confirm all information is accurate" (checkbox)  
   * "I understand bookings are subject to platform commission" (checkbox)  
 * "Submit Application" button
@@ -1644,7 +1644,7 @@ The platform serves 91 million European households with pets through web and mob
   * Time remaining to respond (countdown)  
   * Actions: "Accept", "Decline", "Suggest Alternate Time", "Message
 
-Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+2​
+Continuing the comprehensive User Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+2​
 
 ---
 
@@ -2159,7 +2159,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 **Community Hub**:
 
-* Hero: "Join the PawHelp Community"  
+* Hero: "Join the Waggli Community"  
 * Tabs: Forums, Groups, Events, Success Stories
 
 **Community Navigation**:
@@ -2404,7 +2404,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 **Success Stories Feed**:
 
-* Inspiring stories of animals helped through PawHelp  
+* Inspiring stories of animals helped through Waggli  
 * Filter: Recent, Most liked, Case outcomes, Adoptions  
 * Story cards:  
   * Before/After photos  
@@ -2420,7 +2420,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 * Full story (rich text):  
   * Background  
   * Challenge faced  
-  * How PawHelp community helped  
+  * How Waggli community helped  
   * Outcome  
 * Photos and videos  
 * Original case link (if applicable)  
@@ -2959,9 +2959,9 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
   * Account settings  
 * Category browser:  
   * Getting Started  
-  * Using PawHelp (Pet Owners)  
-  * Using PawHelp (Providers)  
-  * Using PawHelp (Organizations)  
+  * Using Waggli (Pet Owners)  
+  * Using Waggli (Providers)  
+  * Using Waggli (Organizations)  
   * Payments & Billing  
   * Safety & Verification  
   * Account & Settings  
@@ -3013,11 +3013,11 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 **Email Support**:
 
-* support@pawhelp.eu  
+* support@waggli.eu  
 * Categorized email addresses:  
-  * help@pawhelp.eu (general)  
-  * providers@pawhelp.eu (provider support)  
-  * safety@pawhelp.eu (report safety issues)
+  * help@waggli.eu (general)  
+  * providers@waggli.eu (provider support)  
+  * safety@waggli.eu (report safety issues)
 
 **Emergency Contacts**:
 
@@ -3108,13 +3108,13 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 * PCI-DSS compliant payment processing  
 * SSL encryption (256-bit)  
-* No card details stored on PawHelp servers  
+* No card details stored on Waggli servers  
 * Tokenization for saved cards  
 * 3D Secure authentication
 
 **Escrow Protection** (for services):
 
-* Payment held by PawHelp until service completed  
+* Payment held by Waggli until service completed  
 * Released to provider after confirmation  
 * Refund protection for clients if service not delivered  
 * Dispute resolution process
@@ -3224,7 +3224,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 ## **19.2 Blog**
 
-* Regular blog posts from PawHelp team and experts  
+* Regular blog posts from Waggli team and experts  
 * Topics: Platform news, Success stories, Pet care tips, Industry trends  
 * Subscribe to blog (email notifications)  
 * Categories and tags for browsing  
@@ -3255,7 +3255,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
   * Successfully funded case: "Community Hero"  
   * 100 forum posts: "Community Voice"  
   * Event host: "Community Builder"  
-  * Referral: "PawHelp Ambassador" (5 referrals)  
+  * Referral: "Waggli Ambassador" (5 referrals)  
 * Provider badges:  
   * "Rookie" → "Pro" → "Expert" → "Legend" (based on bookings)  
   * "Perfect Rating" (5.0 average for 50+ reviews)  
@@ -3345,7 +3345,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 ## **22.1 Calendar Integration**
 
 * Sync bookings to Google Calendar, Apple Calendar, Outlook  
-* Two-way sync (changes in calendar update PawHelp)  
+* Two-way sync (changes in calendar update Waggli)  
 * iCal feed for external calendars  
 * Calendar invites sent for bookings
 
@@ -3376,7 +3376,7 @@ Continuing the comprehensive User Platform Specification Document:pawhelp\_doc\_
 
 ## **22.4 Veterinary Clinic Integration**
 
-* Connect PawHelp account to vet clinic's system  
+* Connect Waggli account to vet clinic's system  
 * Auto-sync:  
   * Vet appointments  
   * Medical records  
@@ -3585,30 +3585,30 @@ This comprehensive platform specification covers:
 * Blockchain verification  
 * AI chat
 
-Continuing the comprehensive User Platform Specification Document, completing Provider features and covering remaining role-specific and cross-platform details:Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+Continuing the comprehensive User Platform Specification Document, completing Provider features and covering remaining role-specific and cross-platform details:Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
 ---
 
 ## **9.10 Safety, Insurance, and Compliance (Providers)**
 
 * Provider safety checklist:  
-  * Pre-service pet briefing required fields (temperament, triggers, medical needs) shown before accepting a booking.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Required PPE/equipment hints per service type (e.g., muzzles, first-aid kit) with acknowledgements for high-risk services.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Pre-service pet briefing required fields (temperament, triggers, medical needs) shown before accepting a booking.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Required PPE/equipment hints per service type (e.g., muzzles, first-aid kit) with acknowledgements for high-risk services.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Insurance center:  
-  * Upload liability insurance document, expiry date tracking, and automated renewal reminders 30/7/1 days prior to expiry.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Insurance coverage badge displayed when active; hidden if expired, with booking restriction toggle if mandated.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Upload liability insurance document, expiry date tracking, and automated renewal reminders 30/7/1 days prior to expiry.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Insurance coverage badge displayed when active; hidden if expired, with booking restriction toggle if mandated.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Compliance flags:  
-  * Species/breed/local restrictions: Service creation validates allowed breeds/activities per country and surfaces guidance links.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
-  * Vet-only actions guardrails: Veterinary procedures require license verification and separate consent capture flows.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * Species/breed/local restrictions: Service creation validates allowed breeds/activities per country and surfaces guidance links.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
+  * Vet-only actions guardrails: Veterinary procedures require license verification and separate consent capture flows.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
 ## **10\. Community Features (All Users) — moderation hooks and trust**
 
 * Inline reporting:  
-  * Report post/comment: reason taxonomy and optional evidence; soft-hide threshold with auto-escalation to moderation.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Report post/comment: reason taxonomy and optional evidence; soft-hide threshold with auto-escalation to moderation.waggli\_doc\_5\_web\_platform\_spec.md​  
 * AI pre-screen:  
-  * Toxicity, harassment, spam, and fraud cues flagged with confidence badges; user sees pending-review banner on hidden posts.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+  * Toxicity, harassment, spam, and fraud cues flagged with confidence badges; user sees pending-review banner on hidden posts.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Reputation tie-in:  
   * Helpful marks, accepted answers, and group admin endorsements raise community reputation and subtly boost trust score.advice-and-recomend-what-improve-in-my-new-startup.md​
 
@@ -3617,74 +3617,74 @@ Continuing the comprehensive User Platform Specification Document, completing Pr
 ## **11\. Messaging System — enriched context and safeguards**
 
 * Context cards:  
-  * Attach booking/case cards to messages; quick actions: pay, modify, view directions, release escrow, or donate again.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Attach booking/case cards to messages; quick actions: pay, modify, view directions, release escrow, or donate again.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Safety rails:  
-  * Phone/email redaction until both parties consent; reminders not to move payments off-platform; auto-warnings for payment redirection keywords.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Phone/email redaction until both parties consent; reminders not to move payments off-platform; auto-warnings for payment redirection keywords.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Translation assist:  
-  * One-tap machine-translate of incoming messages when language differs from user preference; preserve original with toggle.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * One-tap machine-translate of incoming messages when language differs from user preference; preserve original with toggle.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **12\. Payment & Wallet — donor and client parity**
 
 * Saved methods:  
-  * PCI-compliant tokenization; per-role default method; 3DS challenges for risk; SEPA mandate vaulting where applicable.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * PCI-compliant tokenization; per-role default method; 3DS challenges for risk; SEPA mandate vaulting where applicable.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Receipts:  
-  * Donation tax receipts and booking invoices downloadable; annual summary export for accounting; resend to email.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Donation tax receipts and booking invoices downloadable; annual summary export for accounting; resend to email.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Credits:  
-  * Referral and promotion credits prioritized at checkout with visibility of expiry and effect on total; not withdrawable.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Referral and promotion credits prioritized at checkout with visibility of expiry and effect on total; not withdrawable.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **13\. Account Settings — granular privacy and data control**
 
 * Privacy defaults by role:  
-  * Pet owner default hides exact address, shows city; providers default show service area, hide personal address; toggles at field-level.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Pet owner default hides exact address, shows city; providers default show service area, hide personal address; toggles at field-level.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Data rights:  
-  * One-click data export (JSON/CSV bundle) and account deletion workflow with anonymization of content to protect thread integrity.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+  * One-click data export (JSON/CSV bundle) and account deletion workflow with anonymization of content to protect thread integrity.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Security:  
-  * Device sessions list with revoke; MFA backup codes; social account linking and unlinking; suspicious login alerts.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Device sessions list with revoke; MFA backup codes; social account linking and unlinking; suspicious login alerts.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **14\. Search & Discovery — role-aware ranking**
 
 * Ranking signals:  
-  * Cases: urgency, verification status, funding velocity, proximity, quality of documentation.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Services: rating, responsiveness, acceptance rate, on-time rate, price competitiveness, proximity, availability match.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Cases: urgency, verification status, funding velocity, proximity, quality of documentation.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Services: rating, responsiveness, acceptance rate, on-time rate, price competitiveness, proximity, availability match.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Zero-result rescue:  
-  * Widen radius, relax filters, propose adjacent categories, offer to create a request or set an alert.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Widen radius, relax filters, propose adjacent categories, offer to create a request or set an alert.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **15\. Mobile Apps — high-friction tasks simplified**
 
 * Quick actions:  
-  * From widgets: “Donate again,” “Today’s bookings,” “Create case,” and “Message provider” with deep links.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * From widgets: “Donate again,” “Today’s bookings,” “Create case,” and “Message provider” with deep links.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Offline:  
-  * Draft case capture with media; queued messages and updates; read-only bookings and tickets until online sync.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Draft case capture with media; queued messages and updates; read-only bookings and tickets until online sync.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Safety:  
-  * SOS on active booking screens to contact support with booking context and last known location sharing (opt-in).pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * SOS on active booking screens to contact support with booking context and last known location sharing (opt-in).waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **16\. Accessibility & Localization — European breadth**
 
 * RTL support:  
-  * Arabic/Hebrew layout mirroring; numerals and calendars localized; dynamic string expansion guards for longer translations.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Arabic/Hebrew layout mirroring; numerals and calendars localized; dynamic string expansion guards for longer translations.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Assistive features:  
-  * Keyboard navigable forms and modals; captioning requirement for provider-uploaded videos; color contrast passing AA.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Keyboard navigable forms and modals; captioning requirement for provider-uploaded videos; color contrast passing AA.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Localization:  
-  * Country-aware formats for VAT, address, and phone validation; localized payment options per market.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * Country-aware formats for VAT, address, and phone validation; localized payment options per market.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
 ## **17\. Help & Support — omni-channel with SLAs**
 
 * Tiered SLAs:  
-  * Critical safety/dispute: 2 hours; payment issues: 24 hours; general: 48 hours; surfaced to users as expectations on ticket creation.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Critical safety/dispute: 2 hours; payment issues: 24 hours; general: 48 hours; surfaced to users as expectations on ticket creation.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Guided flows:  
-  * Issue-type specific forms pre-fill context from booking/case, collecting essential evidence up front to cut resolution time.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Issue-type specific forms pre-fill context from booking/case, collecting essential evidence up front to cut resolution time.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
@@ -3693,63 +3693,63 @@ Continuing the comprehensive User Platform Specification Document, completing Pr
 * Trust score levers:  
   * Positive reviews, verified docs, on-time completions, and community endorsements raise score; cancellations, no-shows, policy violations lower it, with decay over time for old negatives.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Disputes life cycle:  
-  * Intake → evidence window → mediation → decision → settlement (refund/credit/release) with audit trail visible to both parties.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Intake → evidence window → mediation → decision → settlement (refund/credit/release) with audit trail visible to both parties.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **19\. Education & Expert Q\&A — credibility and engagement**
 
 * Expert validation:  
-  * Vet/trainer answers carry verified badges; community upvotes lift visibility; conflicts of interest disclosure field on expert profiles.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Vet/trainer answers carry verified badges; community upvotes lift visibility; conflicts of interest disclosure field on expert profiles.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Learning paths:  
-  * Curated content tracks (new pet owner, senior pet care) with progress indicators and reminders.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Curated content tracks (new pet owner, senior pet care) with progress indicators and reminders.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **20\. Gamification — meaningful, not spammy**
 
 * Badge governance:  
-  * Only impactful contributions earn public badges; opt-out from public leaderboards available under privacy.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Only impactful contributions earn public badges; opt-out from public leaderboards available under privacy.waggli\_doc\_5\_web\_platform\_spec.md​  
 * XP tuning:  
-  * Anti-farming: XP capped per day and weighted toward diverse helpful actions rather than repetitive low-value actions.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Anti-farming: XP capped per day and weighted toward diverse helpful actions rather than repetitive low-value actions.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
 ## **21\. User-Facing Analytics — value and control**
 
 * Impact page (donors):  
-  * Animals helped, repeat donations, geographic spread, and matched donations from sponsors; exportable badge for social sharing.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Animals helped, repeat donations, geographic spread, and matched donations from sponsors; exportable badge for social sharing.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Provider benchmarks:  
-  * Anonymous percentile comparisons in locality and category to guide pricing and availability decisions.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * Anonymous percentile comparisons in locality and category to guide pricing and availability decisions.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
 ## **22\. Integrations — user-consented syncs**
 
 * Calendars:  
-  * Two-way sync with conflict detection prompts; ICS export fallback; per-service visibility control.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Two-way sync with conflict detection prompts; ICS export fallback; per-service visibility control.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Social:  
-  * Share cards with localized copy and compliance-safe imagery; UTM tracking back to case/service pages.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Share cards with localized copy and compliance-safe imagery; UTM tracking back to case/service pages.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Vet systems:  
-  * User-consent gated pull of vaccination and diagnosis; revoke any time; read-only display in pet profile and case verification.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * User-consent gated pull of vaccination and diagnosis; revoke any time; read-only display in pet profile and case verification.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
 ## **23\. Policies — surfaced at decision points**
 
 * Inline policy nudges:  
-  * Before donation completion and booking cancellation, show concise policy summaries with links to full pages.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Before donation completion and booking cancellation, show concise policy summaries with links to full pages.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Cookie preferences:  
-  * Granular toggles (necessary, analytics, marketing); honor “Do Not Track”; region-specific defaults (e.g., opt-out by default in some locales).Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * Granular toggles (necessary, analytics, marketing); honor “Do Not Track”; region-specific defaults (e.g., opt-out by default in some locales).Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
 ## **24\. Performance Targets — user-perceived speed**
 
 * Interaction latency:  
-  * Search suggestions under 150ms TTI; message send acknowledgment under 200ms; booking step transitions under 400ms.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Search suggestions under 150ms TTI; message send acknowledgment under 200ms; booking step transitions under 400ms.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Media:  
-  * Responsive images with WebP/AVIF where supported; lazy-loading galleries; background uploads with progress indicators.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Responsive images with WebP/AVIF where supported; lazy-loading galleries; background uploads with progress indicators.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 
@@ -3785,13 +3785,13 @@ Continuing the comprehensive User Platform Specification Document, completing Pr
 ## **26\. UX Patterns & Components Library**
 
 * Form standards:  
-  * Progressive disclosure, inline validation, save-as-draft everywhere for multi-step flows (cases, services, onboarding).pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Progressive disclosure, inline validation, save-as-draft everywhere for multi-step flows (cases, services, onboarding).waggli\_doc\_5\_web\_platform\_spec.md​  
 * Cards:  
-  * Case, service, and review cards with consistent metadata and CTAs; skeleton loaders for perceived speed.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Case, service, and review cards with consistent metadata and CTAs; skeleton loaders for perceived speed.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Empty states:  
-  * Helpful guidance, example content, and primary action; never dead ends.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Helpful guidance, example content, and primary action; never dead ends.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Confirmation patterns:  
-  * Destructive actions require typed confirmations for high-risk operations (case cancel with raised funds, booking cancel \<24h).pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Destructive actions require typed confirmations for high-risk operations (case cancel with raised funds, booking cancel \<24h).waggli\_doc\_5\_web\_platform\_spec.md​
 
 ---
 

@@ -1,4 +1,4 @@
-# PAWZLY SOCIAL NETWORK: Technical Specifications & API Reference
+# WAGGLI SOCIAL NETWORK: Technical Specifications & API Reference
 
 **Version:** 1.0  
 **Status:** Implementation Guide  
@@ -8,7 +8,7 @@
 
 ## API ARCHITECTURE OVERVIEW
 
-**Base URL:** `https://api.pawzly.com/v1`  
+**Base URL:** `https://api.waggli.com/v1`  
 **Authentication:** JWT Bearer Token  
 **Content-Type:** `application/json`  
 **Rate Limit:** 1000 requests/hour per user
@@ -55,7 +55,7 @@ Response 200:
   "breed": "Golden Retriever",
   "birth_date": "2022-01-15",
   "bio": "Living my best golden life!",
-  "hero_image_url": "https://cdn.pawzly.com/pets/550e8400.jpg",
+  "hero_image_url": "https://cdn.waggli.com/pets/550e8400.jpg",
   "location": {
     "latitude": 52.5200,
     "longitude": 13.4050,
@@ -140,8 +140,8 @@ POST /posts
   "pet_id": "550e8400-e29b-41d4-a716-446655440000",
   "caption": "Just had an amazing hike! 🥾",
   "media_urls": [
-    "https://cdn.pawzly.com/posts/image1.jpg",
-    "https://cdn.pawzly.com/posts/image2.jpg"
+    "https://cdn.waggli.com/posts/image1.jpg",
+    "https://cdn.waggli.com/posts/image2.jpg"
   ],
   "hashtags": ["hiking", "goldensofinstagram", "adventure"],
   "geolocation": {
@@ -189,7 +189,7 @@ Response 200:
       "media": [
         {
           "type": "image",
-          "url": "https://cdn.pawzly.com/posts/image.jpg",
+          "url": "https://cdn.waggli.com/posts/image.jpg",
           "width": 1080,
           "height": 1080
         }
@@ -726,7 +726,7 @@ Response 200:
 
 **Connection**
 ```
-wss://api.pawzly.com/v1/realtime
+wss://api.waggli.com/v1/realtime
 Headers: Authorization: Bearer {token}
 ```
 
@@ -847,7 +847,7 @@ Response:
     "offset": 0,
     "has_next": true,
     "has_previous": false,
-    "next_url": "https://api.pawzly.com/v1/resource?limit=20&offset=20",
+    "next_url": "https://api.waggli.com/v1/resource?limit=20&offset=20",
     "previous_url": null
   }
 }
@@ -866,7 +866,7 @@ Response:
   "breed": "Golden Retriever",
   "birth_date": "2022-01-15",
   "bio": "Living my best golden life!",
-  "hero_image_url": "https://cdn.pawzly.com/pets/550e8400.jpg",
+  "hero_image_url": "https://cdn.waggli.com/pets/550e8400.jpg",
   "location": {
     "latitude": 52.5200,
     "longitude": 13.4050,
@@ -888,7 +888,7 @@ Response:
   "id": "uuid",
   "pet_id": "uuid",
   "caption": "Just had an amazing hike!",
-  "media_urls": ["https://cdn.pawzly.com/posts/image.jpg"],
+  "media_urls": ["https://cdn.waggli.com/posts/image.jpg"],
   "hashtags": ["hiking", "goldensofinstagram"],
   "geolocation": {
     "latitude": 52.5200,

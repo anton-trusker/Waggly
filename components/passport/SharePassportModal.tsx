@@ -212,7 +212,7 @@ export default function SharePassportModal({ visible, onClose, petId, petName }:
                                                     style={styles.qrLogo}
                                                     resizeMode="contain"
                                                 />
-                                                <Text style={styles.qrBrandName}>Pawzly</Text>
+                                                <Text style={styles.qrBrandName}>Waggli</Text>
                                             </View>
                                             <Text style={styles.qrPetName}>{petName}</Text>
                                             <View style={styles.qrWrapper}>

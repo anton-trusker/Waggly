@@ -1,15 +1,15 @@
-# Pawzly Pet Passport - Complete Implementation Solution
+# Waggli Pet Passport - Complete Implementation Solution
 
 **Document Version**: 1.0  
 **Created**: January 3, 2026  
 **Based On**: Pet Passport Data Specification v1.0  
-**Purpose**: Detailed solution for implementing comprehensive pet passport features in Pawzly
+**Purpose**: Detailed solution for implementing comprehensive pet passport features in Waggli
 
 ---
 
 ## 📊 EXECUTIVE SUMMARY
 
-This document outlines a complete implementation strategy for enhancing Pawzly with comprehensive digital pet passport capabilities, based on the detailed data specification covering 200+ fields across 9 major categories.
+This document outlines a complete implementation strategy for enhancing Waggli with comprehensive digital pet passport capabilities, based on the detailed data specification covering 200+ fields across 9 major categories.
 
 **Current State Gaps**:
 - Limited health metrics (basic BCS tracking)
@@ -1874,7 +1874,7 @@ function calculateAgeAdjustedScore(pet: Pet, data: HealthData): number {
 
 **Integration Approach**:
 ```typescript
-// Pawzly → Insurance Provider API
+// Waggli → Insurance Provider API
 POST /api/insurance/quote
 {
   pet_health_summary: {
@@ -2079,7 +2079,7 @@ CREATE POLICY "Controlled partner data exports"
 
 ## CONCLUSION
 
-This comprehensive implementation solution provides a complete roadmap for transforming Pawzly into the most advanced digital pet health platform, with:
+This comprehensive implementation solution provides a complete roadmap for transforming Waggli into the most advanced digital pet health platform, with:
 
 ✅ **200+ Data Points** captured across 40+ new tables  
 ✅ **Intelligent Health Scoring** (0-100 with AI-powered insights)  

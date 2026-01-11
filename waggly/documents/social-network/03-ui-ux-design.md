@@ -605,4 +605,4 @@ const InputStates = {
 
 ---
 
-This UI/UX specification provides comprehensive guidelines for implementing a beautiful, accessible, and engaging social network interface in Pawzly.
+This UI/UX specification provides comprehensive guidelines for implementing a beautiful, accessible, and engaging social network interface in Waggli.

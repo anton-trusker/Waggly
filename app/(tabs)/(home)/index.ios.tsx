@@ -37,7 +37,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>Welcome to Pawzly</Text>
+          <Text style={styles.welcomeTitle}>Welcome to Waggli</Text>
           <Text style={styles.welcomeText}>
             Your pet&apos;s complete digital passport. Track health records, vaccinations, treatments, and never miss an important date.
           </Text>
@@ -48,7 +48,7 @@ export default function HomeScreen() {
             <Text style={styles.emptyIcon}>🐾</Text>
             <Text style={styles.emptyTitle}>No Pets Yet</Text>
             <Text style={styles.emptyText}>
-              Add your first pet to get started with Pawzly
+              Add your first pet to get started with Waggli
             </Text>
             <TouchableOpacity
               style={styles.addButton}

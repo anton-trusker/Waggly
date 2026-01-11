@@ -2295,7 +2295,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
-                  projectId: 'pawhelp-admin',
+                  projectId: 'waggli-admin',
                   disableTelemetry: true,
                 }}
               >
@@ -2314,7 +2314,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ***
 
-This comprehensive implementation provides **all core functionality** for the PawHelp Admin Platform using Refine, including complete Supabase integration, all major modules, real-time capabilities, audit logging, role-based access control, and advanced features. The system is production-ready and follows best practices for enterprise admin panel development.[^1][^2]
+This comprehensive implementation provides **all core functionality** for the Waggli Admin Platform using Refine, including complete Supabase integration, all major modules, real-time capabilities, audit logging, role-based access control, and advanced features. The system is production-ready and follows best practices for enterprise admin panel development.[^1][^2]
 
 <div align="center">⁂</div>
 

@@ -1,4 +1,4 @@
-# Pitch Deck Research Document for Pawzly
+# Pitch Deck Research Document for Waggli
 
 ## Research Phase
 - [x] Review existing business documents in .trae/documents
@@ -16,4 +16,4 @@
 - [x] Finalize research document for pitch deck transformation
 
 ## Deliverable Created
-- [x] Full investor research document (`pawzly_investor_pitch_research.md`)
+- [x] Full investor research document (`waggli_investor_pitch_research.md`)

@@ -5,11 +5,11 @@
 also we will use AI capabilities like Image recognition.
 also propose where we can save for example use mapbox instead of google and etc.
 
-Based on Pawzly's requirements, here's a comprehensive solution for the admin platform with open-source options, AI capabilities, and cost-saving alternatives:
+Based on Waggli's requirements, here's a comprehensive solution for the admin platform with open-source options, AI capabilities, and cost-saving alternatives:
 
 ***
 
-# **PAWZLY ADMIN PLATFORM \& COST OPTIMIZATION STRATEGY**
+# **WAGGLI ADMIN PLATFORM \& COST OPTIMIZATION STRATEGY**
 
 ## **1. ADMIN PLATFORM SOLUTIONS**
 
@@ -42,7 +42,7 @@ import { Refine } from "@refinedev/core";
 import { dataProvider } from "@refinedev/supabase";
 import routerBindings from "@refinedev/react-router-v6";
 import { RefineKbar } from "@refinedev/kbar";
-import { supabaseClient } from "@pawzly/database";
+import { supabaseClient } from "@waggli/database";
 
 function App() {
   return (
@@ -241,7 +241,7 @@ Week 4: Polish + Testing
 
 ## **2. AI CAPABILITIES INTEGRATION**
 
-### **AI Use Cases for Pawzly:**
+### **AI Use Cases for Waggli:**
 
 1. **Image Recognition** - Pet breed detection, document OCR
 2. **Content Moderation** - Inappropriate content filtering
@@ -448,7 +448,7 @@ export async function chatWithSupport(userMessage: string, context: any) {
     messages: [
       {
         role: "system",
-        content: `You are a helpful assistant for Pawzly, a pet care platform. 
+        content: `You are a helpful assistant for Waggli, a pet care platform. 
                  Help users with bookings, pet profiles, and general questions.`,
       },
       {
@@ -653,13 +653,13 @@ Pro: $20/month for 50,000 emails
 
 ```typescript
 import { Resend } from 'resend';
-import { VaccinationReminderEmail } from '@pawzly/emails';
+import { VaccinationReminderEmail } from '@waggli/emails';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendVaccinationReminder(user, pet, vaccine) {
   await resend.emails.send({
-    from: 'Pawzly <notifications@pawzly.com>',
+    from: 'Waggli <notifications@waggli.com>',
     to: user.email,
     subject: `Vaccination reminder for ${pet.name}`,
     react: VaccinationReminderEmail({ user, pet, vaccine }),

@@ -23,7 +23,7 @@ export default function ShareDetailsModal({ visible, onClose, share }: ShareDeta
 
     if (!share) return null;
 
-    const shareUrl = `https://mypawzly.app/pet/shared/${share.token}`;
+    const shareUrl = `https://mywaggli.app/pet/shared/${share.token}`;
 
     const handleCopyLink = async () => {
         await Clipboard.setStringAsync(shareUrl);

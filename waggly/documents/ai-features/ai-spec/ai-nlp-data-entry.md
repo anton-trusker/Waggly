@@ -424,4 +424,4 @@ Much cheaper than OCR! Very cost-effective feature.
 
 ---
 
-This NLP capability will make Pawzly the easiest pet health app to use, eliminating the friction of form-filling and making record-keeping effortless.
+This NLP capability will make Waggli the easiest pet health app to use, eliminating the friction of form-filling and making record-keeping effortless.

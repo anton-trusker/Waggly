@@ -153,10 +153,10 @@ export default function PublicShareScreen() {
 
           <TouchableOpacity
             style={styles.installBtn}
-            onPress={() => Linking.openURL('https://app.mypawzly.com')}
+            onPress={() => Linking.openURL('https://app.mywaggli.com')}
           >
             <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="#fff" />
-            <Text style={styles.installBtnText}>Get Pawzly App</Text>
+            <Text style={styles.installBtnText}>Get Waggli App</Text>
           </TouchableOpacity>
         </View>
       </View>

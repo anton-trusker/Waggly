@@ -1,5 +1,5 @@
 
-# Comprehensive Testing Guide for Pawzly
+# Comprehensive Testing Guide for Waggli
 
 ## Pre-Testing Setup
 

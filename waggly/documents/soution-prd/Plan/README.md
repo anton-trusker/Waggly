@@ -1,8 +1,8 @@
-# PAWZLY PLATFORM - DEVELOPMENT PLAN
+# WAGGLI PLATFORM - DEVELOPMENT PLAN
 
 ## 📋 Plan Overview
 
-This folder contains the complete development plan for the Pawzly platform, broken down into phases with detailed specifications, timelines, and deliverables.
+This folder contains the complete development plan for the Waggli platform, broken down into phases with detailed specifications, timelines, and deliverables.
 
 ## 📚 Documentation Structure
 

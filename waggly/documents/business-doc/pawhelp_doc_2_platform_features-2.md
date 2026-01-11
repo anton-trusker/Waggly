@@ -1,9 +1,9 @@
-**PawHelp Document 2: Platform Features & Functional Specification (Expanded 75% Longer Version)**
+**Waggli Document 2: Platform Features & Functional Specification (Expanded 75% Longer Version)**
 
 ---
 
 ### Core Features
-PawHelp provides a comprehensive, interconnected set of features designed to facilitate trusted, transparent, and community-driven assistance for animals in need. The platform serves pet owners, shelters, volunteers, donors, service providers, and sponsors alike, providing essential functionality to save lives and build a global animal welfare ecosystem.
+Waggli provides a comprehensive, interconnected set of features designed to facilitate trusted, transparent, and community-driven assistance for animals in need. The platform serves pet owners, shelters, volunteers, donors, service providers, and sponsors alike, providing essential functionality to save lives and build a global animal welfare ecosystem.
 
 #### Help Request Management
 - Multi-step, guided creation process with clear instructions.
@@ -108,7 +108,7 @@ PawHelp provides a comprehensive, interconnected set of features designed to fac
 ---
 
 ### User Flows
-**PawHelp provides tailored user journeys ensuring ease of use, trust, and role-appropriate access to platform functionality:**
+**Waggli provides tailored user journeys ensuring ease of use, trust, and role-appropriate access to platform functionality:**
 
 #### Pet Owner Journey
 - User registration with email or social login.
@@ -207,5 +207,5 @@ PawHelp provides a comprehensive, interconnected set of features designed to fac
 
 ---
 
-*PawHelp's deeply integrated feature set ensures a trusted, intuitive, and impactful experience for all user groups, combining technology, transparency, and community engagement to deliver real-world animal welfare support at scale.*
+*Waggli's deeply integrated feature set ensures a trusted, intuitive, and impactful experience for all user groups, combining technology, transparency, and community engagement to deliver real-world animal welfare support at scale.*
 

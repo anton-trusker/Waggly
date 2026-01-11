@@ -323,15 +323,15 @@ export function usePetSharing(petId?: string) {
 
     // Generate share URL based on environment
     const getShareUrl = (token: string) => {
-        let baseUrl = 'https://app.mypawzly.app'; // Production default
+        let baseUrl = 'https://app.mywaggli.app'; // Production default
 
         if (typeof window !== 'undefined') {
             const hostname = window.location.hostname;
 
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
                 baseUrl = `http://${hostname}:${window.location.port || '8081'}`;
-            } else if (hostname.includes('pawzly.eu')) {
-                baseUrl = 'https://app.pawzly.eu'; // Staging
+            } else if (hostname.includes('waggli.eu')) {
+                baseUrl = 'https://app.waggli.eu'; // Staging
             }
             // else use production default
         }

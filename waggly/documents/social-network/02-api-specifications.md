@@ -8,7 +8,7 @@
 
 ## 📡 API Overview
 
-The Pawzly Social Network API is built on Supabase's PostgreSQL database with Row-Level Security (RLS), Edge Functions for complex operations, and Supabase Realtime for live updates.
+The Waggli Social Network API is built on Supabase's PostgreSQL database with Row-Level Security (RLS), Edge Functions for complex operations, and Supabase Realtime for live updates.
 
 ### Technology Stack
 - **Database**: Supabase PostgreSQL with RLS policies
@@ -956,4 +956,4 @@ All critical queries have compound indexes:
 
 ---
 
-This API specification provides the foundation for implementing all social network features in Pawzly. All endpoints are designed to work with Supabase's security model and Row-Level Security policies.
+This API specification provides the foundation for implementing all social network features in Waggli. All endpoints are designed to work with Supabase's security model and Row-Level Security policies.

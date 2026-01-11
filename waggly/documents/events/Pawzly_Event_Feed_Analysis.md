@@ -1,4 +1,4 @@
-# PAWZLY EVENT FEED: Complete Feature Analysis & Implementation Plan
+# WAGGLI EVENT FEED: Complete Feature Analysis & Implementation Plan
 
 **Status:** Strategic Analysis | Digital Passport → Dynamic Ecosystem Transition  
 **Date:** January 2026  
@@ -8,7 +8,7 @@
 
 ## EXECUTIVE SUMMARY
 
-The Event Feed transforms Pawzly from a **static digital passport** into a **dynamic, community-driven ecosystem**. By introducing user-generated content streams segmented across health, emergencies, community, and commerce, Pawzly positions itself uniquely between medical records and social networks—capturing untapped behavioral/health data while driving engagement, retention, and monetization.
+The Event Feed transforms Waggli from a **static digital passport** into a **dynamic, community-driven ecosystem**. By introducing user-generated content streams segmented across health, emergencies, community, and commerce, Waggli positions itself uniquely between medical records and social networks—capturing untapped behavioral/health data while driving engagement, retention, and monetization.
 
 **Market Opportunity:**
 - Pet social apps (Petzbe, Pawmates, MyFurtopia) reaching 100K+ users with 300% growth rates
@@ -20,7 +20,7 @@ The Event Feed transforms Pawzly from a **static digital passport** into a **dyn
 
 ## PHASE 1: STRATEGIC VISION & USER BEHAVIOR
 
-### Core Thesis: Why An Event Feed Transforms Pawzly
+### Core Thesis: Why An Event Feed Transforms Waggli
 
 **Current State (Digital Passport):** Static, inbound-focused
 - Pet owner owns the passport
@@ -36,7 +36,7 @@ The Event Feed transforms Pawzly from a **static digital passport** into a **dyn
 **Unique Differentiation:**
 - **Facebook/Instagram** → Generic pet content, no health context
 - **TikTok** → Short form, no service monetization
-- **Pawzly** → Health-aware event feed + service discovery + community + marketplace
+- **Waggli** → Health-aware event feed + service discovery + community + marketplace
 - **Data moat** → Behavioral patterns (when pets are sick, preventive care gaps, training needs) + health records = unprecedented B2B insights
 
 ---
@@ -69,7 +69,7 @@ Urgent, geographically targeted requests for lost/injured animals, emergency fun
 **Key Features:**
 - Geofencing: notifications within user-defined radius (default 10km)
 - Urgency hierarchy: Immediate (red), 24h (orange), Open (yellow)
-- QR tag integration: If pet has Pawzly QR collar tag, auto-fill pet info
+- QR tag integration: If pet has Waggli QR collar tag, auto-fill pet info
 - Verification: Show verified vet clinic, adoption center, or established profile badges
 - Auto-escalation: If unresolved after 2h, escalate to nearby shelters/vets
 - Comments timeline: Supporters post updates, sightings, confirmations
@@ -122,7 +122,7 @@ Structured matching of healthy pets with clinics seeking blood donors; transpare
 - Health safety: Required health check before/after donation
 - Transparency: Original donor visible on recipient post (with privacy consent)
 - Recognition: "Donor Heroes" badge, monthly leaderboard, special perks
-- Incentives: Pawzly credits, discounts on services, exclusive events
+- Incentives: Waggli credits, discounts on services, exclusive events
 
 **Revenue Model:**
 - Clinic pays €10-20 per matched donation
@@ -201,7 +201,7 @@ Pet owners, shelters, trainers, and businesses organize and discover dog-friendl
    - Name, description, date/time, location (map pin)
    - Pet type & size requirements
    - Max attendees, RSVP limit
-   - Cost (free or paid with Pawzly payment)
+   - Cost (free or paid with Waggli payment)
    - Featured image, agenda (optional)
 4. Customization: Breed-specific (Golden Retrievers), age-specific (Puppy playdate), mixed
 5. Organizer details: Name, profile, contact method
@@ -289,13 +289,13 @@ Pet owners, shelters, trainers, and businesses organize and discover dog-friendl
 
 **Journey 2: Emergency → SOS → Help → Resolution → Gratitude**
 1. Dog goes missing → Owner panics, creates SOS post in 30 seconds
-2. Pawzly pushes notification to 500+ nearby users
+2. Waggli pushes notification to 500+ nearby users
 3. 10 volunteers respond within 5 minutes with suggestions
 4. One offers to search local shelter; another posts in neighborhood group
 5. Dog found 3 hours later → Owner updates post: "Found! Thank you so much!"
 6. Volunteers tagged in update, receive grateful comment
 7. Owner sends thank-you message, offers reward (volunteers decline or request charity donation)
-8. Post becomes case study: "How Pawzly Found Max in 3 Hours"
+8. Post becomes case study: "How Waggli Found Max in 3 Hours"
 
 **Journey 3: Health Struggle → Support Community → Recovery → Payback**
 1. Pet has surgery → Owner creates recovery post
@@ -314,7 +314,7 @@ Pet owners, shelters, trainers, and businesses organize and discover dog-friendl
 
 ```typescript
 // Core Event Structure
-interface PawzlyEvent {
+interface WaggliEvent {
   id: string;
   creatorId: string; // pet owner, vet, shelter, business
   creatorType: "owner" | "provider" | "shelter" | "business";
@@ -421,7 +421,7 @@ SELECT
   COUNT(*) as posts,
   AVG(engagement_rate) as avg_engagement,
   AVG(EXTRACT(YEAR FROM AGE(NOW(), pet_birthdate))) as avg_pet_age
-FROM pawzly_events
+FROM waggli_events
 WHERE event_type = 'health_update'
 GROUP BY date, health_topic;
 
@@ -431,7 +431,7 @@ SELECT
   urgency_level,
   AVG(EXTRACT(EPOCH FROM (resolved_at - created_at))/3600) as avg_resolution_hours,
   COUNT(*) as total_cases
-FROM pawzly_events
+FROM waggli_events
 WHERE event_type = 'sos' AND status = 'resolved'
 GROUP BY urgency_level;
 
@@ -492,7 +492,7 @@ Audience: Users with Golden Retrievers nearby
 ```
 Challenge: #TrainingChallenge (Jan-Feb)
 Copy: "Teach your pup a new skill in 30 days. Post weekly updates and inspire others!"
-Rewards: Top 10 creators get featured on Pawzly homepage + €50 Pawzly credit
+Rewards: Top 10 creators get featured on Waggli homepage + €50 Waggli credit
 Duration: 30 days, weekly check-ins
 
 Challenge: #RecoveryWarriors (Ongoing)
@@ -777,7 +777,7 @@ Viral Loop: Health Post Edition
 - [ ] 200K+ users
 - [ ] €50K+ monthly revenue
 - [ ] Launch AI-powered health insights ("Your pet's health compared to similar breeds")
-- [ ] Introduce "Pawzly Professional" subscription for trainers/vets
+- [ ] Introduce "Waggli Professional" subscription for trainers/vets
 - [ ] Blockchain-based donation verification (transparent fundraising)
 
 **2027+ Vision:**
@@ -842,7 +842,7 @@ Viral Loop: Health Post Edition
 
 ## CONCLUSION
 
-The Event Feed transforms Pawzly from a **static, transactional platform** (digital passport → vet records) into a **dynamic, community-driven ecosystem** where:
+The Event Feed transforms Waggli from a **static, transactional platform** (digital passport → vet records) into a **dynamic, community-driven ecosystem** where:
 
 1. **Pet owners** share health journeys, build communities, discover local services
 2. **Volunteers** find urgent ways to help (SOS, blood donations, events)
@@ -851,10 +851,10 @@ The Event Feed transforms Pawzly from a **static, transactional platform** (digi
 5. **Insurers** access anonymized trends for risk modeling and pricing
 
 **Competitive Positioning:**
-- Facebook/Instagram: "Generic pet content" → Pawzly: "Health-aware community"
-- TikTok: "Short-form virality" → Pawzly: "Actionable, monetizable engagement"
-- Existing vet platforms: "Static records" → Pawzly: "Dynamic health narrative"
-- Marketplace platforms: "Fragmented services" → Pawzly: "Integrated ecosystem"
+- Facebook/Instagram: "Generic pet content" → Waggli: "Health-aware community"
+- TikTok: "Short-form virality" → Waggli: "Actionable, monetizable engagement"
+- Existing vet platforms: "Static records" → Waggli: "Dynamic health narrative"
+- Marketplace platforms: "Fragmented services" → Waggli: "Integrated ecosystem"
 
 **Path to Market Leadership:**
 - **Months 1-3:** MVP (health journal), SOS network in 3 pilot cities
@@ -863,10 +863,10 @@ The Event Feed transforms Pawzly from a **static, transactional platform** (digi
 - **Year 2:** 200K+ users, €500K+ MRR, insurance partnerships
 - **Year 3+:** Pan-European leader, €5M+ MRR, B2B data products, potential IPO
 
-The Event Feed is **not a feature—it's the platform's new foundation**, turning Pawzly from a care coordination tool into the **home for the global pet parent community**.
+The Event Feed is **not a feature—it's the platform's new foundation**, turning Waggli from a care coordination tool into the **home for the global pet parent community**.
 
 ---
 
 **Document Version:** 1.0  
 **Last Updated:** January 2, 2026  
-**Prepared for:** Pawzly Leadership & Product Team
+**Prepared for:** Waggli Leadership & Product Team

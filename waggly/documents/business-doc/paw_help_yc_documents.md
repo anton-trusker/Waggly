@@ -1,4 +1,4 @@
-**PawHelp — Y Combinator Aligned Startup Documentation for Angel Investment Readiness**
+**Waggli — Y Combinator Aligned Startup Documentation for Angel Investment Readiness**
 
 ---
 
@@ -12,7 +12,7 @@
 - Pet owners lack centralized access to services, products, and emergency assistance.
 - No unified social network or marketplace for pet-related needs.
 
-**Solution:** PawHelp provides a comprehensive, trusted platform combining:
+**Solution:** Waggli provides a comprehensive, trusted platform combining:
 - Verified, escrow-protected donations.
 - Blood donor registration and matching.
 - Shelter directory and adoption tools.
@@ -105,7 +105,7 @@
 ---
 
 ### 8. Competitive Landscape
-| Competitor              | Focus             | Gaps Addressed by PawHelp                     |
+| Competitor              | Focus             | Gaps Addressed by Waggli                     |
 |-------------------------|------------------|----------------------------------------------|
 | GoFundMe, Tiltify       | General donations| No pet-specific tools, no blood donor system |
 | The Dodo Adoption Tools | Awareness only   | No unified donation, health, or services     |
@@ -123,9 +123,9 @@
 
 ---
 
-**"PawHelp: The trusted, all-in-one platform making pet care, community, and compassion accessible to everyone."**
+**"Waggli: The trusted, all-in-one platform making pet care, community, and compassion accessible to everyone."**
 
 ---
 
-*End of Y Combinator Aligned Startup Documentation for PawHelp.*
+*End of Y Combinator Aligned Startup Documentation for Waggli.*
 

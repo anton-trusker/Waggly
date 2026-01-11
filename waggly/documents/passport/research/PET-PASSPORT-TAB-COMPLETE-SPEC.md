@@ -1,15 +1,15 @@
-# 🐾 PAWZLY PET PASSPORT TAB - COMPLETE COMPREHENSIVE SPECIFICATION
+# 🐾 WAGGLI PET PASSPORT TAB - COMPLETE COMPREHENSIVE SPECIFICATION
 
 **Version:** 2.0 (Final)  
 **Created:** January 10, 2026  
 **Status:** Production-Ready Specification  
-**Scope:** Complete Pet Passport Tab Implementation for Pawzly Pet Details Page
+**Scope:** Complete Pet Passport Tab Implementation for Waggli Pet Details Page
 
 ---
 
 ## 📋 EXECUTIVE SUMMARY
 
-This comprehensive document consolidates everything required to implement Pawzly's Pet Passport Tab—a complete digital health and identification system for pets. The Pet Passport Tab serves as the central hub for all pet health information, vaccination tracking, travel compliance, and health analytics.
+This comprehensive document consolidates everything required to implement Waggli's Pet Passport Tab—a complete digital health and identification system for pets. The Pet Passport Tab serves as the central hub for all pet health information, vaccination tracking, travel compliance, and health analytics.
 
 ### Key Deliverables:
 - ✅ **8 Integrated Widgets** - Complete UI/UX specifications

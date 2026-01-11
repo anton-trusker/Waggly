@@ -1,4 +1,4 @@
-# Pawzly Supabase Architecture - Security & Performance Improvement Solution
+# Waggli Supabase Architecture - Security & Performance Improvement Solution
 
 **Document Version**: 1.0  
 **Created**: January 3, 2026  
@@ -314,7 +314,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'x-application-name': 'pawzly-mobile',
+      'x-application-name': 'waggli-mobile',
     },
   },
   db: {

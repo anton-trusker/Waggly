@@ -1,11 +1,11 @@
 # Waggly Research Documents
 
-This folder contains all investor research and pitch deck preparation materials for **Waggly** (formerly Pawzly/PawHelp).
+This folder contains all investor research and pitch deck preparation materials for **Waggly** (formerly Waggli/Waggli).
 
 ## Documents
 
 ### Main Research
-- **pawzly_investor_pitch_research.md** - Comprehensive investor pitch deck research document (67KB)
+- **waggli_investor_pitch_research.md** - Comprehensive investor pitch deck research document (67KB)
   - Market analysis (European + Global pet care)
   - Competitive landscape
   - Investment trends 2024-2026
@@ -15,7 +15,7 @@ This folder contains all investor research and pitch deck preparation materials 
   - Pitch deck structure recommendations
 
 ### Executive Briefs
-- **pawzly_ai_competitive_advantages.md** - Executive summary highlighting three unique competitive moats:
+- **waggli_ai_competitive_advantages.md** - Executive summary highlighting three unique competitive moats:
   - AI-first architecture
   - AI-powered automatic localization (zero-cost global expansion)
   - AI-native development (60-70% lower costs)
@@ -35,7 +35,7 @@ This folder contains all investor research and pitch deck preparation materials 
 ## Platform Name
 
 **Final Name**: Waggly (decided January 11, 2026)
-- Previous names: Pawzly, PawHelp
+- Previous names: Waggli, Waggli
 - GitHub: https://github.com/anton-trusker/Waggly
 
 ## Key Investment Targets

@@ -1,4 +1,4 @@
-# Pawzly Pet Insurance Comparison & Referral Platform - Complete Solution
+# Waggli Pet Insurance Comparison & Referral Platform - Complete Solution
 
 **Document Version**: 1.0  
 **Created**: January 3, 2026  
@@ -9,7 +9,7 @@
 
 ## 📊 EXECUTIVE SUMMARY
 
-This document outlines a comprehensive strategy to integrate a **pet insurance comparison and referral platform** into Pawzly, creating a new high-value revenue stream while providing exceptional value to users.
+This document outlines a comprehensive strategy to integrate a **pet insurance comparison and referral platform** into Waggli, creating a new high-value revenue stream while providing exceptional value to users.
 
 **Market Opportunity**:
 - US pet insurance market: **$5.34 billion** (2024)
@@ -29,7 +29,7 @@ This document outlines a comprehensive strategy to integrate a **pet insurance c
 1. **AI-Powered Comparison Engine** - Smart recommendations based on pet profiles
 2. **Price Comparison** - Side-by-side quotes from 15+ providers
 3. **Review & Ratings** - Real user reviews and expert ratings
-4. **One-Click Application** - Pre-filled from Pawzly pet data
+4. **One-Click Application** - Pre-filled from Waggli pet data
 5. **Referral Tracking** - Transparent commission tracking
 6. **Education Center** - Help users understand coverage options
 
@@ -37,7 +37,7 @@ This document outlines a comprehensive strategy to integrate a **pet insurance c
 
 ## 🎯 STRATEGIC POSITIONING
 
-### Why Pet Insurance in Pawzly?
+### Why Pet Insurance in Waggli?
 
 **Perfect Fit**:
 1. ✅ **We already have pet data** - Name, breed, age, health history
@@ -49,8 +49,8 @@ This document outlines a comprehensive strategy to integrate a **pet insurance c
 **User Journey**:
 ```
 User adds pet → Records first vet visit → Sees $500 bill →
-"Wish this was covered" moment → Pawzly shows insurance comparison →
-Finds perfect plan → Clicks "Get Quote" → Pawzly earns commission
+"Wish this was covered" moment → Waggli shows insurance comparison →
+Finds perfect plan → Clicks "Get Quote" → Waggli earns commission
 ```
 
 ### Competitive Landscape
@@ -63,11 +63,11 @@ Finds perfect plan → Clicks "Get Quote" → Pawzly earns commission
 | **The Swiftest** | 8+ | $125/conversion | Not pet-focused |
 | **Petted** | Multiple | Standard affiliate | Limited features |
 
-**Pawzly's Advantages**:
+**Waggli's Advantages**:
 1. ✅ **Pre-populated data** - Pet details already in system
 2. ✅ **Smart recommendations** - AI uses health history to suggest plans
 3. ✅ **Existing user base** - No cold traffic acquisition cost
-4. ✅ **Trust advantage** - Users already trust Pawzly with pet health
+4. ✅ **Trust advantage** - Users already trust Waggli with pet health
 5. ✅ **Integrated experience** - Seamless within health records flow
 
 ---
@@ -237,7 +237,7 @@ Finds perfect plan → Clicks "Get Quote" → Pawzly earns commission
 - Typically 5-10% of annual premium
 - Long-term revenue potential
 
-### Pawzly's Recommended Model
+### Waggli's Recommended Model
 
 **Hybrid Approach**:
 
@@ -262,7 +262,7 @@ Finds perfect plan → Clicks "Get Quote" → Pawzly earns commission
 **Conservative Scenario** (Year 1):
 
 **Assumptions**:
-- 100,000 Pawzly users by end of Year 1
+- 100,000 Waggli users by end of Year 1
 - 10% view insurance comparison (10,000 users)
 - 30% request quotes (3,000 leads)
 - 20% purchase policy (600 sales)
@@ -350,7 +350,7 @@ Finds perfect plan → Clicks "Get Quote" → Pawzly earns commission
 
 ### 2. Smart Quote Form (Pre-Filled)
 
-**Auto-Population from Pawzly Data**:
+**Auto-Population from Waggli Data**:
 ```
 Step 1: Pet Information (✓ Auto-filled from profile)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -387,7 +387,7 @@ Annual Limit: [Unlimited ▼]
 
 **User Saves Time**: 
 - Traditional forms: 10-15 minutes
-- Pawzly pre-filled: 2-3 minutes ✅
+- Waggli pre-filled: 2-3 minutes ✅
 
 ### 3. Comparison Results Page
 
@@ -426,7 +426,7 @@ Annual Limit: [Unlimited ▼]
 │ • Unlimited coverage for chronic conditions     │
 │ • No claim limits                               │
 │                                                 │
-│ Pawzly Users: 872 have this plan               │
+│ Waggli Users: 872 have this plan               │
 │ Avg Rating: 4.8/5 (234 reviews)                │
 │                                                 │
 │ [Get Quote →]  [View Details]                  │
@@ -495,8 +495,8 @@ function calculateInsuranceScore(pet, plan) {
   // User reviews
   score += plan.rating * 4; // 4.5 stars = 18 points
   
-  // Pawzly community usage
-  if (plan.pawzlyUsers > 500) score += 10;
+  // Waggli community usage
+  if (plan.waggliUsers > 500) score += 10;
   
   return score;
 }
@@ -529,7 +529,7 @@ function calculateInsuranceScore(pet, plan) {
 ### 7. User Reviews & Ratings
 
 **Review System**:
-- Only verified Pawzly users who purchased through platform can review
+- Only verified Waggli users who purchased through platform can review
 - 5-star rating system
 - Key factors: Claims process, customer service, coverage, price
 - Helpful/not helpful voting
@@ -558,7 +558,7 @@ function calculateInsuranceScore(pet, plan) {
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│               Pawzly Mobile App                      │
+│               Waggli Mobile App                      │
 │  ┌────────────────────────────────────────────────┐ │
 │  │ Insurance Comparison UI (React Native)         │ │
 │  │ - Quote form                                   │ │
@@ -794,7 +794,7 @@ CREATE TABLE insurance_review_votes (
       ],
       "rating": 4.8,
       "total_reviews": 234,
-      "pawzly_users": 872,
+      "waggli_users": 872,
       "match_score": 95,
       "recommendation_reason": "Great for Golden Retrievers with strong orthopedic coverage"
     },
@@ -822,14 +822,14 @@ CREATE TABLE insurance_review_votes (
 ```json
 {
   "application_id": "uuid",
-  "redirect_url": "https://trupanion.com/apply?ref=pawzly_abc123&pet_data=...",
+  "redirect_url": "https://trupanion.com/apply?ref=waggli_abc123&pet_data=...",
   "affiliate_click_id": "abc123"
 }
 ```
 
 **Process**:
 1. Create `insurance_applications` record with status='clicked'
-2. Generate affiliate tracking URL with Pawzly referral code
+2. Generate affiliate tracking URL with Waggli referral code
 3. Pre-fill pet data in URL parameters (if provider supports)
 4. Redirect user to provider website
 5. Track click event for analytics
@@ -901,11 +901,11 @@ Would you like me to continue with the remaining sections including Partnership 
 
 **Email Template**:
 ```
-Subject: Partnership Opportunity - Pawzly Pet Health App
+Subject: Partnership Opportunity - Waggli Pet Health App
 
 Dear [Partnership Manager],
 
-I'm reaching out from Pawzly, a rapidly growing pet health management app 
+I'm reaching out from Waggli, a rapidly growing pet health management app 
 with [XX,XXX] active users across [US/UK/UAE].
 
 We're building an insurance comparison feature and would love to include 
@@ -930,7 +930,7 @@ Can we schedule a call this week?
 
 Best regards,
 [Your Name]
-Partnerships, Pawzly
+Partnerships, Waggli
 ```
 
 ### Phase 2: Enhanced Terms (Months 4-6)
@@ -1073,11 +1073,11 @@ Response: {
 **4. Social Proof**
 
 **User Testimonials**:
-> "I found Trupanion through Pawzly and it saved me $4,200 when Max needed 
+> "I found Trupanion through Waggli and it saved me $4,200 when Max needed 
 > ACL surgery. The comparison tool made it so easy!" - Sarah M.
 
 **Statistics**:
-- "872 Pawzly users chose Trupanion"
+- "872 Waggli users chose Trupanion"
 - "Average savings: $2,400/year on vet bills"
 - "Claims approval rate: 94%"
 
@@ -1107,7 +1107,7 @@ Response: {
 - Target CPA: $50 (customer acquisition cost)
 
 **Facebook/Instagram Ads**:
-- Lookalike audiences (Pawzly users)
+- Lookalike audiences (Waggli users)
 - Pet owner targeting
 - Story ads with carousel
 - Budget: $3K/month
@@ -1117,7 +1117,7 @@ Response: {
 **Veterinary Clinics**:
 - Co-branded materials
 - In-clinic signage
-- "Pawzly Partner Vet" program
+- "Waggli Partner Vet" program
 - Referral bonus
 
 **Pet Influencers**:
@@ -1135,7 +1135,7 @@ Response: {
 **Important**: Pet insurance is regulated at the state level in US
 
 **Required Disclosures**:
-1. ✅ "Pawzly is a comparison platform and receives compensation from insurance providers"
+1. ✅ "Waggli is a comparison platform and receives compensation from insurance providers"
 2. ✅ "We are not licensed insurance agents"
 3. ✅ "This is not insurance advice. Consult a licensed agent for personalized recommendations"
 4. ✅ Individual state licensing requirements (if applicable)
@@ -1162,7 +1162,7 @@ Response: {
 
 **Affiliate Disclosure**:
 ```
-"Disclosure: Pawzly may earn a commission when you purchase 
+"Disclosure: Waggli may earn a commission when you purchase 
 insurance through our platform. This helps us provide free 
 pet health management tools to all users. Our recommendations 
 are based on data analysis and user reviews, not commission rates."
@@ -1174,7 +1174,7 @@ are based on data analysis and user reviews, not commission rates."
 ```markdown
 ## Insurance Comparison Service
 
-Pawzly provides an insurance comparison platform as a service to users.
+Waggli provides an insurance comparison platform as a service to users.
 
 * We are not licensed insurance agents or brokers
 * We receive compensation from insurance providers
@@ -1360,16 +1360,16 @@ analytics.track('Insurance Policy Purchased', {
 
 ## 💡 UNIQUE VALUE PROPOSITIONS
 
-### What Makes Pawzly Different
+### What Makes Waggli Different
 
 **1. Pre-Filled Data** ⭐⭐⭐⭐⭐
 - Traditional: 10-15 minutes to fill out quote form
-- Pawzly: 2-3 minutes (70% faster)
+- Waggli: 2-3 minutes (70% faster)
 - Value: Reduced friction = higher conversion
 
 **2. Smart Recommendations** ⭐⭐⭐⭐⭐
 - Traditional: Generic results sorted by price
-- Pawzly: AI-powered matching based on:
+- Waggli: AI-powered matching based on:
   - Breed-specific risks
   - Age-appropriate coverage
   - Health history
@@ -1378,18 +1378,18 @@ analytics.track('Insurance Policy Purchased', {
 
 **3. Community Reviews** ⭐⭐⭐⭐
 - Traditional: Reviews from unknown sources
-- Pawzly: Verified pet owner reviews from our community
+- Waggli: Verified pet owner reviews from our community
 - Value: Trusted recommendations
 
 **4. Integrated Experience** ⭐⭐⭐⭐⭐
 - Traditional: Standalone comparison sites
-- Pawzly: Embedded in health management workflow
+- Waggli: Embedded in health management workflow
 - Natural moments: "Just paid $500 vet bill → How can I avoid this?"
 - Value: Perfect timing = higher intent
 
 **5. Ongoing Support** ⭐⭐⭐⭐
 - Traditional: One-time comparison, then abandoned
-- Pawzly: 
+- Waggli: 
   - Track if pet gets insured
   - Send renewal reminders
   - Alert if better plans available
@@ -1431,7 +1431,7 @@ analytics.track('Insurance Policy Purchased', {
 
 ### Summary
 
-Pet insurance comparison is a **massive opportunity** for Pawzly:
+Pet insurance comparison is a **massive opportunity** for Waggli:
 
 **Market Opportunity**:
 - $5.34B market, growing 20-25% annually
@@ -1485,7 +1485,7 @@ Pet insurance comparison is a **massive opportunity** for Pawzly:
 
 ---
 
-**This insurance comparison platform will transform Pawzly from a health records app into a comprehensive pet care ecosystem, while generating significant revenue through referral commissions.**
+**This insurance comparison platform will transform Waggli from a health records app into a comprehensive pet care ecosystem, while generating significant revenue through referral commissions.**
 
 🛡️ **Better Coverage. Better Care. Better Peace of Mind.** 🛡️
 

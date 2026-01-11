@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Pawzly",
-    "slug": "pawzly",
+    "name": "Waggli",
+    "slug": "waggli",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./public/logo.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Pawzly",
+      "bundleIdentifier": "com.anonymous.Waggli",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -25,7 +25,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Pawzly"
+      "package": "com.anonymous.Waggli"
     },
     "web": {
       "favicon": "./public/favicon.ico",
@@ -37,7 +37,7 @@
       "expo-web-browser",
       "expo-localization"
     ],
-    "scheme": "pawzly",
+    "scheme": "waggli",
     "experiments": {
       "typedRoutes": true
     },

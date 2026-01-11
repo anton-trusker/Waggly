@@ -1,10 +1,10 @@
-# PAWZLY EVENT FEED: Executive Summary & Priority Action Items
+# WAGGLI EVENT FEED: Executive Summary & Priority Action Items
 
 ---
 
 ## 🎯 STRATEGIC OBJECTIVE
 
-Transform Pawzly from **static digital passport** (medical records only) → **dynamic social ecosystem** where:
+Transform Waggli from **static digital passport** (medical records only) → **dynamic social ecosystem** where:
 - Pet owners share health journeys, organize events, discover services
 - Volunteers find urgent ways to help (SOS, blood donations)
 - Professionals build reputation and client base
@@ -289,7 +289,7 @@ Transform Pawzly from **static digital passport** (medical records only) → **d
 1. **Email campaign to 10K users:** "Share your pet's health journey" → 500 click-through rate expected
 2. **Feature in app home:** "New: Health Stories" widget → 5% tap-through expected
 3. **Create 1 viral SOS case:** Founder posts fake-but-realistic missing dog story → Test engagement
-4. **Launch "First Post" incentive:** €5 Pawzly credit for first post → Conversion expected ~2%
+4. **Launch "First Post" incentive:** €5 Waggli credit for first post → Conversion expected ~2%
 5. **Partner with 1 shelter:** Joint promotional post → Cross-audience reach (10K+ impressions)
 
 ---
@@ -324,6 +324,6 @@ Transform Pawzly from **static digital passport** (medical records only) → **d
 ---
 
 **Document Version:** 1.0 (Executive Summary)  
-**Prepared for:** Pawzly Leadership Team  
+**Prepared for:** Waggli Leadership Team  
 **Next Review:** January 15, 2026  
 **Questions?** Slack #event-feed-project

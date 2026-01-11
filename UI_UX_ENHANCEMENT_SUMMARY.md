@@ -1,7 +1,7 @@
-# Pawzly App UI/UX Enhancement Summary
+# Waggli App UI/UX Enhancement Summary
 
 ## Overview
-This document summarizes the comprehensive UI/UX enhancements implemented for the Pawzly pet management application, focusing on the Calendar, Dashboard, and Pets pages.
+This document summarizes the comprehensive UI/UX enhancements implemented for the Waggli pet management application, focusing on the Calendar, Dashboard, and Pets pages.
 
 ## 🎨 Design System Enhancements
 

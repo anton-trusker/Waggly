@@ -1,6 +1,6 @@
 {
   "common": {
-    "welcome": "Bienvenue sur Pawzly",
+    "welcome": "Bienvenue sur Waggli",
     "language": "Langue",
     "select_language": "Changer de langue",
     "search_language": "Rechercher une langue...",
@@ -216,7 +216,7 @@
   },
   "auth": {
     "login_title": "Bon retour",
-    "login_subtitle": "Connectez-vous pour continuer sur Pawzly",
+    "login_subtitle": "Connectez-vous pour continuer sur Waggli",
     "email_label": "Adresse e-mail",
     "email_placeholder": "nom@exemple.com",
     "password_label": "Mot de passe",
@@ -232,7 +232,7 @@
     "create_account": "Créer un compte",
     "already_have_account": "Vous avez déjà un compte ?",
     "login_link": "Se connecter",
-    "hero_title": "Bon retour sur Pawzly",
+    "hero_title": "Bon retour sur Waggli",
     "hero_subtitle": "La santé de votre animal en un seul endroit.",
     "reset_title": "Réinitialiser le mot de passe",
     "reset_subtitle": "Entrez votre e-mail pour recevoir le lien",
@@ -312,7 +312,7 @@
     "error_weight": "Veuillez entrer un nombre valide pour le poids."
   },
   "pwa": {
-    "install_title": "Installer l'application Pawzly",
+    "install_title": "Installer l'application Waggli",
     "install_ios": "Appuyez sur le bouton Partager et sélectionnez 'Sur l'écran d'accueil'",
     "install_android": "Appuyez sur le bouton Menu et sélectionnez 'Installer l'application'"
   },
@@ -578,7 +578,7 @@
       "title": "Partager le profil",
       "desc": "Partagez ce profil avec votre famille ou vétérinaire.",
       "action": "Partager",
-      "message": "Découvrez ce profil d'animal sur Pawzly ! {{url}}",
+      "message": "Découvrez ce profil d'animal sur Waggli ! {{url}}",
       "message_title": "Profil Animal"
     }
   },

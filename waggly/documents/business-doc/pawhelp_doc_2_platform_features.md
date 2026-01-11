@@ -1,4 +1,4 @@
-**PawHelp Document 2: Platform Features & Functional Specification**
+**Waggli Document 2: Platform Features & Functional Specification**
 
 ---
 
@@ -126,5 +126,5 @@
 
 ---
 
-*PawHelp's feature set ensures an intuitive, secure, and trustworthy experience for all user groups, enhancing the platform's ability to deliver real-world animal welfare impact at scale.*
+*Waggli's feature set ensures an intuitive, secure, and trustworthy experience for all user groups, enhancing the platform's ability to deliver real-world animal welfare impact at scale.*
 

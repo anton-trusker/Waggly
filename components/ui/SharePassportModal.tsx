@@ -36,7 +36,7 @@ export default function SharePassportModal({
     const isMobile = width < 768;
 
     // Generate shareable URL
-    const shareUrl = `${process.env.EXPO_PUBLIC_APP_URL || 'https://pawzly.app'}/passport/${passportId}`;
+    const shareUrl = `${process.env.EXPO_PUBLIC_APP_URL || 'https://waggli.app'}/passport/${passportId}`;
 
     const handleCopyLink = async () => {
         await Clipboard.setStringAsync(shareUrl);

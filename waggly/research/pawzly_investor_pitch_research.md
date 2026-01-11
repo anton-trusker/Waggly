@@ -1,7 +1,7 @@
-# Pawzly Investor Pitch Deck Research Document
+# Waggli Investor Pitch Deck Research Document
 ## Comprehensive Analysis & Investment Preparation for MVP Launch
 
-**Platform**: Pawzly (formerly PawHelp)  
+**Platform**: Waggli (formerly Waggli)  
 **Purpose**: MVPLaunch & Seed/Series A Investment  
 **Document Date**: January 2026  
 **Market**: European Pet Care Ecosystem
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Pawzly is an **AI-first digital pet passport platform** positioned at the intersection of three high-growth markets: **European Pet Care (€77.51B, 5.08% CAGR)**, **Pet Tech (20.7% CAGR 2025-2034)**, and **AI Health Management**. The platform revolutionizes pet care through a conversational AI assistant that manages all pet health data, provides intelligent notifications and advice, and connects pet owners with services—starting with Europe and scaling globally.
+Waggli is an **AI-first digital pet passport platform** positioned at the intersection of three high-growth markets: **European Pet Care (€77.51B, 5.08% CAGR)**, **Pet Tech (20.7% CAGR 2025-2034)**, and **AI Health Management**. The platform revolutionizes pet care through a conversational AI assistant that manages all pet health data, provides intelligent notifications and advice, and connects pet owners with services—starting with Europe and scaling globally.
 
 ### Key Investment Opportunity Highlights
 
@@ -108,27 +108,27 @@ European pet owners increasingly treat pets as family members, driving demand fo
 | **Unavets** | Spain | €116M Series A/B | Veterinary services | B2B clinic network |
 | **Felmo** | Germany | €15M | Mobile vet services | Vet services only |
 
-### Market Gaps Pawzly Addresses
+### Market Gaps Waggli Addresses
 
 #### 1. **Service Fragmentation**
 - **Current State**: Pet owners use 3-5 different platforms for various needs
-- **Pawzly Solution**: Unified platform for services, healthcare, emergency care, community
+- **Waggli Solution**: Unified platform for services, healthcare, emergency care, community
 
 #### 2. **Emergency Care Coordination**
 - **Current State**: No platform offers 24/7 emergency coordination with real-time response
-- **Pawzly Solution**: Emergency care system with GPS tracking, urgent provider matching, health record sharing
+- **Waggli Solution**: Emergency care system with GPS tracking, urgent provider matching, health record sharing
 
 #### 3. **Transparency & Trust**
 - **Current State**: Limited verification, no escrow protection for donations/payments
-- **Pawzly Solution**: AI-powered fraud detection, escrow-protected transactions, verified providers
+- **Waggli Solution**: AI-powered fraud detection, escrow-protected transactions, verified providers
 
 #### 4. **Healthcare Integration**
 - **Current State**: Health records scattered across clinics, no centralized system
-- **Pawzly Solution**: Digital health passport, veterinary integration, medication tracking
+- **Waggli Solution**: Digital health passport, veterinary integration, medication tracking
 
 #### 5. **Community Support**
 - **Current State**: Transactional platforms without community engagement
-- **Pawzly Solution**: Blood donation network, local pet communities, recognition system
+- **Waggli Solution**: Blood donation network, local pet communities, recognition system
 
 ---
 
@@ -318,12 +318,12 @@ European pet owners increasingly treat pets as family members, driving demand fo
 
 ---
 
-## Pawzly Platform Overview
+## Waggli Platform Overview
 
-### Platform Evolution: PawHelp → Pawzly
+### Platform Evolution: Waggli → Waggli
 
 **Strategic Pivot:**
-PawHelp's comprehensive marketplace vision has evolved into **Pawzly** - an AI-first digital pet passport platform that solves the core problem first (scattered health records and lack of intelligent pet health management) before expanding into additional services.
+Waggli's comprehensive marketplace vision has evolved into **Waggli** - an AI-first digital pet passport platform that solves the core problem first (scattered health records and lack of intelligent pet health management) before expanding into additional services.
 
 **Why This Approach Wins:**
 - **Focused MVP**: Nail one critical pain point (pet health management) with AI excellence
@@ -367,7 +367,7 @@ The MVP focuses on becoming the **single source of truth for all pet health info
    - Integration with calendar for appointments
 
 4. **Physical Pet ID Integration**
-   - Metal QR code pet tags (produced by Pawzly)
+   - Metal QR code pet tags (produced by Waggli)
    - QR scan links to digital pet passport
    - Emergency contact information accessible via QR
    - Lost pet finder network activation
@@ -375,7 +375,7 @@ The MVP focuses on becoming the **single source of truth for all pet health info
 
 ### Phased Product Roadmap
 
-Pawzly's development follows a strategic, capital-efficient rollout that builds a strong foundation before expanding to marketplace and network features.
+Waggli's development follows a strategic, capital-efficient rollout that builds a strong foundation before expanding to marketplace and network features.
 
 #### **Phase 1: MVP - Digital Pet Passport + AI Assistant** ✅ (Months 0-6)
 *Status: Launching*
@@ -590,7 +590,7 @@ Pawzly's development follows a strategic, capital-efficient rollout that builds 
 
 ### Primary Revenue Model: Subscription SaaS
 
-Pawzly's business model is **subscription-first**, providing predictable, recurring revenue from day one. Unlike transactional marketplace models that require substantial provider liquidity before monetization, Pawzly monetizes the core value proposition immediately: AI-powered pet health management.
+Waggli's business model is **subscription-first**, providing predictable, recurring revenue from day one. Unlike transactional marketplace models that require substantial provider liquidity before monetization, Waggli monetizes the core value proposition immediately: AI-powered pet health management.
 
 **Why Subscription-First Wins:**
 - **Immediate Revenue**: Users pay for AI assistant value before any marketplace features
@@ -798,7 +798,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 ### 1. **AI-First Architecture vs. Legacy Manual Apps**
 
 **Competitors**: Manual data entry apps (PetDesk, 11pets, PetPro) with basic reminders
-**Pawzly**: Conversational AI that eliminates data entry friction entirely
+**Waggli**: Conversational AI that eliminates data entry friction entirely
 
 **Strategic Advantage:**
 - **Zero-Effort Data Capture**: OCR scanning + voice recording means users never manually type health info
@@ -815,7 +815,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 ### 2. **Subscription SaaS Model vs. Transactional Marketplace**
 
 **Competitors**: Rover, Wag (commission-based, GMV dependent)
-**Pawzly**: Recurring subscription revenue from day one
+**Waggli**: Recurring subscription revenue from day one
 
 **Strategic Advantage:**
 - **Immediate Monetization**: Revenue without needing provider network (saves 12-18 months to monetization)
@@ -828,7 +828,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 ### 3. **Global-First Design vs. Regional Marketplace Constraints**
 
 **Competitors**: Rover expanding country-by-country (requires provider network in each market)
-**Pawzly**: Core MVP works worldwide from day one
+**Waggli**: Core MVP works worldwide from day one
 
 **Strategic Advantage:**
 - **No Geographic Limitations**: Pet passport + AI works in Amsterdam or Australia equally
@@ -840,7 +840,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 ### 4. **AI-Powered Automatic Localization: Zero-Cost Global Expansion**
 
 **Competitors**: Manual translation, localization agencies (€50K-200K per language), 6-12 month timelines per market
-**Pawzly**: **Automatic AI localization built into MVP architecture from day one**
+**Waggli**: **Automatic AI localization built into MVP architecture from day one**
 
 **Strategic Advantage:**
 - **Instant Multi-Language Launch**: Support 20+ languages without translation costs
@@ -851,8 +851,8 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 
 **Financial Impact:**
 - **Traditional Localization Cost**: €50K-100K per language (Dutch, German, French, Spanish = €200K-400K)
-- **Pawzly Cost**: €0 marginal cost (built into AI architecture)
-- **Time to Market**: Competitors need 6 months per country, Pawzly launches globally day one
+- **Waggli Cost**: €0 marginal cost (built into AI architecture)
+- **Time to Market**: Competitors need 6 months per country, Waggli launches globally day one
 - **Capital Efficiency**: Reinvest localization savings into growth (€400K to marketing vs translation)
 
 **Investor Thesis Strengthened:**
@@ -863,12 +863,12 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 
 **Why This Matters:**
 - **Rover's Limitation**: €15M over 5 years for European expansion (manual, slow)
-- **Pawzly's Advantage**: Built-in global capability from MVP, no additional capital required
+- **Waggli's Advantage**: Built-in global capability from MVP, no additional capital required
 
 ### 5. **AI-Native Development: 60-70% Lower Burn Rate**
 
 **Competitors**: Traditional development teams (€50K-80K per engineer × 5-8 engineers = €250K-640K/year)
-**Pawzly**: **AI-assisted/AI-generated development from inception**
+**Waggli**: **AI-assisted/AI-generated development from inception**
 
 **Strategic Advantage:**
 - **Dramatically Lower Development Costs**: €30K-40K vs €250K+ for equivalent output
@@ -879,7 +879,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 
 **Capital Efficiency Comparison:**
 
-| Cost Category | Traditional Startup | Pawzly (AI-Developed) | Savings |
+| Cost Category | Traditional Startup | Waggli (AI-Developed) | Savings |
 |---------------|---------------------|----------------------|---------|
 | **Development Team** | €400K/year | €60K/year | **€340K** |
 | **Time to MVP** | 9-12 months | 3-4 months | **6-9 months** |
@@ -888,7 +888,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 | **Scalability Issues** | Retrofit at Series A | Built-in from day one | €500K+ saved |
 
 **Fundraising Impact:**
-- **€1.5M Seed Goes 3x Further**: What competitors achieve with €4-5M, Pawzly achieves with €1.5M
+- **€1.5M Seed Goes 3x Further**: What competitors achieve with €4-5M, Waggli achieves with €1.5M
 - **Faster Milestones**: Reach Series A metrics in 12-15 months vs 24 months
 - **Higher Valuations**: Efficiency + velocity = better ARR multiple
 - **Lower Dilution**: Need less capital for same outcomes = founders keep more equity
@@ -905,7 +905,7 @@ Pawzly's business model is **subscription-first**, providing predictable, recurr
 
 **Why This Is a Moat:**
 - Competitors with traditional teams can't pivot to AI-native easily (organizational change)
-- Pawzly builds institutional knowledge of AI-assisted development from founding
+- Waggli builds institutional knowledge of AI-assisted development from founding
 - Velocity advantage compounds: Ship 5x more features = 5x more user feedback = 5x better product-market fit
 
 ---
@@ -917,7 +917,7 @@ Traditional pet tech startup needing €5M to achieve Product-Market Fit:
 - €1.5M localization (4 languages manually)
 - €1.5M marketing
 
-**Pawzly achieving same milestones with €1.5M:**
+**Waggli achieving same milestones with €1.5M:**
 - €100K development (AI-assisted)
 - €0 localization (AI automatic)
 - €1.4M marketing (10x advantage goes to growth!)
@@ -1007,7 +1007,7 @@ Traditional pet tech startup needing €5M to achieve Product-Market Fit:
 
 ## Go-to-Market Strategy
 
-**Strategic Positioning**: Pawzly launches as a **SaaS product** first, not a marketplace. This fundamentally changes the GTM approach—we're selling immediate software value (AI health assistant), not a two-sided network.
+**Strategic Positioning**: Waggli launches as a **SaaS product** first, not a marketplace. This fundamentally changes the GTM approach—we're selling immediate software value (AI health assistant), not a two-sided network.
 
 ### Phase 1: MVP Launch & Product-Market Fit (Months 0-6)
 
@@ -1019,13 +1019,13 @@ Traditional pet tech startup needing €5M to achieve Product-Market Fit:
 - Pros: Focused execution, easier operations, clearer metrics
 - Cons: Wastes your AI localization advantage, smaller initial TAM, slower to Series A metrics
 
-✅ **Pawzly's AI-Powered Multi-Country Launch (RECOMMENDED)**
+✅ **Waggli's AI-Powered Multi-Country Launch (RECOMMENDED)**
 - **Netherlands** (Primary: Amsterdam, Rotterdam, Utrecht, The Hague)
 - **Germany** (Secondary: Berlin, Munich, Hamburg)
 - **Belgium** (Tertiary: Brussels, Antwerp)
 - **Austria** (Tertiary: Vienna)
 
-**Why This Works for Pawzly (But Not Competitors):**
+**Why This Works for Waggli (But Not Competitors):**
 1. **Zero Localization Cost**: AI handles Dutch, German, French automatically
 2. **Shared Language Markets**: German works for Germany + Austria; Dutch for Netherlands + Belgium (Flemish)
 3. **4x TAM Immediately**: 20M+ households vs 5M single country
@@ -1387,12 +1387,12 @@ Traditional pet tech startup needing €5M to achieve Product-Market Fit:
 
 ## Pitch Deck Recommended Structure
 
-Based on successful pet care startup examples and VC expectations, here's the recommended pitch deck structure for Pawzly:
+Based on successful pet care startup examples and VC expectations, here's the recommended pitch deck structure for Waggli:
 
 ### Slide-by-Slide Breakdown (12-15 slides)
 
 #### Slide 1: Cover
-- **Pawzly** logo
+- **Waggli** logo
 - Tagline: "Europe's Comprehensive Pet Care Ecosystem"
 - Your name, title, contact
 - Confidential notation
@@ -1408,7 +1408,7 @@ Based on successful pet care startup examples and VC expectations, here's the re
 
 #### Slide 3: The Solution
 - **Visual Product Demo**: 3-4 key screens showing user flow
-- **One-Liner**: "Pawzly is the all-in-one pet care platform connecting owners with verified services, managing health records, and coordinating emergency care—available 24/7 across Europe"
+- **One-Liner**: "Waggli is the all-in-one pet care platform connecting owners with verified services, managing health records, and coordinating emergency care—available 24/7 across Europe"
 - **Key Differentiators**: Emergency care, escrow protection, AI-powered matching
 
 #### Slide 4: Market Opportunity
@@ -1462,7 +1462,7 @@ Based on successful pet care startup examples and VC expectations, here's the re
 
 #### Slide 9: Competitive Landscape
 - **Competitive Matrix** (2x2 with axes: Service Breadth vs. Feature Depth)
-  - **Pawzly**: Top right (comprehensive + deep features)
+  - **Waggli**: Top right (comprehensive + deep features)
   - **Rover**: Wide but shallow (sitting/walking only)
   - **FirstVet**: Deep but narrow (telemedicine only)
   - **Traditional**: GDPR-compliantlow on both
@@ -1634,7 +1634,7 @@ Based on successful pet care startup examples and VC expectations, here's the re
 
 ### Executive Summary for Pitch
 
-Pawzly addresses a **€121 billion market opportunity** by solving the fragmentation problem in European pet care. With **91 million households** struggling across multiple disconnected platforms, Pawzly's comprehensive ecosystem—combining emergency care, service marketplace, health records, and community—creates a defensible moat in a rapidly growing industry.
+Waggli addresses a **€121 billion market opportunity** by solving the fragmentation problem in European pet care. With **91 million households** struggling across multiple disconnected platforms, Waggli's comprehensive ecosystem—combining emergency care, service marketplace, health records, and community—creates a defensible moat in a rapidly growing industry.
 
 **The investment thesis is clear:**
 
@@ -1687,7 +1687,7 @@ Pawzly addresses a **€121 billion market opportunity** by solving the fragment
 - Marketplace platforms: €8-12M typical
 - European B2C: 10-20% discount vs. US
 
-**Pawzly-Specific Value Drivers**:
+**Waggli-Specific Value Drivers**:
 - Comprehensive platform (vs. single-feature competitors)
 - MVP completed and ready to launch
 - Team with domain expertise
@@ -1728,7 +1728,7 @@ Pawzly addresses a **€121 billion market opportunity** by solving the fragment
 
 ---
 
-**Document Prepared By**: Pawzly Research Team  
+**Document Prepared By**: Waggli Research Team  
 **Date**: January 10, 2026  
 **Next Update**: Post-seed funding close  
 

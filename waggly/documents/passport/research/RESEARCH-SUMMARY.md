@@ -194,7 +194,7 @@ For each country:
 **Business Value:**
 - Fewer failed relocations
 - Reduced customer frustration
-- Better Pawzly brand reputation
+- Better Waggli brand reputation
 - Potential partnership with relocation services
 
 ### 4.4 Revenue Opportunities

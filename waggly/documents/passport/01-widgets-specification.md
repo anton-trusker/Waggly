@@ -88,7 +88,7 @@ Provides passport identification, export actions, and generation timestamp.
 - **Label:** "Generate QR"
 - **Style:** Secondary button
 - **Action:** Generate QR code modal
-- **QR Content:** `https://pawzly.app/passport/{passport_id}`
+- **QR Content:** `https://waggli.app/passport/{passport_id}`
 - **Modal:** 400x400px QR code, downloadable PNG
 
 **4. Share**

@@ -1,4 +1,4 @@
-# Pawzly Dashboard - Enhanced Design Proposal
+# Waggli Dashboard - Enhanced Design Proposal
 
 Based on my analysis of your current dashboard, here's a comprehensive proposal for an improved, data-driven dashboard optimized for pet owners.
 

@@ -1,4 +1,4 @@
-# PAWZLY EVENT FEED: Detailed Feature Specifications
+# WAGGLI EVENT FEED: Detailed Feature Specifications
 
 ---
 
@@ -528,7 +528,7 @@ Auto-delete if:
 ✅ Shelter/Rescue: Official nonprofit status verified
 ✅ Trainer: Professional dog trainer (certification verified)
 ✅ Established: Account active 6+ months, 100+ followers, clean record
-✅ Verified QR: Pet registered with Pawzly QR tag
+✅ Verified QR: Pet registered with Waggli QR tag
 ```
 
 **Reporting & Appeal**

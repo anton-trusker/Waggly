@@ -531,6 +531,6 @@ Upcoming:           📅 Calendar icon
 
 **🐾 Pet Card Component Specification - Complete Visual Reference 🐾**
 
-This quick reference guide contains all visual specifications, colors, layouts, and interactive states for implementing the Pet Card component across all Pawzly platforms.
+This quick reference guide contains all visual specifications, colors, layouts, and interactive states for implementing the Pet Card component across all Waggli platforms.
 
 **Ready for Design & Development!**

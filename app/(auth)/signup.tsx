@@ -105,7 +105,7 @@ export default function SignupScreen() {
       <View style={styles.logoContainer}>
         <Image source={require('@/assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
-      <Text style={styles.appName}>Pawzly</Text>
+      <Text style={styles.appName}>Waggli</Text>
     </View>
   );
 

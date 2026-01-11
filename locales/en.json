@@ -1,6 +1,6 @@
 {
   "common": {
-    "welcome": "Welcome to Pawzly",
+    "welcome": "Welcome to Waggli",
     "language": "Language",
     "select_language": "Select language",
     "search_language": "Search language...",
@@ -326,7 +326,7 @@
       "title": "Share Profile",
       "desc": "Share this pet's profile with family, friends, or your veterinarian.",
       "action": "Share Now",
-      "message": "Check out this pet profile on Pawzly! {{url}}",
+      "message": "Check out this pet profile on Waggli! {{url}}",
       "message_title": "Pet Profile"
     },
     "history_timeline": "History & Timeline",
@@ -547,7 +547,7 @@
     }
   },
   "pwa": {
-    "install_title": "Install Pawzly App",
+    "install_title": "Install Waggli App",
     "install_ios": "Tap the Share button and select 'Add to Home Screen'",
     "install_android": "Tap the menu button and select 'Install App'"
   },
@@ -559,7 +559,7 @@
   },
   "auth": {
     "login_title": "Welcome back",
-    "login_subtitle": "Sign in to continue to Pawzly",
+    "login_subtitle": "Sign in to continue to Waggli",
     "email_label": "Email Address",
     "email_placeholder": "name@example.com",
     "password_label": "Password",
@@ -570,15 +570,15 @@
     "no_account": "Don't have an account?",
     "sign_up_link": "Sign Up",
     "signup_title": "Create your account",
-    "signup_subtitle": "Join thousands of pet parents using Pawzly",
+    "signup_subtitle": "Join thousands of pet parents using Waggli",
     "confirm_password_label": "Confirm Password",
     "create_account": "Create Account",
     "already_have_account": "Already have an account?",
     "login_link": "Log In",
-    "hero_title": "Welcome back to Pawzly",
+    "hero_title": "Welcome back to Waggli",
     "hero_subtitle": "Your pet's health and happiness, all in one place. Sign in to access your dashboard and manage your furry friends.",
-    "hero_signup_title": "Join Pawzly Today",
-    "hero_signup_subtitle": "Start managing your pet's health and happiness in one place. Join thousands of pet parents already using Pawzly.",
+    "hero_signup_title": "Join Waggli Today",
+    "hero_signup_subtitle": "Start managing your pet's health and happiness in one place. Join thousands of pet parents already using Waggli.",
     "reset_title": "Reset Password",
     "reset_subtitle": "Enter your email and we'll send you a link to reset your password",
     "send_reset_link": "Send Reset Link",

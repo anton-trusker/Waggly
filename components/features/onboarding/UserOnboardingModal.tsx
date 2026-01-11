@@ -207,7 +207,7 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
 
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>Welcome to Pawzly!</Text>
+              <Text style={styles.title}>Welcome to Waggli!</Text>
               <Text style={styles.subtitle}>Let's set up your profile to get started.</Text>
             </View>
 

@@ -2,11 +2,11 @@
 
 # now also recommend what UI framework and packages need to use to speed up dev process and also app should be very modern and lite.
 
-Based on Pawzly's requirements (modern, lightweight, fast development), here's the **optimal UI framework and package recommendation**:
+Based on Waggli's requirements (modern, lightweight, fast development), here's the **optimal UI framework and package recommendation**:
 
 ***
 
-# **PAWZLY - UI FRAMEWORK \& PACKAGES RECOMMENDATION**
+# **WAGGLI - UI FRAMEWORK \& PACKAGES RECOMMENDATION**
 
 ## **🎨 CORE UI FRAMEWORK STACK**
 
@@ -215,7 +215,7 @@ npx shadcn-ui@latest add --all
 
 ***
 
-## **3. THEME CONFIGURATION (Pawzly Branding)**
+## **3. THEME CONFIGURATION (Waggli Branding)**
 
 ### **TailwindCSS Config (tailwind.config.ts)**
 
@@ -439,7 +439,7 @@ packages/ui/
 │   │   │   ├── dropdown-menu.tsx
 │   │   │   └── ...
 │   │   │
-│   │   ├── custom/                # Pawzly-specific components
+│   │   ├── custom/                # Waggli-specific components
 │   │   │   ├── pet-card.tsx
 │   │   │   ├── service-card.tsx
 │   │   │   ├── booking-calendar.tsx
@@ -661,7 +661,7 @@ const RichTextEditor = dynamic(
 
 ```json
 {
-  "name": "pawzly-web",
+  "name": "waggli-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {

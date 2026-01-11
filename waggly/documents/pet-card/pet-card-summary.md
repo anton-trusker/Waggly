@@ -57,7 +57,7 @@ You now have THREE comprehensive documents:
 ## 🎯 THE PET CARD AT A GLANCE
 
 ### What is a Pet Card?
-A **Pet Card** is a compact, visual component that displays essential pet health information on the Pawzly dashboard and pet list. Users can assess their pet's status in 3-5 seconds.
+A **Pet Card** is a compact, visual component that displays essential pet health information on the Waggli dashboard and pet list. Users can assess their pet's status in 3-5 seconds.
 
 ### Key Information Displayed:
 1. **Pet Photo** - 120px × 120px (or 80px for list/mobile)
@@ -429,7 +429,7 @@ interface PetCardProps {
 This comprehensive package contains everything needed to:
 
 ✅ Build the Pet Card component  
-✅ Integrate with Pawzly dashboard  
+✅ Integrate with Waggli dashboard  
 ✅ Deploy to production  
 ✅ Monitor performance  
 ✅ Enhance in future phases  
@@ -446,7 +446,7 @@ This comprehensive package contains everything needed to:
 
 ## 🐾 FINAL THOUGHTS
 
-The Pet Card is the **gateway to pet health management** in Pawzly. 
+The Pet Card is the **gateway to pet health management** in Waggli. 
 
 Users see:
 - At a glance status of all their pets

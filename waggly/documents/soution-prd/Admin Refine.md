@@ -2,21 +2,21 @@
 
 # Create full Solution and detail Admin platform spec using Refine. And steps how to Setup everyt
 
-Based on the comprehensive PawHelp platform documentation and Refine framework capabilities, here is a complete solution and detailed specification for building the Admin Platform using Refine:
+Based on the comprehensive Waggli platform documentation and Refine framework capabilities, here is a complete solution and detailed specification for building the Admin Platform using Refine:
 
 ***
 
-# **PawHelp Admin Platform - Complete Refine Solution**
+# **Waggli Admin Platform - Complete Refine Solution**
 
 ## **Executive Summary**
 
-The PawHelp Admin Platform is a comprehensive enterprise-grade administrative system built with **Refine.dev**, a headless React framework designed specifically for admin panels and B2B applications. This solution leverages Refine's powerful features including built-in CRUD operations, authentication, authorization, routing, state management, and real-time capabilities to manage the entire PawHelp ecosystem.[^1][^2][^3]
+The Waggli Admin Platform is a comprehensive enterprise-grade administrative system built with **Refine.dev**, a headless React framework designed specifically for admin panels and B2B applications. This solution leverages Refine's powerful features including built-in CRUD operations, authentication, authorization, routing, state management, and real-time capabilities to manage the entire Waggli ecosystem.[^1][^2][^3]
 
 The platform provides centralized control for managing users, pets, cases, fundraising, services, bookings, payments, content moderation, and system configuration across 27+ European countries.[^4]
 
 ***
 
-## **1. Why Refine for PawHelp Admin Platform**
+## **1. Why Refine for Waggli Admin Platform**
 
 ### **Key Advantages**
 
@@ -28,7 +28,7 @@ The platform provides centralized control for managing users, pets, cases, fundr
 
 **Production-Ready**: Automatic code generation, built-in CRUD operations, filtering, sorting, pagination, and form validation.[^9]
 
-**Multi-tenancy Support**: Perfect for PawHelp's multi-country, multi-organization architecture.[^4][^7]
+**Multi-tenancy Support**: Perfect for Waggli's multi-country, multi-organization architecture.[^4][^7]
 
 **Real-time Capabilities**: Built-in support for WebSocket connections and live data updates via Supabase Realtime.[^7]
 
@@ -85,7 +85,7 @@ The platform provides centralized control for managing users, pets, cases, fundr
 ## **3. Monorepo Structure**
 
 ```
-pawzly/
+waggli/
 ├── apps/
 │   ├── admin/                    # Refine Admin Panel (THIS APP)
 │   │   ├── src/
@@ -152,7 +152,7 @@ pawzly/
 
 ```bash
 # Navigate to monorepo root
-cd pawzly
+cd waggli
 
 # Create Refine admin app
 cd apps
@@ -197,7 +197,7 @@ pnpm add -D @types/node @types/react
 ```typescript
 // apps/admin/src/utils/supabase-client.ts
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@pawzly/database';
+import type { Database } from '@waggli/database';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -543,10 +543,10 @@ function App() {
             options={{
               syncWithLocation: true,
               warnWhenUnsavedChanges: true,
-              projectId: 'pawhelp-admin',
+              projectId: 'waggli-admin',
               title: {
-                text: 'PawHelp Admin',
-                icon: <ThemedTitleV2 collapsed={false} text="PawHelp" />,
+                text: 'Waggli Admin',
+                icon: <ThemedTitleV2 collapsed={false} text="Waggli" />,
               },
             }}
           >
@@ -555,7 +555,7 @@ function App() {
               Title={({ collapsed }) => (
                 <ThemedTitleV2
                   collapsed={collapsed}
-                  text="PawHelp Admin"
+                  text="Waggli Admin"
                   icon="🐾"
                 />
               )}
@@ -1015,12 +1015,12 @@ export const AuditLog = ({ userId }: { userId?: string }) => {
 // apps/admin/next.config.js
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ['@pawzly/ui', '@pawzly/database', '@pawzly/auth'],
+  transpilePackages: ['@waggli/ui', '@waggli/database', '@waggli/auth'],
   images: {
     domains: ['your-supabase-project.supabase.co'],
   },
   env: {
-    NEXT_PUBLIC_APP_NAME: 'PawHelp Admin',
+    NEXT_PUBLIC_APP_NAME: 'Waggli Admin',
   },
 };
 ```
@@ -1138,7 +1138,7 @@ const { data } = useList({
 
 ***
 
-This comprehensive solution provides everything needed to build and deploy the PawHelp Admin Platform using Refine, including complete code examples, setup instructions, and deployment steps.[^5][^1][^10][^2][^8][^11][^7][^4]
+This comprehensive solution provides everything needed to build and deploy the Waggli Admin Platform using Refine, including complete code examples, setup instructions, and deployment steps.[^5][^1][^10][^2][^8][^11][^7][^4]
 <span style="display:none">[^12][^13][^14][^15][^16][^17][^18][^19][^20][^21][^22][^23]</span>
 
 <div align="center">⁂</div>

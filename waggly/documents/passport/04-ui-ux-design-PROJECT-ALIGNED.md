@@ -2,13 +2,13 @@
 
 **Document Version:** 2.0  
 **Created:** January 10, 2026  
-**Purpose:** Complete UI/UX design guidelines aligned with Pawzly's actual design system
+**Purpose:** Complete UI/UX design guidelines aligned with Waggli's actual design system
 
 ---
 
 ## DESIGN SYSTEM OVERVIEW
 
-This document is based on the **actual Tailwind configuration** used in Pawzly's mobile and desktop designs.
+This document is based on the **actual Tailwind configuration** used in Waggli's mobile and desktop designs.
 
 ### Key Differences from Generic Spec:
 - ✅ Uses **actual project colors** (Green primary for mobile, Purple primary for desktop)

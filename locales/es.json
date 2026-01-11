@@ -1,6 +1,6 @@
 {
   "common": {
-    "welcome": "Bienvenido a Pawzly",
+    "welcome": "Bienvenido a Waggli",
     "language": "Idioma",
     "select_language": "Seleccionar idioma",
     "search_language": "Buscar idioma...",
@@ -99,7 +99,7 @@
     "error_weight": "Por favor ingresa un número válido para el peso."
   },
   "pwa": {
-    "install_title": "Instalar App Pawzly",
+    "install_title": "Instalar App Waggli",
     "install_ios": "Toca el botón Compartir y selecciona 'Agregar a Inicio'",
     "install_android": "Toca el botón de menú y selecciona 'Instalar Aplicación'"
   },

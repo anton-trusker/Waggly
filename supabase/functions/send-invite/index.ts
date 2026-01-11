@@ -25,9 +25,9 @@ serve(async (req) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    from: 'Pawzly <onboarding@resend.dev>', // User should update this domain
+                    from: 'Waggli <onboarding@resend.dev>', // User should update this domain
                     to: email,
-                    subject: `You've been invited to manage ${petName} on Pawzly`,
+                    subject: `You've been invited to manage ${petName} on Waggli`,
                     html: `<p>Click here to accept the invite: <a href="${inviteLink}">${inviteLink}</a></p>`
                 })
             });

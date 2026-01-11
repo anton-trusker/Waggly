@@ -462,4 +462,4 @@ Implement simple ML models for:
 
 ---
 
-This predictive system will transform Pawzly from a passive record-keeper into an intelligent health partner that actively helps pet owners make better decisions.
+This predictive system will transform Waggli from a passive record-keeper into an intelligent health partner that actively helps pet owners make better decisions.

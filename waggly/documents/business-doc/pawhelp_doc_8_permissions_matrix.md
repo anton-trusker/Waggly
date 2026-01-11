@@ -1,4 +1,4 @@
-**PawHelp Document 8: Role-Based Permissions Matrix & Access Control**
+**Waggli Document 8: Role-Based Permissions Matrix & Access Control**
 
 ---
 
@@ -77,5 +77,5 @@
 
 ---
 
-*PawHelp's role-based permissions and access control system ensures platform security, trust, and user-appropriate functionality while providing the flexibility to grow and evolve within the animal welfare community.*
+*Waggli's role-based permissions and access control system ensures platform security, trust, and user-appropriate functionality while providing the flexibility to grow and evolve within the animal welfare community.*
 

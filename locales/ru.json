@@ -1,6 +1,6 @@
 {
   "common": {
-    "welcome": "Добро пожаловать в Pawzly",
+    "welcome": "Добро пожаловать в Waggli",
     "language": "Язык",
     "select_language": "Выбрать язык",
     "search_language": "Поиск языка...",
@@ -216,7 +216,7 @@
   },
   "auth": {
     "login_title": "С возвращением",
-    "login_subtitle": "Войдите, чтобы продолжить в Pawzly",
+    "login_subtitle": "Войдите, чтобы продолжить в Waggli",
     "email_label": "Email адрес",
     "email_placeholder": "name@example.com",
     "password_label": "Пароль",
@@ -232,7 +232,7 @@
     "create_account": "Создать аккаунт",
     "already_have_account": "Уже есть аккаунт?",
     "login_link": "Войти",
-    "hero_title": "С возвращением в Pawzly",
+    "hero_title": "С возвращением в Waggli",
     "hero_subtitle": "Здоровье вашего питомца в одном месте.",
     "reset_title": "Сброс пароля",
     "reset_subtitle": "Введите email для получения ссылки",
@@ -312,7 +312,7 @@
     "error_weight": "Пожалуйста, введите корректный вес."
   },
   "pwa": {
-    "install_title": "Установить Pawzly",
+    "install_title": "Установить Waggli",
     "install_ios": "Нажмите кнопку Поделиться и выберите 'На экран Домой'",
     "install_android": "Нажмите кнопку Меню и выберите 'Установить приложение'"
   },
@@ -578,7 +578,7 @@
       "title": "Поделиться",
       "desc": "Поделитесь профилем с семьей или врачом.",
       "action": "Поделиться",
-      "message": "Посмотрите профиль питомца в Pawzly! {{url}}",
+      "message": "Посмотрите профиль питомца в Waggli! {{url}}",
       "message_title": "Профиль питомца"
     }
   },

@@ -2,7 +2,7 @@
 
 **Document Version:** 1.0  
 **Created:** January 10, 2026  
-**Purpose:** Complete BCS system specification for Pawzly implementation  
+**Purpose:** Complete BCS system specification for Waggli implementation  
 **Status:** Production-Ready Specification  
 **Based on:** AAHA, WSAVA, APOP, veterinary research standards
 
@@ -1105,7 +1105,7 @@ Month 12:
 
 ---
 
-## 💾 SECTION 8: PAWZLY BCS IMPLEMENTATION
+## 💾 SECTION 8: WAGGLI BCS IMPLEMENTATION
 
 ### 8.1 Pet Card BCS Display
 
@@ -1370,7 +1370,7 @@ Ideal Weight Dogs (BCS 4-5):
 
 ## 🎉 FINAL CHECKLIST: BCS IMPLEMENTATION
 
-### For Pawzly Development:
+### For Waggli Development:
 
 - [ ] BCS scale documentation (this document)
 - [ ] Visual guide with photos for BCS 1-9 (dogs & cats)
@@ -1417,6 +1417,6 @@ Ideal Weight Dogs (BCS 4-5):
 
 ---
 
-This comprehensive BCS specification is ready for implementation in Pawzly. It covers all aspects of body condition scoring, from scientific foundations to practical user implementation.
+This comprehensive BCS specification is ready for implementation in Waggli. It covers all aspects of body condition scoring, from scientific foundations to practical user implementation.
 
 🎓 **Ready to help pets live healthier, longer lives!** 🐾

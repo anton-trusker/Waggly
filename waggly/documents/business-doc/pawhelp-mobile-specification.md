@@ -1,9 +1,9 @@
-# PawHelp Mobile App Technical Specification
+# Waggli Mobile App Technical Specification
 
 ## 1. Overview
 
 ### 1.1 Project Description
-PawHelp Mobile is a React Native application built with Expo that connects pet owners in need with individuals willing to help. The app facilitates financial donations, blood donations, and physical help for animals requiring assistance. It will be available on both iOS and Android platforms.
+Waggli Mobile is a React Native application built with Expo that connects pet owners in need with individuals willing to help. The app facilitates financial donations, blood donations, and physical help for animals requiring assistance. It will be available on both iOS and Android platforms.
 
 ### 1.2 Target Audience
 - Pet owners seeking assistance for their pets
@@ -62,7 +62,7 @@ PawHelp Mobile is a React Native application built with Expo that connects pet o
 
 ### 3.1 Directory Structure
 ```
-/pawhelp-mobile
+/waggli-mobile
 ├── app.json                # Expo configuration
 ├── App.tsx                 # Application entry point
 ├── assets/                 # Static assets (images, fonts)
@@ -167,7 +167,7 @@ PawHelp Mobile is a React Native application built with Expo that connects pet o
 - Level 3: 0px 8px 16px rgba(0, 0, 0, 0.15)
 
 #### 4.1.6 Icons
-- Custom icon set based on PawHelp branding
+- Custom icon set based on Waggli branding
 - Consistent 24x24dp size with adjustable stroke width
 - Outline style for inactive states, filled style for active states
 

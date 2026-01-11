@@ -1,4 +1,4 @@
-# Pawzly: AI-Native Competitive Advantages
+# Waggli: AI-Native Competitive Advantages
 ## Executive Briefing for Investors
 
 **Date**: January 11, 2026  
@@ -17,7 +17,7 @@
 - 6-12 months per new market
 - Rover spending €15M over 5 years for European expansion
 
-**Pawzly's Approach:**
+**Waggli's Approach:**
 - **€0 marginal cost** to add new language
 - **Instant launch** in 20+ languages
 - Real-time translation of user content, AI responses, health advice
@@ -41,7 +41,7 @@
 
 **Cost Comparison:**
 
-| Category | Traditional Startup | Pawzly (AI-Dev) | Savings |
+| Category | Traditional Startup | Waggli (AI-Dev) | Savings |
 |----------|-------------------|-----------------|---------|
 | Development Team | €400K/year | €60K/year | **€340K** |
 | Time to MVP | 9-12 months | 3-4 months | **6-9 months** |
@@ -55,7 +55,7 @@
 - €1.5M localization (manual)
 - €1.5M marketing
 
-**Pawzly achieving same with €1.5M:**
+**Waggli achieving same with €1.5M:**
 - €100K development (AI-assisted)
 - €0 localization (AI automatic)
 - **€1.4M marketing** ← 10x advantage goes to GROWTH!
@@ -75,7 +75,7 @@
 
 ### 3. AI-First Product Architecture (Not Just Features) 🤖
 
-**The Difference:** Others bolt on AI features. Pawzly is AI-native from architecture level.
+**The Difference:** Others bolt on AI features. Waggli is AI-native from architecture level.
 
 **What This Means:**
 - Conversational AI eliminates manual data entry (OCR + voice + natural language)
@@ -85,7 +85,7 @@
 
 **Competitive Moat:**
 - **PetDesk, 11pets, PetPro**: Manual entry apps with basic reminders
-- **Pawzly**: Zero-effort capture, intelligent predictions, human-like interaction
+- **Waggli**: Zero-effort capture, intelligent predictions, human-like interaction
 
 **Why This Matters:**
 - Engagement = SaaS retention = ARR compounding
@@ -98,7 +98,7 @@
 
 ### ✅ RECOMMENDED: Netherlands + Germany + Belgium + Austria
 
-**Why This Works (But Only For Pawzly):**
+**Why This Works (But Only For Waggli):**
 
 1. **AI Localization** = Zero cost for 4 languages (Dutch, German, French)
 2. **Shared Languages** = 2 languages cover 4 markets (German: DE+AT, Dutch: NL+BE)
@@ -137,7 +137,7 @@
 - Manual localization for future expansion
 - €270K ARR Year 1
 
-**Pawzly with €1.5M:**
+**Waggli with €1.5M:**
 - **Four country simultaneous launch**
 - AI development = more features, faster
 - Global-ready from day one
@@ -147,7 +147,7 @@
 
 **Traditional SaaS:** €1.5M seed → €8-12M Series A valuation (5-8x)
 
-**Pawzly:** €1.5M seed → €30M+ Series A valuation (20x potential) because:
+**Waggli:** €1.5M seed → €30M+ Series A valuation (20x potential) because:
 - Multi-country = proven scalability
 - AI efficiency = better margins
 - Faster growth = higher ARR multiple
@@ -163,7 +163,7 @@
 
 **Comparable Exits:**
 - Rover: $2.3B (grew country-by-country, slow)
-- Pawzly path: Faster growth, better margins, potentially higher multiple
+- Waggli path: Faster growth, better margins, potentially higher multiple
 
 ---
 
@@ -206,7 +206,7 @@
 
 ## Bottom Line for Investors
 
-**Pawzly's AI-native architecture creates three compounding advantages:**
+**Waggli's AI-native architecture creates three compounding advantages:**
 
 1. **Immediate Revenue** (subscription SaaS, not waiting for marketplace liquidity)
 2. **Global Scaling** (zero-cost localization, not €400K per expansion)
@@ -221,6 +221,6 @@
 
 ---
 
-**Prepared by**: Pawzly Research Team  
+**Prepared by**: Waggli Research Team  
 **For**: Seed/Series A Investor Conversations  
 **Confidential**

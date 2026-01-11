@@ -1,5 +1,5 @@
 ## 1. Product Overview
-Complete desktop-first redesign of the Pawzly pet management web application to optimize user experience for desktop environments (1920x1080 and above). The redesign transforms the mobile-first navigation into a professional desktop interface with horizontal top navigation, 3-column dashboard layout, and split-screen authentication pages while maintaining all existing pet management functionality and user data compatibility.
+Complete desktop-first redesign of the Waggli pet management web application to optimize user experience for desktop environments (1920x1080 and above). The redesign transforms the mobile-first navigation into a professional desktop interface with horizontal top navigation, 3-column dashboard layout, and split-screen authentication pages while maintaining all existing pet management functionality and user data compatibility.
 
 Target users are desktop power users who require efficient mouse-based interactions, keyboard shortcuts, and multi-panel window management for improved productivity in managing their pets' health and activities.
 

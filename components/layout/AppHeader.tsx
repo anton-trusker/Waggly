@@ -172,7 +172,7 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
         }
       }
 
-      return 'Pawzly';
+      return 'Waggli';
     };
 
     return <Text style={styles.title}>{getPageTitle()}</Text>;

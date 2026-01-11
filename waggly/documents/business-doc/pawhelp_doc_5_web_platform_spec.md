@@ -1,4 +1,4 @@
-**PawHelp Document 5: Web Platform Specification — UI/UX, Screens & Flows**
+**Waggli Document 5: Web Platform Specification — UI/UX, Screens & Flows**
 
 ---
 
@@ -34,7 +34,7 @@
 - Design Tokens for colors, spacing, typography.
 - Accessibility-first color contrasts.
 - Responsive layout grid.
-- Custom iconography aligned with PawHelp branding.
+- Custom iconography aligned with Waggli branding.
 
 ---
 
@@ -123,5 +123,5 @@
 
 ---
 
-*The PawHelp web platform provides a feature-rich, inclusive, and trustworthy environment for animal welfare action, designed to complement and enhance the mobile experience.*
+*The Waggli web platform provides a feature-rich, inclusive, and trustworthy environment for animal welfare action, designed to complement and enhance the mobile experience.*
 

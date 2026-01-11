@@ -1,23 +1,23 @@
-Here is a complete, structured platform specification for the user-facing PawHelp product, covering UI, core pages, roles, onboarding, user flows, messaging, posting, search, pet profiles and digital passport, image recognition, service offers, requests, and more.pawhelp\_doc\_7\_admin\_panel\_roles.md+3​
+Here is a complete, structured platform specification for the user-facing Waggli product, covering UI, core pages, roles, onboarding, user flows, messaging, posting, search, pet profiles and digital passport, image recognition, service offers, requests, and more.waggli\_doc\_7\_admin\_panel\_roles.md+3​
 
 ## **Scope and goals**
 
-PawHelp is a multi-role, multi-language web and mobile platform that lets users discover and help animal cases, manage pets and their digital passports, find and book services, create service offers, message securely, and participate in the community. The spec below defines primary screens, components, flows, data, and edge-case logic for an MVP-to-scale implementation.pawhelp\_doc\_5\_web\_platform\_spec.md+1​
+Waggli is a multi-role, multi-language web and mobile platform that lets users discover and help animal cases, manage pets and their digital passports, find and book services, create service offers, message securely, and participate in the community. The spec below defines primary screens, components, flows, data, and edge-case logic for an MVP-to-scale implementation.waggli\_doc\_5\_web\_platform\_spec.md+1​
 
 ## **Global UX foundations**
 
 * Navigation  
-  * Header: logo, universal search, location, language, notifications, messages, profile menu.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Footer: help, FAQ, policies, contact, social, newsletter.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Header: logo, universal search, location, language, notifications, messages, profile menu.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Footer: help, FAQ, policies, contact, social, newsletter.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Common components  
-  * Cards: case, service, provider, article, event with consistent metadata, CTAs, skeleton loaders.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Filters: collapsible on mobile; apply/reset; persistent URL params.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Modals: accessible focus trap, Esc to close, enter-key submit.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Loaders: skeletons and progress; optimistic UI for quick feedback.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Cards: case, service, provider, article, event with consistent metadata, CTAs, skeleton loaders.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Filters: collapsible on mobile; apply/reset; persistent URL params.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Modals: accessible focus trap, Esc to close, enter-key submit.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Loaders: skeletons and progress; optimistic UI for quick feedback.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Design system  
-  * Color tokens with WCAG AA contrast, state colors for statuses, consistent spacing scale, typography ramp, icon set.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Color tokens with WCAG AA contrast, state colors for statuses, consistent spacing scale, typography ramp, icon set.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Performance  
-  * SSR for SEO on web, prefetch on hover, lazy-load media, WebP/AVIF, CDN caching, API pagination.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * SSR for SEO on web, prefetch on hover, lazy-load media, WebP/AVIF, CDN caching, API pagination.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Roles and access**
 
@@ -30,56 +30,56 @@ PawHelp is a multi-role, multi-language web and mobile platform that lets users 
 
 ## **Onboarding and authentication**
 
-* Registration methods: email+password, phone+OTP, social (Google/Apple/Facebook, regionals if market fit); email verification; optional MFA (SMS/app).pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* First-run role chooser: I need help; I want to help; I offer services; I represent organization.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Profile bootstrap: name, location, language, currency, notifications; pet quick-add for owners.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+* Registration methods: email+password, phone+OTP, social (Google/Apple/Facebook, regionals if market fit); email verification; optional MFA (SMS/app).waggli\_doc\_5\_web\_platform\_spec.md​  
+* First-run role chooser: I need help; I want to help; I offer services; I represent organization.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Profile bootstrap: name, location, language, currency, notifications; pet quick-add for owners.waggli\_doc\_5\_web\_platform\_spec.md​  
 * For providers: guided onboarding with verification (ID, certs, insurance), service setup, availability, payouts.advice-and-recomend-what-improve-in-my-new-startup.md​
 
 ## **Core pages**
 
 * Home  
-  * Urgent cases, search bar, service categories, community highlights, education teasers, top donors/providers.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Urgent cases, search bar, service categories, community highlights, education teasers, top donors/providers.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Cases listing  
-  * Filters: location \+ radius, species, urgency, help type, funding %, date; sort: urgency/recent/near goal/near me; grid/list.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Filters: location \+ radius, species, urgency, help type, funding %, date; sort: urgency/recent/near goal/near me; grid/list.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Case detail  
-  * Media carousel; progress; donate CTA; tabs: Story, Supporters, Updates, Comments; organizer card; related cases; verified docs block.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Media carousel; progress; donate CTA; tabs: Story, Supporters, Updates, Comments; organizer card; related cases; verified docs block.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Services listing  
   * Filters: category, price, rating, availability date, verified, provider type, languages, mobile vs at-location; sort: recommended/nearest/rated/price.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Service detail  
   * Photo gallery; quick info (price, duration, location); description; calendar; pricing details; provider profile; reviews; related services.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Community hub  
-  * Forums, groups, events, success stories; create post; category filters; best answers; moderation cues.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Forums, groups, events, success stories; create post; category filters; best answers; moderation cues.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Messages  
-  * Inbox with booking/case context cards; secure attachments; language-aware translate; safety rails reminding in-platform payments.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Inbox with booking/case context cards; secure attachments; language-aware translate; safety rails reminding in-platform payments.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Wallet and billing  
-  * Saved methods (tokenized), receipts, donation summaries, credits, transactions.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Saved methods (tokenized), receipts, donation summaries, credits, transactions.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Help center  
-  * Searchable articles, guided flows, contact forms, live chat window (phase).pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Searchable articles, guided flows, contact forms, live chat window (phase).waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Universal search**
 
-* Autocomplete suggestions (cases, services, providers, community); full results page with tabs and type-specific filters; zero-result helpers widen radius/relax filters or let users create requests/alerts.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Autocomplete suggestions (cases, services, providers, community); full results page with tabs and type-specific filters; zero-result helpers widen radius/relax filters or let users create requests/alerts.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Pet profiles and Digital Passport**
 
-* Pet list: cards with species/breed/age, quick actions (book, create case, add record).pawhelp\_doc\_5\_web\_platform\_spec.md​  
+* Pet list: cards with species/breed/age, quick actions (book, create case, add record).waggli\_doc\_5\_web\_platform\_spec.md​  
 * Create pet flow  
   * Species, name, age/weight units, breed with search/mixed, photos uploader with crop; health info (allergies, conditions, meds); behavior; emergency contacts; vet details.advice-and-recomend-what-improve-in-my-new-startup.md+1​  
 * Digital Passport tabs  
   * Overview; Health records (vaccinations with reminders, diagnoses, treatments, surgeries, labs, invoices); Documents (OCR, verification status); Service history; Cases.advice-and-recomend-what-improve-in-my-new-startup.md+1​  
 * Image recognition (optional, phased)  
-  * On photo upload: detect species/breed/age range; autofill suggestions; dedupe pet profile with similarity; flag medical document types via OCR for case verification.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * On photo upload: detect species/breed/age range; autofill suggestions; dedupe pet profile with similarity; flag medical document types via OCR for case verification.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Create a help request (case)**
 
 * Stepper  
-  * Help type(s) (medical, blood, physical); choose pet; story title \+ rich description; documents upload with types and counts; fundraising goal \+ cost breakdown; media; contact visibility; review \+ submit for admin approval; save draft anytime.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Help type(s) (medical, blood, physical); choose pet; story title \+ rich description; documents upload with types and counts; fundraising goal \+ cost breakdown; media; contact visibility; review \+ submit for admin approval; save draft anytime.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Post-publish  
-  * Share kit (images \+ links), updates authoring, donor thanks broadcast, close/cancel with outcomes and refund handling according to policy.pawhelp\_doc\_5\_web\_platform\_spec.md​
+  * Share kit (images \+ links), updates authoring, donor thanks broadcast, close/cancel with outcomes and refund handling according to policy.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Donate flow**
 
-* Amount presets \+ custom; anonymity; message to owner; method (card/PayPal/SEPA/local); tip/fee display; 3DS; receipt and share; subscription/recurring donations (phase).pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Amount presets \+ custom; anonymity; message to owner; method (card/PayPal/SEPA/local); tip/fee display; 3DS; receipt and share; subscription/recurring donations (phase).waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Blood donation network**
 
@@ -93,7 +93,7 @@ PawHelp is a multi-role, multi-language web and mobile platform that lets users 
 * Availability  
   * Weekly schedule, exceptions, buffer time, instant booking rules, recurring support; calendar drag-and-drop and blocked time.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Pricing tools  
-  * Packages, promo codes, seasonal pricing, AI suggestions vs. market benchmarks; visibility flags (featured).Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+  * Packages, promo codes, seasonal pricing, AI suggestions vs. market benchmarks; visibility flags (featured).Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Performance  
   * Views→bookings conversion, revenue trend, most-booked slots, review summaries.advice-and-recomend-what-improve-in-my-new-startup.md​
 
@@ -104,24 +104,24 @@ PawHelp is a multi-role, multi-language web and mobile platform that lets users 
 ## **Provider dashboard**
 
 * Today’s schedule; pending requests; earnings/payouts; performance KPIs (rating, response, acceptance); messages; service list quick actions.advice-and-recomend-what-improve-in-my-new-startup.md​  
-* Safety & compliance: insurance uploads with expiry reminders; license/cert verification; breed/regional restriction checks.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+* Safety & compliance: insurance uploads with expiry reminders; license/cert verification; breed/regional restriction checks.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
 ## **Community**
 
-* Forums with categories and post types; rich editor with images; replies and best answers; moderation flags and AI pre-screen badges; profile cards and trust tie-in.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Groups: discover/join/create; privacy levels; discussions, events, media; admin tools for membership and moderation.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Events: calendar and list; RSVP and messaging; organizer tools; check-in lists.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Success stories: before/after, link to original cases, submission after case completion.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Forums with categories and post types; rich editor with images; replies and best answers; moderation flags and AI pre-screen badges; profile cards and trust tie-in.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Groups: discover/join/create; privacy levels; discussions, events, media; admin tools for membership and moderation.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Events: calendar and list; RSVP and messaging; organizer tools; check-in lists.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Success stories: before/after, link to original cases, submission after case completion.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Messaging**
 
-* Inbox with filters; conversation thread with read receipts; attachments, photos, location; booking/case context cards with quick actions; canned replies; translation assist; safety keyword warnings.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Inbox with filters; conversation thread with read receipts; attachments, photos, location; booking/case context cards with quick actions; canned replies; translation assist; safety keyword warnings.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Profiles**
 
 * User profile  
-  * Public: avatar, bio, location (city), badges, activity, reviews; private details hidden per privacy.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-  * Settings: personal info, address (private), languages, currency, notifications, privacy toggles, connected accounts, MFA, login history, data export/delete.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Public: avatar, bio, location (city), badges, activity, reviews; private details hidden per privacy.waggli\_doc\_5\_web\_platform\_spec.md​  
+  * Settings: personal info, address (private), languages, currency, notifications, privacy toggles, connected accounts, MFA, login history, data export/delete.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Provider profile  
   * Public: hero, badges (verified, background-checked, licensed), services grid, reviews, certifications gallery, service area map, response/acceptance rates; contact button.advice-and-recomend-what-improve-in-my-new-startup.md​  
   * Edit: completeness score, preview as public.advice-and-recomend-what-improve-in-my-new-startup.md​
@@ -129,14 +129,14 @@ PawHelp is a multi-role, multi-language web and mobile platform that lets users 
 ## **Search, recommendations, and ranking**
 
 * Search relevance  
-  * Cases: urgency, verification, proximity, velocity, content quality.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+  * Cases: urgency, verification, proximity, velocity, content quality.waggli\_doc\_5\_web\_platform\_spec.md​  
   * Services: rating, responsiveness, acceptance/on-time, price competitiveness, proximity, availability, verification.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Personalized feeds  
-  * For owners: services and cases tied to pets and history; for providers: demand heatmaps, suggested categories; for helpers: similar cases and local needs.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * For owners: services and cases tied to pets and history; for providers: demand heatmaps, suggested categories; for helpers: similar cases and local needs.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Mobile-specific**
 
-* Bottom nav (Home, Search, Messages, Notifications, Profile); push with action buttons; camera integration for uploads; offline drafts and queued messages; deep links; widgets for bookings/donations/cases.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Bottom nav (Home, Search, Messages, Notifications, Profile); push with action buttons; camera integration for uploads; offline drafts and queued messages; deep links; widgets for bookings/donations/cases.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Trust, safety, disputes**
 
@@ -144,27 +144,27 @@ PawHelp is a multi-role, multi-language web and mobile platform that lets users 
 
 ## **Help & education**
 
-* Help center with guided forms, searchable FAQs; expert Q\&A with verified pros; learning paths by user type; video tutorials.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Help center with guided forms, searchable FAQs; expert Q\&A with verified pros; learning paths by user type; video tutorials.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Main user flows (step summaries)**
 
-* Sign up and select role → complete profile → for owners: add pet → for providers: verify and add services → first action (donate, book, create case).pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Create case → admin approval → publish → donations and updates → completion/closure → success story.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+* Sign up and select role → complete profile → for owners: add pet → for providers: verify and add services → first action (donate, book, create case).waggli\_doc\_5\_web\_platform\_spec.md​  
+* Create case → admin approval → publish → donations and updates → completion/closure → success story.waggli\_doc\_5\_web\_platform\_spec.md​  
 * Search services → view detail → select slot/pets → pay → track → review.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Register blood donor → verification → receive match → schedule → confirm → cooldown.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Create service offer → set availability → get bookings → perform service (check-in/out) → payout.advice-and-recomend-what-improve-in-my-new-startup.md​  
-* Post to community → replies/best answer → badges and trust.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Post to community → replies/best answer → badges and trust.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Data and files**
 
-* Media limits: 10 photos per case/service, 5MB each; docs up to 10MB; OCR for medical docs; PII masked in public views.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Localization: 20+ EU languages; currency display and local payment options; regional compliance for addresses/VAT/phone formats.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Media limits: 10 photos per case/service, 5MB each; docs up to 10MB; OCR for medical docs; PII masked in public views.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Localization: 20+ EU languages; currency display and local payment options; regional compliance for addresses/VAT/phone formats.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Non-functional requirements**
 
-* Performance targets: page loads \<2s; API \<200–500ms; search \<300ms; mobile launch \<3s; availability 99.9%.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Accessibility: WCAG 2.1 AA; keyboard, ARIA, captions, contrast; RTL layouts.pawhelp\_doc\_5\_web\_platform\_spec.md​  
-* Security: TLS 1.3; tokenized payments; escrow for bookings; MFA; device/session management; GDPR data rights flows.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Performance targets: page loads \<2s; API \<200–500ms; search \<300ms; mobile launch \<3s; availability 99.9%.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Accessibility: WCAG 2.1 AA; keyboard, ARIA, captions, contrast; RTL layouts.waggli\_doc\_5\_web\_platform\_spec.md​  
+* Security: TLS 1.3; tokenized payments; escrow for bookings; MFA; device/session management; GDPR data rights flows.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 Here is the complete user-facing specification for Businesses, Shelters/Rescues (Non-Commercial Organizations), and Veterinary Clinics, extending the platform with organization-grade features, workflows, and UI tailored to multi-staff operations and compliance needs.advice-and-recomend-what-improve-in-my-new-startup.md+2​
 
@@ -172,12 +172,12 @@ Here is the complete user-facing specification for Businesses, Shelters/Rescues 
 
 * Business (commercial): salons, grooming, boarding, training centers, pet stores; multi-location, staff scheduling, inventory/retail add-ons.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Shelter/Rescue (non-commercial): animal intake, case portfolios, adoption pipeline, volunteer coordination, fundraising pages.advice-and-recomend-what-improve-in-my-new-startup.md​  
-* Veterinary clinic: appointments, medical records sync, prescription requests, case verification, emergency triage channel.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+* Veterinary clinic: appointments, medical records sync, prescription requests, case verification, emergency triage channel.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Shared: organization profile, verification (business registration/VAT, licenses, insurance), payouts, analytics, CSR/sponsor tools (phase).advice-and-recomend-what-improve-in-my-new-startup.md​
 
 ## **Common organization onboarding**
 
-* Step 1: Account creation \+ role selection (Business, Shelter/Rescue, Clinic).pawhelp\_doc\_5\_web\_platform\_spec.md​  
+* Step 1: Account creation \+ role selection (Business, Shelter/Rescue, Clinic).waggli\_doc\_5\_web\_platform\_spec.md​  
 * Step 2: Organization profile  
   * Legal name, public display name, logo/cover, description, website, phone, contact email, social links, languages.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Step 3: Locations  
@@ -265,7 +265,7 @@ Here is the complete user-facing specification for Businesses, Shelters/Rescues 
 
 ## **Safety and compliance**
 
-* Data consent for adopters/donors; GDPR exports; confidentiality on sensitive cases; incident reporting workflow.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Data consent for adopters/donors; GDPR exports; confidentiality on sensitive cases; incident reporting workflow.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Veterinary clinics**
 
@@ -274,21 +274,21 @@ Here is the complete user-facing specification for Businesses, Shelters/Rescues 
 * Appointment types  
   * Exam, vaccination, surgery, follow-up, tele-vet; durations and prep/post buffers; required room/equipment; pre-visit forms.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Triage and emergencies  
-  * Urgent case channel: owners flag emergency, clinic sees alert feed by distance; accept for triage with ETA; queue management.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+  * Urgent case channel: owners flag emergency, clinic sees alert feed by distance; accept for triage with ETA; queue management.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Calendar  
   * Doctor/room calendars; surgery blocks; overrun handling; ICS/Google/Outlook sync; waitlist auto-fill.advice-and-recomend-what-improve-in-my-new-startup.md​
 
 ## **Medical records and digital passport sync**
 
-* Consent-gated read access to pet’s Digital Passport; push updates to passport for vaccinations/treatments; upload PDFs/images; OCR recognition to map records fields.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​  
+* Consent-gated read access to pet’s Digital Passport; push updates to passport for vaccinations/treatments; upload PDFs/images; OCR recognition to map records fields.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​  
 * Prescriptions  
-  * Issue, renew, attach dosage instructions; e-sign; refill requests; pharmacy integration hook.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​  
+  * Issue, renew, attach dosage instructions; e-sign; refill requests; pharmacy integration hook.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​  
 * Case verification  
-  * Clinic verifies diagnosis/cost estimates for fundraising cases; clinic logo “Verified by” on case; optional direct-to-clinic disbursement.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+  * Clinic verifies diagnosis/cost estimates for fundraising cases; clinic logo “Verified by” on case; optional direct-to-clinic disbursement.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Billing and payouts**
 
-* Clinic payouts for services; direct billing for surgeries tied to cases; escrow split (donations → clinic) with proof-of-service upload before release.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Clinic payouts for services; direct billing for surgeries tied to cases; escrow split (donations → clinic) with proof-of-service upload before release.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Tele-vet (phase)**
 
@@ -309,7 +309,7 @@ Here is the complete user-facing specification for Businesses, Shelters/Rescues 
 
 ## **Messaging and CRM**
 
-* Unified inbox by organization with assignment; SLA timers; templates; conversation linking to animals/bookings/adoptions/cases; internal notes.pawhelp\_doc\_5\_web\_platform\_spec.md​
+* Unified inbox by organization with assignment; SLA timers; templates; conversation linking to animals/bookings/adoptions/cases; internal notes.waggli\_doc\_5\_web\_platform\_spec.md​
 
 ## **Payments and finance**
 
@@ -339,26 +339,26 @@ Here is the complete user-facing specification for Businesses, Shelters/Rescues 
 
 ## **Clinic: verify a case and bill directly**
 
-1. Owner creates case and selects clinic → clinic verifies diagnosis/estimate → donations flow to escrow → surgery completed → clinic uploads invoice → escrow released to clinic → case closed with outcome update.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+1. Owner creates case and selects clinic → clinic verifies diagnosis/estimate → donations flow to escrow → surgery completed → clinic uploads invoice → escrow released to clinic → case closed with outcome update.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Verification and compliance specifics**
 
 * Businesses: business register (country-specific), VAT, liability insurance, staff background checks for certain services (e.g., in-home).advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Shelters/NGOs: registration documents, board/contact verification, dedicated donation ledger, transparency commitments.advice-and-recomend-what-improve-in-my-new-startup.md​  
-* Clinics: medical licenses, doctor registrations, facility licenses; heightened data privacy for medical records; explicit user consent capture and revocation.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Clinics: medical licenses, doctor registrations, facility licenses; heightened data privacy for medical records; explicit user consent capture and revocation.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Edge-case logic**
 
 * Location downtime: auto-hide bookable slots and show notice; offer waitlist transfer to other locations.advice-and-recomend-what-improve-in-my-new-startup.md​  
 * Overcapacity: resource conflict → suggest alternate times/provider; keep deposit hold until client decides within window.advice-and-recomend-what-improve-in-my-new-startup.md​  
-* Refund precedence: donation refunds subject to policy and fraud checks; booking refunds apply policy matrix; split payments (donation+client copay) prorated on service cancellation.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Refund precedence: donation refunds subject to policy and fraud checks; booking refunds apply policy matrix; split payments (donation+client copay) prorated on service cancellation.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **Mobile UX for organizations**
 
-* Staff app mode: today’s schedule, check-in/out, photo notes, quick messages, navigation links, incident reporting; offline caching for schedules and forms.pawhelp\_doc\_5\_web\_platform\_spec.md​  
+* Staff app mode: today’s schedule, check-in/out, photo notes, quick messages, navigation links, incident reporting; offline caching for schedules and forms.waggli\_doc\_5\_web\_platform\_spec.md​  
 * NGO mobile: scan intake via camera, quick update posts to campaigns, volunteer shift check-ins via QR.advice-and-recomend-what-improve-in-my-new-startup.md​
 
 ## **Data model additions (high level)**
 
-* Organizations, Locations, Resources, StaffRoles, Services, Packages, Bookings, Deposits, Animals, Intakes, FosterAssignments, AdoptionApplications, VolunteerShifts, Campaigns, Donations, MedicalRecords, Prescriptions, Verifications, Invoices.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+* Organizations, Locations, Resources, StaffRoles, Services, Packages, Bookings, Deposits, Animals, Intakes, FosterAssignments, AdoptionApplications, VolunteerShifts, Campaigns, Donations, MedicalRecords, Prescriptions, Verifications, Invoices.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 

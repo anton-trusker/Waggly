@@ -9,7 +9,7 @@
 
 ## 📊 EXECUTIVE SUMMARY
 
-This document defines the complete data specification for Pawzly's Digital Pet Passport, including all pet details, health metrics, scoring systems, medical records, and analytics aggregation formats. This specification is designed for:
+This document defines the complete data specification for Waggli's Digital Pet Passport, including all pet details, health metrics, scoring systems, medical records, and analytics aggregation formats. This specification is designed for:
 
 - **Health Partner Integrations**: Insurance companies, veterinary networks
 - **Analytics & Research**: Population health studies, breed analytics

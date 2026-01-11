@@ -1,16 +1,16 @@
-# PAWZLY PET HEALTH MANAGEMENT PLATFORM
+# WAGGLI PET HEALTH MANAGEMENT PLATFORM
 ## Comprehensive Forms Specification Document
 
 **Document Version:** 1.1  
 **Last Updated:** December 25, 2025  
 **Status:** Complete Specification (Supabase Integrated)  
-**Platform:** Pawzly (Pet Health & Wellness Management)
+**Platform:** Waggli (Pet Health & Wellness Management)
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-This document provides comprehensive specifications for all forms within the Pawzly pet health management platform. It includes detailed field definitions, data types, validation rules, conditional logic, UX/UI improvements, and design patterns optimized for modern web and mobile applications.
+This document provides comprehensive specifications for all forms within the Waggli pet health management platform. It includes detailed field definitions, data types, validation rules, conditional logic, UX/UI improvements, and design patterns optimized for modern web and mobile applications.
 
 The forms are designed to cover six primary use cases:
 1. **Visit Management** - Veterinary appointments and check-ups
@@ -1934,7 +1934,7 @@ END
 This specification consolidates requirements from the following source documents found in the project repository:
 1.  **`pet-management-enhancement-prd.md`**: Provided high-level feature requirements (Pet Profile, Dashboard, Calendar) but lacked detailed field specifications for medical forms. This spec fills that gap.
 2.  **`pet_vaccinations_complete.csv` & `pet_medicines_comprehensive.csv`**: Analyzed for data structure. The "Vaccine Name" and "Medication Name" dropdowns in this spec are designed to consume this rich dataset directly from Supabase.
-3.  **`Pawzly-Forms-Specification.md` (Previous Draft)**: Served as the base, refined to include Supabase integration and responsive layout strategies.
+3.  **`Waggli-Forms-Specification.md` (Previous Draft)**: Served as the base, refined to include Supabase integration and responsive layout strategies.
 
 ### A.2 Standardization Decisions
 To ensure consistency across the platform, the following standards have been enforced in this specification:
@@ -1973,4 +1973,4 @@ This comprehensive forms specification document provides:
 **Document Status:** ✅ Complete  
 **Version:** 1.0  
 **Last Updated:** December 2025  
-**Maintained By:** Pawzly Product Team
+**Maintained By:** Waggli Product Team

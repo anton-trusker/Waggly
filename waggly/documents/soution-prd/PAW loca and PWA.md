@@ -2,15 +2,15 @@
 
 # now create solution for pwa. and how platform should manage multi country and localisation
 
-Based on Pawzly's requirements for multi-country support, here's a comprehensive solution for PWA implementation and internationalization strategy:
+Based on Waggli's requirements for multi-country support, here's a comprehensive solution for PWA implementation and internationalization strategy:
 
 ***
 
-# **PAWZLY - PWA \& MULTI-COUNTRY LOCALIZATION SOLUTION**
+# **WAGGLI - PWA \& MULTI-COUNTRY LOCALIZATION SOLUTION**
 
 ## **1. PROGRESSIVE WEB APP (PWA) IMPLEMENTATION**
 
-### **Why PWA for Pawzly?**
+### **Why PWA for Waggli?**
 
 ✅ **App-like experience** - No app store needed
 ✅ **Push notifications** - Re-engage users
@@ -127,7 +127,7 @@ export default withPWA({
       },
     },
     {
-      urlPattern: /^https:\/\/api\.pawzly\.com\/.*/i,
+      urlPattern: /^https:\/\/api\.waggli\.com\/.*/i,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'api-cache',
@@ -150,8 +150,8 @@ export default withPWA({
 ```json
 // public/manifest.json
 {
-  "name": "Pawzly - Pet Care & Community",
-  "short_name": "Pawzly",
+  "name": "Waggli - Pet Care & Community",
+  "short_name": "Waggli",
   "description": "Connect with pet services, manage pet health, and join the pet community",
   "start_url": "/",
   "display": "standalone",
@@ -284,7 +284,7 @@ export default withPWA({
 // packages/api/src/offline/sync-manager.ts
 import { openDB, DBSchema } from 'idb';
 
-interface PawzlyDB extends DBSchema {
+interface WaggliDB extends DBSchema {
   pets: {
     key: string;
     value: Pet;
@@ -300,7 +300,7 @@ interface PawzlyDB extends DBSchema {
   };
 }
 
-const dbPromise = openDB<PawzlyDB>('pawzly-cache', 1, {
+const dbPromise = openDB<WaggliDB>('waggli-cache', 1, {
   upgrade(db) {
     const petStore = db.createObjectStore('pets', { keyPath: 'id' });
     petStore.createIndex('by-owner', 'owner_id');
@@ -349,7 +349,7 @@ export async function syncDrafts() {
 'use client';
 
 import { useEffect, useState } from 'react';
-import { syncDrafts } from '@pawzly/api/offline';
+import { syncDrafts } from '@waggli/api/offline';
 import { useToast } from '@/components/ui/use-toast';
 
 export function OfflineSync() {
@@ -563,11 +563,11 @@ export function InstallPrompt() {
       </button>
       
       <div className="flex items-start gap-3">
-        <img src="/icons/icon-72x72.png" alt="Pawzly" className="w-12 h-12" />
+        <img src="/icons/icon-72x72.png" alt="Waggli" className="w-12 h-12" />
         <div className="flex-1">
-          <h3 className="font-semibold text-lg">Install Pawzly</h3>
+          <h3 className="font-semibold text-lg">Install Waggli</h3>
           <p className="text-sm text-gray-600 mt-1">
-            Add Pawzly to your home screen for quick access and offline features
+            Add Waggli to your home screen for quick access and offline features
           </p>
           <div className="flex gap-2 mt-3">
             <Button onClick={handleInstall} size="sm">
@@ -626,27 +626,27 @@ const nextConfig = {
     localeDetection: true,
     domains: [
       {
-        domain: 'pawzly.com',
+        domain: 'waggli.com',
         defaultLocale: 'en-GB',
         http: true, // for local dev
       },
       {
-        domain: 'pawzly.de',
+        domain: 'waggli.de',
         defaultLocale: 'de-DE',
         http: true,
       },
       {
-        domain: 'pawzly.fr',
+        domain: 'waggli.fr',
         defaultLocale: 'fr-FR',
         http: true,
       },
       {
-        domain: 'pawzly.es',
+        domain: 'waggli.es',
         defaultLocale: 'es-ES',
         http: true,
       },
       {
-        domain: 'pawzly.it',
+        domain: 'waggli.it',
         defaultLocale: 'it-IT',
         http: true,
       },
@@ -659,16 +659,16 @@ const nextConfig = {
 
 ```
 // Option 1: Subdomain (Recommended for SEO)
-https://pawzly.de/pets/123
-https://pawzly.fr/pets/123
+https://waggli.de/pets/123
+https://waggli.fr/pets/123
 
 // Option 2: Path-based (Easier setup)
-https://pawzly.com/de/pets/123
-https://pawzly.com/fr/pets/123
+https://waggli.com/de/pets/123
+https://waggli.com/fr/pets/123
 
 // Option 3: Hybrid (Best UX)
-https://pawzly.de/pets/123  (German users)
-https://pawzly.com/en/pets/123 (Other countries)
+https://waggli.de/pets/123  (German users)
+https://waggli.com/en/pets/123 (Other countries)
 ```
 
 
@@ -1092,7 +1092,7 @@ async function handleRequest(request) {
   
   // Redirect to localized subdomain
   if (!url.hostname.includes(locale.split('-')[0])) {
-    url.hostname = `${locale.split('-')[0]}.pawzly.com`;
+    url.hostname = `${locale.split('-')[0]}.waggli.com`;
     return Response.redirect(url.toString(), 302);
   }
   
@@ -1270,7 +1270,7 @@ posthog.capture('service_booked', {
 
 ✅ 5 languages (en, de, fr, es, it)
 ✅ next-intl for translations
-✅ Regional domains (pawzly.de, pawzly.fr)
+✅ Regional domains (waggli.de, waggli.fr)
 ✅ Currency conversion
 ✅ Date/time/number formatting
 ✅ Localized content storage
@@ -1283,5 +1283,5 @@ posthog.capture('service_booked', {
 - Domains: \$30/year (5 domains)
 - **Total: ~\$40-80 for MVP**
 
-This gives Pawzly a native app-like experience on web with full multi-country support! 🌍🐾
+This gives Waggli a native app-like experience on web with full multi-country support! 🌍🐾
 

@@ -1,7 +1,7 @@
 # Pet Passport Tab - Quick Implementation Reference (Project-Styled)
 
 **Version:** 2.0 - Project-Aligned  
-**Purpose:** Quick reference guide using Pawzly's actual design system
+**Purpose:** Quick reference guide using Waggli's actual design system
 
 ---
 

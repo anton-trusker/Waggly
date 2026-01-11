@@ -44,7 +44,7 @@ export default function PWAInstallPrompt() {
             <Text style={{ fontSize: 24 }}>📱</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{t('pwa.install_title', { defaultValue: 'Install Pawzly App' })}</Text>
+          <Text style={styles.title}>{t('pwa.install_title', { defaultValue: 'Install Waggli App' })}</Text>
           <Text style={styles.description}>
             {isIOS 
               ? t('pwa.install_ios', { defaultValue: 'Tap the Share button and select "Add to Home Screen"' })

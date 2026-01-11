@@ -1,4 +1,4 @@
-# Pawzly Pet Insurance - Europe Market Strategy
+# Waggli Pet Insurance - Europe Market Strategy
 
 **Document Version**: 1.0  
 **Created**: January 3, 2026  
@@ -541,7 +541,7 @@ This document outlines a comprehensive strategy for launching a **pet insurance 
 ### Year 1 Strategy: Focus on UK + Germany + France
 
 **Assumptions**:
-- 50,000 total Pawzly users across Europe (Year 1)
+- 50,000 total Waggli users across Europe (Year 1)
 - UK: 30,000 users (60%)
 - Germany: 10,000 users (20%)
 - France: 10,000 users (20%)
@@ -1391,11 +1391,11 @@ This document outlines a comprehensive strategy for launching a **pet insurance 
 ## 🎯 TOTAL ADDRESSABLE MARKET (TAM)
 
 **Total European Pet Insurance Market**: €7.62B (2024)  
-**Pawzly Target (Year 3)**: €500K = **0.0066% market share**
+**Waggli Target (Year 3)**: €500K = **0.0066% market share**
 
 **With Conservative 1% Market Share** (by Year 5):
 - 1% of €7.62B = **€76.2M market opportunity**
-- If Pawzly captures this via commissions (avg 10% of premium)
+- If Waggli captures this via commissions (avg 10% of premium)
 - **Potential Revenue**: **€7.6M/year** 🚀
 
 ---

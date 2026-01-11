@@ -1,8 +1,8 @@
-# PAWZLY PLATFORM - EXECUTIVE SUMMARY
+# WAGGLI PLATFORM - EXECUTIVE SUMMARY
 
 ## Project Overview
 
-**Pawzly** is a comprehensive multi-role pet care platform that combines:
+**Waggli** is a comprehensive multi-role pet care platform that combines:
 - Digital pet passport and health management
 - Service marketplace (grooming, training, sitting, veterinary)
 - Help requests and fundraising for animals in need

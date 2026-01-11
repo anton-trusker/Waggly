@@ -6,14 +6,14 @@
 | **Version** | 1.0 |
 | **Last Updated** | 2025-12-25 |
 | **Status** | Draft |
-| **Owner** | Pawzly Product Team |
+| **Owner** | Waggli Product Team |
 
 ---
 
 ## 1. Executive Summary
 
 ### 1.1 Purpose
-This PRD defines the complete specification for the Co-Owner Management feature in Pawzly, enabling pet owners to invite and manage co-owners who share responsibility for pet care. Co-owners receive controlled access to pet profiles, health records, and care management tools.
+This PRD defines the complete specification for the Co-Owner Management feature in Waggli, enabling pet owners to invite and manage co-owners who share responsibility for pet care. Co-owners receive controlled access to pet profiles, health records, and care management tools.
 
 ### 1.2 Problem Statement
 Pet care is often a shared responsibility between family members, partners, roommates, or caregivers. Currently, users cannot:
@@ -37,7 +37,7 @@ A comprehensive co-owner management system that allows:
 ### 2.1 Primary Persona: Pet Owner (Inviter)
 | Attribute | Details |
 |-----------|---------|
-| **Description** | Registered Pawzly user who owns/manages pet profiles |
+| **Description** | Registered Waggli user who owns/manages pet profiles |
 | **Goals** | Share pet care responsibilities, maintain control over data |
 | **Pain Points** | Managing multiple caregivers, ensuring everyone has needed info |
 | **Key Actions** | Send invitations, assign pets, set permissions, revoke access |
@@ -185,7 +185,7 @@ sequenceDiagram
     participant API as Backend API
     participant Email as Email Service
     participant Invitee as Invitee
-    participant App as Pawzly App
+    participant App as Waggli App
 
     Owner->>API: Send Invitation
     API->>API: Create invitation record
@@ -559,13 +559,13 @@ CREATE POLICY "Co-owners can view their access"
 
 ### 8.1 Invitation Email
 
-**Subject:** `[Pawzly] {inviter_name} invited you to co-manage {pet_names}`
+**Subject:** `[Waggli] {inviter_name} invited you to co-manage {pet_names}`
 
 **Body:**
 ```html
 Hello,
 
-{inviter_name} has invited you to help manage their pet(s) on Pawzly!
+{inviter_name} has invited you to help manage their pet(s) on Waggli!
 
 Pets being shared:
 - {pet_list_with_photos}
@@ -579,20 +579,20 @@ Your access level: {permission_level_description}
 This invitation expires on {expiry_date}.
 
 ---
-Pawzly - Your Pet Care Companion
+Waggli - Your Pet Care Companion
 ```
 
 ### 8.2 Acceptance Notification
 
-**Subject:** `[Pawzly] {invitee_name} accepted your co-owner invitation`
+**Subject:** `[Waggli] {invitee_name} accepted your co-owner invitation`
 
 ### 8.3 Decline Notification
 
-**Subject:** `[Pawzly] {invitee_email} declined your co-owner invitation`
+**Subject:** `[Waggli] {invitee_email} declined your co-owner invitation`
 
 ### 8.4 Revocation Notification
 
-**Subject:** `[Pawzly] Your access to {pet_names} has been revoked`
+**Subject:** `[Waggli] Your access to {pet_names} has been revoked`
 
 ---
 

@@ -1,9 +1,9 @@
-**PawHelp Document 2: Platform Features & Functional Specification (Comprehensively Expanded, Fully Refined Version)**
+**Waggli Document 2: Platform Features & Functional Specification (Comprehensively Expanded, Fully Refined Version)**
 
 ---
 
 ### Core Features
-PawHelp delivers an extensive suite of integrated features for pet owners, shelters, volunteers, animal lovers, service providers, and sponsors, all meticulously designed to streamline assistance, enhance transparency, foster global collaboration, and drive real-world animal welfare outcomes.
+Waggli delivers an extensive suite of integrated features for pet owners, shelters, volunteers, animal lovers, service providers, and sponsors, all meticulously designed to streamline assistance, enhance transparency, foster global collaboration, and drive real-world animal welfare outcomes.
 
 #### 1. Help Request Management
 - Intuitive, guided, multi-step help request creation.
@@ -173,5 +173,5 @@ Each user type experiences tailored, role-appropriate journeys:
 
 ---
 
-**PawHelp's advanced feature set ensures a comprehensive, user-centric, and mission-driven experience—empowering individuals, organizations, and communities to unite in providing timely, effective, and transparent help for animals in need globally.**
+**Waggli's advanced feature set ensures a comprehensive, user-centric, and mission-driven experience—empowering individuals, organizations, and communities to unite in providing timely, effective, and transparent help for animals in need globally.**
 

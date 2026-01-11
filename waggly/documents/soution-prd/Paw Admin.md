@@ -1,14 +1,14 @@
-Based on comprehensive analysis of PawHelp's existing platform documentation, business requirements, and system architecture, here is the complete Admin Panel Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+3​
+Based on comprehensive analysis of Waggli's existing platform documentation, business requirements, and system architecture, here is the complete Admin Panel Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+3​
 
 ---
 
-# **PawHelp Admin Panel Platform Specification Document**
+# **Waggli Admin Panel Platform Specification Document**
 
 ## **Executive Summary**
 
-The PawHelp Admin Panel is the central command and control system for the entire PawHelp ecosystem, providing comprehensive management capabilities across users, services, content, finances, integrations, and platform configuration. Designed for web-only access with enterprise-grade security, the Admin Panel enables platform administrators to oversee the €121B European pet care marketplace operations, manage multi-country deployments, coordinate emergency services, and ensure GDPR compliance across all platform activities.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+The Waggli Admin Panel is the central command and control system for the entire Waggli ecosystem, providing comprehensive management capabilities across users, services, content, finances, integrations, and platform configuration. Designed for web-only access with enterprise-grade security, the Admin Panel enables platform administrators to oversee the €121B European pet care marketplace operations, manage multi-country deployments, coordinate emergency services, and ensure GDPR compliance across all platform activities.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
-This specification defines the complete administrative interface architecture, including all modules, workflows, permissions, data structures, API integrations, bulk operations, AI management, and operational logic required to manage a scalable, multi-language, multi-currency platform serving pet owners, service providers, veterinarians, shelters, and sponsors across 27+ European countries.pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+This specification defines the complete administrative interface architecture, including all modules, workflows, permissions, data structures, API integrations, bulk operations, AI management, and operational logic required to manage a scalable, multi-language, multi-currency platform serving pet owners, service providers, veterinarians, shelters, and sponsors across 27+ European countries.waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -32,7 +32,7 @@ This specification defines the complete administrative interface architecture, i
 * Audit logging of every admin action with tamper-proof timestamping  
 * Role-based access control (RBAC) with granular permission management  
 * End-to-end encryption for sensitive data display and transmission (AES-256)  
-* OAuth 2.1 with adaptive risk scoring for authenticationPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* OAuth 2.1 with adaptive risk scoring for authenticationPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 **Access Control Levels**
 
@@ -50,7 +50,7 @@ This specification defines the complete administrative interface architecture, i
 
 * React.js 18+ with TypeScript for type safety  
 * Redux for state management with persistence  
-* Material-UI component library with custom PawHelp theme  
+* Material-UI component library with custom Waggli theme  
 * Real-time updates via WebSocket connections  
 * Progressive Web App (PWA) capabilities for offline functionality
 
@@ -61,7 +61,7 @@ This specification defines the complete administrative interface architecture, i
 * Redis caching for performance optimization  
 * PostgreSQL for primary data storage with read replicas  
 * MongoDB for document storage (logs, audit trails)  
-* InfluxDB for time-series metrics and analyticsPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* InfluxDB for time-series metrics and analyticsPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 **Deployment & Infrastructure**
 
@@ -69,7 +69,7 @@ This specification defines the complete administrative interface architecture, i
 * Multi-availability zone architecture for 99.9% uptime  
 * Blue-green deployment for zero-downtime updates  
 * Automated backup every 4 hours with 90-day retention  
-* Disaster recovery with 15-minute RTO and 5-minute RPOPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Disaster recovery with 15-minute RTO and 5-minute RPOPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
@@ -79,7 +79,7 @@ This specification defines the complete administrative interface architecture, i
 
 **Header Section**
 
-* PawHelp logo with admin panel designation  
+* Waggli logo with admin panel designation  
 * Global search bar (universal search across users, cases, providers, transactions)  
 * Notification center with real-time alerts and task assignments  
 * Quick actions menu: Emergency response, Manual case approval, Financial override  
@@ -1650,7 +1650,7 @@ This specification defines the complete administrative interface architecture, i
 
 **General Settings**
 
-* Platform name: PawHelp (editable)  
+* Platform name: Waggli (editable)  
 * Platform logo: Upload (used in emails, headers)  
 * Favicon: Upload  
 * Default language: Dropdown  

@@ -1,8 +1,8 @@
-# 🚀 Pawzly Security Architecture - Deployment Guide
+# 🚀 Waggli Security Architecture - Deployment Guide
 
 ## 📋 Overview
 
-This guide covers the deployment of the comprehensive security architecture for Pawzly, including Edge Functions, RLS policies, and environment configuration.
+This guide covers the deployment of the comprehensive security architecture for Waggli, including Edge Functions, RLS policies, and environment configuration.
 
 ## 🔒 Phase 1: Immediate Security Fixes ✅ COMPLETED
 

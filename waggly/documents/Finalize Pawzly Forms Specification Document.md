@@ -1,4 +1,4 @@
-I will finalize the `Pawzly-Forms-Specification.md` with strict requirements for Supabase integration, specific desktop/mobile layout behaviors, and time-saving UX.
+I will finalize the `Waggli-Forms-Specification.md` with strict requirements for Supabase integration, specific desktop/mobile layout behaviors, and time-saving UX.
 
 ### **Revised Plan: Finalize Forms Specification**
 

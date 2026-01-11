@@ -86,7 +86,7 @@ export default function SharedPetProfile() {
                         style={styles.logo}
                         resizeMode="contain"
                     />
-                    <Text style={styles.brandName}>Pawzly</Text>
+                    <Text style={styles.brandName}>Waggli</Text>
                 </View>
                 <View style={styles.badge}>
                     <Ionicons name="shield-checkmark" size={14} color="#FFFFFF" />
@@ -210,7 +210,7 @@ export default function SharedPetProfile() {
 
                 {/* Footer Footer */}
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>Shared securely by Pawzly</Text>
+                    <Text style={styles.footerText}>Shared securely by Waggli</Text>
                     <View style={styles.footerDivider} />
                     <Text style={styles.footerSecondaryText}>
                         This profile is for informational purposes only.

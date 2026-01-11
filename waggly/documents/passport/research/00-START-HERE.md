@@ -1,4 +1,4 @@
-# 🐾 PAWZLY PET PASSPORT TAB - START HERE
+# 🐾 WAGGLI PET PASSPORT TAB - START HERE
 
 **Complete Documentation Package v1.0**  
 **Created:** January 10, 2026  
@@ -8,7 +8,7 @@
 
 ## 📦 WHAT YOU'VE RECEIVED
 
-A complete, enterprise-grade specification package for the **Pet Passport Tab** on Pawzly's pet details page.
+A complete, enterprise-grade specification package for the **Pet Passport Tab** on Waggli's pet details page.
 
 **Total Package:** 10 comprehensive documents  
 **Total Content:** 65,000+ words  

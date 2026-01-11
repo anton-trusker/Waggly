@@ -1,7 +1,7 @@
 # Forms System Unit Tests
 
 ## Overview
-Comprehensive unit tests for all enhanced form modals in the Pawzly Forms System.
+Comprehensive unit tests for all enhanced form modals in the Waggli Forms System.
 
 ## Test Coverage
 

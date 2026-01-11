@@ -2,7 +2,7 @@
 
 ## 📚 Document Overview
 
-This folder contains **6 comprehensive documents** outlining how to implement AI capabilities in the Pawzly pet health app. Each document provides complete technical specifications, implementation guides, and cost analysis.
+This folder contains **6 comprehensive documents** outlining how to implement AI capabilities in the Waggli pet health app. Each document provides complete technical specifications, implementation guides, and cost analysis.
 
 ---
 

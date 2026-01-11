@@ -1,6 +1,6 @@
 <img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
 
-# I need very detailed specification document for MVP version for Pawzly.
+# I need very detailed specification document for MVP version for Waggli.
 
 with all logic, user flows, specifications, Platform specification.
 Pet owner:
@@ -46,15 +46,15 @@ we will use all functionality of  Supabase, Google API, Vercel, React,
 with the modern design and architecture.
 review whole details from this thread.
 
-Based on the comprehensive analysis of all previous specifications and your detailed requirements, here is the complete **Pawzly MVP Specification Document** with modern architecture using Supabase, Google APIs, Vercel, and React[^1][^2][^3]:
+Based on the comprehensive analysis of all previous specifications and your detailed requirements, here is the complete **Waggli MVP Specification Document** with modern architecture using Supabase, Google APIs, Vercel, and React[^1][^2][^3]:
 
 ***
 
-# **PAWZLY MVP - COMPLETE SPECIFICATION DOCUMENT**
+# **WAGGLI MVP - COMPLETE SPECIFICATION DOCUMENT**
 
 ## **Executive Summary**
 
-Pawzly is a comprehensive pet social network and service platform combining pet passport management, location-based services, community features, shelter adoption, and multi-role marketplace functionality. Built with modern stack: React, Supabase, Google Maps API, and Vercel deployment[^1][^2][^3].
+Waggli is a comprehensive pet social network and service platform combining pet passport management, location-based services, community features, shelter adoption, and multi-role marketplace functionality. Built with modern stack: React, Supabase, Google Maps API, and Vercel deployment[^1][^2][^3].
 
 ***
 
@@ -1782,7 +1782,7 @@ interface AdoptionApplication {
 
 ***
 
-This comprehensive MVP specification for **Pawzly** covers all requested features with modern technical architecture using Supabase, Google APIs, React, and Vercel. The document includes complete database schemas, user flows, UI layouts, and implementation details for all user roles with multi-role support built in[^1][^2][^3][^4].
+This comprehensive MVP specification for **Waggli** covers all requested features with modern technical architecture using Supabase, Google APIs, React, and Vercel. The document includes complete database schemas, user flows, UI layouts, and implementation details for all user roles with multi-role support built in[^1][^2][^3][^4].
 
 <div align="center">⁂</div>
 

@@ -1,8 +1,8 @@
-# Pawzly Social Network - Complete Solution Document
+# Waggli Social Network - Complete Solution Document
 
 ## 📋 Executive Summary
 
-This document provides a comprehensive solution for implementing a full-featured social network for pets and pet owners within the Pawzly app. The social network will enable pet owners to share moments, connect with other pet parents, discover pet-friendly places, join communities, and engage in meaningful interactions centered around their beloved companions.
+This document provides a comprehensive solution for implementing a full-featured social network for pets and pet owners within the Waggli app. The social network will enable pet owners to share moments, connect with other pet parents, discover pet-friendly places, join communities, and engage in meaningful interactions centered around their beloved companions.
 
 **Key Features:**
 - Pet-centric profiles and posts
@@ -110,7 +110,7 @@ graph TD
 
 #### 1.1 Pet Profile Social Features
 
-**Existing** (from current Pawzly):
+**Existing** (from current Waggli):
 - Pet basic info (name, species, breed, age, photos)
 - Health passport (vaccinations, medical records)
 - Owner information

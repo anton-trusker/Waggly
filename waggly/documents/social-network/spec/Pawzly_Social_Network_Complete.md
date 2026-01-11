@@ -1,4 +1,4 @@
-# PAWZLY SOCIAL NETWORK: Complete Platform & Features Specification
+# WAGGLI SOCIAL NETWORK: Complete Platform & Features Specification
 
 **Version:** 1.0  
 **Status:** Complete Feature Specification  
@@ -9,7 +9,7 @@
 
 ## 🎯 VISION: "Instagram for Pets, Built by Vets"
 
-Transform Pawzly into the **world's leading pet social network** where:
+Transform Waggli into the **world's leading pet social network** where:
 - **Pet owners** build personal profiles for their pets, share daily moments, connect with other owners
 - **Content creators** turn pet photos/videos into income (€500-€22K per post)
 - **Pet professionals** discover, verify, and grow their clientele
@@ -19,8 +19,8 @@ Transform Pawzly into the **world's leading pet social network** where:
 **Competitive Positioning:**
 - **vs Instagram/Facebook:** Generic pet content, no health context, no monetization for owners
 - **vs TikTok:** Viral reach but no service discovery, no professional marketplace
-- **vs Existing Pet Apps:** Fragmented (vet app, training app, social app) → Pawzly unified
-- **vs Pawzly Today:** Static passport → Dynamic, profitable social ecosystem
+- **vs Existing Pet Apps:** Fragmented (vet app, training app, social app) → Waggli unified
+- **vs Waggli Today:** Static passport → Dynamic, profitable social ecosystem
 
 **Market Opportunity:**
 - 1.5B+ Instagram users; 300% growth in pet social apps (2024)
@@ -96,7 +96,7 @@ Transform Pawzly into the **world's leading pet social network** where:
 
 **5. Achievements Tab**
 - Badges earned (Blood Hero, SOS Helper, Event Organizer, etc.)
-- Milestones reached (1 year on Pawzly, 100 followers, etc.)
+- Milestones reached (1 year on Waggli, 100 followers, etc.)
 - Awards/recognitions
 
 **6. Friends Tab**
@@ -294,7 +294,7 @@ Comment limits:
 - Record or upload video (60 seconds max)
 - Trim to length
 - Auto-subtitle from speech
-- Add music from Pawzly library
+- Add music from Waggli library
 - Text overlay (title, captions)
 - Speed adjust (0.5x to 2x)
 - Transition effects (optional)
@@ -394,7 +394,7 @@ Trending filtered by:
 
 **Hashtag Challenges:**
 ```
-Monthly challenges (created by Pawzly or brands):
+Monthly challenges (created by Waggli or brands):
 - #TrainingChallenge2026 (Jan 1-31)
   Instructions: "Teach your dog a new trick in 30 days, post weekly updates!"
   Rewards: Top 10 posts featured + €50 credit
@@ -405,7 +405,7 @@ Monthly challenges (created by Pawzly or brands):
   
 - #LocalPawsDay (Monthly)
   Instructions: "Feature local pet spots, dog parks, pet-friendly cafes"
-  Rewards: Featured on Pawzly homepage
+  Rewards: Featured on Waggli homepage
 ```
 
 **Hashtag Collections:**
@@ -426,7 +426,7 @@ Personalized collections based on pet & interests:
 
 ```
 ┌─────────────────────────────────────┐
-│ Explore Pawzly                      │
+│ Explore Waggli                      │
 ├─────────────────────────────────────┤
 │ Search Pets, Creators, Hashtags     │ (Search bar)
 ├─────────────────────────────────────┤
@@ -621,7 +621,7 @@ Features:
 
 **Smart Collections (Auto-generated):**
 ```
-Pawzly auto-creates collections based on saved posts:
+Waggli auto-creates collections based on saved posts:
 - Posts you liked (all-time)
 - Recent saves (last 30 days)
 - Posts from following (timeline archive)
@@ -757,7 +757,7 @@ Showcase badges on profile:
 **Point System:**
 
 ```
-Users earn Pawzly Points for:
+Users earn Waggli Points for:
 
 Content Creation:
 - Post photo: +5 points
@@ -795,7 +795,7 @@ Referral:
 
 ```
 Points redeemable for:
-- 50 points: €2.50 Pawzly credit (products, services)
+- 50 points: €2.50 Waggli credit (products, services)
 - 100 points: €5 credit
 - 250 points: €15 credit
 - 500 points: €30 credit
@@ -919,7 +919,7 @@ Revenue Sources:
 1. Affiliate Links
    - Share links to pet products in bio/posts
    - Earn 8-15% commission on sales
-   - Easy setup: Pawzly affiliate program
+   - Easy setup: Waggli affiliate program
    - Potential: €50-500/month
 
 2. Sponsored Posts
@@ -930,7 +930,7 @@ Revenue Sources:
 
 3. Tip Jar
    - Followers can tip 1-10 euros per post
-   - Pawzly takes 30% (70% to creator)
+   - Waggli takes 30% (70% to creator)
    - Requires <30 followers to start
    - Potential: €50-300/month
 ```
@@ -954,20 +954,20 @@ Revenue Sources:
 
 3. Merchandise
    - Sell branded products (t-shirts, toys, accessories)
-   - Pawzly marketplace integration
+   - Waggli marketplace integration
    - 30-40% margin
    - Potential: €1K-5K/month
 
 4. Consulting
    - Offer training/behavior advice
    - €50-200 per hour consultation
-   - Via Pawzly paid messaging feature
+   - Via Waggli paid messaging feature
    - Potential: €1K-5K/month
 
 5. Digital Products
    - Sell training guides, e-books
    - Meal plans, fitness routines
-   - Pawzly digital store
+   - Waggli digital store
    - Potential: €500-3K/month
 ```
 
@@ -988,7 +988,7 @@ Revenue Sources:
    - Potential: €20K-200K/month
 
 3. Audience Monetization
-   - Pawzly shares advertising revenue
+   - Waggli shares advertising revenue
    - Per-view payments (€0.01-0.05 per view)
    - Engagement bonuses
    - Potential: €10K-50K/month
@@ -1015,12 +1015,12 @@ Revenue Sources:
 **Creator Revenue Share Model:**
 
 ```
-Pawzly takes commission from sponsored content:
-- Micro creators (< 10K): Pawzly takes 20%
-- Established (10K-100K): Pawzly takes 15%
-- Mega creators (100K+): Pawzly takes 10%
+Waggli takes commission from sponsored content:
+- Micro creators (< 10K): Waggli takes 20%
+- Established (10K-100K): Waggli takes 15%
+- Mega creators (100K+): Waggli takes 10%
 
-Pawzly handles:
+Waggli handles:
 - Brand outreach and deals
 - Contract negotiation
 - Payment processing (Stripe)
@@ -1071,7 +1071,7 @@ Benefits:
 - Promoted posts in that category
 - Monthly cost: €2K-20K per brand
 
-Pawzly takes 40% commission
+Waggli takes 40% commission
 ```
 
 **Tier 4: Marketplace Sponsorships**
@@ -1104,7 +1104,7 @@ Unlock:
 - Custom landing page link
 ```
 
-**Pawzly Creator Pro (€19.99/month)**
+**Waggli Creator Pro (€19.99/month)**
 
 ```
 For content creators:
@@ -1119,7 +1119,7 @@ For content creators:
 - Early access to new features
 ```
 
-**Pawzly Max (€49.99/month)**
+**Waggli Max (€49.99/month)**
 
 ```
 For professional creators/services:
@@ -1151,7 +1151,7 @@ Average creator LTV: €300-5000/year
 **Anonymized Health Data for Insurance Partners**
 
 ```
-Data Pawzly provides (fully anonymized):
+Data Waggli provides (fully anonymized):
 - Health trends by breed
   e.g., "Golden Retrievers: 23% post hip dysplasia at age 4-6"
 - Preventive care patterns
@@ -1178,7 +1178,7 @@ Insurance use cases:
 **Anonymized Behavior Data for Pet Tech Companies**
 
 ```
-Data Pawzly provides:
+Data Waggli provides:
 - Most popular activities by season
 - Trending training methods
 - Product recommendation patterns
@@ -1195,7 +1195,7 @@ Revenue:
 **Market Research**
 
 ```
-Pawzly can sell anonymized survey data:
+Waggli can sell anonymized survey data:
 - Pet owner demographics
 - Pet ownership patterns
 - Pet spending habits
@@ -1499,7 +1499,7 @@ Requirements:
 - Exceptional content quality
 - Engaged community
 - Monetization active
-Benefits: Special badge + featured on Pawzly
+Benefits: Special badge + featured on Waggli
 
 🏆 Top Creator
 Requirements:
@@ -1615,9 +1615,9 @@ Benefits: Professional badge + directory listing + client booking tools
 
 ## PART 7: COMPETITIVE ADVANTAGES
 
-**Why Pawzly Beats Competitors:**
+**Why Waggli Beats Competitors:**
 
-| Aspect | Instagram/Facebook | TikTok | Existing Pet Apps | Pawzly |
+| Aspect | Instagram/Facebook | TikTok | Existing Pet Apps | Waggli |
 |--------|-------|--------|-------|--------|
 | **Health Awareness** | ❌ Generic | ❌ Generic | ✅ Fragmented | ✅ Integrated |
 | **Service Discovery** | ❌ None | ❌ None | ✅ Limited | ✅ Full marketplace |

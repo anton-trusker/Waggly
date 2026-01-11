@@ -104,7 +104,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 - Accepting applications now for first cohort
 - **Contact**: Apply via **pawsible.vc**
 
-**Why Perfect for Pawzly:**
+**Why Perfect for Waggli:**
 - Exact stage fit: Pre-seed/seed $100K-500K
 - Health tech focus = digital passport + AI assistant alignment
 - Venture studio support = operational help
@@ -118,7 +118,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 **Focus**: Pet care brands, animal health innovation  
 **Investment Style**: Lead position in early stages
 
-**Why Perfect for Pawzly:**
+**Why Perfect for Waggli:**
 - Just deployed $1M (Jan 2026) = actively investing
 - Animal health exclusive = perfect thesis fit
 - Lead investor = can anchor your round
@@ -132,7 +132,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 **Model**: Venture fund + Venture Studio (The Startup Factory provides engineering/tech support)  
 **Notable**: First direct-to-consumer investment; mostly B2B focus going forward
 
-**Why Perfect for Pawzly:**
+**Why Perfect for Waggli:**
 - AI-first thesis = your AI localization + AI development exactly their focus
 - £15M fund = actively deploying
 - Scooch deal = AI pet health subscription = direct comparable
@@ -172,7 +172,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 **Typical Capital Raise**: $100K–$1.5M (Europe: €50K–€1M)  
 **Example from data**: Lil Luv Dog ($1M pre-seed led by AniVC), Scout (pre-seed, Kansas City)
 
-**For Pawzly to raise €500K–€1M Pre-Seed:**
+**For Waggli to raise €500K–€1M Pre-Seed:**
 - ✅ 1,000–5,000 pet profiles created
 - ✅ 100–500 B2B partners (vets, shelters, groomers integrating)
 - ✅ 2,000–5,000 monthly active users
@@ -193,7 +193,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 
 **Typical Capital Raise**: $500K–$3M standard; $5M–$7M for exceptionally strong traction
 
-**For Pawzly to raise €2–5M Seed:**
+**For Waggli to raise €2–5M Seed:**
 - ✅ 25,000–100,000 pet profiles across 3+ countries
 - ✅ 500–1,000 B2B partners actively using platform
 - ✅ €30K–€60K MRR from subscriptions + partnerships
@@ -213,7 +213,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 
 **Typical Capital Raise**: $5M–$20M (pet tech typically €5–15M)
 
-**For Pawzly to raise €8–15M Series A:**
+**For Waggli to raise €8–15M Series A:**
 - ✅ 150,000–500,000 users across 10+ countries
 - ✅ €100K+ MRR (€1.2M+ ARR)
 - ✅ LTV:CAC 5:1+, profitable cohorts
@@ -269,7 +269,7 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 
 ---
 
-## Immediate Action Items for Pawzly
+## Immediate Action Items for Waggli
 
 ### 1. Apply to Pawsible Ventures ⭐⭐⭐ PRIORITY
 
@@ -309,12 +309,12 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 **Pre-Seed Average**: $1.5M (range $100K–$10M for AI)  
 **Seed Average**: $3.2M (range $500K–$13.4M)
 
-**Top 3 Investors for Pawzly:**
+**Top 3 Investors for Waggli:**
 1. **Pawsible Ventures** - Accepting applications NOW at pawsible.vc
 2. **AniVC** - Just deployed $1M in January 2026
 3. **EHE Ventures** - £15M AI fund, perfect thesis match
 
-**Pawzly Positioning**: AI-powered digital pet passport + subscription SaaS is attracting 45% YoY growth in funding. Your unique advantages:
+**Waggli Positioning**: AI-powered digital pet passport + subscription SaaS is attracting 45% YoY growth in funding. Your unique advantages:
 - AI-first architecture (automatic localization + AI development)
 - Subscription revenue model (predictable ARR)
 - Global scaling capability
@@ -331,4 +331,4 @@ To show typical Series A scale, top pet tech Series A rounds range from **$3M–
 
 **Document Date**: January 11, 2026  
 **Source**: Comprehensive pet tech funding research 2023-2025  
-**For**: Pawzly fundraising strategy
+**For**: Waggli fundraising strategy

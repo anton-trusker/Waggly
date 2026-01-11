@@ -1,8 +1,8 @@
-# PAWZLY PLATFORM - MASTER DEVELOPMENT PLAN
+# WAGGLI PLATFORM - MASTER DEVELOPMENT PLAN
 
 ## 🎯 Executive Summary
 
-Pawzly is a comprehensive multi-role pet care platform combining digital pet passports, service marketplace, fundraising, and social networking for pets across Europe.
+Waggli is a comprehensive multi-role pet care platform combining digital pet passports, service marketplace, fundraising, and social networking for pets across Europe.
 
 **Timeline**: 30-40 weeks (7-10 months) for full platform  
 **MVP**: 12-17 weeks (3-4 months)  
@@ -185,7 +185,7 @@ CDN:       Cloudflare
 
 ### Monorepo Structure
 ```
-pawzly/
+waggli/
 ├── apps/
 │   ├── web/          # User platform (Next.js)
 │   ├── admin/        # Admin panel (Refine.dev)
@@ -500,7 +500,7 @@ pawzly/
 
 ---
 
-## 🎉 Let's Build Pawzly!
+## 🎉 Let's Build Waggli!
 
 This is an ambitious but achievable project. With the right team, clear plan, and modern tech stack, we can build the leading pet care platform in Europe.
 

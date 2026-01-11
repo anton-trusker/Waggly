@@ -53,7 +53,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'x-application-name': 'pawzly-mobile',
+      'x-application-name': 'waggli-mobile',
     },
   },
   db: {

@@ -2,11 +2,11 @@
 
 # now also recommend what UI framework and packages need to use to speed up dev process and also app should be very modern and lite.
 
-Based on Pawzly's requirements for a modern, lightweight, and fast development process, here's the comprehensive UI framework and package recommendation:
+Based on Waggli's requirements for a modern, lightweight, and fast development process, here's the comprehensive UI framework and package recommendation:
 
 ***
 
-# **PAWZLY - MODERN UI FRAMEWORK \& PACKAGE STACK**
+# **WAGGLI - MODERN UI FRAMEWORK \& PACKAGE STACK**
 
 ## **Core Recommendation: Shadcn/ui + TailwindCSS + Radix UI**
 
@@ -18,7 +18,7 @@ This combination provides the **perfect balance** of speed, customization, acces
 
 ### **Primary: Shadcn/ui (Highly Recommended)**
 
-**Why Shadcn/ui is Perfect for Pawzly:**
+**Why Shadcn/ui is Perfect for Waggli:**
 
 ✅ **Copy-paste components** - You own the code, no package dependency bloat
 ✅ **Built on Radix UI** - Accessible by default (ARIA compliant)
@@ -145,7 +145,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Pawzly Brand Colors
+        // Waggli Brand Colors
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -351,7 +351,7 @@ npm install @tanstack/react-query zustand
 ```tsx
 // packages/api/src/hooks/usePets.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@pawzly/database';
+import { supabase } from '@waggli/database';
 
 export function usePets(userId: string) {
   return useQuery({
@@ -583,7 +583,7 @@ isPast(petRecord.nextDueDate);
 ```tsx
 // packages/api/src/hooks/useRealtimeMessages.ts
 import { useEffect } from 'react';
-import { supabase } from '@pawzly/database';
+import { supabase } from '@waggli/database';
 import { useQueryClient } from '@tanstack/react-query';
 
 export function useRealtimeMessages(conversationId: string) {
@@ -794,7 +794,7 @@ npm install focus-trap-react
 
 ```json
 {
-  "name": "@pawzly/ui",
+  "name": "@waggli/ui",
   "version": "0.1.0",
   "dependencies": {
     // Core UI
@@ -971,5 +971,5 @@ npm install @next/bundle-analyzer
 ✅ Expo                    // Mobile framework
 ```
 
-This stack gives you **speed, modern aesthetics, excellent DX, and minimal bundle size** - perfect for Pawzly! 🐾
+This stack gives you **speed, modern aesthetics, excellent DX, and minimal bundle size** - perfect for Waggli! 🐾
 

@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-Implement optical character recognition (OCR) and AI-powered data extraction to automatically read veterinary documents, vaccination certificates, lab results, and prescriptions, then intelligently populate the Pawzly database.
+Implement optical character recognition (OCR) and AI-powered data extraction to automatically read veterinary documents, vaccination certificates, lab results, and prescriptions, then intelligently populate the Waggli database.
 
 ---
 

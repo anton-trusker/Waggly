@@ -1,5 +1,5 @@
 ## 1. Product Overview
-Redesign authentication pages (login, sign-up, forgot-password) with pixel-perfect implementation based on provided designs. Add persistent "Remember Me" functionality that maintains user sessions without requiring re-authentication. Incorporate the Pawzly logo from `/public/logo.png` across all auth pages.
+Redesign authentication pages (login, sign-up, forgot-password) with pixel-perfect implementation based on provided designs. Add persistent "Remember Me" functionality that maintains user sessions without requiring re-authentication. Incorporate the Waggli logo from `/public/logo.png` across all auth pages.
 
 ## 2. Core Features
 
@@ -18,7 +18,7 @@ Authentication system consists of the following main pages:
 ### 2.3 Page Details
 | Page Name | Module Name | Feature description |
 |-----------|-------------|---------------------|
-| Login page | Logo header | Display Pawzly logo from `/public/logo.png` in top-left corner with brand name |
+| Login page | Logo header | Display Waggli logo from `/public/logo.png` in top-left corner with brand name |
 | Login page | Hero section | Split-screen layout with pet imagery on right side, gradient overlay |
 | Login page | Email input | Email field with icon prefix, validation, placeholder text |
 | Login page | Password input | Password field with show/hide toggle, lock icon prefix |
@@ -27,7 +27,7 @@ Authentication system consists of the following main pages:
 | Login page | Social login | Apple and Google OAuth buttons with brand icons |
 | Login page | Forgot password | Link to password reset flow |
 | Login page | Sign-up link | Navigation to registration page |
-| Sign-up page | Logo header | Pawzly logo positioning consistent with login |
+| Sign-up page | Logo header | Waggli logo positioning consistent with login |
 | Sign-up page | Hero section | Pet imagery background with gradient overlay |
 | Sign-up page | Email input | Email validation with real-time feedback |
 | Sign-up page | Password input | Password creation with strength indicator |
@@ -35,7 +35,7 @@ Authentication system consists of the following main pages:
 | Sign-up page | Sign-up button | Primary CTA with form validation |
 | Sign-up page | Social sign-up | Apple and Google registration options |
 | Sign-up page | Login link | Navigation back to login page |
-| Forgot password | Logo header | Consistent Pawzly branding |
+| Forgot password | Logo header | Consistent Waggli branding |
 | Forgot password | Hero section | Pet imagery with gradient overlay |
 | Forgot password | Email input | Email field for password reset request |
 | Forgot password | Reset button | Submit button for password reset email |
@@ -43,7 +43,7 @@ Authentication system consists of the following main pages:
 
 ## 3. Core Process
 ### User Authentication Flow
-1. User lands on login page with Pawzly branding and pet imagery
+1. User lands on login page with Waggli branding and pet imagery
 2. User enters email/password credentials
 3. Optional: User selects "Remember Me" for persistent session
 4. User clicks login button with loading state feedback
@@ -95,12 +95,12 @@ graph TD
 - **Typography**: Plus Jakarta Sans/Inter font family, clean sans-serif
 - **Layout**: Split-screen design with pet imagery on right side
 - **Icons**: Material Icons for consistency, paw print icon for logo
-- **Logo**: Pawzly logo from `/public/logo.png` with circular emblem and stylized dog silhouette
+- **Logo**: Waggli logo from `/public/logo.png` with circular emblem and stylized dog silhouette
 
 ### 4.2 Page Design Overview
 | Page Name | Module Name | UI Elements |
 |-----------|-------------|-------------|
-| Login page | Logo header | 32px circular icon with paw print, "pawzly" text in bold geometric sans-serif, positioned top-left |
+| Login page | Logo header | 32px circular icon with paw print, "waggli" text in bold geometric sans-serif, positioned top-left |
 | Login page | Form container | White/dark card with rounded corners (24px), shadow effects, max-width 400px |
 | Login page | Input fields | Rounded inputs (12px), icon prefixes, focus ring in primary blue, placeholder text |
 | Login page | Remember me | Checkbox with label, positioned below password field |

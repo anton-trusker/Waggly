@@ -1,11 +1,11 @@
-**PawHelp Full Business & Platform Overview Document (Presentation-Ready & Extended with Full Capabilities)**
+**Waggli Full Business & Platform Overview Document (Presentation-Ready & Extended with Full Capabilities)**
 
 ---
 
 ### 1. Executive Summary
-PawHelp is a comprehensive mobile and web platform designed to connect people ready to help animals with those who urgently need assistance. Through an integrated ecosystem of help requests, blood donation matching, transparent fundraising, community tools, peer-to-peer services, and a full-service marketplace, PawHelp empowers pet owners, shelters, volunteers, and sponsors to collaborate, support each other, and save lives.
+Waggli is a comprehensive mobile and web platform designed to connect people ready to help animals with those who urgently need assistance. Through an integrated ecosystem of help requests, blood donation matching, transparent fundraising, community tools, peer-to-peer services, and a full-service marketplace, Waggli empowers pet owners, shelters, volunteers, and sponsors to collaborate, support each other, and save lives.
 
-The platform operates with multilingual, multi-currency support, AI-powered fraud prevention, and an escrow-protected donation system—ensuring safety, trust, and global accessibility. PawHelp's mission is simple yet impactful: **"Connecting people ready to help animals."**
+The platform operates with multilingual, multi-currency support, AI-powered fraud prevention, and an escrow-protected donation system—ensuring safety, trust, and global accessibility. Waggli's mission is simple yet impactful: **"Connecting people ready to help animals."**
 
 ---
 
@@ -18,7 +18,7 @@ The platform operates with multilingual, multi-currency support, AI-powered frau
 - Businesses seek **social responsibility visibility** through partnerships.
 - Pet owners need localized, trustworthy help at critical moments.
 
-PawHelp bridges these gaps through its unified, feature-rich, globally scalable platform.
+Waggli bridges these gaps through its unified, feature-rich, globally scalable platform.
 
 ---
 
@@ -174,10 +174,10 @@ Strict multi-level verification applies to cases, donors, businesses, and organi
 
 ---
 
-### 10. Conclusion: Why PawHelp Matters
-PawHelp is more than an app—it is a comprehensive, scalable, trust-centered platform uniting people, technology, and compassion to ensure no animal faces a crisis alone.
+### 10. Conclusion: Why Waggli Matters
+Waggli is more than an app—it is a comprehensive, scalable, trust-centered platform uniting people, technology, and compassion to ensure no animal faces a crisis alone.
 
-With its mission-driven design, AI enhancements, marketplace, community tools, and transparent processes, PawHelp has the potential to reshape how people, businesses, and organizations collaborate for animal welfare worldwide.
+With its mission-driven design, AI enhancements, marketplace, community tools, and transparent processes, Waggli has the potential to reshape how people, businesses, and organizations collaborate for animal welfare worldwide.
 
 **"Together, we can save lives—one paw, one family, one community at a time."**
 

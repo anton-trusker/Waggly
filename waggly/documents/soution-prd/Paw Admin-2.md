@@ -1,14 +1,14 @@
-Based on comprehensive analysis of PawHelp's existing platform documentation, business requirements, and system architecture, here is the complete Admin Panel Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+3​
+Based on comprehensive analysis of Waggli's existing platform documentation, business requirements, and system architecture, here is the complete Admin Panel Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+3​
 
 ---
 
-# **PawHelp Admin Panel Platform Specification Document**
+# **Waggli Admin Panel Platform Specification Document**
 
 ## **Executive Summary**
 
-The PawHelp Admin Panel is the central command and control system for the entire PawHelp ecosystem, providing comprehensive management capabilities across users, services, content, finances, integrations, and platform configuration. Designed for web-only access with enterprise-grade security, the Admin Panel enables platform administrators to oversee the €121B European pet care marketplace operations, manage multi-country deployments, coordinate emergency services, and ensure GDPR compliance across all platform activities.Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+1​
+The Waggli Admin Panel is the central command and control system for the entire Waggli ecosystem, providing comprehensive management capabilities across users, services, content, finances, integrations, and platform configuration. Designed for web-only access with enterprise-grade security, the Admin Panel enables platform administrators to oversee the €121B European pet care marketplace operations, manage multi-country deployments, coordinate emergency services, and ensure GDPR compliance across all platform activities.Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+1​
 
-This specification defines the complete administrative interface architecture, including all modules, workflows, permissions, data structures, API integrations, bulk operations, AI management, and operational logic required to manage a scalable, multi-language, multi-currency platform serving pet owners, service providers, veterinarians, shelters, and sponsors across 27+ European countries.pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+This specification defines the complete administrative interface architecture, including all modules, workflows, permissions, data structures, API integrations, bulk operations, AI management, and operational logic required to manage a scalable, multi-language, multi-currency platform serving pet owners, service providers, veterinarians, shelters, and sponsors across 27+ European countries.waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -32,7 +32,7 @@ This specification defines the complete administrative interface architecture, i
 * Audit logging of every admin action with tamper-proof timestamping  
 * Role-based access control (RBAC) with granular permission management  
 * End-to-end encryption for sensitive data display and transmission (AES-256)  
-* OAuth 2.1 with adaptive risk scoring for authenticationPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* OAuth 2.1 with adaptive risk scoring for authenticationPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 **Access Control Levels**
 
@@ -50,7 +50,7 @@ This specification defines the complete administrative interface architecture, i
 
 * React.js 18+ with TypeScript for type safety  
 * Redux for state management with persistence  
-* Material-UI component library with custom PawHelp theme  
+* Material-UI component library with custom Waggli theme  
 * Real-time updates via WebSocket connections  
 * Progressive Web App (PWA) capabilities for offline functionality
 
@@ -61,7 +61,7 @@ This specification defines the complete administrative interface architecture, i
 * Redis caching for performance optimization  
 * PostgreSQL for primary data storage with read replicas  
 * MongoDB for document storage (logs, audit trails)  
-* InfluxDB for time-series metrics and analyticsPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* InfluxDB for time-series metrics and analyticsPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 **Deployment & Infrastructure**
 
@@ -69,7 +69,7 @@ This specification defines the complete administrative interface architecture, i
 * Multi-availability zone architecture for 99.9% uptime  
 * Blue-green deployment for zero-downtime updates  
 * Automated backup every 4 hours with 90-day retention  
-* Disaster recovery with 15-minute RTO and 5-minute RPOPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+* Disaster recovery with 15-minute RTO and 5-minute RPOPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ---
 
@@ -79,7 +79,7 @@ This specification defines the complete administrative interface architecture, i
 
 **Header Section**
 
-* PawHelp logo with admin panel designation  
+* Waggli logo with admin panel designation  
 * Global search bar (universal search across users, cases, providers, transactions)  
 * Notification center with real-time alerts and task assignments  
 * Quick actions menu: Emergency response, Manual case approval, Financial override  
@@ -1650,7 +1650,7 @@ This specification defines the complete administrative interface architecture, i
 
 **General Settings**
 
-* Platform name: PawHelp (editable)  
+* Platform name: Waggli (editable)  
 * Platform logo: Upload (used in emails, headers)  
 * Favicon: Upload  
 * Default language: Dropdown  
@@ -1739,7 +1739,7 @@ This specification defines the complete administrative interface architecture, i
 * Number formats: Decimal separator, thousand separator  
 * Currency symbol position: Before, After
 
-Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+Continuing the comprehensive Admin Panel Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -2299,11 +2299,11 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
     * Prescription history  
     * Lab results  
     * Treatment plans  
-  * Sync direction: One-way (clinic → PawHelp), Two-way  
-  * Conflict resolution: Clinic data priority, PawHelp priority, Manual review  
+  * Sync direction: One-way (clinic → Waggli), Two-way  
+  * Conflict resolution: Clinic data priority, Waggli priority, Manual review  
 * **Field Mapping**  
-  * Map clinic system fields to PawHelp fields:  
-    * Pet ID ↔ PawHelp Pet ID  
+  * Map clinic system fields to Waggli fields:  
+    * Pet ID ↔ Waggli Pet ID  
     * Owner name ↔ User name  
     * Medical condition ↔ Health status  
   * Custom field mapping: Add unmapped fields  
@@ -2356,7 +2356,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 * Enable enhanced ecommerce: Checkbox  
 * Event tracking: Configure custom events  
 * Goal tracking: Define conversion goals  
-* User-ID tracking: Map PawHelp user ID
+* User-ID tracking: Map Waggli user ID
 
 **Facebook Pixel Integration**
 
@@ -2371,7 +2371,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 * Audience ID: Select mailing list  
 * Sync users: Automatic, Manual  
 * Sync frequency: Real-time, Daily  
-* Field mapping: PawHelp user fields ↔ Mailchimp merge tags  
+* Field mapping: Waggli user fields ↔ Mailchimp merge tags  
 * Tag management: Auto-assign tags based on user activity
 
 **Intercom/Zendesk Integration**
@@ -2449,7 +2449,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 
 **Webhook Configuration**
 
-* **Outgoing Webhooks** (PawHelp → External systems)  
+* **Outgoing Webhooks** (Waggli → External systems)  
   * Webhook name/label  
   * Target URL: Where to send events  
   * HTTP method: POST, PUT  
@@ -2473,7 +2473,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
   * Status: Active, Paused  
   * Test webhook: Send sample payload
 
-**Incoming Webhooks** (External systems → PawHelp)
+**Incoming Webhooks** (External systems → Waggli)
 
 * Generated webhook URLs for external systems  
 * Webhook endpoint: Unique URL per integration  
@@ -2852,7 +2852,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 * Supported formats: CSV, Excel (.xlsx)  
 * Column mapping:  
   * Auto-detect columns: Automatic mapping if headers match  
-  * Manual mapping: Dropdown per column to map to PawHelp fields  
+  * Manual mapping: Dropdown per column to map to Waggli fields  
   * Required fields validation: Email, Name, Role  
   * Optional fields: Phone, Address, Language, etc.
 
@@ -2984,7 +2984,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
   * Select source platform: Dropdown (Rover, Care.com, Custom)  
   * Upload data export: Multiple CSV files or ZIP  
 * **Data Mapping**  
-  * Map source fields to PawHelp fields per entity type:  
+  * Map source fields to Waggli fields per entity type:  
     * Users: Name, email, phone, address, role  
     * Pets: Name, species, breed, owner  
     * Bookings: Service, provider, client, date, price, status  
@@ -2998,8 +2998,8 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
     * Create new with suffix (e.g., email+1)  
   * Test migration: Run on small sample first  
 * **Data Transformation**  
-  * Custom rules: If source field X \= "value", set PawHelp field Y \= "new value"  
-  * Calculated fields: Derive PawHelp fields from multiple source fields  
+  * Custom rules: If source field X \= "value", set Waggli field Y \= "new value"  
+  * Calculated fields: Derive Waggli fields from multiple source fields  
   * Reference integrity: Ensure foreign keys (e.g., pet owner) match imported users  
 * **Execute Migration**  
   * Staged migration: Import users first, then pets, then bookings  
@@ -3351,7 +3351,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 * Average provider rating  
 * Top
 
-Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+Continuing the comprehensive Admin Panel Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -4491,7 +4491,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 
 **Chatbot Configuration**
 
-* Chatbot name and persona: "PawHelper"  
+* Chatbot name and persona: "Wagglier"  
 * AI model: GPT-4, Custom trained model  
 * Language support: Multi-language chatbot  
 * Availability: 24/7, Business hours only  
@@ -4679,7 +4679,7 @@ Continuing the comprehensive Admin Panel Platform Specification Document:pawhelp
 
 * CDN provider: CloudFlare, AWS CloudFront, Akamai  
 * CDN endpoints: URLs for cached content  
-* Origin server: PawHelp primary server  
+* Origin server: Waggli primary server  
 * Cache rules: Which files to cache, TTL per file type  
 * Geographic distribution: Edge locations enabled
 
@@ -5023,7 +5023,7 @@ text
 
 `│   ├── Multi`
 
-Continuing and completing the comprehensive Admin Panel Platform Specification Document:pawhelp\_doc\_7\_admin\_panel\_roles.md+1​
+Continuing and completing the comprehensive Admin Panel Platform Specification Document:waggli\_doc\_7\_admin\_panel\_roles.md+1​
 
 ---
 
@@ -5549,7 +5549,7 @@ json
 
 ## **23.1 Document Summary**
 
-This comprehensive Admin Panel Platform Specification Document provides complete technical and functional specifications for the PawHelp administrative system, covering:Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md+2​
+This comprehensive Admin Panel Platform Specification Document provides complete technical and functional specifications for the Waggli administrative system, covering:Platform-Waggli\_-Complete-Solution-and-Implementa-2.md+2​
 
 **Core Capabilities Documented:**
 
@@ -5564,11 +5564,11 @@ This comprehensive Admin Panel Platform Specification Document provides complete
 * Advanced analytics and reporting  
 * Enterprise-grade security and compliance tools
 
-**Total Modules Specified:** 23 major modules with 150+ sub-modules and pagespawhelp\_doc\_7\_admin\_panel\_roles.md​
+**Total Modules Specified:** 23 major modules with 150+ sub-modules and pageswaggli\_doc\_7\_admin\_panel\_roles.md​
 
-**Total Features Documented:** 500+ distinct administrative features and capabilitiesPlatform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+**Total Features Documented:** 500+ distinct administrative features and capabilitiesPlatform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
-**Integration Points:** 20+ third-party integration specifications (payment gateways, email services, SMS, analytics, veterinary systems, IoT devices)Platform-PawHelp\_-Complete-Solution-and-Implementa-2.md​
+**Integration Points:** 20+ third-party integration specifications (payment gateways, email services, SMS, analytics, veterinary systems, IoT devices)Platform-Waggli\_-Complete-Solution-and-Implementa-2.md​
 
 ## **23.2 Implementation Priorities**
 

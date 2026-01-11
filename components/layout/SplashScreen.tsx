@@ -12,7 +12,7 @@ export default function SplasScreen() {
     <View style={styles.container} accessibilityLabel="Splas Screen">
       <View style={styles.card}>
         <Image source={source as any} style={styles.logo} resizeMode="contain" />
-        <Text style={styles.brand}>pawzly</Text>
+        <Text style={styles.brand}>waggli</Text>
       </View>
     </View>
   );

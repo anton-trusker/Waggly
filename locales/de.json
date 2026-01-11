@@ -1,6 +1,6 @@
 {
   "common": {
-    "welcome": "Willkommen bei Pawzly",
+    "welcome": "Willkommen bei Waggli",
     "language": "Sprache",
     "select_language": "Sprache auswählen",
     "search_language": "Sprache suchen...",
@@ -227,12 +227,12 @@
     "no_account": "Noch kein Konto?",
     "sign_up_link": "Registrieren",
     "signup_title": "Konto erstellen",
-    "signup_subtitle": "Werden Sie Teil der Pawzly-Community",
+    "signup_subtitle": "Werden Sie Teil der Waggli-Community",
     "confirm_password_label": "Passwort bestätigen",
     "create_account": "Konto erstellen",
     "already_have_account": "Haben Sie bereits ein Konto?",
     "login_link": "Einloggen",
-    "hero_title": "Willkommen zurück bei Pawzly",
+    "hero_title": "Willkommen zurück bei Waggli",
     "hero_subtitle": "Die Gesundheit Ihres Haustieres an einem Ort.",
     "reset_title": "Passwort zurücksetzen",
     "reset_subtitle": "Geben Sie Ihre E-Mail ein, um den Reset-Link zu erhalten",
@@ -312,7 +312,7 @@
     "error_weight": "Bitte geben Sie eine gültige Zahl für das Gewicht ein."
   },
   "pwa": {
-    "install_title": "Pawzly App installieren",
+    "install_title": "Waggli App installieren",
     "install_ios": "Tippen Sie auf die Teilen-Schaltfläche und wählen Sie 'Zum Home-Bildschirm'",
     "install_android": "Tippen Sie auf die Menü-Schaltfläche und wählen Sie 'App installieren'"
   },
@@ -578,7 +578,7 @@
       "title": "Profil teilen",
       "desc": "Teilen Sie dieses Profil mit Familie, Freunden oder Ihrem Tierarzt.",
       "action": "Jetzt teilen",
-      "message": "Schau dir dieses Haustierprofil auf Pawzly an! {{url}}",
+      "message": "Schau dir dieses Haustierprofil auf Waggli an! {{url}}",
       "message_title": "Haustierprofil"
     }
   },

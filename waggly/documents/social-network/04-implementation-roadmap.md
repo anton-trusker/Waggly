@@ -9,10 +9,10 @@
 
 ## 📋 Executive Summary
 
-This roadmap outlines a phased approach to implementing a comprehensive social network for pets and pet owners within Pawzly. The implementation prioritizes core features first, followed by community and advanced features, ensuring a minimum viable product (MVP) can be delivered quickly while maintaining quality.
+This roadmap outlines a phased approach to implementing a comprehensive social network for pets and pet owners within Waggli. The implementation prioritizes core features first, followed by community and advanced features, ensuring a minimum viable product (MVP) can be delivered quickly while maintaining quality.
 
 ### Strategic Approach
-1. **Build on Existing Foundation**: Leverage current Pawzly architecture (React Native, Supabase, health tracking)
+1. **Build on Existing Foundation**: Leverage current Waggli architecture (React Native, Supabase, health tracking)
 2. **Phased Rollout**: Release features incrementally to gather user feedback
 3. **Quick Wins First**: Prioritize features that deliver immediate value
 4. **Community-Driven**: Focus on features that drive engagement and retention
@@ -457,7 +457,7 @@ Activities:
 Activities:
 - 🎯 Announce on all communication channels (email, push, in-app)
 - 🎯 Press release to pet media outlets
-- 🎯 Social media campaign (#PawzlySocial)
+- 🎯 Social media campaign (#WaggliSocial)
 - 🎯 Partnerships with pet influencers (sponsored posts)
 - 🎯 Onboarding prompts for existing users
 - 🎯 In-app messaging highlighting new features
@@ -651,4 +651,4 @@ Activities:
 
 ---
 
-This roadmap provides a clear, actionable path to implementing a world-class social network for pets and pet owners in Pawzly, balancing speed, quality, and sustainability.
+This roadmap provides a clear, actionable path to implementing a world-class social network for pets and pet owners in Waggli, balancing speed, quality, and sustainability.

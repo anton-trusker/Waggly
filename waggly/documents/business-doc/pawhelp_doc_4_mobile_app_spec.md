@@ -1,4 +1,4 @@
-**PawHelp Document 4: Mobile App Specification — UI/UX, Screens & Flows**
+**Waggli Document 4: Mobile App Specification — UI/UX, Screens & Flows**
 
 ---
 
@@ -47,7 +47,7 @@
   - SF Pro Text (iOS)
   - Roboto (Android)
 - **Iconography:**
-  - PawHelp custom icon set.
+  - Waggli custom icon set.
   - Outline and filled styles for inactive/active states.
 - **Spacing & Layout:**
   - Base 4px grid system.
@@ -140,5 +140,5 @@
 
 ---
 
-*The PawHelp mobile app delivers a comprehensive, role-aware experience that prioritizes accessibility, usability, and community-driven action.*
+*The Waggli mobile app delivers a comprehensive, role-aware experience that prioritizes accessibility, usability, and community-driven action.*
 

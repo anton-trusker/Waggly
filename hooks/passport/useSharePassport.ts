@@ -33,7 +33,7 @@ export function useSharePassport(petId: string) {
     const { success, error } = useToast();
 
     const getShareUrl = useCallback((token: string) => {
-        let baseUrl = 'https://mypawzly.com'; // Production default
+        let baseUrl = 'https://mywaggli.com'; // Production default
 
         if (Platform.OS === 'web') {
             const hostname = window.location.hostname;

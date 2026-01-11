@@ -2,7 +2,7 @@
 
 # advice and recomend what improve in my new startup idea
 
-Based on your PawHelp startup documentation, you've built a comprehensive platform for animal welfare that shows real promise. Here's my YC-aligned advice on what to improve and prioritize:
+Based on your Waggli startup documentation, you've built a comprehensive platform for animal welfare that shows real promise. Here's my YC-aligned advice on what to improve and prioritize:
 
 ## **Start Simple and Focus on One Core Problem**
 
@@ -103,24 +103,24 @@ The animal welfare space needs better solutions, but success comes from solving 
 
 <div style="text-align: center">⁂</div>
 
-[^1_1]: pawhelp_doc_1_executive_summary.md
+[^1_1]: waggli_doc_1_executive_summary.md
 
-[^1_2]: pawhelp_doc_2_platform_features.md
+[^1_2]: waggli_doc_2_platform_features.md
 
-[^1_3]: pawhelp_doc_4_mobile_app_spec.md
+[^1_3]: waggli_doc_4_mobile_app_spec.md
 
-[^1_4]: pawhelp_doc_5_web_platform_spec.md
+[^1_4]: waggli_doc_5_web_platform_spec.md
 
-[^1_5]: pawhelp_doc_7_admin_panel_roles.md
+[^1_5]: waggli_doc_7_admin_panel_roles.md
 
-[^1_6]: pawhelp_doc_8_permissions_matrix.md
+[^1_6]: waggli_doc_8_permissions_matrix.md
 
 
 ---
 
-# PawHelp MVP Strategy: Building Your Animal Welfare Platform for Europe
+# Waggli MVP Strategy: Building Your Animal Welfare Platform for Europe
 
-Based on my review of your comprehensive PawHelp documentation and current European startup landscape, here's a focused MVP strategy that aligns with Y Combinator principles and European funding opportunities.
+Based on my review of your comprehensive Waggli documentation and current European startup landscape, here's a focused MVP strategy that aligns with Y Combinator principles and European funding opportunities.
 
 ## **Your MVP Should Be: Emergency Vet Bill Crowdfunding Only**
 
@@ -321,9 +321,9 @@ Remember: **Your goal is proving people will pay for the core escrow donation se
 
 ---
 
-# Fast Funding Options for Your €30-40K PawHelp Startup
+# Fast Funding Options for Your €30-40K Waggli Startup
 
-Based on your PawHelp documentation and current European funding landscape, here are the fastest ways to secure €30-40K for your animal welfare platform startup:
+Based on your Waggli documentation and current European funding landscape, here are the fastest ways to secure €30-40K for your animal welfare platform startup:
 
 ## **Immediate Options (1-4 weeks)**
 
@@ -459,7 +459,7 @@ Multiple competitions offering significant prizes[^3_19].
 - **S+T+ARTS Prize** - €20,000 per category[^3_19]
 
 
-## **Recommended Strategy for PawHelp**
+## **Recommended Strategy for Waggli**
 
 ### **Phase 1: Immediate (Next 2 weeks)**
 
@@ -491,7 +491,7 @@ Multiple competitions offering significant prizes[^3_19].
 
 **Y Combinator Principle:** Focus on solving one problem exceptionally well - the escrow-protected emergency vet bill fundraising - before expanding to your comprehensive platform vision. This focus will make all funding applications stronger and faster to approve.
 
-The combination of friends \& family funding plus P2P lending gives you the highest probability of securing €30-40K within 2-4 weeks, which aligns with your immediate needs for PawHelp's MVP development.
+The combination of friends \& family funding plus P2P lending gives you the highest probability of securing €30-40K within 2-4 weeks, which aligns with your immediate needs for Waggli's MVP development.
 
 <div style="text-align: center">⁂</div>
 
@@ -533,17 +533,17 @@ The combination of friends \& family funding plus P2P lending gives you the high
 
 [^3_19]: https://www.femaleswitch.com/playbook/tpost/3j8xm6k861-top-20-startup-competitions-in-europe-in
 
-[^3_20]: pawhelp_doc_1_executive_summary.md
+[^3_20]: waggli_doc_1_executive_summary.md
 
-[^3_21]: pawhelp_doc_2_platform_features.md
+[^3_21]: waggli_doc_2_platform_features.md
 
-[^3_22]: pawhelp_doc_4_mobile_app_spec.md
+[^3_22]: waggli_doc_4_mobile_app_spec.md
 
-[^3_23]: pawhelp_doc_5_web_platform_spec.md
+[^3_23]: waggli_doc_5_web_platform_spec.md
 
-[^3_24]: pawhelp_doc_7_admin_panel_roles.md
+[^3_24]: waggli_doc_7_admin_panel_roles.md
 
-[^3_25]: pawhelp_doc_8_permissions_matrix.md
+[^3_25]: waggli_doc_8_permissions_matrix.md
 
 [^3_26]: https://www.softkit.dev/blog/startup-funding/
 
@@ -685,21 +685,21 @@ By leveraging a structured shareholder loan you preserve cash flow, minimize tax
 
 [^4_3]: https://lawyers-portugal.com/dividend-tax-in-portugal/
 
-[^4_4]: pawhelp_doc_1_executive_summary.md
+[^4_4]: waggli_doc_1_executive_summary.md
 
 [^4_5]: https://www.iapmei.pt/Paginas/Linha-de-Apoio-a-Tesouraria-para-Micro-e-Pequenas.aspx
 
 [^4_6]: https://www.iapmei.pt/NOTICIAS/Linha-de-Apoio-a-Tesouraria-para-Micro-e-Pequenas.aspx
 
-[^4_7]: pawhelp_doc_2_platform_features.md
+[^4_7]: waggli_doc_2_platform_features.md
 
-[^4_8]: pawhelp_doc_4_mobile_app_spec.md
+[^4_8]: waggli_doc_4_mobile_app_spec.md
 
-[^4_9]: pawhelp_doc_5_web_platform_spec.md
+[^4_9]: waggli_doc_5_web_platform_spec.md
 
-[^4_10]: pawhelp_doc_7_admin_panel_roles.md
+[^4_10]: waggli_doc_7_admin_panel_roles.md
 
-[^4_11]: pawhelp_doc_8_permissions_matrix.md
+[^4_11]: waggli_doc_8_permissions_matrix.md
 
 [^4_12]: https://www.iapmei.pt/PRODUTOS-E-SERVICOS/Incentivos-Financiamento/Financiamento-para-PME/Outros-instrumentos-de-financiamento/Microcredito.aspx
 
@@ -838,17 +838,17 @@ Use a simple SAFE with a €3 M–€5 M cap, include pro rata and MFN protectio
 
 [^5_5]: https://developmentcorporate.com/2024/05/14/trends-in-pre-seed-seed-and-early-stage-european-vc-a-pre-seed-funded-founders-perspective/
 
-[^5_6]: pawhelp_doc_1_executive_summary.md
+[^5_6]: waggli_doc_1_executive_summary.md
 
-[^5_7]: pawhelp_doc_2_platform_features.md
+[^5_7]: waggli_doc_2_platform_features.md
 
-[^5_8]: pawhelp_doc_4_mobile_app_spec.md
+[^5_8]: waggli_doc_4_mobile_app_spec.md
 
-[^5_9]: pawhelp_doc_5_web_platform_spec.md
+[^5_9]: waggli_doc_5_web_platform_spec.md
 
-[^5_10]: pawhelp_doc_7_admin_panel_roles.md
+[^5_10]: waggli_doc_7_admin_panel_roles.md
 
-[^5_11]: pawhelp_doc_8_permissions_matrix.md
+[^5_11]: waggli_doc_8_permissions_matrix.md
 
 [^5_12]: https://www.statista.com/statistics/439669/business-angel-investments-by-country-in-europe/
 
@@ -912,7 +912,7 @@ Answer skipped.
 
 ---
 
-# Accelerating Growth and Fundraising for Your Live PawHelp Platform
+# Accelerating Growth and Fundraising for Your Live Waggli Platform
 
 **Main Recommendation:**
 Leverage concrete **traction metrics**—not features—to demonstrate real market validation, optimize donor conversion and retention, and craft a data-driven pitch deck that speaks directly to angel investors’ priorities.
@@ -999,17 +999,17 @@ By centering on **hard metrics**—active donors, conversion rates, average gift
 
 [^7_3]: https://www.grandviewresearch.com/press-release/global-crowdfunding-market
 
-[^7_4]: pawhelp_doc_1_executive_summary.md
+[^7_4]: waggli_doc_1_executive_summary.md
 
-[^7_5]: pawhelp_doc_2_platform_features.md
+[^7_5]: waggli_doc_2_platform_features.md
 
-[^7_6]: pawhelp_doc_4_mobile_app_spec.md
+[^7_6]: waggli_doc_4_mobile_app_spec.md
 
-[^7_7]: pawhelp_doc_5_web_platform_spec.md
+[^7_7]: waggli_doc_5_web_platform_spec.md
 
-[^7_8]: pawhelp_doc_7_admin_panel_roles.md
+[^7_8]: waggli_doc_7_admin_panel_roles.md
 
-[^7_9]: pawhelp_doc_8_permissions_matrix.md
+[^7_9]: waggli_doc_8_permissions_matrix.md
 
 [^7_10]: https://www.growthmentor.com/glossary/startup-traction/
 
@@ -1104,11 +1104,11 @@ By centering on **hard metrics**—active donors, conversion rates, average gift
 
 ---
 
-# Comprehensive Research for PawHelp Startup Preparation
+# Comprehensive Research for Waggli Startup Preparation
 
 ## Executive Summary
 
-PawHelp addresses the **trust gap** in emergency veterinary crowdfunding by offering an escrow-protected donation platform in Europe. The **European pet care market** is forecast to reach €81.4 billion in 2025, growing at a 5.1% CAGR through 2033[^8_1]. The **animal healthcare segment** alone will be worth US \$16.1 billion in 2025, expanding at 5.3% annually through 2032[^8_2]. To capture this opportunity, PawHelp must differentiate via its secure escrow model, integrate with European payment rails, and target high-trust urban markets. Early funding of **€40 000–€50 000** with **1–2% equity per angel**, leveraging **SAFE** instruments, aligns with investor norms.
+Waggli addresses the **trust gap** in emergency veterinary crowdfunding by offering an escrow-protected donation platform in Europe. The **European pet care market** is forecast to reach €81.4 billion in 2025, growing at a 5.1% CAGR through 2033[^8_1]. The **animal healthcare segment** alone will be worth US \$16.1 billion in 2025, expanding at 5.3% annually through 2032[^8_2]. To capture this opportunity, Waggli must differentiate via its secure escrow model, integrate with European payment rails, and target high-trust urban markets. Early funding of **€40 000–€50 000** with **1–2% equity per angel**, leveraging **SAFE** instruments, aligns with investor norms.
 
 ## 1. Market Analysis
 
@@ -1219,7 +1219,7 @@ PawHelp addresses the **trust gap** in emergency veterinary crowdfunding by offe
 - Draft investor deck emphasizing market size, traction plan, and escrow security advantage.
 - Begin investor outreach to 5–7 angels, target closing round within 6 weeks.
 
-By executing this focused research and validation roadmap, PawHelp will be well-positioned to launch a trust-centric emergency vet fundraising platform in Europe and secure timely angel investment.
+By executing this focused research and validation roadmap, Waggli will be well-positioned to launch a trust-centric emergency vet fundraising platform in Europe and secure timely angel investment.
 
 <div style="text-align: center">⁂</div>
 
@@ -1251,7 +1251,7 @@ By executing this focused research and validation roadmap, PawHelp will be well-
 
 [^8_14]: https://tech.eu/2024/05/21/pitchbooks-q1-2024-european-vc-valuations-report-valuations-trends-and-outlook/
 
-[^8_15]: PawHelp-MVP-Product-Requirements-Document.md
+[^8_15]: Waggli-MVP-Product-Requirements-Document.md
 
 [^8_16]: https://www.cognitivemarketresearch.com/pet-care-market-report
 
@@ -1338,11 +1338,11 @@ By executing this focused research and validation roadmap, PawHelp will be well-
 
 ---
 
-# PawHelp Platform: Market Analysis, Business Metrics, and Investor Documentation Preparation
+# Waggli Platform: Market Analysis, Business Metrics, and Investor Documentation Preparation
 
 ## Executive Summary
 
-PawHelp targets the **€81 billion** European pet care market by solving the critical **trust gap** in emergency veterinary crowdfunding via an escrow-protected donation platform. The **animal healthcare** submarket is worth **€16.08 billion** in 2025, growing at 5.3%CAGR, and the broader **veterinary services** industry is **€34.9 billion** in 2025, rising at 1.3%CAGR. Donation-based crowdfunding for individuals in Europe averages **€6 460** per campaign, with **8 donors** each giving about **€66**. Business angels in Europe write average tickets of **€24 500**, and total visible angel investment per company is **€221 400**. To build a compelling investor package, PawHelp must map its **TAM/SAM/SOM**, model unit economics, define clear growth metrics, and craft a data-driven pitch deck.
+Waggli targets the **€81 billion** European pet care market by solving the critical **trust gap** in emergency veterinary crowdfunding via an escrow-protected donation platform. The **animal healthcare** submarket is worth **€16.08 billion** in 2025, growing at 5.3%CAGR, and the broader **veterinary services** industry is **€34.9 billion** in 2025, rising at 1.3%CAGR. Donation-based crowdfunding for individuals in Europe averages **€6 460** per campaign, with **8 donors** each giving about **€66**. Business angels in Europe write average tickets of **€24 500**, and total visible angel investment per company is **€221 400**. To build a compelling investor package, Waggli must map its **TAM/SAM/SOM**, model unit economics, define clear growth metrics, and craft a data-driven pitch deck.
 
 ## 1. Market Overview
 
@@ -1360,7 +1360,7 @@ PawHelp targets the **€81 billion** European pet care market by solving the cr
 - 299 million pets in 139 million European households (49%) and a pet food market of **€29.3 billion**, 9% growth in 2023[get_url_content].
 
 
-## 2. Crowdfunding Landscape \& PawHelp’s Opportunity
+## 2. Crowdfunding Landscape \& Waggli’s Opportunity
 
 **Donation-Based Crowdfunding Benchmarks**
 
@@ -1368,7 +1368,7 @@ PawHelp targets the **€81 billion** European pet care market by solving the cr
 - Average number of donors per campaign: **8**; average gift size: **€66**[5].
 
 **Scaling Potential for Emergency Vet Crowdfunding**
-Assuming PawHelp captures just **0.1%** of Europe’s emergency veterinary market (≈ €35 million TAM), it could facilitate **€35 million** of funds via crowdfunding. With an average campaign size of **€6 460**, this equates to **5 425** campaigns (≈ 450 per month).
+Assuming Waggli captures just **0.1%** of Europe’s emergency veterinary market (≈ €35 million TAM), it could facilitate **€35 million** of funds via crowdfunding. With an average campaign size of **€6 460**, this equates to **5 425** campaigns (≈ 450 per month).
 
 ## 3. Total Addressable \& Serviceable Markets
 
@@ -1401,7 +1401,7 @@ Assuming PawHelp captures just **0.1%** of Europe’s emergency veterinary marke
 **Example Economics (per campaign)**
 
 - Funds raised: €6 460
-- PawHelp revenue (15%): €969
+- Waggli revenue (15%): €969
 - Processing cost (2.5%): €161
 - Verification \& ops: €150
 - **Gross profit per campaign: €658**
@@ -1484,9 +1484,9 @@ Assuming PawHelp captures just **0.1%** of Europe’s emergency veterinary marke
 
 ---
 
-# PawHelp's Strategic Position in the European Pet Care Market
+# Waggli's Strategic Position in the European Pet Care Market
 
-PawHelp is exceptionally well-positioned to capitalize on the massive growth trajectory of the European pet care market, which is projected to reach **€121.02 billion by 2033** with a **5.08% CAGR**[^10_1]. Your platform addresses critical market gaps while aligning with key industry trends driving this expansion.
+Waggli is exceptionally well-positioned to capitalize on the massive growth trajectory of the European pet care market, which is projected to reach **€121.02 billion by 2033** with a **5.08% CAGR**[^10_1]. Your platform addresses critical market gaps while aligning with key industry trends driving this expansion.
 
 ## **Market Size and Opportunity Alignment**
 
@@ -1496,14 +1496,14 @@ PawHelp is exceptionally well-positioned to capitalize on the massive growth tra
 - **90 million households** own pets across Europe, with **89 million cats and 67 million dogs**[^10_1]
 - Veterinary healthcare specifically: **€11.47 billion in 2025**, growing at **6.90% CAGR through 2033**[^10_2]
 
-**PawHelp's Addressable Market:**
+**Waggli's Addressable Market:**
 Your emergency veterinary crowdfunding platform targets a specific but substantial segment within this massive market. With average emergency vet costs often exceeding €1,000-€3,000, and your escrow-protected donation model, you're positioned to capture meaningful market share from the growing veterinary healthcare segment.
 
 ## **Critical Trend Alignment**
 
 ### **Pet Humanization and Premium Spending**
 
-The market shows **intensified emotional connection between pet owners and their pets**, with owners spending more on **premium lifestyle-improving and wellness products**[^10_3]. This directly supports PawHelp's value proposition—pet owners who view pets as family members are more likely to:
+The market shows **intensified emotional connection between pet owners and their pets**, with owners spending more on **premium lifestyle-improving and wellness products**[^10_3]. This directly supports Waggli's value proposition—pet owners who view pets as family members are more likely to:
 
 - Seek emergency funding for expensive treatments
 - Donate to help other pets in need
@@ -1512,7 +1512,7 @@ The market shows **intensified emotional connection between pet owners and their
 
 ### **Digital Transformation and E-commerce Growth**
 
-**Online pet product sales rose 20% in 2022**[^10_1], and **online retailers are expected to exhibit a 10.9% CAGR**[^10_4]. This digital-first trend strongly favors PawHelp's platform-based approach, as European pet owners are increasingly comfortable with:
+**Online pet product sales rose 20% in 2022**[^10_1], and **online retailers are expected to exhibit a 10.9% CAGR**[^10_4]. This digital-first trend strongly favors Waggli's platform-based approach, as European pet owners are increasingly comfortable with:
 
 - Online transactions for pet-related services
 - Digital platforms for pet care solutions
@@ -1521,7 +1521,7 @@ The market shows **intensified emotional connection between pet owners and their
 
 ### **Technology Adoption in Pet Care**
 
-The **European pet tech market is projected to grow at 20.7% CAGR from 2025-2034**[^10_5], with **smart pet devices expected to grow 18% annually**[^10_1]. While PawHelp isn't a traditional "pet tech" company, your AI-powered features align with this trend:
+The **European pet tech market is projected to grow at 20.7% CAGR from 2025-2034**[^10_5], with **smart pet devices expected to grow 18% annually**[^10_1]. While Waggli isn't a traditional "pet tech" company, your AI-powered features align with this trend:
 
 - AI-assisted case creation and fraud detection
 - Smart donor matching algorithms
@@ -1536,12 +1536,12 @@ The European market faces a **shortage of skilled veterinary professionals**, wi
 
 - **Higher veterinary costs** due to supply constraints
 - **Longer wait times** for emergency care
-- **Increased need** for financial assistance platforms like PawHelp
+- **Increased need** for financial assistance platforms like Waggli
 
 
 ### **Sustainability Alignment**
 
-European consumers show **25% rise in sales of sustainable pet care products**[^10_1], and sustainability is becoming a **key factor in brand selection**[^10_3]. PawHelp's transparency-focused, community-driven model aligns with these values by:
+European consumers show **25% rise in sales of sustainable pet care products**[^10_1], and sustainability is becoming a **key factor in brand selection**[^10_3]. Waggli's transparency-focused, community-driven model aligns with these values by:
 
 - Reducing waste through targeted, verified donations
 - Supporting local veterinary communities
@@ -1556,7 +1556,7 @@ European consumers show **25% rise in sales of sustainable pet care products**[^
 - **France and UK**: Key markets with **high pet ownership and established veterinary infrastructure**[^10_2]
 - **Netherlands**: Strong digital adoption and existing crowdfunding culture
 
-These markets offer the optimal combination of large pet populations, high digital adoption, and established payment infrastructure necessary for PawHelp's success.
+These markets offer the optimal combination of large pet populations, high digital adoption, and established payment infrastructure necessary for Waggli's success.
 
 ## **Revenue Model Validation**
 
@@ -1588,7 +1588,7 @@ The **€500,000 raise** you're planning aligns well with the market opportunity
 
 ## **Long-term Market Position**
 
-PawHelp is positioned to become the **"Stripe for pet emergency funding"** in Europe, benefiting from multiple converging trends:
+Waggli is positioned to become the **"Stripe for pet emergency funding"** in Europe, benefiting from multiple converging trends:
 
 - Massive market growth (**5.08% CAGR to 2033**)
 - Digital transformation acceleration
@@ -1609,17 +1609,17 @@ Your platform addresses a genuine market need while riding the wave of European 
 
 [^10_5]: https://pacvue.com/blog/the-pet-economy-in-europe-market-trends-and-insights-for-2025/
 
-[^10_6]: pawhelp_doc_1_executive_summary.md
+[^10_6]: waggli_doc_1_executive_summary.md
 
-[^10_7]: pawhelp_doc_2_platform_features.md
+[^10_7]: waggli_doc_2_platform_features.md
 
-[^10_8]: pawhelp_doc_4_mobile_app_spec.md
+[^10_8]: waggli_doc_4_mobile_app_spec.md
 
-[^10_9]: pawhelp_doc_5_web_platform_spec.md
+[^10_9]: waggli_doc_5_web_platform_spec.md
 
-[^10_10]: pawhelp_doc_7_admin_panel_roles.md
+[^10_10]: waggli_doc_7_admin_panel_roles.md
 
-[^10_11]: pawhelp_doc_8_permissions_matrix.md
+[^10_11]: waggli_doc_8_permissions_matrix.md
 
 [^10_12]: https://www.petfoodindustry.com/blogs-columns/adventures-in-pet-food/blog/15741828/pet-food-pet-care-insights-from-global-pet-expo-2025
 
@@ -1634,16 +1634,16 @@ Your platform addresses a genuine market need while riding the wave of European 
 
 ---
 
-# PawHelp's Strategic Alignment with European Pet Care Market Trends
+# Waggli's Strategic Alignment with European Pet Care Market Trends
 
-Based on your comprehensive platform documentation and current European pet care market data, PawHelp is exceptionally well-positioned to capitalize on major industry trends driving the **€121.02 billion** European pet care market by 2033.
+Based on your comprehensive platform documentation and current European pet care market data, Waggli is exceptionally well-positioned to capitalize on major industry trends driving the **€121.02 billion** European pet care market by 2033.
 
 ## **Perfect Alignment with Pet Humanization Trend**
 
 **Market Reality:**
 European pet owners increasingly treat pets as **family members**, with **71% globally considering pets as family**[^11_1]. This humanization drives demand for premium, health-focused products and services.
 
-**PawHelp's Advantage:**
+**Waggli's Advantage:**
 Your platform directly addresses this trend through:
 
 - **Escrow-protected emergency funding** - treating pet medical emergencies with the same urgency as human family emergencies
@@ -1656,7 +1656,7 @@ Your platform directly addresses this trend through:
 **Market Growth:**
 The **European pet tech market is growing at 20.7% CAGR (2025-2034)**[^11_2][^11_3], with smart devices and health monitoring gaining massive adoption.
 
-**PawHelp's Tech Integration:**
+**Waggli's Tech Integration:**
 Your platform leverages cutting-edge technology:
 
 - **AI-powered fraud detection** and risk scoring
@@ -1665,14 +1665,14 @@ Your platform leverages cutting-edge technology:
 - **Real-time translation and localization** for multi-country expansion
 - **Blood donor compatibility matching** using AI algorithms
 
-This positions PawHelp as a **pet tech innovator** rather than just a crowdfunding platform.
+This positions Waggli as a **pet tech innovator** rather than just a crowdfunding platform.
 
 ## **Sustainability and Transparency Demands**
 
 **Market Trend:**
 European consumers show a **25% rise in sales of sustainable pet care products**[^11_4], prioritizing transparency and ethical practices.
 
-**PawHelp's Solution:**
+**Waggli's Solution:**
 Your escrow system directly addresses transparency concerns:
 
 - **Funds held until goals are met** - eliminating donation waste
@@ -1686,7 +1686,7 @@ Your escrow system directly addresses transparency concerns:
 **Market Data:**
 **Online pet product sales rose 20% in 2022**[^11_5], with **e-commerce expected to grow at 10.9% CAGR**[^11_4].
 
-**PawHelp's Digital-First Approach:**
+**Waggli's Digital-First Approach:**
 
 - **Web and mobile platform parity** - meeting users wherever they are
 - **Social sharing integration** - leveraging digital networks for campaign reach
@@ -1699,7 +1699,7 @@ Your escrow system directly addresses transparency concerns:
 **Market Challenge:**
 The European veterinary services market is worth **€41.17 billion in 2025**, growing at **11.38% CAGR**[^11_6], but faces **20% staffing shortages**[^11_4].
 
-**PawHelp's Market Opportunity:**
+**Waggli's Market Opportunity:**
 Your platform addresses the funding gap created by:
 
 - **Higher veterinary costs** due to professional shortages
@@ -1713,7 +1713,7 @@ Your **blood donation network** also directly supports overwhelmed veterinary pr
 **Market Insight:**
 Pet ownership surged during COVID-19, with **88 million European households** now owning pets[^11_6]. This created stronger community bonds around pet care.
 
-**PawHelp's Community Features:**
+**Waggli's Community Features:**
 
 - **Local community groups** for regional pet support
 - **"Heroes Nearby" recognition** - celebrating local donors
@@ -1726,7 +1726,7 @@ Pet ownership surged during COVID-19, with **88 million European households** no
 **Market Growth:**
 European pet owners increasingly spend on **premium lifestyle-improving and wellness products**[^11_4], with focus on **preventive health**[^11_1].
 
-**PawHelp's Premium Positioning:**
+**Waggli's Premium Positioning:**
 
 - **Verified service provider marketplace** - connecting users with premium veterinary services
 - **AI-powered service recommendations** - matching users with quality providers
@@ -1739,7 +1739,7 @@ European pet owners increasingly spend on **premium lifestyle-improving and well
 **Market Reality:**
 Europe's diverse linguistic landscape requires **localized solutions** with **culturally adapted terminology**[^11_7].
 
-**PawHelp's Localization Strategy:**
+**Waggli's Localization Strategy:**
 
 - **Multi-language platform interface** with seamless switching
 - **AI-powered content translation** for user-generated content
@@ -1757,13 +1757,13 @@ Current European platforms like **Steunactie** and **Spendenaktion** lack:
 - Comprehensive blood donation networks
 - Multi-country integration
 
-**PawHelp's Differentiation:**
+**Waggli's Differentiation:**
 Your platform combines **crowdfunding + pet tech + community + marketplace** in one integrated solution, creating a **comprehensive ecosystem** rather than a single-purpose tool.
 
 ## **Investment Attractiveness**
 
 **Market Validation:**
-With the **veterinary services market growing at 11.38% CAGR** and **pet tech at 20.7% CAGR**, PawHelp sits at the intersection of two high-growth segments.
+With the **veterinary services market growing at 11.38% CAGR** and **pet tech at 20.7% CAGR**, Waggli sits at the intersection of two high-growth segments.
 
 **Revenue Model Alignment:**
 Your **15% commission model** aligns with European consumers' willingness to pay premium prices for **transparency and quality** in pet care services.
@@ -1779,7 +1779,7 @@ Your **15% commission model** aligns with European consumers' willingness to pay
 **Launch Strategy:**
 Focus on **emergency veterinary crowdfunding** first, then expand to blood donation network and service marketplace as you gain traction. This aligns with the **premium emergency care** trend while building the community foundation for broader features.
 
-PawHelp's comprehensive feature set positions it as the **"super app" for European pet care**, perfectly aligned with every major market trend driving the industry's growth to €121 billion by 2033.
+Waggli's comprehensive feature set positions it as the **"super app" for European pet care**, perfectly aligned with every major market trend driving the industry's growth to €121 billion by 2033.
 
 <div style="text-align: center">⁂</div>
 
@@ -1795,17 +1795,17 @@ PawHelp's comprehensive feature set positions it as the **"super app" for Europe
 
 [^11_6]: https://www.marketdataforecast.com/market-reports/europe-veterinary-services-market
 
-[^11_7]: pawhelp_doc_1_executive_summary.md
+[^11_7]: waggli_doc_1_executive_summary.md
 
-[^11_8]: pawhelp_doc_2_platform_features.md
+[^11_8]: waggli_doc_2_platform_features.md
 
-[^11_9]: pawhelp_doc_4_mobile_app_spec.md
+[^11_9]: waggli_doc_4_mobile_app_spec.md
 
-[^11_10]: pawhelp_doc_5_web_platform_spec.md
+[^11_10]: waggli_doc_5_web_platform_spec.md
 
-[^11_11]: pawhelp_doc_7_admin_panel_roles.md
+[^11_11]: waggli_doc_7_admin_panel_roles.md
 
-[^11_12]: pawhelp_doc_8_permissions_matrix.md
+[^11_12]: waggli_doc_8_permissions_matrix.md
 
 [^11_13]: https://lenderkit.com/blog/escrow-account-for-crowdfunding-platforms/
 
@@ -1823,9 +1823,9 @@ PawHelp's comprehensive feature set positions it as the **"super app" for Europe
 
 [^11_20]: https://www.grandviewresearch.com/industry-analysis/europe-pet-insurance-market-report
 
-[^11_21]: https://pawhelp.uk
+[^11_21]: https://waggli.uk
 
-[^11_22]: https://pawhelp.uk/adopt/
+[^11_22]: https://waggli.uk/adopt/
 
 [^11_23]: https://pawlytics.com
 
