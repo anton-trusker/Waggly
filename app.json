@@ -4,11 +4,11 @@
     "slug": "waggli",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./public/logo.png",
+    "icon": "./public/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./public/logo.png",
+      "image": "./public/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./public/logo.png",
+        "foregroundImage": "./public/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "edgeToEdgeEnabled": true,
