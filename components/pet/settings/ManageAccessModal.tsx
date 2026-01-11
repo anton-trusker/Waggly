@@ -4,7 +4,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
 import { useCoOwners } from '@/hooks/useCoOwners';
-import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
+import GenericFormModal from '@/components/ui/GenericFormModal';
 
 interface ManageAccessModalProps {
     visible: boolean;

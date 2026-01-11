@@ -3,14 +3,16 @@ import { z } from 'https://deno.land/x/zod@v3.21.4/mod.ts'
 // Pet validation schemas
 export const CreatePetSchema = z.object({
   name: z.string().min(1).max(100),
-  species: z.enum(['dog', 'cat', 'bird', 'rabbit', 'other']),
+  species: z.enum(['dog', 'cat', 'other']), // Matching V2 Enum
   breed: z.string().min(1).max(100).optional(),
-  birth_date: z.string().datetime().optional(),
-  weight_kg: z.number().positive().optional(),
+  date_of_birth: z.string().optional(), // ISO Date string YYYY-MM-DD
+  weight_current: z.number().positive().optional(),
+  weight_unit: z.enum(['kg', 'lbs']).default('kg'),
   microchip_number: z.string().max(50).optional(),
-  gender: z.enum(['male', 'female', 'unknown']).optional(),
+  gender: z.enum(['male', 'female']).optional(), // Matching V2 Enum
+  size: z.enum(['small', 'medium', 'large', 'giant']).optional(),
   color: z.string().max(50).optional(),
-  profile_image_url: z.string().url().optional(),
+  avatar_url: z.string().url().optional(),
 })
 
 export const UpdatePetSchema = CreatePetSchema.partial()
@@ -55,16 +57,16 @@ export async function validateBody<T>(req: Request, schema: z.ZodSchema<T>): Pro
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Validation failed', 
-          details: error.errors 
+        JSON.stringify({
+          error: 'Validation failed',
+          details: error.errors
         }),
-        { 
-          status: 400, 
-          headers: { 
+        {
+          status: 400,
+          headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-          } 
+          }
         }
       )
     }

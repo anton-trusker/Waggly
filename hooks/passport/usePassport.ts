@@ -239,12 +239,12 @@ export function usePassport(petId: string): UsePassportReturn {
                 registrationId: pet.registration_id || undefined,
                 tattooId: pet.tattoo_id || undefined,
                 petStatus: (pet.pet_status as PetStatus) || 'active',
-                photoUrl: pet.photo_url || undefined,
-                ownerId: pet.user_id,
+                photoUrl: pet.avatar_url || undefined,
+                ownerId: pet.owner_id,
             };
 
             // Build physical characteristics
-            const currentWeight = weightHistory && weightHistory.length > 0 ? weightHistory[0].weight : pet.weight;
+            const currentWeight = weightHistory && weightHistory.length > 0 ? weightHistory[0].weight : pet.weight_current;
             const physical: PhysicalCharacteristics = {
                 weight: {
                     currentKg: currentWeight || 0,

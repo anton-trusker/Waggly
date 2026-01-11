@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { router, usePathname } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocale } from '@/hooks/useLocale';
 import { ActivityIndicator, View } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { Tabs } from 'expo-router';
@@ -12,10 +13,10 @@ export default function TabLayout() {
   const { t } = useLocale();
 
   // Define paths where the bottom menu should be hidden
-  const shouldHideTabBar = 
-    pathname.includes('/add-') || 
-    pathname.includes('/edit') || 
-    pathname.includes('/wizard') || 
+  const shouldHideTabBar =
+    pathname.includes('/add-') ||
+    pathname.includes('/edit') ||
+    pathname.includes('/wizard') ||
     pathname.includes('/log-') ||
     pathname.includes('/co-owners');
 

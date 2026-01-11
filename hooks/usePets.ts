@@ -21,7 +21,7 @@ export function usePets() {
       const { data: ownedPets, error: ownedError } = await supabase
         .from('pets')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('owner_id', user.id)
         .order('created_at', { ascending: false });
 
       if (ownedError) throw ownedError;
@@ -47,14 +47,14 @@ export function usePets() {
           const { data: potentialSharedPets, error: sharedError } = await supabase
             .from('pets')
             .select('*')
-            .in('user_id', mainOwnerIds);
+            .in('owner_id', mainOwnerIds);
 
           if (sharedError) throw sharedError;
 
           // Filter based on permissions
           sharedPets = (potentialSharedPets || []).filter((pet: any) => {
             // Find the co-owner record linking me to this pet's owner
-            const relationship = records.find(r => r.main_owner_id === pet.user_id);
+            const relationship = records.find(r => r.main_owner_id === pet.owner_id);
             if (!relationship) return false;
 
             const permissions = relationship.permissions as unknown as CoOwnerPermissions;
@@ -66,7 +66,7 @@ export function usePets() {
             }
             return false;
           }).map((pet: any) => {
-            const relationship = records.find(r => r.main_owner_id === pet.user_id);
+            const relationship = records.find(r => r.main_owner_id === pet.owner_id);
             return {
               ...pet,
               role: relationship?.role || 'viewer',
@@ -102,7 +102,7 @@ export function usePets() {
     try {
       const { data, error } = await (supabase
         .from('pets') as any)
-        .insert([{ ...petData, user_id: user.id }])
+        .insert([{ ...petData, owner_id: user.id }])
         .select()
         .single();
 

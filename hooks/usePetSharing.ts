@@ -23,7 +23,7 @@ export interface SharedPetData {
     breed?: string;
     gender?: string;
     date_of_birth?: string;
-    photo_url?: string;
+    avatar_url?: string;
     microchip_number?: string;
 
     // Advanced info (only with advanced permission)
@@ -256,7 +256,7 @@ export function usePetSharing(petId?: string) {
             // Fetch basic pet info
             const { data: petData, error: petError } = await supabase
                 .from('pets')
-                .select('id, name, species, breed, gender, date_of_birth, photo_url, microchip_number')
+                .select('id, name, species, breed, gender, date_of_birth, avatar_url, microchip_number')
                 .eq('id', tokenData.pet_id)
                 .single();
 

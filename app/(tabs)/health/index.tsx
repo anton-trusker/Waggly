@@ -4,13 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
 import { useHealthDashboard, HealthEvent } from '@/hooks/useHealthDashboard';
 import { useRouter } from 'expo-router';
-import HealthEventSelectorModal from '@/components/desktop/modals/HealthEventSelectorModal';
-import PetSelectorModal from '@/components/desktop/modals/PetSelectorModal';
-import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
-import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
-import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
+import HealthEventSelectorModal from '@/components/features/health/HealthEventSelectorModal';
+import PetSelectorModal from '@/components/features/pets/PetSelectorModal';
+import VaccinationFormModal from '@/components/features/health/VaccinationFormModal';
+import VisitFormModal from '@/components/features/health/VisitFormModal';
+import MedicationFormModal from '@/components/features/health/MedicationFormModal';
 
-import WeightModal from '@/components/desktop/modals/WeightModal';
+import WeightFormModal from '@/components/features/health/WeightFormModal';
 
 export default function HealthDashboard() {
     const router = useRouter();
@@ -267,14 +267,14 @@ export default function HealthDashboard() {
                         petId={targetPetId}
                         onSuccess={handleSuccess}
                     />
-                    <TreatmentFormModal
+                    <MedicationFormModal
                         visible={modals.treatment}
                         onClose={closeAllModals}
                         petId={targetPetId}
                         onSuccess={handleSuccess}
                     />
 
-                    <WeightModal
+                    <WeightFormModal
                         visible={modals.weight}
                         onClose={closeAllModals}
                         petId={targetPetId}

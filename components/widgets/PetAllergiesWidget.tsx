@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Allergy } from '@/types';
+import { Allergy } from '@/types/v2/schema';
 
 interface PetAllergiesWidgetProps {
     allergies: Allergy[];
@@ -46,9 +46,9 @@ export default function PetAllergiesWidget({ allergies, onAdd, onEdit, onRemove 
                 {allergies.length > 0 ? (
                     <View style={styles.tagsContainer}>
                         {allergies.map((allergy) => {
-                            const name = allergy.allergen || allergy.allergen_name || 'Unknown';
-                            const type = allergy.type || allergy.allergy_type || 'Unknown';
-                            const severity = allergy.severity || allergy.severity_level;
+                            const name = allergy.name; // V2 uses name
+                            const type = allergy.type || 'Unknown';
+                            const severity = allergy.severity;
                             const colors = getSeverityColor(severity);
 
                             return (

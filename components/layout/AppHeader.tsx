@@ -10,7 +10,7 @@ import { useLocale } from '@/hooks/useLocale';
 import { Ionicons } from '@expo/vector-icons';
 import { usePets } from '@/hooks/usePets';
 import EditPetModal from '@/components/pet/EditPetModal';
-import ShareModal from '@/components/sharing/ShareModal';
+import ShareModal from '@/components/features/sharing/ShareModal';
 
 type Props = {
   title?: string;

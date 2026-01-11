@@ -5,7 +5,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { usePets } from '@/hooks/usePets';
 import { PetDetailedCard } from '@/components/pet/PetDetailedCard';
 import { PetCardSkeleton } from '@/components/skeletons/PetCardSkeleton';
-import ShareModal from '@/components/desktop/modals/ShareModal';
+import ShareModal from '@/components/features/sharing/DesktopShareModal';
 import { Pet } from '@/types';
 
 import { useLocale } from '@/hooks/useLocale';

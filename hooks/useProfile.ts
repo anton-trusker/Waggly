@@ -19,7 +19,7 @@ export function useProfile() {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single();
     if (error) {
       setProfile(null);
@@ -40,7 +40,7 @@ export function useProfile() {
     const existing = await supabase
       .from('profiles')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .maybeSingle();
 
     if (existing.error && existing.error.code !== 'PGRST116') {
@@ -51,7 +51,7 @@ export function useProfile() {
       const { error } = await (supabase
         .from('profiles') as any)
         .update(values)
-        .eq('user_id', user.id);
+        .eq('id', user.id);
 
       if (!error) {
         posthog.capture('user_profile_updated', {

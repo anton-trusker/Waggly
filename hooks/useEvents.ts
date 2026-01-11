@@ -238,7 +238,7 @@ export function useEvents(initialFilters?: EventFilters) {
       const { data: dbEvents, error: eErr } = await (supabase
         .from('events') as any)
         .select('*')
-        .eq('user_id', user.id);
+        .eq('created_by', user.id);
 
       if (!eErr && dbEvents) {
         (dbEvents as DbEvent[]).forEach((e) => {

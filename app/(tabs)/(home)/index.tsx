@@ -11,23 +11,23 @@ import { supabase } from '@/lib/supabase';
 import { useDashboardData } from '@/hooks/useDashboardData';
 
 // Modals
-import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
-import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
-import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
-import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal';
-import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
-import UserOnboardingModal from '@/components/desktop/modals/UserOnboardingModal';
+import VisitFormModal from '@/components/features/health/VisitFormModal';
+import VaccinationFormModal from '@/components/features/health/VaccinationFormModal';
+import MedicationFormModal from '@/components/features/health/MedicationFormModal';
+import WeightFormModal from '@/components/features/health/WeightFormModal';
+import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
+import UserOnboardingModal from '@/components/features/onboarding/UserOnboardingModal';
 
 // Widgets
-import MyPetsWidget from '@/components/desktop/dashboard/MyPetsWidget';
-import HealthSnapshotWidget from '@/components/desktop/dashboard/HealthSnapshotWidget';
-import TodaysPrioritiesWidget from '@/components/desktop/dashboard/TodaysPrioritiesWidget';
-import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid';
-import DashboardUpcoming from '@/components/desktop/dashboard/DashboardUpcoming';
-import DashboardTimeline from '@/components/desktop/dashboard/DashboardTimeline';
-import HealthMetricsWidget from '@/components/desktop/dashboard/HealthMetricsWidget';
-import MedicationTrackerWidget from '@/components/desktop/dashboard/MedicationTrackerWidget';
-import SmartInsightsWidget from '@/components/desktop/dashboard/SmartInsightsWidget';
+import MyPetsWidget from '@/components/features/dashboard/MyPetsWidget';
+import HealthSnapshotWidget from '@/components/features/dashboard/HealthSnapshotWidget';
+import TodaysPrioritiesWidget from '@/components/features/dashboard/TodaysPrioritiesWidget';
+import QuickActionsGrid from '@/components/features/dashboard/QuickActionsGrid';
+import DashboardUpcoming from '@/components/features/dashboard/DashboardUpcoming';
+import DashboardTimeline from '@/components/features/dashboard/DashboardTimeline';
+import HealthMetricsWidget from '@/components/features/dashboard/HealthMetricsWidget';
+import MedicationTrackerWidget from '@/components/features/dashboard/MedicationTrackerWidget';
+import SmartInsightsWidget from '@/components/features/dashboard/SmartInsightsWidget';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -62,7 +62,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (profile) {
-            if (!profile.onboarding_completed) {
+            if (!(profile as any).onboarding_completed) {
                 setOnboardingVisible(true);
             }
         } else if (user) {
@@ -81,11 +81,11 @@ export default function DashboardPage() {
 
         const { data, error } = await supabase
             .from('profiles')
-            .select('onboarding_completed')
+            .select('onboarding_completed' as any)
             .eq('id', user.id)
             .single();
 
-        if (data && !data.onboarding_completed) {
+        if (data && !(data as any).onboarding_completed) {
             setOnboardingVisible(true);
         }
     };
@@ -260,15 +260,15 @@ export default function DashboardPage() {
                 onClose={() => setVaccinationOpen(false)}
                 onSuccess={() => setVaccinationOpen(false)}
             />
-            <TreatmentFormModal
+            <MedicationFormModal
                 visible={treatmentOpen}
                 onClose={() => setTreatmentOpen(false)}
                 onSuccess={() => setTreatmentOpen(false)}
             />
-            <HealthMetricsModal
+            <WeightFormModal
                 visible={healthMetricsOpen}
                 onClose={() => setHealthMetricsOpen(false)}
-                initialTab="weight"
+                onSuccess={() => setHealthMetricsOpen(false)}
             />
             <DocumentUploadModal
                 visible={documentOpen}

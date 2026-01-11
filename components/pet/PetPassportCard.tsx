@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, useWindowDim
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocale } from '@/hooks/useLocale';
-import { Pet } from '@/types';
+import { Pet } from '@/types/v2/schema';
 import { usePetHealthScore } from '@/hooks/usePetHealthScore';
 import { differenceInYears, differenceInMonths, format } from 'date-fns';
 import { designSystem } from '@/constants/designSystem';
@@ -64,8 +64,8 @@ export const PetPassportCard = React.memo(({ pet, onPress, onQrPress, alerts = [
                 <View style={styles.cardContent}>
                     {/* Pet Photo */}
                     <View style={styles.photoWrapper}>
-                        {pet.photo_url ? (
-                            <Image source={{ uri: pet.photo_url }} style={styles.avatar} />
+                        {pet.avatar_url ? (
+                            <Image source={{ uri: pet.avatar_url }} style={styles.avatar} />
                         ) : (
                             <View style={styles.avatarPlaceholder}>
                                 <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="rgba(255,255,255,0.5)" />

@@ -3,26 +3,26 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensio
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Ionicons } from '@expo/vector-icons';
-import { usePets } from '@/hooks/usePets';
-import { usePetProfileData } from '@/hooks/usePetProfileData';
+import { usePetV2 } from '@/hooks/domain/usePetV2';
+import { usePetProfileV2 } from '@/hooks/domain/useHealthV2';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Pet, Allergy, Vaccination, Treatment, Condition } from '@/types';
-import VisitFormModal from '@/components/desktop/modals/VisitFormModal';
-import VaccinationFormModal from '@/components/desktop/modals/VaccinationFormModal';
-import TreatmentFormModal from '@/components/desktop/modals/TreatmentFormModal';
-import HealthMetricsModal from '@/components/desktop/modals/HealthMetricsModal'; // Added
-import AllergyModal from '@/components/desktop/modals/AllergyModal'; // Added
-import QuickActionsGrid from '@/components/desktop/dashboard/QuickActionsGrid'; // Added
-import ConditionFormModal from '@/components/desktop/modals/ConditionFormModal';
+import VisitFormModal from '@/components/features/health/VisitFormModal';
+import VaccinationFormModal from '@/components/features/health/VaccinationFormModal';
+import MedicationFormModal from '@/components/features/health/MedicationFormModal';
+import WeightFormModal from '@/components/features/health/WeightFormModal';
+import AllergyModal from '@/components/features/health/AllergyModal';
+import QuickActionsGrid from '@/components/features/dashboard/QuickActionsGrid';
+import ConditionFormModal from '@/components/features/health/ConditionFormModal';
 import PetAllergiesWidget from '@/components/widgets/PetAllergiesWidget'; // Added import
-import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
+import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
 import { useLocale } from '@/hooks/useLocale';
 import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { PetProfileSkeleton } from '@/components/skeletons/PetProfileSkeleton';
 
 import EditKeyInfoModal from '@/components/pet/edit/EditKeyInfoModal';
 import { PetPassportCard } from '@/components/pet/PetPassportCard';
-import ShareModal from '@/components/sharing/ShareModal';
+import ShareModal from '@/components/features/sharing/ShareModal';
 
 export default function OverviewTab() {
   const router = useRouter();
@@ -34,33 +34,36 @@ export default function OverviewTab() {
 
   const { t, locale } = useLocale();
   const { theme } = useAppTheme();
-  const { pets } = usePets();
-  const pet = pets.find(p => p.id === petId) as Pet | undefined;
+  // V2 Hooks
+  const { data: pet, isLoading: petLoading } = usePetV2(petId);
+  const { data: healthData, isLoading: dataLoading, refetch: refetchAllData } = usePetProfileV2(petId);
 
+  const {
+    vaccinations = [],
+    allergies = [],
+    medications: treatments = [], // Map medications to 'treatments' variable for compatibility
+    conditions = [],
+    activities = [],
+    visits = [] // New
+  } = healthData || {};
+
+  // Modal State
   const [visitOpen, setVisitOpen] = useState(false);
   const [vaccinationOpen, setVaccinationOpen] = useState(false);
   const [treatmentOpen, setTreatmentOpen] = useState(false);
-  const [healthMetricsOpen, setHealthMetricsOpen] = useState(false); // Added
-  const [allergyModalOpen, setAllergyModalOpen] = useState(false); // Added
-  const [selectedAllergy, setSelectedAllergy] = useState<Allergy | null>(null); // Added
-  const [selectedVaccination, setSelectedVaccination] = useState<Vaccination | null>(null);
-  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null); // Added
-  const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null); // Added
-  const [conditionModalOpen, setConditionModalOpen] = useState(false); // Added
-  const [documentModalOpen, setDocumentModalOpen] = useState(false); // Added
+  const [healthMetricsOpen, setHealthMetricsOpen] = useState(false);
+  const [documentModalOpen, setDocumentModalOpen] = useState(false);
   const [editKeyInfoModalVisible, setEditKeyInfoModalVisible] = useState(false);
   const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [conditionModalOpen, setConditionModalOpen] = useState(false);
+  const [allergyModalOpen, setAllergyModalOpen] = useState(false);
 
-  // Unified data fetching - replaces 5 individual hooks for better performance
-  const {
-    vaccinations,
-    allergies,
-    treatments,
-    conditions,
-    activities,
-    loading: dataLoading,
-    refetch: refetchAllData,
-  } = usePetProfileData(petId);
+  // Selected Items State
+  const [selectedVaccination, setSelectedVaccination] = useState<Vaccination | null>(null);
+  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
+  const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null);
+  const [selectedAllergy, setSelectedAllergy] = useState<Allergy | null>(null);
+
 
   useFocusEffect(
     useCallback(() => {
@@ -75,6 +78,7 @@ export default function OverviewTab() {
     // If item has 'type' (from a view/transformer), use it.
     // Otherwise map 'action_type' from DB to a design type.
     if (item.type) return item.type;
+    if (item.activity_type) return item.activity_type; // V2 Support
     const action = item.action_type || '';
     if (action.includes('visit')) return 'visit';
     if (action.includes('vaccin')) return 'vaccination'; // vaccination or added_vaccination
@@ -270,12 +274,12 @@ export default function OverviewTab() {
                         setVaccinationOpen(true);
                       }}
                     >
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.administered_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                       <View style={{ flex: 2 }}>
                         <Text style={styles.vaccName}>{vacc.vaccine_name}</Text>
                         <Text style={styles.vaccBatch}>{t('pet_profile.table_headers.batch')}: {vacc.batch_number || t('pet_profile.na')}</Text>
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.administered_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
                       <View style={{ flex: 1 }}>
                         {vacc.next_due_date && new Date(vacc.next_due_date) > new Date() ? (
                           <View style={styles.validBadge}>
@@ -286,7 +290,7 @@ export default function OverviewTab() {
                           <Text style={styles.expiredText}>{vacc.next_due_date ? new Date(vacc.next_due_date).toLocaleDateString(locale === 'en' ? 'en-US' : locale, { day: '2-digit', month: 'short', year: 'numeric' }) : t('pet_profile.na')}</Text>
                         )}
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || t('pet_profile.na')}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider_name || t('pet_profile.na')}</Text>
                     </TouchableOpacity>
                   ))
                 ) : (
@@ -314,7 +318,7 @@ export default function OverviewTab() {
                         setVaccinationOpen(true);
                       }}
                     >
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.date_given).toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{new Date(vacc.administered_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}</Text>
                       <Text style={[styles.vaccName, { flex: 2 }]}>{vacc.vaccine_name}</Text>
                       <Text style={[styles.vaccBatch, { flex: 1 }]}>#{vacc.batch_number || t('pet_profile.na')}</Text>
                       <View style={{ flex: 1 }}>
@@ -329,7 +333,7 @@ export default function OverviewTab() {
                           )
                         )}
                       </View>
-                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider || t('pet_profile.na')}</Text>
+                      <Text style={[styles.tableCell, { flex: 1 }]}>{vacc.provider_name || t('pet_profile.na')}</Text>
                     </TouchableOpacity>
                   ))
                 ) : (
@@ -373,8 +377,8 @@ export default function OverviewTab() {
                           <Ionicons name="medical" size={20} color="#4F46E5" />
                         </View>
                         <View style={styles.medInfo}>
-                          <Text style={styles.medName}>{treatment.treatment_name}</Text>
-                          <Text style={styles.medDosage}>{treatment.dosage_value ? `${treatment.dosage_value} ${treatment.dosage_unit || ''}` : treatment.dosage || t('pet_profile.no_dosage')} • {treatment.frequency}</Text>
+                          <Text style={styles.medName}>{treatment.name}</Text>
+                          <Text style={styles.medDosage}>{treatment.dosage || t('pet_profile.no_dosage')} • {treatment.frequency}</Text>
                         </View>
                       </TouchableOpacity>
                     ))
@@ -401,8 +405,8 @@ export default function OverviewTab() {
                         >
                           <View style={styles.treatmentTimelineDot} />
                           <View style={styles.treatmentTimelineContent}>
-                            <Text style={styles.treatmentTimelineTitle}>{treatment.treatment_name}</Text>
-                            <Text style={styles.treatmentTimelineDesc}>{treatment.notes || treatment.category || 'Treatment'}</Text>
+                            <Text style={styles.treatmentTimelineTitle}>{treatment.name}</Text>
+                            <Text style={styles.treatmentTimelineDesc}>{treatment.instructions || treatment.category || 'Treatment'}</Text>
                           </View>
                           <Text style={styles.treatmentTimelineDate}>
                             {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' }) : t('pet_profile.na')}
@@ -538,10 +542,10 @@ export default function OverviewTab() {
           setVaccinationOpen(false);
         }}
       />
-      <TreatmentFormModal
+      <MedicationFormModal
         visible={treatmentOpen}
         petId={petId}
-        treatment={selectedTreatment}
+        existingMedication={selectedTreatment}
         onClose={() => {
           setTreatmentOpen(false);
           setSelectedTreatment(null);
@@ -566,7 +570,7 @@ export default function OverviewTab() {
       <ConditionFormModal
         visible={conditionModalOpen}
         petId={petId}
-        condition={selectedCondition}
+        existingCondition={selectedCondition}
         onClose={() => {
           setConditionModalOpen(false);
           setSelectedCondition(null);
@@ -596,12 +600,13 @@ export default function OverviewTab() {
         onClose={() => setDocumentModalOpen(false)}
         petId={petId}
       />
-      <HealthMetricsModal
+      <WeightFormModal
         visible={healthMetricsOpen}
         onClose={() => setHealthMetricsOpen(false)}
         petId={petId}
         onSuccess={() => {
           setHealthMetricsOpen(false);
+          refetchAllData(); // Refresh to see weight log
         }}
       />
     </ScrollView>

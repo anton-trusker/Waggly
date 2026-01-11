@@ -51,9 +51,9 @@ export default function EditPetPage() {
                 gender: pet.gender || '',
                 date_of_birth: pet.date_of_birth || '',
                 weight: pet.weight || 0,
-                weight_unit: pet.weight_unit || 'kg',
+                weight_unit: (pet as any).weight_unit || 'kg',
                 microchip_number: pet.microchip_number || '',
-                notes: pet.notes || '',
+                notes: (pet as any).notes || '',
                 is_spayed_neutered: pet.is_spayed_neutered || false,
             });
         }

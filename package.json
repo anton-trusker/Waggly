@@ -35,6 +35,7 @@
     "@tamagui/font-inter": "^1.141.5",
     "@tamagui/shorthands": "^1.141.5",
     "@tamagui/themes": "^1.141.5",
+    "@tanstack/react-query": "^5.90.16",
     "@types/difflib": "^0.2.7",
     "base64-arraybuffer": "^1.0.2",
     "date-fns": "^4.1.0",

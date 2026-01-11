@@ -10,8 +10,8 @@ import DocumentsTab from './documents';
 import HistoryTab from './history';
 import SettingsTab from './settings';
 import PassportTab from './passport';
-import ShareModal from '@/components/sharing/ShareModal';
-import ActiveLinksList from '@/components/sharing/ActiveLinksList';
+import ShareModal from '@/components/features/sharing/ShareModal';
+import ActiveLinksList from '@/components/features/sharing/ActiveLinksList';
 import Button from '@/components/ui/Button';
 import EditPetModal from '@/components/pet/EditPetModal';
 

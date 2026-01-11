@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Text } from 'react-native';
 import FormModal from '@/components/ui/FormModal';
-import { usePets } from '@/hooks/usePets';
-import { Pet } from '@/types';
+import { usePetV2, useUpdatePetV2 } from '@/hooks/domain/usePetV2';
+import { Pet } from '@/types/v2/schema';
 import { designSystem } from '@/constants/designSystem';
 import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
 import ModernSelect from '@/components/ui/ModernSelect';
@@ -41,10 +41,9 @@ const dmyToIso = (dmyDate: string): string => {
 };
 
 export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInfoModalProps) {
-    const { pets, updatePet } = usePets();
-    const pet = pets.find(p => p.id === petId);
+    const { data: pet } = usePetV2(petId);
+    const { mutateAsync: updatePet, isPending: loading } = useUpdatePetV2();
 
-    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Pet>>({});
 
     useEffect(() => {
@@ -64,17 +63,18 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
     };
 
     const handleSave = async () => {
-        setLoading(true);
+        if (!pet) return;
         try {
-            await updatePet(petId, {
-                ...formData,
-                updated_at: new Date().toISOString(),
+            await updatePet({
+                id: petId,
+                updates: {
+                    ...formData,
+                    updated_at: new Date().toISOString(),
+                }
             });
             onClose();
         } catch (error) {
             console.error('Failed to update key info:', error);
-        } finally {
-            setLoading(false);
         }
     };
 

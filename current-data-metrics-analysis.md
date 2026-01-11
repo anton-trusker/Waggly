@@ -11,17 +11,15 @@
 
 This document analyzes Pawzly's existing database structure and identifies **30+ metrics and scores** that can be immediately implemented using current data, without requiring new data collection.
 
-**Current Data Available**:
+**Current Data Available (V2 Schema)**:
 - ✅ Pet demographics (species, breed, age, size, weight)
-- ✅ Weight history (weight_entries table)
-- ✅ Vaccinations with due dates
-- ✅ Active treatments/medications
-- ✅ Allergies (type, severity)
-- ✅ Medical history & conditions
-- ✅ Health metrics (vital signs, BCS, measurements)
-- ✅ Diet/food information
-- ✅ Behavioral tags
-- ✅ Veterinary clinics
+- ✅ Weight history (`weight_logs` table)
+- ✅ Vaccinations with validity dates (`vaccinations`)
+- ✅ Active medications (`medications`)
+- ✅ Allergies with severity (`allergies`)
+- ✅ Medical visits & diagnoses (`medical_visits`)
+- ✅ Providers & Insurance (`providers`)
+- ✅ Documents & Passports (`documents`, `travel_records`)
 
 **Implementable Metrics**:
 1. **Vaccination Compliance Score** (0-100)
@@ -162,9 +160,9 @@ function getRequiredVaccines(species: string, ageYears: number): Required Vaccin
 ### Data Available
 ```sql
 -- Weight history
-SELECT weight, date FROM weight_entries 
+SELECT weight, recorded_date as date FROM weight_logs 
 WHERE pet_id = ? 
-ORDER BY date DESC;
+ORDER BY recorded_date DESC;
 
 -- Current weight from pets table
 SELECT weight, size, breed FROM pets WHERE id = ?;
@@ -333,11 +331,10 @@ SELECT * FROM medical_visits
 WHERE pet_id = ? 
 ORDER BY visit_date DESC;
 
--- Active preventive treatments
-SELECT * FROM treatments 
+-- Active medications (preventative)
+SELECT * FROM medications 
 WHERE pet_id = ? 
-AND category = 'preventive' 
-AND is_active = TRUE;
+AND is_ongoing = TRUE;
 
 -- Vaccinations
 SELECT * FROM vaccinations WHERE pet_id = ?;
@@ -798,6 +795,54 @@ function getAgeBenchmarks(pet: Pet): AgeBenchmarks {
   const lifeStage = getLifeStage(pet.species, pet.size, ageYears);
   
   return {
+    stage: lifeStage,
+    human_age_equivalent: calculateHumanAge(pet.species, ageYears),
+    expected_weight_range: getIdealWeightRange(pet.breed, pet.size),
+    recommended_checks: getLifeStageRecommendations(lifeStage)
+  };
+}
+```
+
+---
+
+## 7. TRAVEL READINESS SCORE (PASSPORT)
+
+### Data Available
+```sql
+SELECT 
+  p.microchip_number,
+  v.vaccine_name,
+  v.valid_until,
+  d.category as doc_category
+FROM pets p
+LEFT JOIN vaccinations v ON p.id = v.pet_id
+LEFT JOIN documents d ON p.id = d.pet_id
+WHERE p.id = ?;
+```
+
+### Scoring Logic
+- **Microchip**: Required (+25)
+- **Rabies Vaccination**: Must be valid (valid_until > return_date) (+25)
+- **Core Vaccinations**: Up to date (+20)
+- **Passport Document**: 'passport' category document exists (+20)
+- **Recent Health Check**: Visit within 30 days (+10)
+
+---
+
+## 8. PROVIDER NETWORK STRENGTH
+
+### Data Available
+```sql
+SELECT category, name FROM providers WHERE owner_id = ?;
+```
+
+### Scoring Logic
+- **Primary Vet**: Linked (+40)
+- **Emergency Vet**: Linked (+30)
+- **Insurance**: Linked (+20)
+- **Other Providers**: Groomer/Sitter (+10)
+
+Displays as: "Network Strength: Strong" to encourage users to add emergency contacts.
     life_stage: lifeStage,
     age_years: ageYears,
     age_category: getAgeCategory(lifeStage),

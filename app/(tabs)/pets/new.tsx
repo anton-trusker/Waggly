@@ -25,8 +25,6 @@ const INITIAL_DATA: WizardData = {
     dateOfBirth: undefined,
     weight: 0,
     weightUnit: 'kg',
-    height: 0,
-    heightUnit: 'cm',
     bloodType: '',
     microchipNumber: '',
     implantationDate: undefined,
@@ -85,18 +83,13 @@ export default function AddPetWizardScreen() {
                 ? formData.weight
                 : Number((formData.weight * 0.453592).toFixed(2));
 
-            const finalHeightCm = formData.heightUnit === 'cm'
-                ? formData.height
-                : Number((formData.height * 2.54).toFixed(2));
-
             const { data: petData, error: petError } = await addPet({
                 name: formData.name.trim(),
                 species: formData.species,
                 breed: formData.breed || undefined,
                 gender: formData.gender,
                 date_of_birth: formData.dateOfBirth ? formData.dateOfBirth.toISOString().split('T')[0] : undefined,
-                weight: formData.weight > 0 ? finalWeightKg : undefined,
-                height: formData.height > 0 ? finalHeightCm : undefined,
+                weight_current: formData.weight > 0 ? finalWeightKg : undefined,
                 blood_type: formData.bloodType || undefined,
                 microchip_number: formData.microchipNumber || undefined,
                 microchip_implantation_date: formData.implantationDate ? formData.implantationDate.toISOString().split('T')[0] : undefined,
@@ -114,7 +107,7 @@ export default function AddPetWizardScreen() {
                 try {
                     const uploadedUrl = await uploadPetPhoto(user.id, petId, formData.photoUri);
                     if (uploadedUrl) {
-                        await updatePet(petId, { photo_url: uploadedUrl });
+                        await updatePet(petId, { avatar_url: uploadedUrl });
                     }
                 } catch (photoError) {
                     console.warn('Photo upload failed but pet created:', photoError);

@@ -15,6 +15,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PostHogProvider } from "posthog-react-native";
 import { posthogConfig } from "@/lib/posthog";
 import { ToastProvider } from '@/contexts/ToastContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function RootLayoutNav() {
   const { session, user, loading } = useAuth();
@@ -155,17 +158,19 @@ export default function RootLayout() {
       options={posthogConfig.options}
       autocapture={posthogConfig.autocapture}
     >
-      <DesignSystemProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <ThemeContextProvider>
-            <ToastProvider>
-              <AuthProvider>
-                <RootLayoutNav />
-              </AuthProvider>
-            </ToastProvider>
-          </ThemeContextProvider>
-        </GestureHandlerRootView>
-      </DesignSystemProvider>
+      <QueryClientProvider client={queryClient}>
+        <DesignSystemProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <ThemeContextProvider>
+              <ToastProvider>
+                <AuthProvider>
+                  <RootLayoutNav />
+                </AuthProvider>
+              </ToastProvider>
+            </ThemeContextProvider>
+          </GestureHandlerRootView>
+        </DesignSystemProvider>
+      </QueryClientProvider>
     </PostHogProvider>
   );
 }

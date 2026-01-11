@@ -16,7 +16,7 @@ serve(async (req) => {
     if (authResult instanceof Response) {
       return authResult
     }
-    
+
     const { userId, authenticatedClient } = authResult
 
     // Rate limiting
@@ -62,13 +62,7 @@ async function handleGetPet(supabase: any, req: Request) {
       .select(`
         *,
         vaccinations (*),
-        medical_history (*),
-        co_owners:co_owners(
-          co_owner_id,
-          status,
-          permissions,
-          user:users!co_owners_co_owner_id_fkey(email, name)
-        )
+        medical_visits (*)
       `)
       .eq('id', id)
       .single()
@@ -101,7 +95,7 @@ async function handleUpdatePet(supabase: any, userId: string, req: Request) {
     // Note: UpdatePetSchema should be partial. If it's not, we might need to adjust.
     // Assuming UpdatePetSchema is Zod schema.
     // We can manually validate or trust the client logic + RLS + Schema
-    
+
     // Simple validation for now, ideally use Zod parse
     // const validationResult = UpdatePetSchema.safeParse(updateData)
     // if (!validationResult.success) ...

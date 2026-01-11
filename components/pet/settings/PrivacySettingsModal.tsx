@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Switch } from 'react-n
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
-import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
+import GenericFormModal from '@/components/ui/GenericFormModal';
 
 interface PrivacySettingsModalProps {
     visible: boolean;

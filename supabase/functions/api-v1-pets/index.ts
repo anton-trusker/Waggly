@@ -16,7 +16,7 @@ serve(async (req) => {
     if (authResult instanceof Response) {
       return authResult // Authentication failed
     }
-    
+
     // Use authenticated client for RLS
     const { userId, authenticatedClient } = authResult
 
@@ -51,13 +51,13 @@ async function handleGetPets(supabase: any, userId: string, req: Request) {
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100)
     const search = url.searchParams.get('search') || ''
 
-    // RLS automatically filters pets the user owns or is a co-owner of
+    // RLS automatically filters pets the user owns
     let query = supabase
       .from('pets')
       .select(`
         *,
         vaccinations (count),
-        medical_history (count)
+        medical_visits (count)
       `, { count: 'exact' })
       .order('created_at', { ascending: false })
 
@@ -72,7 +72,7 @@ async function handleGetPets(supabase: any, userId: string, req: Request) {
       return createErrorResponse('Failed to fetch pets', 500)
     }
 
-    return createSuccessResponse({ 
+    return createSuccessResponse({
       pets: pets || [],
       pagination: {
         page,
@@ -98,12 +98,12 @@ async function handleCreatePet(supabase: any, userId: string, req: Request) {
 
     const petData = validationResult
 
-    // Insert with automatic user_id
+    // Insert with automatic owner_id
     const { data: pet, error } = await supabase
       .from('pets')
       .insert({
         ...petData,
-        user_id: userId, // Enforce owner
+        owner_id: userId, // V2 uses owner_id
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

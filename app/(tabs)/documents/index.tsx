@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, useWindowD
 import { Ionicons } from '@expo/vector-icons';
 import { useDocuments } from '@/hooks/useDocuments';
 import { usePets } from '@/hooks/usePets';
-import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
+import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
 import * as Linking from 'expo-linking';
 import DragDropZone from '@/components/desktop/DragDropZone';
 import { useLocale } from '@/hooks/useLocale';
-import DocumentActionModal from '@/components/desktop/modals/DocumentActionModal';
-import DocumentViewerModal from '@/components/desktop/modals/DocumentViewerModal';
+import DocumentActionModal from '@/components/features/documents/DocumentActionModal';
+import DocumentViewerModal from '@/components/features/documents/DocumentViewerModal';
 import { Document } from '@/types';
 
 export default function DocumentsPage() {

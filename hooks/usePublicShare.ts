@@ -22,7 +22,7 @@ export interface PublicPetProfile {
     date_of_birth: string;
     gender: string;
     weight: number;
-    photo_url: string;
+    avatar_url: string;
     chip_id?: string;
   };
   owner: {
@@ -48,7 +48,7 @@ export function usePublicShare() {
     try {
       // Generate a unique token (simple implementation, could be better)
       const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      
+
       const { data, error } = await supabase
         .from('public_shares')
         .insert({
@@ -115,7 +115,7 @@ export function usePublicShare() {
 
       if (error) throw error;
       if (data && data.error) throw new Error(data.error);
-      
+
       return data as PublicPetProfile;
     } catch (e: any) {
       setError(e.message);

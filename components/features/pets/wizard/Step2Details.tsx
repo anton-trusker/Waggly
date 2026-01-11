@@ -22,8 +22,6 @@ export interface Step2Data {
     dateOfBirth?: Date;
     weight: number;
     weightUnit: 'kg' | 'lbs';
-    height: number;
-    heightUnit: 'cm' | 'in';
     bloodType: string;
 }
 
@@ -39,8 +37,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
     const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(initialData.dateOfBirth);
     const [weight, setWeight] = useState(initialData.weight ? initialData.weight.toString() : '');
     const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData.weightUnit || 'kg');
-    const [height, setHeight] = useState(initialData.height ? initialData.height.toString() : '');
-    const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>(initialData.heightUnit || 'cm');
     const [bloodType, setBloodType] = useState(initialData.bloodType || '');
 
     // Custom Modal States
@@ -60,8 +56,7 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
             dateOfBirth,
             weight: parseFloat(weight) || 0,
             weightUnit,
-            height: parseFloat(height) || 0,
-            heightUnit,
+            weightUnit,
             bloodType,
         });
     };
@@ -147,35 +142,6 @@ export default function Step2Details({ initialData, species, onNext }: Step2Prop
                                         onPress={() => setWeightUnit('lbs')}
                                     >
                                         <Text style={[styles.toggleText, weightUnit === 'lbs' && styles.toggleTextSelected]}>LBS</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-
-                        <View style={styles.col}>
-                            <Text style={styles.label}>{t('add_pet.step2.height_label')}</Text>
-                            <View style={styles.inputWithUnit}>
-                                <TextInput
-                                    style={[styles.input, styles.compactInput]}
-                                    placeholder="0"
-                                    keyboardType="numeric"
-                                    value={height}
-                                    onChangeText={setHeight}
-                                    placeholderTextColor={designSystem.colors.text.tertiary}
-                                    maxLength={3}
-                                />
-                                <View style={styles.toggle}>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, heightUnit === 'cm' && styles.toggleSelected]}
-                                        onPress={() => setHeightUnit('cm')}
-                                    >
-                                        <Text style={[styles.toggleText, heightUnit === 'cm' && styles.toggleTextSelected]}>CM</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.toggleOption, heightUnit === 'in' && styles.toggleSelected]}
-                                        onPress={() => setHeightUnit('in')}
-                                    >
-                                        <Text style={[styles.toggleText, heightUnit === 'in' && styles.toggleTextSelected]}>IN</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

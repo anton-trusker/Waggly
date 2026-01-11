@@ -5,9 +5,9 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
 import { useLocale } from '@/hooks/useLocale';
-import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
-import DocumentActionModal from '@/components/desktop/modals/DocumentActionModal';
-import DocumentViewerModal from '@/components/desktop/modals/DocumentViewerModal';
+import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
+import DocumentActionModal from '@/components/features/documents/DocumentActionModal';
+import DocumentViewerModal from '@/components/features/documents/DocumentViewerModal';
 import { Document } from '@/types';
 
 export default function DocumentsTab() {

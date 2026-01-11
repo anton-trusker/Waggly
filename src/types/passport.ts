@@ -76,17 +76,18 @@ export enum BCSCategory {
 
 export interface Pet {
     id: string;
-    user_id: string;
+    owner_id: string;
     name: string;
     species: Species;
     breed: string | null;
     date_of_birth: Date | null;
     gender: Gender | null;
-    weight: number | null;
+    weight_current: number | null;
+    weight_unit: string | null;
     color: string | null;
     microchip_number: string | null;
-    spayed_neutered: boolean | null;
-    photo_url: string | null;
+    is_spayed_neutered: boolean | null;
+    avatar_url: string | null;
 
     // Passport fields
     passport_id: string | null;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DragDropZone from '@/components/desktop/DragDropZone';
-import DocumentUploadModal from '@/components/desktop/modals/DocumentUploadModal';
+import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
 import { useDocuments } from '@/hooks/useDocuments';
 import { Document } from '@/types';
 
@@ -38,8 +38,8 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
             `Are you sure you want to delete "${doc.name}"?`,
             [
                 { text: "Cancel", style: "cancel" },
-                { 
-                    text: "Delete", 
+                {
+                    text: "Delete",
                     style: "destructive",
                     onPress: async () => {
                         const { error } = await deleteDocument(doc.id, doc.file_url || '');
@@ -108,7 +108,7 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                                             {formatSize(doc.size_bytes)} • {new Date(doc.created_at).toLocaleDateString()}
                                         </Text>
                                     </View>
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         style={styles.actionButton}
                                         onPress={() => handleDelete(doc)}
                                     >

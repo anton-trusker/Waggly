@@ -41,7 +41,13 @@ import EmergencyContactForm from '@/components/passport/forms/EmergencyContactFo
 import BCSForm from '@/components/passport/forms/BCSForm';
 import ConditionForm from '@/components/passport/forms/ConditionForm';
 import WeightTrackingModal from '@/components/passport/modals/WeightTrackingModal';
-import { MedicalCondition, ConditionFormData } from '@/types/passport';
+import {
+    MedicalCondition, ConditionFormData,
+    Vaccination, VaccinationFormData,
+    Treatment, TreatmentFormData,
+    Allergy, AllergyFormData,
+    EmergencyContact, EmergencyContactFormData
+} from '@/types/passport';
 
 interface PassportPageProps {
     onEditPet?: () => void;

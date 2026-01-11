@@ -67,10 +67,7 @@ export default function Step5Review({ data, onSubmit, isSubmitting }: Step5Props
                             <Text style={styles.detailLabel}>{t('add_pet.step5.weight_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.weight ? `${data.weight} ${data.weightUnit}` : '-'}</Text>
                         </View>
-                        <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>{t('add_pet.step5.height_label')}</Text>
-                            <Text style={styles.detailValue} numberOfLines={1}>{data.height ? `${data.height} ${data.heightUnit}` : '-'}</Text>
-                        </View>
+
                         <View style={styles.detailItem}>
                             <Text style={styles.detailLabel}>{t('add_pet.step5.blood_label')}</Text>
                             <Text style={styles.detailValue} numberOfLines={1}>{data.bloodType || '-'}</Text>

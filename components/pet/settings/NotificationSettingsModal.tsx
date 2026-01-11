@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Switch } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import GenericFormModal from '@/components/desktop/modals/GenericFormModal';
+import GenericFormModal from '@/components/ui/GenericFormModal';
 
 interface NotificationSettingsModalProps {
     visible: boolean;
