@@ -207,7 +207,9 @@
         "vaccinations": "Vaccinations",
         "visits": "Visits",
         "medications": "Medications",
-        "weight": "Weight"
+        "conditions": "Conditions",
+        "weight": "Weight",
+        "profile": "Profile"
       },
       "empty": {
         "title": "No History Yet",
@@ -216,6 +218,8 @@
         "load_error": "Unable to load pet history"
       }
     },
+    "profile_created": "Profile Created",
+    "welcome_message": "Welcome to the family, {{name}}!",
     "album": {
       "title": "Photo Gallery",
       "subtitle": "Manage {{name}}'s photos, videos, and albums.",

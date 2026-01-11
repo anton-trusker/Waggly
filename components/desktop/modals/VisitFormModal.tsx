@@ -78,8 +78,6 @@ interface VisitFormData {
     cost: string;
     currency: string;
     payment_method: string;
-    follow_up_date: string;
-    reminder_enabled: boolean;
 }
 
 export default function VisitFormModal({ visible, onClose, petId: initialPetId, onSuccess }: VisitFormModalProps) {
@@ -120,8 +118,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
         cost: '',
         currency: 'EUR',
         payment_method: '',
-        follow_up_date: '',
-        reminder_enabled: false,
     };
 
     const handleSubmit = async (data: VisitFormData) => {
@@ -159,8 +155,6 @@ export default function VisitFormModal({ visible, onClose, petId: initialPetId, 
             cost: data.cost ? parseFloat(data.cost) : null,
             currency: data.currency,
             payment_method: data.payment_method || null,
-            follow_up_date: data.follow_up_date || null,
-            reminder_enabled: data.reminder_enabled,
         };
 
         const { error } = await supabase

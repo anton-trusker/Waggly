@@ -234,6 +234,7 @@ export default function HealthMetricsModal({ visible, onClose, petId: initialPet
                                         keyboardType="numeric"
                                         value={formState.data.weight}
                                         onChangeText={(t) => formState.updateField('weight', t)}
+                                        selectTextOnFocus
                                     />
                                     <View style={styles.unitToggle}>
                                         <TouchableOpacity

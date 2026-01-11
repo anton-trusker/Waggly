@@ -19,7 +19,11 @@ interface TreatmentFormModalProps {
     onSuccess?: () => void;
 }
 
-const TREATMENT_TYPES = ['Medication', 'Supplement', 'Therapy', 'Topical', 'Injection', 'Other'];
+const TREATMENT_TYPES = [
+    { value: 'preventive', label: 'Preventive' },
+    { value: 'acute', label: 'Acute' },
+    { value: 'chronic', label: 'Chronic' }
+];
 const DOSAGE_UNITS = [
     { label: 'mg', value: 'mg' },
     { label: 'ml', value: 'ml' },
@@ -71,7 +75,7 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
     }, [visible, initialPetId, pets]);
 
     const initialData: TreatmentFormData = {
-        treatment_type: existingTreatment?.category || 'Medication',
+        treatment_type: existingTreatment?.category || 'preventive',
         name: existingTreatment?.treatment_name || '',
         dosage_value: existingTreatment?.dosage_value ? String(existingTreatment.dosage_value) : '',
         dosage_unit: existingTreatment?.dosage_unit || 'mg',
@@ -163,19 +167,19 @@ export default function TreatmentFormModal({ visible, onClose, petId: initialPet
                             <View style={styles.chipRow}>
                                 {TREATMENT_TYPES.map(type => (
                                     <TouchableOpacity
-                                        key={type}
-                                        onPress={() => formState.updateField('treatment_type', type)}
+                                        key={type.value}
+                                        onPress={() => formState.updateField('treatment_type', type.value)}
                                         style={[
                                             styles.chip,
                                             { backgroundColor: theme.colors.background.tertiary, borderColor: theme.colors.border.primary },
-                                            formState.data.treatment_type === type && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
+                                            formState.data.treatment_type === type.value && { backgroundColor: theme.colors.primary[500], borderColor: theme.colors.primary[500] }
                                         ]}
                                     >
                                         <Text style={[
                                             styles.chipText,
                                             { color: theme.colors.text.secondary },
-                                            formState.data.treatment_type === type && { color: '#FFFFFF' }
-                                        ]}>{type}</Text>
+                                            formState.data.treatment_type === type.value && { color: '#FFFFFF' }
+                                        ]}>{type.label}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>

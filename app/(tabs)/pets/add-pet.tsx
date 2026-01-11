@@ -91,9 +91,12 @@ export default function AddPetScreen() {
         Alert.alert('Error', 'Failed to add pet. Please try again.');
         console.error('Add pet error:', error);
       } else {
-        Alert.alert('Success', 'Pet added successfully!', [
-          { text: 'OK', onPress: () => router.back() }
-        ]);
+        // Navigate directly to dashboard instead of going back
+        router.replace('/(tabs)/(home)');
+        // Show success message after navigation
+        setTimeout(() => {
+          Alert.alert('Success', `${name} has been added successfully!`);
+        }, 300);
       }
     } finally {
       setLoading(false);
