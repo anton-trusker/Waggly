@@ -1,5 +1,6 @@
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#fff";
+// Waggli Colors - Ocean Gradient Theme
+const tintColorLight = "#0EA5E9"; // Sky Blue
+const tintColorDark = "#38BDF8"; // Light Sky Blue for dark mode
 
 export const zincColors = {
   50: "#fafafa",

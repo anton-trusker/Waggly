@@ -1,18 +1,30 @@
-// Paw_AI Color Design Tokens
-// Based on your current brand colors
+// Waggli Color Design Tokens
+// Ocean Gradient Theme: Sky Blue (#0EA5E9) to Emerald (#10B981)
 
 export const colors = {
-    // Primary - Indigo (your main brand color #6366F1)
-    primary50: '#EEF2FF',
-    primary100: '#E0E7FF',
-    primary200: '#C7D2FE',
-    primary300: '#A5B4FC',
-    primary400: '#818CF8',
-    primary500: '#6366F1', // Main brand
-    primary600: '#4F46E5',
-    primary700: '#4338CA',
-    primary800: '#3730A3',
-    primary900: '#312E81',
+    // Primary - Sky Blue (Ocean Gradient start)
+    primary50: '#F0F9FF',
+    primary100: '#E0F2FE',
+    primary200: '#BAE6FD',
+    primary300: '#7DD3FC',
+    primary400: '#38BDF8',
+    primary500: '#0EA5E9', // Main brand - Sky Blue
+    primary600: '#0284C7',
+    primary700: '#0369A1',
+    primary800: '#075985',
+    primary900: '#0C4A6E',
+
+    // Secondary - Emerald (Ocean Gradient end / Accent)
+    secondary50: '#ECFDF5',
+    secondary100: '#D1FAE5',
+    secondary200: '#A7F3D0',
+    secondary300: '#6EE7B7',
+    secondary400: '#34D399',
+    secondary500: '#10B981', // Accent - Emerald
+    secondary600: '#059669',
+    secondary700: '#047857',
+    secondary800: '#065F46',
+    secondary900: '#064E3B',
 
     // Success - Green
     success50: '#ECFDF5',

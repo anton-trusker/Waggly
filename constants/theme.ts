@@ -1,24 +1,28 @@
+// Waggli Theme - Ocean Gradient
 export const colors = {
-  primary: '#0A84FF',
-  primaryLight: '#9CC6FF',
-  primaryDark: '#0062D6',
+  primary: '#0EA5E9', // Sky Blue
+  primaryLight: '#7DD3FC',
+  primaryDark: '#0284C7',
+  secondary: '#10B981', // Emerald
+  secondaryLight: '#6EE7B7',
+  secondaryDark: '#059669',
   background: '#FFFFFF',
-  backgroundGradientStart: '#A8D5FF',
-  backgroundGradientEnd: '#E8F4FF',
+  backgroundGradientStart: '#E0F2FE', // Light sky blue
+  backgroundGradientEnd: '#ECFDF5', // Light emerald
   card: '#FFFFFF',
   text: '#111827',
   textSecondary: '#6B7280',
   textTertiary: '#C7C7CC',
-  accent: '#FF9500',
-  success: '#10B981',
-  warning: '#FF9500',
+  accent: '#10B981', // Emerald as accent
+  success: '#22C55E',
+  warning: '#F59E0B',
   error: '#EF4444',
-  info: '#0A84FF',
+  info: '#0EA5E9',
   border: '#E5E7EB',
   separator: '#E5E7EB',
-  highlight: '#F8FAFC',
-  iconBackground: '#F8FAFC',
-  iconBackgroundBlue: '#E3F2FF',
+  highlight: '#F0F9FF',
+  iconBackground: '#F0F9FF',
+  iconBackgroundBlue: '#E0F2FE',
   white: '#FFFFFF',
   errorLight: '#FEE2E2',
 };

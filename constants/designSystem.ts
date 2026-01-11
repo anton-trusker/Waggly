@@ -8,31 +8,32 @@ if (typeof window !== 'undefined' && (window as any).__DESIGN_SYSTEM__) {
 // Define the design system with all required properties
 export const designSystem = Object.freeze({
   colors: {
-    // Primary Colors - Enhanced Blue Palette
+    // Primary Colors - Sky Blue (Ocean Gradient start)
     primary: {
-      50: '#F0F6FF',
-      100: '#E0EDFF',
-      200: '#C2DBFF',
-      300: '#94C0FF',
-      400: '#607AFB', // New Brand Primary (used as main in design)
-      500: '#607AFB', // Main primary mapped to design
-      600: '#4B62D6',
-      700: '#384CB0',
-      800: '#28388A',
-      900: '#1A2666',
+      50: '#F0F9FF',
+      100: '#E0F2FE',
+      200: '#BAE6FD',
+      300: '#7DD3FC',
+      400: '#38BDF8',
+      500: '#0EA5E9', // Main brand - Sky Blue
+      600: '#0284C7',
+      700: '#0369A1',
+      800: '#075985',
+      900: '#0C4A6E',
     },
 
-    // Secondary Colors - Pet-themed palette
+    // Secondary Colors - Emerald (Ocean Gradient end / Accent)
     secondary: {
-      paw: '#FF6B6B',
-      pawLight: '#FF8E8E',
-      pawDark: '#E55555',
-      leaf: '#4ECDC4',
-      leafLight: '#7ED9D1',
-      leafDark: '#3BA99F',
-      sun: '#FFE66D',
-      sunLight: '#FFF2A1',
-      sunDark: '#E6CD62',
+      50: '#ECFDF5',
+      100: '#D1FAE5',
+      200: '#A7F3D0',
+      300: '#6EE7B7',
+      400: '#34D399',
+      500: '#10B981', // Accent - Emerald
+      600: '#059669',
+      700: '#047857',
+      800: '#065F46',
+      900: '#064E3B',
     },
 
     // Neutral Colors - Enhanced grayscale
@@ -78,12 +79,12 @@ export const designSystem = Object.freeze({
 
     // Background Colors
     background: {
-      primary: '#f5f6f8', // Updated from design
+      primary: '#f5f6f8', // Light background
       secondary: '#FFFFFF',
-      tertiary: '#F5F5F5',
+      tertiary: '#F0F9FF', // Light sky blue tint
       gradient: {
-        start: '#E3F2FF',
-        end: '#FFFFFF',
+        start: '#E0F2FE', // Light sky blue
+        end: '#ECFDF5', // Light emerald
       },
     },
 
@@ -100,7 +101,7 @@ export const designSystem = Object.freeze({
     border: {
       primary: '#E5E7EB',
       secondary: '#D1D5DB',
-      focus: '#0A84FF',
+      focus: '#0EA5E9', // Sky Blue for focus
     },
     status: {
       error: {
