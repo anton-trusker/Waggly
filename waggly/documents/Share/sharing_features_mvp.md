@@ -10,7 +10,7 @@ Enable pet owners to quickly and securely share their pet's profile with third p
 *   **Presets**: Two hardcoded sharing options:
     1.  **Basic Info**: Name, Breed, Age, Weight, Chip ID.
     2.  **Full Profile**: All of the above + Vaccinations, Medications, Medical History, and Documents.
-*   **Link Generation**: Create a unique, secure URL (e.g., `mywaggli.app/share/xyz123`).
+*   **Link Generation**: Create a unique, secure URL (e.g., `waggli.app/share/xyz123`).
 *   **QR Code**: Display a QR code for the generated link immediately.
 *   **Active Links List**: A simple list showing currently active links.
 *   **Revocation**: Ability to delete/revoke an active link, rendering it inaccessible.

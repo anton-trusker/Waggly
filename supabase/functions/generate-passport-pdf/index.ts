@@ -182,7 +182,7 @@ serve(async (req) => {
         page.drawLine({ start: { x: margin, y: footerY }, end: { x: width - margin, y: footerY }, thickness: 1, color: COLORS.BORDER });
 
         try {
-            const qrUrl = `https://mywaggli.com/p/verify/${pet.passport_id}`;
+            const qrUrl = `https://waggli.app/p/verify/${pet.passport_id}`;
             const qrDataUrl = await QRCode.toDataURL(qrUrl);
             const qrImage = await pdfDoc.embedPng(qrDataUrl);
             page.drawImage(qrImage, { x: width - margin - 80, y: 30, width: 60, height: 60 });
@@ -190,7 +190,7 @@ serve(async (req) => {
         } catch (e) { console.error("QR fail", e); }
 
         page.drawText("This document is an official digital passport for the identified pet.", { x: margin, y: 70, size: 8, font: font, color: COLORS.TEXT_SEC });
-        page.drawText("Waggli Inc. | www.mywaggli.com | Secure Pet Travel & Health Records", { x: margin, y: 55, size: 8, font: font, color: COLORS.PRIMARY });
+        page.drawText("Waggli Inc. | www.waggli.app | Secure Pet Travel & Health Records", { x: margin, y: 55, size: 8, font: font, color: COLORS.PRIMARY });
 
         const pdfBytes = await pdfDoc.save();
 

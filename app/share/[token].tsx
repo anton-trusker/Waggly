@@ -153,7 +153,7 @@ export default function PublicShareScreen() {
 
           <TouchableOpacity
             style={styles.installBtn}
-            onPress={() => Linking.openURL('https://app.mywaggli.com')}
+            onPress={() => Linking.openURL('https://waggli.app')}
           >
             <IconSymbol ios_icon_name="pawprint.fill" android_material_icon_name="pets" size={20} color="#fff" />
             <Text style={styles.installBtnText}>Get Waggli App</Text>
