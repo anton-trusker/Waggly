@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Switch, StyleSheet } from 'react-native';
 import { usePetsV2 } from '@/hooks/domain/usePetV2';
 import { designSystem } from '@/constants/designSystem';
@@ -10,6 +10,8 @@ import BottomSheetSelect from '@/components/ui/BottomSheetSelect';
 import { Medication } from '@/types/v2/schema';
 import { useLocale } from '@/hooks/useLocale';
 import { useCreateMedication, useUpdateMedication, useCreateActivityLog } from '@/hooks/domain/useHealthMutationsV2';
+import MedicationSelector from '@/components/features/health/MedicationSelector';
+import { RefMedication } from '@/hooks/useReferenceData';
 
 interface MedicationFormModalProps {
     visible: boolean;
@@ -19,11 +21,6 @@ interface MedicationFormModalProps {
     onSuccess?: () => void;
 }
 
-const TREATMENT_TYPES = [
-    { value: 'preventive', label: 'Preventive' },
-    { value: 'acute', label: 'Acute' },
-    { value: 'chronic', label: 'Chronic' }
-];
 const DOSAGE_UNITS = [
     { label: 'mg', value: 'mg' },
     { label: 'ml', value: 'ml' },
@@ -34,16 +31,8 @@ const DOSAGE_UNITS = [
     { label: 'IU', value: 'IU' }
 ];
 const FREQUENCIES = ['Once daily', 'Twice daily', 'Three times daily', 'Every 12 hours', 'As needed'];
-const CURRENCIES = [
-    { label: 'EUR', value: 'EUR' },
-    { label: 'USD', value: 'USD' },
-    { label: 'GBP', value: 'GBP' },
-    { label: 'CAD', value: 'CAD' },
-    { label: 'AUD', value: 'AUD' },
-];
 
 interface MedicationFormData {
-    treatment_type: string;
     name: string;
     dosage_value: string;
     dosage_unit: string;
@@ -51,8 +40,6 @@ interface MedicationFormData {
     start_date: string;
     end_date: string;
     is_active: boolean;
-    cost: string;
-    currency: string;
     notes: string;
 }
 
@@ -66,6 +53,11 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
     const { mutateAsync: logActivity } = useCreateActivityLog();
 
     const [selectedPetId, setSelectedPetId] = useState<string>(initialPetId || '');
+    const [selectedMedicationRef, setSelectedMedicationRef] = useState<RefMedication | null>(null);
+
+    // Derive pet species for filtering
+    const selectedPet = useMemo(() => pets.find(p => p.id === selectedPetId), [pets, selectedPetId]);
+    const species = selectedPet?.species || 'dog';
 
     useEffect(() => {
         if (visible) {
@@ -74,11 +66,13 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             } else if (pets.length > 0 && !selectedPetId) {
                 setSelectedPetId(pets[0].id);
             }
+            if (existingMedication) {
+                setSelectedMedicationRef(null);
+            }
         }
-    }, [visible, initialPetId, pets]);
+    }, [visible, initialPetId, pets, existingMedication]);
 
     const initialData: MedicationFormData = {
-        treatment_type: 'preventive', // V2 Schema might not have 'category'. Let's check.
         name: existingMedication?.name || '',
         dosage_value: existingMedication?.dosage ? existingMedication.dosage.split(' ')[0] : '', // Poor man's parse
         dosage_unit: existingMedication?.dosage ? existingMedication.dosage.split(' ')[1] || 'mg' : 'mg',
@@ -86,36 +80,30 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         start_date: existingMedication?.start_date || new Date().toISOString().split('T')[0],
         end_date: existingMedication?.end_date || '',
         is_active: existingMedication ? (existingMedication.status === 'active') : true,
-        cost: '', // V2 Schema medications NO COST? Check.
-        currency: 'EUR',
         notes: existingMedication?.instructions || '', // V2 'instructions' -> 'notes'.
     };
 
-    // Schema Check (Step 372):
-    // medications: id, pet_id, name, dosage, frequency, start_date, end_date, prescribing_veterinarian, status, instructions.
-    // NO category. NO cost. NO currency.
-    // "instructions" is likely the "notes" field equivalent.
-
     const handleSubmit = async (data: MedicationFormData) => {
+        const medName = selectedMedicationRef?.medication_name || data.name;
+
         if (!selectedPetId) {
             Alert.alert('Error', 'Please select a pet');
             return;
         }
-        if (!data.name.trim()) {
-            Alert.alert('Error', 'Please enter medication name');
+        if (!medName.trim()) {
+            Alert.alert('Error', 'Please select or enter medication name');
             return;
         }
 
         const payload: any = {
             pet_id: selectedPetId,
-            name: data.name,
+            name: medName,
             dosage: data.dosage_value ? `${data.dosage_value} ${data.dosage_unit}` : null,
             frequency: data.frequency,
             start_date: data.start_date,
             end_date: data.end_date || null,
             instructions: data.notes || null,
             status: data.is_active ? 'active' : 'completed',
-            // Missing: cost, currency, category
         };
 
         try {
@@ -125,7 +113,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                     pet_id: selectedPetId,
                     activity_type: 'medication',
                     title: 'Medication Updated',
-                    description: `Updated ${data.name}`,
+                    description: `Updated ${medName}`,
                     metadata: payload
                 });
             } else {
@@ -134,7 +122,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                     pet_id: selectedPetId,
                     activity_type: 'medication',
                     title: 'Medication Added',
-                    description: `Added ${data.name}`,
+                    description: `Added ${medName}`,
                     metadata: payload
                 });
             }
@@ -147,7 +135,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
 
     const validate = (data: MedicationFormData) => {
         const errors: Record<string, string> = {};
-        if (!data.name.trim()) errors.name = 'Name is required';
+        if (!data.name.trim() && !selectedMedicationRef) errors.name = 'Name is required';
         return errors;
     };
 
@@ -168,27 +156,25 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
                         <PetSelector selectedPetId={selectedPetId} onSelectPet={setSelectedPetId} />
                     )}
 
-                    {/* V2 has no category, but we can keep UI for future? Or simple remove. keeping as 'Metadata' possibility? No, schema doesn't support it. Removing 'Treatment Type' selector to avoid confusion. */}
-
                     <View style={[styles.card, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.secondary, borderWidth: 1 }]}>
-                        {/* Name */}
-                        <View style={styles.fieldGroup}>
-                            <Text style={[styles.label, { color: theme.colors.text.secondary }]}>{t('treatment_form.name')}</Text>
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    {
-                                        backgroundColor: theme.colors.background.tertiary,
-                                        color: theme.colors.text.primary,
-                                        borderColor: formState.errors.name ? theme.colors.status.error[500] : theme.colors.border.primary
-                                    }
-                                ] as any}
-                                placeholder="e.g. Amoxicillin"
-                                placeholderTextColor={theme.colors.text.tertiary}
-                                value={formState.data.name}
-                                onChangeText={(text) => formState.updateField('name', text)}
-                            />
-                        </View>
+                        {/* Custom Name Selector */}
+                        <MedicationSelector
+                            species={species}
+                            selectedMedication={selectedMedicationRef}
+                            onSelect={(med) => {
+                                setSelectedMedicationRef(med);
+                                formState.clearError('name');
+                                if (med) {
+                                    formState.updateField('name', med.medication_name);
+                                }
+                            }}
+                            customName={formState.data.name}
+                            onCustomNameChange={(text) => {
+                                formState.updateField('name', text);
+                                if (text) formState.clearError('name');
+                            }}
+                            error={formState.errors.name}
+                        />
 
                         {/* Dosage */}
                         <View style={styles.row}>

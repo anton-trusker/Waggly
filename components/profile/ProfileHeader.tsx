@@ -107,21 +107,21 @@ const styles = StyleSheet.create({
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: '#E0E7FF',
+        backgroundColor: '#E0F2FE',
         alignItems: 'center',
         justifyContent: 'center',
     },
     avatarText: {
         fontSize: 24,
         fontWeight: '600',
-        color: '#4F46E5',
+        color: '#0284C7',
         textTransform: 'uppercase',
     },
     uploadButton: {
         position: 'absolute',
         bottom: -4,
         right: -4,
-        backgroundColor: '#4F46E5',
+        backgroundColor: '#0284C7',
         width: 28,
         height: 28,
         borderRadius: 14,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     editButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 20,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     editButtonText: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#4F46E5',
+        color: '#0284C7',
     },
     email: {
         fontSize: 15,

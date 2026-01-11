@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
 import { designSystem } from '@/constants/designSystem';
 import { getSpacing } from '@/utils/designSystem';
 import { useLocale } from '@/hooks/useLocale';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
+import { IconSymbolName } from '@/components/ui/IconSymbol';
 
 interface QuickActionItem {
-  iconName: keyof typeof MaterialCommunityIcons.glyphMap;
+  iconName: IconSymbolName;
   label: string;
   onPress: () => void;
   accessibilityLabel: string;
@@ -15,33 +16,33 @@ interface QuickActionItem {
 
 const quickActionsData: QuickActionItem[] = [
   {
-    iconName: 'medical-bag',
+    iconName: 'note.text',
     label: 'Add Visit',
     onPress: () => router.push('/(tabs)/pets/add-visit'),
     accessibilityLabel: 'Add a new vet visit',
   },
   {
-    iconName: 'pill',
+    iconName: 'pills.fill',
     label: 'Add Treatment',
     onPress: () => router.push('/(tabs)/pets/add-treatment'),
     accessibilityLabel: 'Add a new treatment',
   },
   {
-    iconName: 'needle',
+    iconName: 'syringe.fill',
     label: 'Add Vaccine',
     onPress: () => router.push('/(tabs)/pets/add-vaccination'),
     accessibilityLabel: 'Add a new vaccination',
   },
   {
-    iconName: 'clipboard-pulse',
+    iconName: 'heart.text.square.fill',
     label: 'Health Record',
     onPress: () => router.push('/(tabs)/pets/add-health-record'),
     accessibilityLabel: 'Log pet\'s health record',
   },
   {
-    iconName: 'calendar-plus',
+    iconName: 'calendar',
     label: 'Add Event',
-    onPress: () => router.push('/(tabs)/calendar/add-event'), // Assuming an add-event screen
+    onPress: () => router.push('/(tabs)/calendar/add-event'),
     accessibilityLabel: 'Add a new event to the calendar',
   },
 ];
@@ -60,10 +61,9 @@ export function QuickActions() {
             accessibilityRole="button"
             accessibilityLabel={t(action.accessibilityLabel, { defaultValue: action.accessibilityLabel })}
           >
-            <MaterialCommunityIcons
-              name={action.iconName}
-              size={designSystem.spacing[8] as any}
-              color={designSystem.colors.primary[500] as any}
+            <CategoryIcon
+              icon={action.iconName}
+              size={56}
             />
             <Text style={styles.label}>{t(action.label, { defaultValue: action.label })}</Text>
           </TouchableOpacity>
@@ -89,18 +89,19 @@ const styles = StyleSheet.create({
   },
   card: {
     width: designSystem.spacing[25],
-    height: designSystem.spacing[25],
-    backgroundColor: designSystem.colors.background.secondary,
-    borderRadius: designSystem.borderRadius.xl,
-    justifyContent: 'center',
+    height: 'auto',
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    ...designSystem.shadows.sm,
+    shadowColor: 'transparent',
+    elevation: 0,
   },
   label: {
     ...designSystem.typography.body.small,
     color: designSystem.colors.text.primary,
     marginTop: designSystem.spacing[2],
     textAlign: 'center',
-    paddingHorizontal: getSpacing(2),
+    paddingHorizontal: 0,
   },
 });

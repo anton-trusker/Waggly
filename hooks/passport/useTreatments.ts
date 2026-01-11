@@ -24,7 +24,7 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
             setError(null);
 
             const { data, error: fetchError } = await supabase
-                .from('treatments')
+                .from('medications')
                 .select('*')
                 .eq('pet_id', petId)
                 .order('start_date', { ascending: false });
@@ -33,23 +33,23 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
 
             const mappedTreatments: Treatment[] = (data || []).map(t => ({
                 id: t.id,
-                treatmentName: t.treatment_name,
-                category: t.category || 'acute',
+                treatmentName: t.name,
+                category: 'acute', // Default as V2 doesn't have category
                 startDate: new Date(t.start_date),
                 endDate: t.end_date ? new Date(t.end_date) : undefined,
                 dosage: t.dosage || '',
                 frequency: t.frequency || '',
-                timeOfDay: t.time_of_day,
-                vet: t.vet,
-                prescribedBy: t.prescribed_by,
-                prescriptionNumber: t.prescription_number,
-                pharmacy: t.pharmacy,
-                refillsRemaining: t.refills_remaining,
-                isActive: t.is_active || false,
-                withFood: t.with_food,
-                sideEffects: t.side_effects,
-                specialInstructions: t.special_instructions,
-                notes: t.notes,
+                timeOfDay: undefined,
+                vet: undefined,
+                prescribedBy: undefined,
+                prescriptionNumber: undefined,
+                pharmacy: undefined,
+                refillsRemaining: undefined,
+                isActive: t.is_ongoing || false,
+                withFood: undefined,
+                sideEffects: undefined,
+                specialInstructions: undefined,
+                notes: t.instructions,
             }));
 
             setTreatments(mappedTreatments);
@@ -79,11 +79,11 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
             dosage: data.dosage || '',
             frequency: data.frequency || '',
             timeOfDay: data.timeOfDay,
-            vet: undefined, // Form doesn't provide?
+            vet: undefined,
             prescribedBy: data.prescribedBy,
-            prescriptionNumber: data.prescriptionNumber,
+            prescriptionNumber: undefined,
             pharmacy: data.pharmacy,
-            refillsRemaining: undefined, // Form doesn't provide?
+            refillsRemaining: undefined,
             isActive: isActive,
             withFood: data.withFood,
             sideEffects: undefined,
@@ -98,23 +98,25 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
             return newList;
         });
 
+        const instructions = [
+            data.notes,
+            data.withFood ? 'Take with food' : undefined,
+            data.prescribedBy ? `Prescribed by: ${data.prescribedBy}` : undefined,
+            data.pharmacy ? `Pharmacy: ${data.pharmacy}` : undefined
+        ].filter(Boolean).join('\n');
+
         try {
             const { error: insertError } = await supabase
-                .from('treatments')
+                .from('medications')
                 .insert({
                     pet_id: petId,
-                    treatment_name: data.treatmentName,
-                    category: data.category,
+                    name: data.treatmentName,
                     start_date: data.startDate.toISOString(),
                     end_date: data.endDate?.toISOString(),
                     dosage: data.dosage,
                     frequency: data.frequency,
-                    time_of_day: data.timeOfDay,
-                    prescribed_by: data.prescribedBy,
-                    pharmacy: data.pharmacy,
-                    with_food: data.withFood,
-                    notes: data.notes,
-                    is_active: isActive,
+                    instructions: instructions,
+                    is_ongoing: isActive,
                 });
 
             if (insertError) throw insertError;
@@ -153,11 +155,7 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
                         ...(data.endDate !== undefined && { endDate: data.endDate }),
                         ...(data.dosage && { dosage: data.dosage }),
                         ...(data.frequency && { frequency: data.frequency }),
-                        ...(data.timeOfDay && { timeOfDay: data.timeOfDay }),
-                        ...(data.prescribedBy && { prescribedBy: data.prescribedBy }),
-                        ...(data.pharmacy && { pharmacy: data.pharmacy }),
-                        ...(data.withFood !== undefined && { withFood: data.withFood }),
-                        ...(data.notes !== undefined && { notes: data.notes }),
+                        ...(data.notes !== undefined && { notes: data.notes }), // Simplification
                         isActive: isActive
                     };
                 }
@@ -169,29 +167,26 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
 
         try {
             const updateData: any = {};
-            // Re-map all potential fields:
-            if (data.treatmentName) updateData.treatment_name = data.treatmentName;
-            if (data.category) updateData.category = data.category;
+            if (data.treatmentName) updateData.name = data.treatmentName;
             if (data.startDate) updateData.start_date = data.startDate.toISOString();
             if (data.endDate !== undefined) updateData.end_date = data.endDate?.toISOString() || null;
             if (data.dosage) updateData.dosage = data.dosage;
             if (data.frequency) updateData.frequency = data.frequency;
-            if (data.timeOfDay) updateData.time_of_day = data.timeOfDay;
-            if (data.prescribedBy) updateData.prescribed_by = data.prescribedBy;
-            if (data.pharmacy) updateData.pharmacy = data.pharmacy;
-            if (data.withFood !== undefined) updateData.with_food = data.withFood;
-            if (data.notes !== undefined) updateData.notes = data.notes;
+
+            // Reconstruct instructions if notes or other fields change is tricky without reading old data perfectly.
+            // For now, simple update of instructions if notes provided.
+            if (data.notes) updateData.instructions = data.notes;
 
             if (data.endDate || data.startDate) {
                 if ((data.endDate && data.endDate < new Date())) {
-                    updateData.is_active = false;
+                    updateData.is_ongoing = false;
                 } else if (!data.endDate || data.endDate > new Date()) {
-                    updateData.is_active = true;
+                    updateData.is_ongoing = true;
                 }
             }
 
             const { error: updateError } = await supabase
-                .from('treatments')
+                .from('medications')
                 .update(updateData)
                 .eq('id', id);
 
@@ -219,7 +214,7 @@ export function useTreatments(petId: string): UseTreatmentsReturn {
 
         try {
             const { error: deleteError } = await supabase
-                .from('treatments')
+                .from('medications')
                 .delete()
                 .eq('id', id);
 

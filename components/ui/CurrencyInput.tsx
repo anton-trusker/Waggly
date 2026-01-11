@@ -135,7 +135,7 @@ export default function CurrencyInput({
                                 <Text style={styles.currencyCodeSmall}>{curr.code}</Text>
                             </View>
                             {curr.code === currency && (
-                                <IconSymbol android_material_icon_name="check" size={20} color="#6366F1" />
+                                <IconSymbol android_material_icon_name="check" size={20} color="#0EA5E9" />
                             )}
                         </TouchableOpacity>
                     ))}
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#F3F4F6',
     },
     currencyOptionSelected: {
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
     },
     currencyInfo: {
         flex: 1,

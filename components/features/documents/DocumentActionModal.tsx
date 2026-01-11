@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Alert, Platform } from
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/styles/commonStyles';
 import { designSystem } from '@/constants/designSystem';
-import { Document } from '@/types';
+import { Document } from '@/types/v2/schema';
 import * as Linking from 'expo-linking';
 import { useLocale } from '@/hooks/useLocale';
 
@@ -21,11 +21,11 @@ export default function DocumentActionModal({ visible, onClose, document, onDele
     if (!document) return null;
 
     const handleDownload = () => {
-        if (document.file_url) {
+        if (document.file_path) {
             if (Platform.OS === 'web') {
-                window.open(document.file_url, '_blank');
+                window.open(document.file_path, '_blank');
             } else {
-                Linking.openURL(document.file_url);
+                Linking.openURL(document.file_path);
             }
             onClose();
         }
@@ -34,7 +34,7 @@ export default function DocumentActionModal({ visible, onClose, document, onDele
     const handleDelete = () => {
         Alert.alert(
             t('documents.delete_confirm_title', { defaultValue: 'Delete Document?' }),
-            t('documents.delete_confirm_message', { name: document.file_name, defaultValue: `Are you sure you want to delete "${document.file_name}"?` }),
+            t('documents.delete_confirm_message', { name: document.name, defaultValue: `Are you sure you want to delete "${document.name}"?` }),
             [
                 { text: t('common.cancel', { defaultValue: 'Cancel' }), style: 'cancel' },
                 {
@@ -50,8 +50,8 @@ export default function DocumentActionModal({ visible, onClose, document, onDele
     };
 
     const handleView = () => {
-        if (Platform.OS === 'web' && document.file_url) {
-            window.open(document.file_url, '_blank');
+        if (Platform.OS === 'web' && document.file_path) {
+            window.open(document.file_path, '_blank');
             onClose();
         } else {
             onView(document);
@@ -70,14 +70,14 @@ export default function DocumentActionModal({ visible, onClose, document, onDele
                 <View style={styles.content}>
                     <View style={styles.header}>
                         <View style={styles.dragHandle} />
-                        <Text style={styles.title} numberOfLines={1}>{document.file_name}</Text>
-                        <Text style={styles.subtitle}>{(document.size_bytes ? (document.size_bytes / 1024).toFixed(0) + ' KB' : 'Unknown size')}</Text>
+                        <Text style={styles.title} numberOfLines={1}>{document.name}</Text>
+                        <Text style={styles.subtitle}>{(document.file_size ? (document.file_size / 1024).toFixed(0) + ' KB' : 'Unknown size')}</Text>
                     </View>
 
                     <View style={styles.actions}>
                         <TouchableOpacity style={styles.actionItem} onPress={handleView}>
-                            <View style={[styles.iconContainer, { backgroundColor: '#EEF2FF' }]}>
-                                <Ionicons name="eye-outline" size={24} color="#6366F1" />
+                            <View style={[styles.iconContainer, { backgroundColor: '#F0F9FF' }]}>
+                                <Ionicons name="eye-outline" size={24} color="#0EA5E9" />
                             </View>
                             <Text style={styles.actionText}>{t('common.view', { defaultValue: 'View' })}</Text>
                         </TouchableOpacity>

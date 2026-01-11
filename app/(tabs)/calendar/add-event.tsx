@@ -21,6 +21,13 @@ const EVENT_TYPES = [
   { id: 'other', label: 'Other', icon: 'calendar-star' },
 ];
 
+interface LocationDetails {
+  address: string;
+  lat?: number;
+  lng?: number;
+  placeId?: string;
+}
+
 export default function AddEventScreen() {
   const { petId: initialPetId } = useLocalSearchParams();
   const { user } = useAuth();
@@ -35,7 +42,7 @@ export default function AddEventScreen() {
 
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState('');
-  const [locationDetails, setLocationDetails] = useState<any>(null);
+  const [locationDetails, setLocationDetails] = useState<LocationDetails | null>(null);
 
   const handleSave = async () => {
     if (!title.trim()) {

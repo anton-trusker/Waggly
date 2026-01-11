@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  TouchableWithoutFeedback,
+  Pressable,
 } from 'react-native';
 import { colors } from '@/styles/commonStyles';
 import { Pet } from '@/types';
@@ -211,7 +211,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.content}
@@ -389,7 +389,7 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </TouchableWithoutFeedback>
+      </Pressable>
 
       {/* Add extra padding when keyboard is visible */}
       <View style={{ height: 40 }} />

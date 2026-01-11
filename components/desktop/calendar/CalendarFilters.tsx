@@ -13,7 +13,7 @@ interface CalendarFiltersProps {
 }
 
 const EVENT_TYPES: { id: EventType; labelKey: string; icon: string; color: string }[] = [
-    { id: 'vaccination', labelKey: 'vaccination', icon: 'medkit', color: '#6366F1' },
+    { id: 'vaccination', labelKey: 'vaccination', icon: 'medkit', color: '#0EA5E9' },
     { id: 'treatment', labelKey: 'treatment', icon: 'bandage', color: '#F59E0B' },
     { id: 'vet', labelKey: 'vet', icon: 'medkit', color: '#10B981' },
     { id: 'grooming', labelKey: 'grooming', icon: 'cut', color: '#06B6D4' },
@@ -83,14 +83,14 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
                         >
                             <View style={styles.checkbox}>
                                 {selectedPets.includes(pet.id) && (
-                                    <Ionicons name="checkmark" size={16} color="#6366F1" />
+                                    <Ionicons name="checkmark" size={16} color="#0EA5E9" />
                                 )}
                             </View>
                             {pet.photo_url ? (
                                 <Image source={{ uri: pet.photo_url }} style={styles.petAvatar} />
                             ) : (
                                 <View style={styles.petAvatarPlaceholder}>
-                                    <Ionicons name="paw" size={12} color="#6366F1" />
+                                    <Ionicons name="paw" size={12} color="#0EA5E9" />
                                 </View>
                             )}
                             <Text style={styles.filterLabel}>{pet.name}</Text>
@@ -122,7 +122,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({
                         >
                             <View style={styles.checkbox}>
                                 {selectedTypes.includes(type.id) && (
-                                    <Ionicons name="checkmark" size={16} color="#6366F1" />
+                                    <Ionicons name="checkmark" size={16} color="#0EA5E9" />
                                 )}
                             </View>
                             <View style={[styles.typeIcon, { backgroundColor: type.color + '20' }]}>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     selectButtonText: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     selectDivider: {
         fontSize: 12,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
         width: 24,
         height: 24,
         borderRadius: 12,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     showMoreText: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
         textAlign: 'center',
     },
     upcomingList: {

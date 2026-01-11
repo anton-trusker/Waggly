@@ -45,7 +45,7 @@ const ActivityFeedTimeline: React.FC = () => {
     const getIconColor = (type: string) => {
         switch (type) {
             case 'weight': return '#F59E0B';
-            case 'visit': return '#6366F1';
+            case 'visit': return '#0EA5E9';
             case 'vaccination': return '#10B981';
             case 'treatment': return '#EC4899';
             case 'document': return '#8B5CF6';
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     viewAllText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
         textAlign: 'center',
     },
 });

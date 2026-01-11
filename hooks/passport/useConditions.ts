@@ -12,7 +12,7 @@ export function useConditions(petId: string) {
         try {
             setLoading(true);
             const { data, error: fetchError } = await supabase
-                .from('medical_conditions')
+                .from('conditions')
                 .select('*')
                 .eq('pet_id', petId)
                 .order('diagnosed_date', { ascending: false });
@@ -22,7 +22,7 @@ export function useConditions(petId: string) {
             setConditions((data || []).map(c => ({
                 id: c.id,
                 petId: c.pet_id,
-                conditionName: c.condition_name,
+                conditionName: c.name, // Map name -> conditionName
                 diagnosedDate: c.diagnosed_date ? new Date(c.diagnosed_date) : undefined,
                 status: c.status,
                 notes: c.notes,
@@ -40,10 +40,10 @@ export function useConditions(petId: string) {
 
     const addCondition = async (newCondition: Omit<MedicalCondition, 'id' | 'petId'>) => {
         const { error: insertError } = await supabase
-            .from('medical_conditions')
+            .from('conditions')
             .insert({
                 pet_id: petId,
-                condition_name: newCondition.conditionName,
+                name: newCondition.conditionName, // Map conditionName -> name
                 diagnosed_date: newCondition.diagnosedDate?.toISOString().split('T')[0],
                 status: newCondition.status,
                 notes: newCondition.notes,
@@ -54,15 +54,20 @@ export function useConditions(petId: string) {
     };
 
     const updateCondition = async (id: string, updates: Partial<Omit<MedicalCondition, 'id' | 'petId'>>) => {
+        const updatePayload: any = {
+            diagnosed_date: updates.diagnosedDate?.toISOString().split('T')[0],
+            status: updates.status,
+            notes: updates.notes,
+            updated_at: new Date().toISOString(),
+        };
+
+        if (updates.conditionName) {
+            updatePayload.name = updates.conditionName;
+        }
+
         const { error: updateError } = await supabase
-            .from('medical_conditions')
-            .update({
-                condition_name: updates.conditionName,
-                diagnosed_date: updates.diagnosedDate?.toISOString().split('T')[0],
-                status: updates.status,
-                notes: updates.notes,
-                updated_at: new Date().toISOString(),
-            })
+            .from('conditions')
+            .update(updatePayload)
             .eq('id', id);
 
         if (updateError) throw updateError;
@@ -71,7 +76,7 @@ export function useConditions(petId: string) {
 
     const deleteCondition = async (id: string) => {
         const { error: deleteError } = await supabase
-            .from('medical_conditions')
+            .from('conditions')
             .delete()
             .eq('id', id);
 

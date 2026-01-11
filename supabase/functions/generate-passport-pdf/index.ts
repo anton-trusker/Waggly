@@ -48,8 +48,8 @@ serve(async (req) => {
         if (petError || !pet) throw new Error(`Error fetching pet: ${petError?.message || "Pet not found"}`);
 
         const { data: vaccinations } = await supabase.from("vaccinations").select("*").eq("pet_id", pet.id).order("date_given", { ascending: false });
-        const { data: treatments } = await supabase.from("treatments").select("*").eq("pet_id", pet.id).eq("is_active", true);
-        const { data: conditions } = await supabase.from("medical_conditions").select("*").eq("pet_id", pet.id).order("diagnosed_date", { ascending: false });
+        // treatments table is 'medications' in V2 and unused here, removing.
+        const { data: conditions } = await supabase.from("conditions").select("*").eq("pet_id", pet.id).order("diagnosed_date", { ascending: false });
         const { data: contacts } = await supabase.from("emergency_contacts").select("*").eq("pet_id", pet.id).order("is_primary", { ascending: false });
 
         // 2. Setup PDF document
@@ -160,7 +160,7 @@ serve(async (req) => {
             page.drawText("Medical Conditions", { x: margin + 10, y: currentY, size: 11, font: fontBold, color: COLORS.TEXT_MAIN });
             currentY -= 15;
             for (const c of conditions.slice(0, 3)) {
-                page.drawText(`• ${c.condition_name} (${c.status}) - Diagnosed: ${c.diagnosed_date}`, { x: margin + 15, y: currentY, size: 9, font: font });
+                page.drawText(`• ${c.name} (${c.status}) - Diagnosed: ${c.diagnosed_date}`, { x: margin + 15, y: currentY, size: 9, font: font });
                 currentY -= 12;
             }
             currentY -= 20;

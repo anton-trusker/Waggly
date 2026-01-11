@@ -149,11 +149,15 @@ export default function AddPetWizardScreen() {
                 }
             }
 
-            Alert.alert(
-                t('add_pet.success_title'),
-                t('add_pet.success_message', { name: formData.name }),
-                [{ text: 'OK', onPress: () => router.replace('/(tabs)/(home)') }]
-            );
+            if (Platform.OS === 'web') {
+                router.replace('/(tabs)/(home)');
+            } else {
+                Alert.alert(
+                    t('add_pet.success_title'),
+                    t('add_pet.success_message', { name: formData.name }),
+                    [{ text: 'OK', onPress: () => router.replace('/(tabs)/(home)') }]
+                );
+            }
 
         } catch (error: any) {
             Alert.alert(t('common.error'), error.message || t('common.error'));

@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Alert } from "react-native";
-import { IconSymbol } from "@/components/IconSymbol";
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from "@react-navigation/native";
 
 export function HeaderRightButton() {

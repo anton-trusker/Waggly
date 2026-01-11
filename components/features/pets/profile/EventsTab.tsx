@@ -49,7 +49,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
             case 'vaccination': return { bg: '#DCFCE7', text: '#16A34A', border: '#86EFAC' }; // green
             case 'treatment': return { bg: '#FCE7F3', text: '#DB2777', border: '#F9A8D4' }; // pink
             case 'vet': return { bg: '#DBEAFE', text: '#2563EB', border: '#93C5FD' }; // blue
-            case 'grooming': return { bg: '#F3E8FF', text: '#9333EA', border: '#D8B4FE' }; // purple
+            case 'grooming': return { bg: '#F3E8FF', text: '#10B981', border: '#D8B4FE' }; // purple
             case 'walking': return { bg: '#FEF9C3', text: '#CA8A04', border: '#FDE047' }; // yellow
             case 'feeding': return { bg: '#FFEDD5', text: '#EA580C', border: '#FDBA74' }; // orange
             default: return { bg: '#F3F4F6', text: '#4B5563', border: '#E5E7EB' }; // gray
@@ -74,7 +74,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                     <TouchableOpacity
                         onPress={() => router.push(`/(tabs)/pets/events/new?petId=${petId}` as any)}
                     >
-                        <Ionicons name="add-circle-outline" size={24} color="#6366F1" />
+                        <Ionicons name="add-circle-outline" size={24} color="#0EA5E9" />
                         <Text style={styles.addButtonText}>Add Event</Text>
                     </TouchableOpacity>
                 </View>

@@ -35,7 +35,7 @@ export default function PetProfileCardWidget({ pet }: PetProfileCardWidgetProps)
             {/* Header: Name Left, Microchip Right */}
             <View style={styles.identityHeader}>
                 <View style={styles.identityHeaderLeft}>
-                    <Ionicons name="paw" size={20} color="#4F46E5" />
+                    <Ionicons name="paw" size={20} color="#0284C7" />
                     <Text style={styles.identityTitle}>{pet.name?.toUpperCase() || ''}</Text>
                 </View>
                 {pet.microchip_number && (
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 12,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         borderBottomWidth: 1,
         borderBottomColor: '#E5E7EB',
     },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     identityTitle: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#4F46E5',
+        color: '#0284C7',
         fontFamily: 'Plus Jakarta Sans',
     },
     idBadge: {

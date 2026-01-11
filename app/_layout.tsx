@@ -99,7 +99,6 @@ function RootLayoutNav() {
     if (!isMounted || loading) return; // Don't navigate before mount or while loading session
 
     const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
-    const inOnboardingGroup = segments[0] === '(onboarding)';
     const isPublicRoute = segments[0] === 'pet' && segments[1] === 'shared';
 
     // If logged in and still in auth pages, go to home
@@ -107,8 +106,8 @@ function RootLayoutNav() {
       router.replace('/(tabs)/(home)');
     }
 
-    // If not logged in and not in auth/onboarding or public route, go to login
-    if (!session && !inAuthGroup && !inOnboardingGroup && !isPublicRoute) {
+    // If not logged in and not in auth or public route, go to login
+    if (!session && !inAuthGroup && !isPublicRoute) {
       router.replace('/(auth)/login');
     }
   }, [session, segments, isMounted, loading]);

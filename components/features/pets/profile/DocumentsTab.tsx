@@ -30,7 +30,7 @@ export default function DocumentsTab({ documents = [], isLoading = false, onUplo
         all: { label: 'All', icon: 'folder', color: theme.colors.text.primary, bg: theme.colors.background.secondary },
         vaccination: { label: 'Vaccines', icon: 'vaccines', color: '#DB2777', bg: '#FCE7F3' },
         lab_result: { label: 'Labs', icon: 'biotech', color: '#2563EB', bg: '#EFF6FF' },
-        prescription: { label: 'Meds', icon: 'healing', color: '#9333EA', bg: '#F3E8FF' },
+        prescription: { label: 'Meds', icon: 'healing', color: '#10B981', bg: '#F3E8FF' },
         insurance: { label: 'Insurance', icon: 'health-and-safety', color: '#EA580C', bg: '#FFEDD5' },
         medical: { label: 'Medical', icon: 'assignment', color: '#059669', bg: '#ECFDF5' },
         other: { label: 'Other', icon: 'folder-open', color: '#6B7280', bg: '#F3F4F6' },

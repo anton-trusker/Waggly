@@ -31,7 +31,7 @@ export function PetHealthProfile({ petId }: PetHealthProfileProps) {
     if (loading && !summary) {
         return (
             <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#6366F1" />
+                <ActivityIndicator size="large" color="#0EA5E9" />
                 <Text style={styles.loadingText}>Loading Health Profile...</Text>
             </View>
         );

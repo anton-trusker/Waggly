@@ -15,7 +15,7 @@ export function PetProfileLayout({ petId, children }: PetProfileLayoutProps) {
     if (loading && !pet) {
         return (
             <View style={styles.center}>
-                <ActivityIndicator size="large" color="#6366F1" />
+                <ActivityIndicator size="large" color="#0EA5E9" />
             </View>
         );
     }

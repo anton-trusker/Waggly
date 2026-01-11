@@ -183,7 +183,7 @@ const CalendarGridDesktop: React.FC<CalendarGridDesktopProps> = ({
                                                     >
                                                         <TouchableOpacity
                                                             activeOpacity={0.9}
-                                                            style={[styles.eventPill, { backgroundColor: event.color || '#6366F1' }] as any}
+                                                            style={[styles.eventPill, { backgroundColor: event.color || '#0EA5E9' }] as any}
                                                             onPressIn={handlePressIn}
                                                             onPressOut={handlePressOut}
                                                             onPress={() => onEventClick?.(event)}
@@ -290,8 +290,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#FAFAFA',
     },
     dayCellToday: {
-        backgroundColor: '#EEF2FF',
-        borderColor: '#6366F1',
+        backgroundColor: '#F0F9FF',
+        borderColor: '#0EA5E9',
     },
     dayNumber: {
         fontSize: 14,
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     dayNumberToday: {
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     eventsList: {
         gap: 2,

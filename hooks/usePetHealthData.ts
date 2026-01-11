@@ -32,13 +32,13 @@ export function usePetHealthData(petId?: string) {
         .from('medical_visits') as any)
         .select('*')
         .eq('pet_id', petId)
-        .order('date', { ascending: false })
+        .order('visit_date', { ascending: false }) // Changed date -> visit_date
         .limit(1);
 
       if (visitsError) throw visitsError;
 
       const lastVetVisit = visits && visits.length > 0
-        ? { date: visits[0].date, reason: visits[0].reason || 'Check-up' }
+        ? { date: visits[0].visit_date, reason: visits[0].reason || 'Check-up' } // Changed date -> visit_date
         : undefined;
 
       // Fetch Next Vaccine Due
@@ -56,7 +56,7 @@ export function usePetHealthData(petId?: string) {
 
       // Fetch Current Weight
       const { data: weightEntries, error: weightsError } = await (supabase
-        .from('weight_entries') as any)
+        .from('weight_logs') as any) // Changed weight_entries -> weight_logs
         .select('*')
         .eq('pet_id', petId)
         .order('date', { ascending: false })
@@ -70,10 +70,10 @@ export function usePetHealthData(petId?: string) {
 
       // Fetch Active Treatments
       const { data: treatments, error: treatmentsError } = await (supabase
-        .from('treatments') as any)
+        .from('medications') as any) // Changed treatments -> medications
         .select('*')
         .eq('pet_id', petId)
-        .eq('is_active', true);
+        .eq('is_ongoing', true); // Changed is_active -> is_ongoing
 
       if (treatmentsError) throw treatmentsError;
 
@@ -87,7 +87,7 @@ export function usePetHealthData(petId?: string) {
 
       if (allergiesError) throw allergiesError;
 
-      const allergyNames = allergies ? allergies.map((a: Allergy) => a.allergy_name) : [];
+      const allergyNames = allergies ? allergies.map((a: Allergy) => a.allergy_name || a.name || 'Unknown') : []; // Handle schema variations
 
       setHealthData({
         lastVetVisit,

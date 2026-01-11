@@ -47,8 +47,10 @@ export interface Pet {
     blood_type: string | null;
     color: string | null;
     microchip_number: string | null;
+    microchip_implantation_date: string | null; // Date string YYYY-MM-DD
     registration_id: string | null;
     avatar_url: string | null;
+    photo_url: string | null; // Alias for avatar_url for backward compatibility
     description: string | null;
     is_spayed_neutered: boolean;
     is_deceased: boolean;

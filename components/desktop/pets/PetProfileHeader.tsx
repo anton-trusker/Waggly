@@ -67,7 +67,7 @@ export default function PetProfileHeader({ pet }: PetProfileHeaderProps) {
                                 <Image source={{ uri: pet.photo_url }} style={styles.petPhoto} />
                             ) : (
                                 <View style={styles.petPhotoPlaceholder}>
-                                    <Ionicons name="paw" size={48} color="#6366F1" />
+                                    <Ionicons name="paw" size={48} color="#0EA5E9" />
                                 </View>
                             )}
                         </View>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         height: 120,
         borderRadius: 60,
         padding: 4,
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
     },
     petPhoto: {
         width: 112,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
         width: 112,
         height: 112,
         borderRadius: 56,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 4,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
         width: 24,
         height: 24,
         borderRadius: 12,
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 2,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'transparent',
     },
     tabActive: {
-        borderBottomColor: '#6366F1',
+        borderBottomColor: '#0EA5E9',
     },
     tabText: {
         fontSize: 14,
@@ -291,6 +291,6 @@ const styles = StyleSheet.create({
         color: '#6B7280',
     },
     tabTextActive: {
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
 });

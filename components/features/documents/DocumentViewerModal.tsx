@@ -1,10 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Image, Dimensions, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Image, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/styles/commonStyles';
-import { designSystem } from '@/constants/designSystem';
+import { Document } from '@/types/v2/schema';
 import * as Linking from 'expo-linking';
-import { Document } from '@/types';
+import { useLocale } from '@/hooks/useLocale';
 
 interface DocumentViewerModalProps {
     visible: boolean;
@@ -12,45 +11,50 @@ interface DocumentViewerModalProps {
     document: Document | null;
 }
 
-const { width, height } = Dimensions.get('window');
-
 export default function DocumentViewerModal({ visible, onClose, document }: DocumentViewerModalProps) {
-    if (!document) return null;
+    const { t } = useLocale();
+    const { width, height } = useWindowDimensions();
+    const [isImage, setIsImage] = useState(false);
 
-    const isImage = document.type === 'image/jpeg' || document.type === 'image/png' || document.mime_type?.startsWith('image/');
+    useEffect(() => {
+        if (document?.file_type) {
+            setIsImage(document.file_type.startsWith('image/'));
+        }
+    }, [document]);
 
     const handleDownload = () => {
-        if (document.file_url) {
+        if (document?.file_path) {
             if (Platform.OS === 'web') {
-                window.open(document.file_url, '_blank');
+                window.open(document.file_path, '_blank');
             } else {
-                Linking.openURL(document.file_url);
+                Linking.openURL(document.file_path);
             }
+            onClose();
         }
     };
+
+    if (!document) return null;
 
     return (
         <Modal
             visible={visible}
             transparent={true}
-            animationType="fade"
+            animationType="slide"
             onRequestClose={onClose}
         >
-            <View style={styles.container}>
-                <TouchableOpacity style={styles.backdrop} onPress={onClose} activeOpacity={1} />
-
+            <View style={styles.overlay}>
                 <View style={styles.content}>
                     <View style={styles.header}>
-                        <Text style={styles.title} numberOfLines={1}>{document.file_name}</Text>
+                        <Text style={styles.title} numberOfLines={1}>{document.name}</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                            <Ionicons name="close" size={24} color="#fff" />
+                            <Ionicons name="close" size={24} color="#6B7280" />
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.body}>
-                        {isImage && document.file_url ? (
+                    <View style={styles.viewer}>
+                        {isImage && document.file_path ? (
                             <Image
-                                source={{ uri: document.file_url }}
+                                source={{ uri: document.file_path }}
                                 style={styles.image}
                                 resizeMode="contain"
                             />
@@ -86,14 +90,11 @@ export default function DocumentViewerModal({ visible, onClose, document }: Docu
 }
 
 const styles = StyleSheet.create({
-    container: {
+    overlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.9)',
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    backdrop: {
-        ...StyleSheet.absoluteFillObject,
     },
     content: {
         width: '100%',
@@ -120,14 +121,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderRadius: 20,
     },
-    body: {
+    viewer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
     },
     image: {
-        width: width,
+        width: '100%',
         height: '100%',
     },
     previewPlaceholder: {

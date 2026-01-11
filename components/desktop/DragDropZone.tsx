@@ -63,7 +63,7 @@ export default function DragDropZone({ onDrop, children }: DragDropZoneProps) {
             {isDragging && (
                 <View style={styles.dragOverlay}>
                     <View style={styles.dragContent}>
-                        <Ionicons name="cloud-upload" size={64} color="#6366F1" />
+                        <Ionicons name="cloud-upload" size={64} color="#0EA5E9" />
                         <Text style={styles.dragText}>Drop files to upload</Text>
                     </View>
                 </View>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 16,
         borderWidth: 2,
-        borderColor: '#6366F1',
+        borderColor: '#0EA5E9',
         borderStyle: 'dashed',
         margin: 8,
     },
@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
     dragText: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
 });

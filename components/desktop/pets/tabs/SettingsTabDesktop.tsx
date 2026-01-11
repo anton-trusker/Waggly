@@ -60,7 +60,7 @@ export default function SettingsTabDesktop({ petId, onEdit }: SettingsTabProps) 
                     <Switch
                         value={notificationsEnabled}
                         onValueChange={setNotificationsEnabled}
-                        trackColor={{ false: '#E5E7EB', true: '#6366F1' }}
+                        trackColor={{ false: '#E5E7EB', true: '#0EA5E9' }}
                     />
                 </View>
             </View>

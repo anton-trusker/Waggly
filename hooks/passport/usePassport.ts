@@ -67,13 +67,13 @@ export function usePassport(petId: string): UsePassportReturn {
                 .from('vaccinations')
                 .select('*')
                 .eq('pet_id', petId)
-                .order('date_given', { ascending: false });
+                .order('vaccination_date', { ascending: false });
 
             if (vaccinationsError) throw vaccinationsError;
 
             // Fetch treatments
             const { data: rawTreatments, error: treatmentsError } = await supabase
-                .from('treatments')
+                .from('medications')
                 .select('*')
                 .eq('pet_id', petId)
                 .order('start_date', { ascending: false });
@@ -100,7 +100,7 @@ export function usePassport(petId: string): UsePassportReturn {
 
             // Fetch weight history
             const { data: rawWeightHistory, error: weightError } = await supabase
-                .from('weight_entries')
+                .from('weight_logs')
                 .select('*')
                 .eq('pet_id', petId)
                 .order('date', { ascending: false })
@@ -150,7 +150,7 @@ export function usePassport(petId: string): UsePassportReturn {
 
             // Fetch medical conditions
             const { data: rawConditions, error: conditionsError } = await supabase
-                .from('medical_conditions')
+                .from('conditions')
                 .select('*')
                 .eq('pet_id', petId)
                 .order('diagnosed_date', { ascending: false });
@@ -164,7 +164,7 @@ export function usePassport(petId: string): UsePassportReturn {
                 .from('medical_visits')
                 .select('*')
                 .eq('pet_id', petId)
-                .order('date', { ascending: false });
+                .order('visit_date', { ascending: false });
 
             if (visitsError && visitsError.code !== '42P01') { // Ignore table missing error just in case
                 throw visitsError;
@@ -350,7 +350,7 @@ export function usePassport(petId: string): UsePassportReturn {
                     id: vac.id,
                     vaccineName: vac.vaccine_name,
                     category: (vac.category || 'core') as VaccineCategory,
-                    dateGiven: new Date(vac.date_given),
+                    dateGiven: new Date(vac.vaccination_date || vac.date_given),
                     nextDueDate: vac.next_due_date ? new Date(vac.next_due_date) : undefined,
                     doseNumber: vac.dose_number,
                     administeringVet: vac.administering_vet,
@@ -375,29 +375,29 @@ export function usePassport(petId: string): UsePassportReturn {
                 })),
                 treatments: (treatments || []).map(treatment => ({
                     id: treatment.id,
-                    treatmentName: treatment.treatment_name,
-                    category: (treatment.category || 'acute') as TreatmentCategory,
+                    treatmentName: treatment.name, // Map name
+                    category: 'acute', // Default
                     startDate: new Date(treatment.start_date),
                     endDate: treatment.end_date ? new Date(treatment.end_date) : undefined,
                     dosage: treatment.dosage || '',
                     frequency: treatment.frequency || '',
-                    timeOfDay: treatment.time_of_day,
-                    vet: treatment.vet,
-                    prescribedBy: treatment.prescribed_by,
-                    prescriptionNumber: treatment.prescription_number,
-                    pharmacy: treatment.pharmacy,
-                    refillsRemaining: treatment.refills_remaining,
-                    isActive: treatment.is_active || false,
-                    withFood: treatment.with_food,
-                    sideEffects: treatment.side_effects,
-                    specialInstructions: treatment.special_instructions,
-                    notes: treatment.notes,
+                    timeOfDay: undefined,
+                    vet: undefined,
+                    prescribedBy: undefined,
+                    prescriptionNumber: undefined,
+                    pharmacy: undefined,
+                    refillsRemaining: undefined,
+                    isActive: treatment.is_ongoing || false, // Map is_ongoing
+                    withFood: undefined,
+                    sideEffects: undefined,
+                    specialInstructions: undefined,
+                    notes: treatment.instructions, // Map instructions
                 })),
                 medicalHistory: [
                     ...((medicalVisits || []).map(visit => ({
                         id: visit.id,
                         eventType: (visit.visit_type as MedicalEventType) || MedicalEventType.CHECKUP,
-                        eventDate: new Date(visit.date),
+                        eventDate: new Date(visit.visit_date || visit.date), // Map visit_date
                         title: visit.reason || 'Medical Visit',
                         description: visit.notes || '',
                         veterinarian: visit.vet_name,
@@ -408,7 +408,7 @@ export function usePassport(petId: string): UsePassportReturn {
                     ...((vaccinations || []).map(vac => ({
                         id: vac.id,
                         eventType: MedicalEventType.VACCINATION,
-                        eventDate: new Date(vac.date_given),
+                        eventDate: new Date(vac.vaccination_date || vac.date_given), // Map vaccination_date
                         title: `Vaccination: ${vac.vaccine_name}`,
                         description: `Administered ${vac.vaccine_name} (${vac.category})`,
                         veterinarian: vac.administering_vet,
@@ -420,7 +420,7 @@ export function usePassport(petId: string): UsePassportReturn {
                 allergies: (allergies || []).map(allergy => ({
                     id: allergy.id,
                     type: allergy.type,
-                    allergen: allergy.name || allergy.allergen_name || allergy.allergen || 'Unknown',
+                    allergen: allergy.allergen_name || allergy.name || 'Unknown',
                     reactionDescription: allergy.reaction_description || '',
                     severity: allergy.severity_level || allergy.severity,
                     notes: allergy.notes,
@@ -430,7 +430,7 @@ export function usePassport(petId: string): UsePassportReturn {
                 conditions: (conditions || []).map(cond => ({
                     id: cond.id,
                     petId: cond.pet_id,
-                    conditionName: cond.condition_name,
+                    conditionName: cond.name,
                     diagnosedDate: cond.diagnosed_date ? new Date(cond.diagnosed_date) : undefined,
                     status: cond.status,
                     notes: cond.notes,

@@ -40,11 +40,11 @@ export default function PetMedicationsWidget({ medications, onManage }: PetMedic
                                     width={40}
                                     height={40}
                                     borderRadius="$base"
-                                    backgroundColor="#E0E7FF"
+                                    backgroundColor="#E0F2FE"
                                     alignItems="center"
                                     justifyContent="center"
                                 >
-                                    <IconSymbol android_material_icon_name="medication" size={20} color="#4F46E5" />
+                                    <IconSymbol android_material_icon_name="medication" size={20} color="#0284C7" />
                                 </XStack>
                                 <YStack flex={1}>
                                     <Text fontSize="$base" fontWeight="600" color="$textPrimary">

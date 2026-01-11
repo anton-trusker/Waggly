@@ -60,7 +60,7 @@ export default function PetDocuments({ petId }: Props) {
                 style={[styles.typeChip, selectedDocType === type && styles.typeChipActive] as any}
                 onPress={() => setSelectedDocType(type)}
               >
-                <Text style={[styles.typeText, selectedDocType === type && styles.typeText Active]}>
+                <Text style={[styles.typeText, selectedDocType === type && styles.typeTextActive]}>
                   {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
                 </Text>
               </TouchableOpacity>

@@ -105,7 +105,7 @@ export default function BusinessSearch({
             {required && <Text style={styles.required}> *</Text>}
           </Text>
           <TouchableOpacity onPress={() => setIsManualEntry(false)} style={styles.backButton}>
-            <IconSymbol android_material_icon_name="search" size={16} color="#6366F1" />
+            <IconSymbol android_material_icon_name="search" size={16} color="#0EA5E9" />
             <Text style={styles.backButtonText}>Search Instead</Text>
           </TouchableOpacity>
         </View>
@@ -248,7 +248,7 @@ export default function BusinessSearch({
 
             {/* Manual Entry Option */}
             <TouchableOpacity style={styles.manualEntryButton} onPress={handleManualEntry}>
-              <IconSymbol android_material_icon_name="edit" size={18} color="#6366F1" />
+              <IconSymbol android_material_icon_name="edit" size={18} color="#0EA5E9" />
               <Text style={styles.manualEntryButtonText}>Enter manually</Text>
             </TouchableOpacity>
           </View>
@@ -268,7 +268,7 @@ export default function BusinessSearch({
             )}
           </View>
           <TouchableOpacity onPress={() => setShowResults(true)}>
-            <IconSymbol android_material_icon_name="edit" size={20} color="#6366F1" />
+            <IconSymbol android_material_icon_name="edit" size={20} color="#0EA5E9" />
           </TouchableOpacity>
         </View>
       )}
@@ -288,7 +288,7 @@ function BusinessResultItem({ business, onSelect, showDistance }: BusinessResult
   return (
     <TouchableOpacity style={styles.resultItem} onPress={() => onSelect(business)}>
       <View style={styles.resultIconContainer}>
-        <IconSymbol android_material_icon_name="location-on" size={20} color="#6366F1" />
+        <IconSymbol android_material_icon_name="location-on" size={20} color="#0EA5E9" />
       </View>
       <View style={styles.resultInfo}>
         <Text style={styles.resultName}>{business.businessName}</Text>
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#6366F1',
+    color: '#0EA5E9',
   },
   searchContainer: {
     position: 'relative',
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#F0F9FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   manualEntryButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6366F1',
+    color: '#0EA5E9',
   },
   selectedBusinessContainer: {
     flexDirection: 'row',

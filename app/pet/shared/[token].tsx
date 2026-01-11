@@ -82,7 +82,7 @@ export default function SharedPetProfile() {
             <View style={styles.brandedHeader}>
                 <View style={styles.brandRow}>
                     <Image
-                        source={require('@/assets/images/logo.png')}
+                        source={require('@/assets/images/icons/logo.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

@@ -55,7 +55,7 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
     const getDocumentIcon = (type: string) => {
         switch (type) {
             case 'vaccination': return { icon: 'medical', color: '#10B981' };
-            case 'medical': return { icon: 'fitness', color: '#6366F1' };
+            case 'medical': return { icon: 'fitness', color: '#0EA5E9' };
             case 'legal': return { icon: 'shield-checkmark', color: '#F59E0B' };
             case 'insurance': return { icon: 'umbrella', color: '#8B5CF6' };
             case 'prescription': return { icon: 'bandage', color: '#EC4899' };
@@ -78,14 +78,14 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                 <View style={styles.header}>
                     <Text style={styles.sectionTitle}>Documents</Text>
                     <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-                        <Ionicons name="cloud-upload-outline" size={16} color="#6366F1" />
+                        <Ionicons name="cloud-upload-outline" size={16} color="#0EA5E9" />
                         <Text style={styles.uploadButtonText}>Upload</Text>
                     </TouchableOpacity>
                 </View>
 
                 {loading ? (
                     <View style={styles.centerState}>
-                        <ActivityIndicator size="small" color="#6366F1" />
+                        <ActivityIndicator size="small" color="#0EA5E9" />
                     </View>
                 ) : documents.length === 0 ? (
                     <View style={styles.emptyState}>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     centerState: {
         alignItems: 'center',

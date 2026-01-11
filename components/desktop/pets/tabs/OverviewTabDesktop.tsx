@@ -24,8 +24,8 @@ export default function OverviewTabDesktop({ pet, vets }: OverviewTabDesktopProp
                 {/* Stats Row */}
                 <View style={styles.statsRow}>
                     <View style={styles.statCard}>
-                        <View style={[styles.statIcon, { backgroundColor: '#EEF2FF' }]}>
-                            <Ionicons name="calendar" size={20} color="#6366F1" />
+                        <View style={[styles.statIcon, { backgroundColor: '#F0F9FF' }]}>
+                            <Ionicons name="calendar" size={20} color="#0EA5E9" />
                         </View>
                         <View>
                             <Text style={styles.statLabel}>Age</Text>

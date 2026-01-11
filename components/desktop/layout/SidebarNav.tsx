@@ -29,7 +29,7 @@ const SidebarNav: React.FC = () => {
         <View style={styles.sidebar}>
             {/* Logo */}
             <View style={styles.logoContainer}>
-                <Image source={require('@/assets/images/logo.png')} style={styles.logoIcon} />
+                <Image source={require('@/assets/images/icons/logo.png')} style={styles.logoIcon} />
                 <Text style={styles.logoText}>Waggli</Text>
             </View>
 
@@ -44,7 +44,7 @@ const SidebarNav: React.FC = () => {
                         <Ionicons
                             name={item.icon as any}
                             size={20}
-                            color={isActive(item.path) ? '#6366F1' : '#6B7280'}
+                            color={isActive(item.path) ? '#0EA5E9' : '#6B7280'}
                         />
                         <Text style={[styles.navLabel, isActive(item.path) && styles.navLabelActive]}>
                             {item.label}
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#6366F1',
+        shadowColor: '#0EA5E9',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
         borderLeftColor: 'transparent',
     },
     navItemActive: {
-        backgroundColor: '#EEF2FF', // Primary-50
-        borderLeftColor: '#6366F1', // Primary-600
+        backgroundColor: '#F0F9FF', // Primary-50
+        borderLeftColor: '#0EA5E9', // Primary-600
     },
     navLabel: {
         fontSize: 16,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         color: '#4B5563', // Gray-600
     },
     navLabelActive: {
-        color: '#4F46E5', // Primary-600
+        color: '#0284C7', // Primary-600
         fontWeight: '600',
     },
     bottomSection: {
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
         alignItems: 'center',
         justifyContent: 'center',
     },

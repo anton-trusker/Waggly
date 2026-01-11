@@ -26,7 +26,7 @@ const actions: ActionItem[] = [
   { id: 'vaccine', title: 'Vaccine', icon: 'needle', route: '/(tabs)/pets/add-vaccination', color: '#EC4899' },
   { id: 'treatment', title: 'Add Meds', icon: 'pill', route: '/(tabs)/pets/add-treatment', color: '#8B5CF6' },
   { id: 'record', title: 'Health Record', icon: 'clipboard-pulse', route: '/(tabs)/pets/add-health-record', color: '#10B981' },
-  { id: 'document', title: 'Documents', icon: 'file-document-outline', route: '/(tabs)/pets/add-documents', color: '#4F46E5' },
+  { id: 'document', title: 'Documents', icon: 'file-document-outline', route: '/(tabs)/pets/add-documents', color: '#0284C7' },
 ];
 
 const { width, height } = Dimensions.get('window');
@@ -252,8 +252,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   petButtonSelected: {
-    backgroundColor: '#EEF2FF',
-    borderColor: '#6366F1',
+    backgroundColor: '#F0F9FF',
+    borderColor: '#0EA5E9',
   },
   petButtonText: {
     fontSize: 15,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     color: '#4B5563',
   },
   petButtonTextSelected: {
-    color: '#6366F1',
+    color: '#0EA5E9',
   },
   selectedIndicator: {
     position: 'absolute',
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     left: '20%',
     right: '20%',
     height: 2,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#0EA5E9',
     borderRadius: 1,
   },
   scrollContainer: {

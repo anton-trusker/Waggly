@@ -18,7 +18,7 @@ export function useTreatments(petId: string | null) {
 
     try {
       const { data, error } = await supabase
-        .from('treatments')
+        .from('medications')
         .select('*')
         .eq('pet_id', petId)
         .order('start_date', { ascending: false });
@@ -26,7 +26,13 @@ export function useTreatments(petId: string | null) {
       if (error) {
         console.error('Error fetching treatments:', error);
       } else {
-        setTreatments(data || []);
+        const mappedData = (data || []).map((m: any) => ({
+          ...m,
+          treatment_name: m.name, // Map name -> treatment_name
+          is_active: m.is_ongoing, // Map is_ongoing -> is_active
+          category: 'acute' // Default category as it's missing in V2
+        }));
+        setTreatments(mappedData);
       }
     } catch (error) {
       console.error('Error fetching treatments:', error);
@@ -42,10 +48,21 @@ export function useTreatments(petId: string | null) {
   const addTreatment = async (treatmentData: Partial<Treatment>) => {
     if (!petId) return { error: 'No pet selected' };
 
+    const payload = {
+      pet_id: petId,
+      name: treatmentData.treatment_name,
+      dosage: treatmentData.dosage,
+      frequency: treatmentData.frequency,
+      start_date: treatmentData.start_date,
+      end_date: treatmentData.end_date,
+      instructions: treatmentData.notes, // Map notes -> instructions
+      is_ongoing: true, // Default active
+    };
+
     try {
       const { data, error } = await (supabase
-        .from('treatments') as any)
-        .insert([{ ...treatmentData, pet_id: petId, is_active: true }])
+        .from('medications') as any)
+        .insert([payload])
         .select()
         .single();
 
@@ -54,15 +71,22 @@ export function useTreatments(petId: string | null) {
         return { error };
       }
 
+      const mapped = {
+        ...data,
+        treatment_name: data.name,
+        is_active: data.is_ongoing,
+        category: 'acute'
+      };
+
       posthog.capture('treatment_created', {
         pet_id: petId,
-        treatment_name: data.treatment_name,
+        treatment_name: data.name,
       });
 
       // OPTIMISTIC UPDATE: Immediately add to local state
-      setTreatments(prev => [data, ...prev]);
+      setTreatments(prev => [mapped, ...prev]);
 
-      return { data, error: null };
+      return { data: mapped, error: null };
     } catch (error) {
       console.error('Error adding treatment:', error);
       return { error };
@@ -71,14 +95,24 @@ export function useTreatments(petId: string | null) {
 
   const updateTreatment = async (treatmentId: string, treatmentData: Partial<Treatment>) => {
     try {
+      // Map update fields
+      const updates: any = {};
+      if (treatmentData.treatment_name) updates.name = treatmentData.treatment_name;
+      if (treatmentData.dosage) updates.dosage = treatmentData.dosage;
+      if (treatmentData.frequency) updates.frequency = treatmentData.frequency;
+      if (treatmentData.start_date) updates.start_date = treatmentData.start_date;
+      if (treatmentData.end_date) updates.end_date = treatmentData.end_date;
+      if (treatmentData.notes) updates.instructions = treatmentData.notes;
+      if (treatmentData.is_active !== undefined) updates.is_ongoing = treatmentData.is_active;
+
       // OPTIMISTIC UPDATE: Update local state immediately
       setTreatments(prev =>
         prev.map(t => t.id === treatmentId ? { ...t, ...treatmentData } : t)
       );
 
       const { data, error } = await (supabase
-        .from('treatments') as any)
-        .update(treatmentData)
+        .from('medications') as any)
+        .update(updates)
         .eq('id', treatmentId)
         .select()
         .single();
@@ -95,7 +129,14 @@ export function useTreatments(petId: string | null) {
         treatment_id: treatmentId,
       });
 
-      return { data, error: null };
+      const mapped = {
+        ...data,
+        treatment_name: data.name,
+        is_active: data.is_ongoing,
+        category: 'acute'
+      };
+
+      return { data: mapped, error: null };
     } catch (error) {
       console.error('Error updating treatment:', error);
       await fetchTreatments();
@@ -109,7 +150,7 @@ export function useTreatments(petId: string | null) {
       setTreatments(prev => prev.filter(t => t.id !== treatmentId));
 
       const { error } = await supabase
-        .from('treatments')
+        .from('medications')
         .delete()
         .eq('id', treatmentId);
 

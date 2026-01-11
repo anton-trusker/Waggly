@@ -46,8 +46,8 @@ export default function PetDetailsPage() {
     }
 
     const getAge = () => {
-        if (!pet.birth_date) return 'Unknown';
-        const birth = new Date(pet.birth_date);
+        if (!pet.date_of_birth) return 'Unknown';
+        const birth = new Date(pet.date_of_birth);
         const now = new Date();
         const years = now.getFullYear() - birth.getFullYear();
         if (years > 0) return `${years} Yrs`; // Abbreviated for mobile

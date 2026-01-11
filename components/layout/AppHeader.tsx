@@ -1,4 +1,6 @@
 import React from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { designSystem } from '@/constants/designSystem';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, usePathname, useLocalSearchParams } from 'expo-router';
@@ -111,7 +113,7 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
     if (isMainTab) {
       return (
         <Image
-          source={require('@/assets/images/logo.png')}
+          source={require('@/assets/images/icons/logo.png')}
           style={{ width: 32, height: 32 }}
           resizeMode="contain"
         />
@@ -195,7 +197,7 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
       return (
         <View style={styles.actions}>
           <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/(tabs)/pets/new' as any)}>
-            <Ionicons name="add" size={22} color="#6366F1" />
+            <Ionicons name="add" size={22} color={designSystem.colors.primary[500]} />
             <Text style={styles.addBtnText}>Add Pet</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(tabs)/notifications')}>
@@ -216,12 +218,19 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
   };
 
   return (
-    <View style={[styles.header, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}>
-      <View style={styles.content}>
-        <View style={styles.leftContainer}>{renderLeft()}</View>
-        <View style={styles.centerContainer}>{renderCenter()}</View>
-        <View style={styles.rightContainer}>{renderRight()}</View>
-      </View>
+    <View style={styles.header}>
+      <LinearGradient
+        colors={[designSystem.colors.primary[500], designSystem.colors.secondary[500]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.gradient, { paddingTop: Platform.OS === 'ios' ? insets.top : 20 }]}
+      >
+        <View style={styles.content}>
+          <View style={styles.leftContainer}>{renderLeft()}</View>
+          <View style={styles.centerContainer}>{renderCenter()}</View>
+          <View style={styles.rightContainer}>{renderRight()}</View>
+        </View>
+      </LinearGradient>
       {currentPetId && (
         <>
           <EditPetModal
@@ -242,7 +251,8 @@ export default function AppHeader({ title: propTitle, showBack: propShowBack, on
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#6366F1', // Primary Blue
+
+    // backgroundColor: '#6366F1', // Handled by LinearGradient
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     shadowColor: '#000',
@@ -251,8 +261,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
     zIndex: 100,
+    overflow: 'hidden',
+  },
+  gradient: {
     paddingBottom: 16,
     paddingHorizontal: 16,
+    width: '100%',
   },
   content: {
     flexDirection: 'row',
@@ -322,7 +336,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   addBtnText: {
-    color: '#6366F1',
+    color: designSystem.colors.primary[500],
     fontWeight: '600',
     fontSize: 13,
   },

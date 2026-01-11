@@ -1,5 +1,6 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { designSystem } from '@/constants/designSystem';
 import { YStack, XStack, Text } from '@/components';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Vaccination } from '@/types';
@@ -11,7 +12,7 @@ interface PetHealthStatusWidgetProps {
 export default function PetHealthStatusWidget({ nextVaccineDue }: PetHealthStatusWidgetProps) {
     return (
         <LinearGradient
-            colors={['#6366F1', '#9333EA'] as any}
+            colors={[designSystem.colors.primary[500], designSystem.colors.secondary[500]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{
@@ -30,7 +31,7 @@ export default function PetHealthStatusWidget({ nextVaccineDue }: PetHealthStatu
                     <Text
                         fontSize={11}
                         fontWeight="600"
-                        color="#E0E7FF"
+                        color="white"
                         letterSpacing={1}
                         marginBottom={8}
                         textTransform="uppercase"
@@ -42,8 +43,8 @@ export default function PetHealthStatusWidget({ nextVaccineDue }: PetHealthStatu
                     </Text>
                     {nextVaccineDue && (
                         <XStack alignItems="center" gap="$2">
-                            <IconSymbol android_material_icon_name="event" size={16} color="#E0E7FF" />
-                            <Text fontSize="$sm" color="#E0E7FF" fontWeight="500">
+                            <IconSymbol android_material_icon_name="event" size={16} color="white" />
+                            <Text fontSize="$sm" color="white" fontWeight="500">
                                 Next Due: {new Date(nextVaccineDue.next_due_date!).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric'
@@ -60,7 +61,7 @@ export default function PetHealthStatusWidget({ nextVaccineDue }: PetHealthStatu
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <IconSymbol android_material_icon_name="verified-user" size={24} color="#6366F1" />
+                    <IconSymbol android_material_icon_name="verified-user" size={24} color="white" />
                 </YStack>
             </XStack>
         </LinearGradient>

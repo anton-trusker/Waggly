@@ -98,13 +98,13 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ selectedDate, onDateSelect,
         <View style={styles.container}>
             <View style={styles.monthHeader}>
                 <TouchableOpacity onPress={handlePreviousMonth} style={styles.navButton}>
-                    <Ionicons name="chevron-back" size={20} color="#6366F1" />
+                    <Ionicons name="chevron-back" size={20} color="#0EA5E9" />
                 </TouchableOpacity>
                 <Text style={styles.monthText}>
                     {monthYear}
                 </Text>
                 <TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
-                    <Ionicons name="chevron-forward" size={20} color="#6366F1" />
+                    <Ionicons name="chevron-forward" size={20} color="#0EA5E9" />
                 </TouchableOpacity>
             </View>
 
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F3F4F6',
     },
     dayCellSelected: {
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
     },
     dayText: {
         fontSize: 13,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     },
     dayTextToday: {
         fontWeight: '700',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     dayTextSelected: {
         color: '#fff',
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
         width: 4,
         height: 4,
         borderRadius: 2,
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
     },
     eventDotSelected: {
         backgroundColor: '#fff',

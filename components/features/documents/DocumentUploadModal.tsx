@@ -127,6 +127,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
             onPrimaryAction={handleUpload}
             loading={loading}
             primaryActionLabel="Upload"
+            primaryActionDisabled={!file || !name}
             width={600}
         >
             <View style={styles.formGroup}>
@@ -134,7 +135,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
                 {file ? (
                     <View style={styles.filePreview}>
                         <View style={styles.fileIcon}>
-                            <Ionicons name="document" size={24} color="#6366F1" />
+                            <Ionicons name="document" size={24} color="#0EA5E9" />
                         </View>
                         <View style={styles.fileInfo}>
                             <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
@@ -172,7 +173,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
                                 <Ionicons
                                     name="paw"
                                     size={16}
-                                    color={selectedPetId === pet.id ? '#6366F1' : '#6B7280'}
+                                    color={selectedPetId === pet.id ? '#0EA5E9' : '#6B7280'}
                                 />
                                 <Text style={[
                                     styles.typeText,
@@ -212,7 +213,7 @@ export default function DocumentUploadModal({ visible, onClose, petId, initialFi
                             <Ionicons
                                 name={docType.icon as any}
                                 size={16}
-                                color={type === docType.id ? '#6366F1' : '#6B7280'}
+                                color={type === docType.id ? '#0EA5E9' : '#6B7280'}
                             />
                             <Text style={[
                                 styles.typeText,
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -331,8 +332,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     typeOptionActive: {
-        backgroundColor: '#EEF2FF',
-        borderColor: '#6366F1',
+        backgroundColor: '#F0F9FF',
+        borderColor: '#0EA5E9',
     },
     typeText: {
         fontSize: 13,
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     typeTextActive: {
-        color: '#6366F1',
+        color: '#0EA5E9',
         fontWeight: '600',
     },
 });

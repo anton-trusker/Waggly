@@ -67,7 +67,7 @@ export default function HealthTab({ pet, vaccinations = [], treatments = [], con
                 style={styles.quickActionsScroll}
             >
                 <QuickAction icon="stethoscope" materialIcon="medical-services" color="#2563EB" bg="#EFF6FF" label="Add Visit" onPress={() => onAddRecord('visit')} theme={theme} />
-                <QuickAction icon="syringe" materialIcon="vaccines" color="#9333EA" bg="#F3E8FF" label="Add Vaccine" onPress={() => onAddRecord('vaccination')} theme={theme} />
+                <QuickAction icon="syringe" materialIcon="vaccines" color="#10B981" bg="#F3E8FF" label="Add Vaccine" onPress={() => onAddRecord('vaccination')} theme={theme} />
                 <QuickAction icon="pills.fill" materialIcon="healing" color="#10B981" bg="#ECFDF5" label="Add Tx" onPress={() => onAddRecord('treatment')} theme={theme} />
                 <QuickAction icon="doc.text.fill" materialIcon="note-add" color="#E11D48" bg="#FFF1F2" label="Add Doc" onPress={() => onAddRecord('document')} theme={theme} />
                 <QuickAction icon="camera" materialIcon="camera-alt" color="#D97706" bg="#FFFBEB" label="Add Photo" onPress={() => onAddRecord('photo')} theme={theme} />
@@ -140,7 +140,7 @@ export default function HealthTab({ pet, vaccinations = [], treatments = [], con
                             vaccinations.slice(0, 3).map(v => (
                                 <View key={v.id} style={[styles.listItem, { backgroundColor: theme.colors.background.primary }]}>
                                     <View style={[styles.listIcon, { backgroundColor: '#F3E8FF' }]}>
-                                        <IconSymbol android_material_icon_name="vaccines" size={20} color="#9333EA" />
+                                        <IconSymbol android_material_icon_name="vaccines" size={20} color="#10B981" />
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={[styles.itemTitle, { color: theme.colors.text.primary }]}>{v.vaccine_name}</Text>

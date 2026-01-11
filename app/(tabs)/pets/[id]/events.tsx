@@ -115,7 +115,7 @@ export default function EventsTab() {
                       >
                         <View className="flex items-center gap-4">
                           <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
-                            <IconSymbol name={getEventIcon(event.type)} size={24} />
+                            <IconSymbol android_material_icon_name={getEventIcon(event.type)} size={24} color="#6366F1" />
                           </View>
                           <View className="flex-1">
                             <View className="flex justify-between items-start">
@@ -129,7 +129,7 @@ export default function EventsTab() {
                               <Text style={styles.eventTimeText}>{formatDate(event.dueDate)}</Text>
                               <IconSymbol android_material_icon_name="access-time" size={14} color="#6B7280" />
                               <Text style={styles.eventTimeText}>
-                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
+                                {(event as any).allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
                               </Text>
                             </View>
                             {event.location && (
@@ -187,7 +187,7 @@ export default function EventsTab() {
                       >
                         <View className="flex items-center gap-4">
                           <View className={`w-12 h-12 rounded-full ${getEventColor(event.type)} flex items-center justify-center flex-shrink-0`}>
-                            <IconSymbol name={getEventIcon(event.type)} size={24} />
+                            <IconSymbol android_material_icon_name={getEventIcon(event.type)} size={24} color="#6366F1" />
                           </View>
                           <View className="flex-1">
                             <View className="flex justify-between items-start">
@@ -197,7 +197,7 @@ export default function EventsTab() {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
                               <IconSymbol android_material_icon_name="access-time" size={14} color="#6B7280" />
                               <Text style={styles.eventTimeText}>
-                                {event.allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
+                                {(event as any).allDay ? t('pet_profile.events.time.all_day') : formatTime(event.dueDate)}
                               </Text>
                             </View>
                             {event.location && (

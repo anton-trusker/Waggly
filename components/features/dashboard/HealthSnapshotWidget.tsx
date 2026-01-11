@@ -22,7 +22,7 @@ export default function HealthSnapshotWidget() {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['#4F46E5', '#7C3AED'] as any}
+                colors={['#0284C7', '#7C3AED'] as any}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradient}
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         overflow: 'hidden',
         marginBottom: 24,
-        shadowColor: '#4F46E5',
+        shadowColor: '#0284C7',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.2,
         shadowRadius: 16,

@@ -55,9 +55,23 @@ export type Allergy = Database['public']['Tables']['allergies']['Row'] & {
 export type BehaviorTag = Database['public']['Tables']['behavior_tags']['Row'];
 export type MedicalHistory = Database['public']['Tables']['medical_history']['Row'];
 export type Food = Database['public']['Tables']['food']['Row'];
-export type Treatment = Database['public']['Tables']['treatments']['Row'];
+// export type Treatment = Database['public']['Tables']['treatments']['Row'];
+export type Treatment = {
+  id: string;
+  pet_id: string;
+  treatment_name: string; // Mapped from name
+  category?: string;
+  start_date: string;
+  end_date?: string | null;
+  dosage?: string | null;
+  frequency?: string | null;
+  notes?: string | null; // Mapped from instructions
+  is_active: boolean; // Mapped from is_ongoing
+  created_at?: string;
+  updated_at?: string;
+};
 export type Vaccination = Database['public']['Tables']['vaccinations']['Row'];
-export type WeightEntry = Database['public']['Tables']['weight_entries']['Row'];
+export type WeightEntry = Database['public']['Tables']['weight_logs']['Row'];
 export type Event = Database['public']['Tables']['events']['Row'];
 export type Notification = Database['public']['Tables']['notifications']['Row'];
 export type Document = Database['public']['Tables']['documents']['Row'];

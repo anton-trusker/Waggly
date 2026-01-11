@@ -139,7 +139,7 @@ export default function ShareModal({ visible, onClose, petId, petName }: ShareMo
                             style={styles.copyButton}
                             onPress={() => handleCopyLink(shareUrl)}
                         >
-                            <Ionicons name="copy-outline" size={18} color="#4F46E5" />
+                            <Ionicons name="copy-outline" size={18} color="#0284C7" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#4F46E5',
+        backgroundColor: '#0284C7',
         borderRadius: 12,
         paddingVertical: 14,
         gap: 8,

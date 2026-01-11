@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        shadowColor: '#A855F7', // Purple shadow match
+        shadowColor: '#0EA5E9', // Sky Blue shadow match
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 12,

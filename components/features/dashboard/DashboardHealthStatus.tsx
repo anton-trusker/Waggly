@@ -24,7 +24,7 @@ export default function DashboardHealthStatus() {
 
     return (
         <LinearGradient
-            colors={['#6366F1', '#9333EA'] as any}
+            colors={['#0EA5E9', '#10B981'] as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.gradientCard}
@@ -38,7 +38,7 @@ export default function DashboardHealthStatus() {
 
                     {nextDue ? (
                         <View style={styles.gradientCardSubtitleRow}>
-                            <IconSymbol android_material_icon_name="event" ios_icon_name="calendar" size={16} color="#E0E7FF" />
+                            <IconSymbol android_material_icon_name="event" ios_icon_name="calendar" size={16} color="#E0F2FE" />
                             <Text style={styles.gradientCardSubtitle}>
                                 Next: {nextDue.title} • {new Date(nextDue.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </Text>
@@ -61,7 +61,7 @@ export default function DashboardHealthStatus() {
                         android_material_icon_name={allGood ? "verified-user" : "warning"}
                         ios_icon_name={allGood ? "checkmark.shield.fill" : "exclamationmark.triangle.fill"}
                         size={32}
-                        color={allGood ? "#6366F1" : "#F87171"}
+                        color={allGood ? "#0EA5E9" : "#F87171"}
                     />
                 </View>
             </View>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 24,
         marginBottom: 24,
-        shadowColor: '#6366F1',
+        shadowColor: '#0EA5E9',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.25,
         shadowRadius: 16,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     gradientCardLabel: {
         fontSize: 12,
         fontWeight: '700',
-        color: '#E0E7FF',
+        color: '#E0F2FE',
         textTransform: 'uppercase',
         letterSpacing: 1,
         marginBottom: 8,
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     },
     gradientCardSubtitle: {
         fontSize: 14,
-        color: '#E0E7FF',
+        color: '#E0F2FE',
         fontFamily: 'Plus Jakarta Sans',
     },
     verifiedIconBox: {

@@ -18,7 +18,7 @@ export function MedicationWidget({ medications, petId }: MedicationWidgetProps) 
             <View style={styles.header}>
                 <View style={styles.titleRow}>
                     <View style={[styles.iconBox, { backgroundColor: '#F3E8FF' }]}>
-                        <IconSymbol android_material_icon_name="medication" size={24} color="#9333EA" />
+                        <IconSymbol android_material_icon_name="medication" size={24} color="#10B981" />
                     </View>
                     <Text style={styles.title}>Medications</Text>
                 </View>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     linkText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     list: {
         gap: 12,

@@ -135,7 +135,7 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAdd
                 {/* Birthday */}
                 <View style={[styles.gridItem, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }]}>
                     <View style={[styles.iconBox, { backgroundColor: '#F3E8FF' }]}>
-                        <IconSymbol ios_icon_name="birthday.cake.fill" android_material_icon_name="cake" size={24} color="#9333EA" />
+                        <IconSymbol ios_icon_name="birthday.cake.fill" android_material_icon_name="cake" size={24} color="#10B981" />
                     </View>
                     <Text style={[styles.gridValue, { color: theme.colors.text.primary }]}>
                         {pet.date_of_birth ? new Date(pet.date_of_birth).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: '2-digit' }) : '--'}
@@ -179,8 +179,8 @@ export default function OverviewTab({ pet, vets, onAddVet, onViewPassport, onAdd
                 {pet.registration_id && (
                     <View style={[styles.identityCard, { backgroundColor: theme.colors.background.secondary }]}>
                         <View style={styles.identityContent}>
-                            <View style={[styles.identityIcon, { backgroundColor: '#E0E7FF' }]}>
-                                <IconSymbol ios_icon_name="person.text.rectangle" android_material_icon_name="badge" size={24} color="#4F46E5" />
+                            <View style={[styles.identityIcon, { backgroundColor: '#E0F2FE' }]}>
+                                <IconSymbol ios_icon_name="person.text.rectangle" android_material_icon_name="badge" size={24} color="#0284C7" />
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={[styles.identityLabel, { color: theme.colors.text.secondary }]}>REGISTRATION</Text>

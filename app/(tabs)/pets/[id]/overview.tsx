@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePetV2 } from '@/hooks/domain/usePetV2';
 import { usePetProfileV2 } from '@/hooks/domain/useHealthV2';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { Pet, Allergy, Vaccination, Treatment, Condition } from '@/types';
+import { Pet } from '@/types';
+import { Allergy, Vaccination, Condition, Medication } from '@/types/v2/schema';
 import VisitFormModal from '@/components/features/health/VisitFormModal';
 import VaccinationFormModal from '@/components/features/health/VaccinationFormModal';
 import MedicationFormModal from '@/components/features/health/MedicationFormModal';
@@ -60,7 +61,7 @@ export default function OverviewTab() {
 
   // Selected Items State
   const [selectedVaccination, setSelectedVaccination] = useState<Vaccination | null>(null);
-  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
+  const [selectedTreatment, setSelectedTreatment] = useState<Medication | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<Condition | null>(null);
   const [selectedAllergy, setSelectedAllergy] = useState<Allergy | null>(null);
 
@@ -363,8 +364,8 @@ export default function OverviewTab() {
                 {/* Current Prescriptions (Active Medications) */}
                 <View style={styles.treatmentsColumn}>
                   <Text style={styles.treatmentsSectionTitle}>{t('pet_profile.current_prescriptions')}</Text>
-                  {treatments.filter(t => t.is_active && t.category === 'Medication').length > 0 ? (
-                    treatments.filter(t => t.is_active && t.category === 'Medication').slice(0, 3).map((treatment) => (
+                  {treatments.filter(t => t.is_ongoing).length > 0 ? (
+                    treatments.filter(t => t.is_ongoing).slice(0, 3).map((treatment) => (
                       <TouchableOpacity
                         key={treatment.id}
                         style={[styles.medCard, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }] as any}
@@ -406,7 +407,7 @@ export default function OverviewTab() {
                           <View style={styles.treatmentTimelineDot} />
                           <View style={styles.treatmentTimelineContent}>
                             <Text style={styles.treatmentTimelineTitle}>{treatment.name}</Text>
-                            <Text style={styles.treatmentTimelineDesc}>{treatment.instructions || treatment.category || 'Treatment'}</Text>
+                            <Text style={styles.treatmentTimelineDesc}>{treatment.instructions || 'Medication'}</Text>
                           </View>
                           <Text style={styles.treatmentTimelineDate}>
                             {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, { day: '2-digit', month: 'short' }) : t('pet_profile.na')}

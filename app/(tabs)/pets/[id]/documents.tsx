@@ -8,7 +8,7 @@ import { useLocale } from '@/hooks/useLocale';
 import DocumentUploadModal from '@/components/features/documents/DocumentUploadModal';
 import DocumentActionModal from '@/components/features/documents/DocumentActionModal';
 import DocumentViewerModal from '@/components/features/documents/DocumentViewerModal';
-import { Document } from '@/types';
+import { Document } from '@/types/v2/schema';
 
 export default function DocumentsTab() {
   const { t } = useLocale();
@@ -59,9 +59,8 @@ export default function DocumentsTab() {
 
   // Filter logic
   const filteredDocs = allDocs.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (doc.file_name || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === 'all_types' || doc.type === selectedType;
+    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = selectedType === 'all_types' || doc.category === selectedType;
     return matchesSearch && matchesType;
   });
 
@@ -114,7 +113,7 @@ export default function DocumentsTab() {
       {/* Documents List */}
       <View style={[styles.listContainer, isMobile && styles.listContainerMobile]}>
         {filteredDocs.map((doc) => {
-          const iconConfig = getDocumentIcon(doc.type);
+          const iconConfig = getDocumentIcon(doc.category);
           return (
             <TouchableOpacity key={doc.id} style={styles.docCard}>
               <View style={[styles.docIconBox, { backgroundColor: iconConfig.bgColor }]}>
@@ -127,7 +126,7 @@ export default function DocumentsTab() {
                 </View>
 
                 <View style={styles.docMetaRow}>
-                  <Text style={styles.docType}>{t(`pet_profile.documents.types.${doc.type}` as any) || doc.type}</Text>
+                  <Text style={styles.docType}>{t(`pet_profile.documents.types.${doc.category}` as any) || doc.category}</Text>
                   <Text style={styles.docDot}>•</Text>
                   <Text style={styles.docDate}>{formatDate(doc.created_at)}</Text>
                 </View>
@@ -191,9 +190,9 @@ export default function DocumentsTab() {
         onClose={() => setActionModalVisible(false)}
         document={selectedDocument}
         onDelete={async (doc) => {
-          const { error } = await deleteDocument(doc.id, doc.file_url);
+          const { error } = await deleteDocument(doc.id, doc.file_path);
           if (error) {
-            Alert.alert(t('common.error'), error.message || t('documents.delete_error'));
+            Alert.alert(t('common.error'), (error as any)?.message || t('documents.delete_error'));
           } else {
             fetchDocuments();
           }

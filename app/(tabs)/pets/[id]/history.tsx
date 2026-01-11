@@ -64,8 +64,6 @@ export default function HistoryTab() {
             events.push({
                 id: `vacc-${v.id}`,
                 type: 'vaccination',
-                id: `vacc-${v.id}`,
-                type: 'vaccination',
                 title: v.vaccine_name || t('pet_profile.history.filters.vaccinations'),
                 description: v.notes || `Batch: ${v.batch_number || t('common.na')}`,
                 date: new Date(v.date_given || v.created_at),
@@ -78,8 +76,6 @@ export default function HistoryTab() {
         // Add medications
         (medications || []).forEach((m: any) => {
             events.push({
-                id: `med-${m.id}`,
-                type: 'medication',
                 id: `med-${m.id}`,
                 type: 'medication',
                 title: m.medication_name || t('pet_profile.history.filters.medications'),
@@ -96,8 +92,6 @@ export default function HistoryTab() {
             events.push({
                 id: `visit-${v.id}`,
                 type: 'visit',
-                id: `visit-${v.id}`,
-                type: 'visit',
                 title: v.visit_type || t('pet_profile.history.filters.visits'),
                 description: v.notes || `Visit to ${v.clinic_name || 'clinic'}`,
                 date: new Date(v.visit_date || v.created_at),
@@ -110,8 +104,6 @@ export default function HistoryTab() {
         // Add weight logs
         (weightEntries || []).forEach((w: any) => {
             events.push({
-                id: `weight-${w.id}`,
-                type: 'weight',
                 id: `weight-${w.id}`,
                 type: 'weight',
                 title: t('pet_profile.history.filters.weight'),

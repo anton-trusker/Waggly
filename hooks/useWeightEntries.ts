@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/db';
 
-type WeightEntry = Database['public']['Tables']['weight_entries']['Row'];
-type WeightEntryInsert = Database['public']['Tables']['weight_entries']['Insert'];
-type WeightEntryUpdate = Database['public']['Tables']['weight_entries']['Update'];
+type WeightEntry = Database['public']['Tables']['weight_logs']['Row'];
+type WeightEntryInsert = Database['public']['Tables']['weight_logs']['Insert'];
+type WeightEntryUpdate = Database['public']['Tables']['weight_logs']['Update'];
 
 type WeightEntryInsertPayload = {
   weight: number;
@@ -34,7 +34,7 @@ export function useWeightEntries(petId: string | null) {
 
     try {
       const { data, error } = await supabase
-        .from('weight_entries')
+        .from('weight_logs')
         .select('*')
         .eq('pet_id', petId)
         .order('date', { ascending: false });
@@ -67,7 +67,7 @@ export function useWeightEntries(petId: string | null) {
         created_at: new Date().toISOString(),
       };
       const { data, error } = await (supabase
-        .from('weight_entries') as any)
+        .from('weight_logs') as any)
         .insert([payload as WeightEntryInsert])
         .select()
         .single();
@@ -94,7 +94,7 @@ export function useWeightEntries(petId: string | null) {
     try {
       const payload: WeightEntryUpdate = weightData;
       const { data, error } = await (supabase
-        .from('weight_entries') as any)
+        .from('weight_logs') as any)
         .update(payload as WeightEntryUpdate)
         .eq('id', entryId)
         .select()
@@ -121,7 +121,7 @@ export function useWeightEntries(petId: string | null) {
   const deleteWeightEntry = async (entryId: string) => {
     try {
       const { error } = await supabase
-        .from('weight_entries')
+        .from('weight_logs')
         .delete()
         .eq('id', entryId);
 

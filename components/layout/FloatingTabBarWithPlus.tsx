@@ -9,6 +9,7 @@ import {
 import { useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@react-navigation/native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Href } from 'expo-router';
@@ -149,12 +150,19 @@ export default function FloatingTabBarWithPlus({
                 onPress={onPlusPress}
                 activeOpacity={0.9}
               >
-                <IconSymbol
-                  android_material_icon_name="add"
-                  ios_icon_name="plus"
-                  size={32}
-                  color="#FFFFFF"
-                />
+                <LinearGradient
+                  colors={[designSystem.colors.primary[500], designSystem.colors.secondary[500]]} // Ocean Gradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.plusButtonGradient}
+                >
+                  <IconSymbol
+                    android_material_icon_name="add"
+                    ios_icon_name="plus"
+                    size={32}
+                    color="#FFFFFF"
+                  />
+                </LinearGradient>
               </TouchableOpacity>
             </View>
 
@@ -278,5 +286,12 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 4,
     borderColor: '#FFFFFF', // Creates "cutout" effect against background
+  },
+  plusButtonGradient: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

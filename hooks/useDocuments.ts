@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Document } from '@/types';
+import { Document } from '@/types/v2/schema';
 import { useAuth } from '@/contexts/AuthContext';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
@@ -55,12 +55,11 @@ export function useDocuments(petId?: string) {
 
       console.log(`[useDocuments] Fetched ${data?.length} documents.`);
 
-      // Map to Document type
+      // Data already has correct V2 schema: name, file_path, file_type, file_size
       const formattedData = (data || []).map((doc: any) => ({
         ...doc,
-        name: doc.file_name,
-        url: doc.file_url,
-        // petName will be mapped in the UI using the pets context
+        // V2 already has 'name', add convenience fields
+        url: doc.file_path, // For backward compatibility
         uploadedAt: new Date(doc.created_at).toLocaleDateString()
       }));
 
@@ -114,17 +113,16 @@ export function useDocuments(petId?: string) {
         .from('pet-documents')
         .getPublicUrl(filePath);
 
-      // 3. Insert into Table
+      // 3. Insert into Table (V2 schema)
       const { data, error: dbError } = await (supabase
         .from('documents') as any)
         .insert({
           pet_id: finalPetId,
-          type,
-          file_url: publicUrl,
-          file_name: fileName,
-          metadata: metadata || {},
-          mime_type: mimeType || null,
-          size_bytes: metadata?.size_bytes || null,
+          category: type, // V2 uses 'category' not 'type'
+          name: fileName,
+          file_path: publicUrl,
+          file_type: mimeType || null,
+          file_size: metadata?.size || metadata?.size_bytes || null,
         })
         .select()
         .single();
@@ -140,8 +138,7 @@ export function useDocuments(petId?: string) {
       // OPTIMISTIC UPDATE: Immediately add to local state
       const formattedDoc = {
         ...data,
-        name: data.file_name,
-        url: data.file_url,
+        url: data.file_path, // V2 has file_path
         uploadedAt: new Date(data.created_at).toLocaleDateString()
       };
       if (isMountedRef.current) {

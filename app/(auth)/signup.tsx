@@ -103,7 +103,7 @@ export default function SignupScreen() {
   const renderLogo = () => (
     <View style={styles.header}>
       <View style={styles.logoContainer}>
-        <Image source={require('@/assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+        <Image source={require('@/assets/images/icons/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
       <Text style={styles.appName}>Waggli</Text>
     </View>

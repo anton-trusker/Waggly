@@ -85,7 +85,7 @@ export default function PetHealthPassport({ petId }: { petId: string }) {
 
           <TouchableOpacity style={styles.actionButton} onPress={handleAddTreatment}>
             <View style={[styles.actionIcon, { backgroundColor: '#F3E8FF' }]}>
-              <IconSymbol ios_icon_name="pills.fill" android_material_icon_name="medication" size={24} color="#9333EA" />
+              <IconSymbol ios_icon_name="pills.fill" android_material_icon_name="medication" size={24} color="#10B981" />
             </View>
             <Text style={styles.actionLabel}>{t('pets.add_meds', { defaultValue: 'Add Meds' })}</Text>
           </TouchableOpacity>

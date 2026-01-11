@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     itemSelected: {
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
     },
     flag: {
         fontSize: 20,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     labelSelected: {
-        color: '#4F46E5',
+        color: '#0284C7',
         fontWeight: '600',
     },
 });

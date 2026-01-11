@@ -12,7 +12,7 @@ interface CompactPetCardProps {
 
 export const CompactPetCard = React.memo(({ pet, onPress }: CompactPetCardProps) => {
     const { t } = useLocale();
-    const gradientColors = ['#4F46E5', '#818CF8'] as const;
+    const gradientColors = ['#0284C7', '#38BDF8'] as const;
 
     return (
         <TouchableOpacity
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         overflow: 'hidden',
         marginRight: 12,
-        shadowColor: '#4F46E5',
+        shadowColor: '#0284C7',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,

@@ -157,7 +157,7 @@ export default function ShareTab() {
                         <View style={styles.brandedQR}>
                             <View style={styles.brandedHeader}>
                                 <Image
-                                    source={require('../../../../assets/images/logo.png')}
+                                    source={require('@/assets/images/icons/logo.png')}
                                     style={styles.qrLogo}
                                     resizeMode="contain"
                                 />

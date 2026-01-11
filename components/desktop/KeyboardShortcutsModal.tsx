@@ -49,7 +49,7 @@ export default function KeyboardShortcutsModal({ visible, onClose }: KeyboardSho
                 <View style={styles.modal}>
                     <View style={styles.header}>
                         <View style={styles.headerLeft}>
-                            <Ionicons name="keypad-outline" size={24} color="#6366F1" />
+                            <Ionicons name="keypad-outline" size={24} color="#0EA5E9" />
                             <Text style={styles.title}>Keyboard Shortcuts</Text>
                         </View>
                         <TouchableOpacity onPress={onClose}>
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     },
     footerKey: {
         fontWeight: '700',
-        color: '#6366F1',
+        color: '#0EA5E9',
         fontFamily: 'monospace',
     },
 });

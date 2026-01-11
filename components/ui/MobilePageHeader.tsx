@@ -12,7 +12,7 @@ export default function MobilePageHeader({ title, rightComponent }: MobilePageHe
         <View style={styles.header}>
             <View style={styles.leftSection}>
                 <Image
-                    source={require('@/assets/images/logo.png')}
+                    source={require('@/assets/images/icons/logo.png')}
                     style={styles.logo}
                     resizeMode="contain"
                 />

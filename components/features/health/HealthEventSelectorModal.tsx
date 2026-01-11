@@ -1,61 +1,69 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
 interface HealthEventSelectorModalProps {
     visible: boolean;
     onClose: () => void;
-    onSelect: (type: 'vaccination' | 'visit' | 'treatment' | 'weight') => void;
+    onSelect: (type: 'vaccine' | 'medication' | 'visit') => void;
 }
 
 export default function HealthEventSelectorModal({ visible, onClose, onSelect }: HealthEventSelectorModalProps) {
-    if (!visible) return null;
-
-    const options = [
-        { id: 'vaccination', label: 'Vaccination', icon: 'medical', color: '#10B981', bg: '#D1FAE5' },
-        { id: 'visit', label: 'Vet Visit', icon: 'fitness', color: '#6366F1', bg: '#E0E7FF' },
-        { id: 'treatment', label: 'Treatment', icon: 'bandage', color: '#F59E0B', bg: '#FDE68A' },
-        { id: 'weight', label: 'Weight Entry', icon: 'scale', color: '#8B5CF6', bg: '#EDE9FE' },
-    ];
-
     return (
-        <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-            <TouchableWithoutFeedback onPress={onClose}>
-                <View style={styles.overlay}>
-                    <BlurView intensity={20} style={StyleSheet.absoluteFill} />
-                    <TouchableWithoutFeedback>
-                        <View style={styles.content}>
-                            <View style={styles.header}>
-                                <Text style={styles.title}>Log Health Event</Text>
-                                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                                    <Ionicons name="close" size={20} color="#6B7280" />
-                                </TouchableOpacity>
-                            </View>
+        <Modal
+            visible={visible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={onClose}
+        >
+            <Pressable style={styles.overlay} onPress={onClose}>
+                <Pressable style={styles.content} onPress={(e) => e.stopPPropagation && e.stopPropagation()}>
+                    <Text style={styles.title}>Add Health Record</Text>
 
-                            <Text style={styles.subtitle}>What would you like to record?</Text>
-
-                            <View style={styles.grid}>
-                                {options.map((option) => (
-                                    <TouchableOpacity
-                                        key={option.id}
-                                        style={styles.card}
-                                        onPress={() => {
-                                            onSelect(option.id as any);
-                                            onClose();
-                                        }}
-                                    >
-                                        <View style={[styles.icon, { backgroundColor: option.bg }]}>
-                                            <Ionicons name={option.icon as any} size={32} color={option.color} />
-                                        </View>
-                                        <Text style={styles.label}>{option.label}</Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => onSelect('vaccine')}
+                    >
+                        <View style={[styles.iconContainer, { backgroundColor: '#EFF6FF' }]}>
+                            <Text style={styles.icon}>💉</Text>
                         </View>
-                    </TouchableWithoutFeedback>
-                </View>
-            </TouchableWithoutFeedback>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.optionTitle}>Vaccination</Text>
+                            <Text style={styles.optionDescription}>Log a new vaccine dose</Text>
+                        </View>
+                        <Text style={styles.arrow}>›</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => onSelect('medication')}
+                    >
+                        <View style={[styles.iconContainer, { backgroundColor: '#FEF2F2' }]}>
+                            <Text style={styles.icon}>💊</Text>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.optionTitle}>Medication</Text>
+                            <Text style={styles.optionDescription}>Add a new treatment plan</Text>
+                        </View>
+                        <Text style={styles.arrow}>›</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => onSelect('visit')}
+                    >
+                        <View style={[styles.iconContainer, { backgroundColor: '#F0FDF4' }]}>
+                            <Text style={styles.icon}>🏥</Text>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.optionTitle}>Vet Visit</Text>
+                            <Text style={styles.optionDescription}>Record a checkup or consultation</Text>
+                        </View>
+                        <Text style={styles.arrow}>›</Text>
+                    </TouchableOpacity>
+                </Pressable>
+            </Pressable>
         </Modal>
     );
 }

@@ -126,10 +126,10 @@ export default function GalleryTabDesktop({ pet }: GalleryTabProps) {
                 <Text style={styles.sectionTitle}>Gallery</Text>
                 <TouchableOpacity style={styles.uploadButton} onPress={handleAddPhoto} disabled={loading}>
                     {loading ? (
-                        <ActivityIndicator size="small" color="#6366F1" />
+                        <ActivityIndicator size="small" color="#0EA5E9" />
                     ) : (
                         <>
-                            <Ionicons name="add" size={20} color="#6366F1" />
+                            <Ionicons name="add" size={20} color="#0EA5E9" />
                             <Text style={styles.uploadButtonText}>Add Photo</Text>
                         </>
                     )}
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     emptyState: {
         alignItems: 'center',

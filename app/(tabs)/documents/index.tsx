@@ -9,7 +9,7 @@ import DragDropZone from '@/components/desktop/DragDropZone';
 import { useLocale } from '@/hooks/useLocale';
 import DocumentActionModal from '@/components/features/documents/DocumentActionModal';
 import DocumentViewerModal from '@/components/features/documents/DocumentViewerModal';
-import { Document } from '@/types';
+import { Document } from '@/types/v2/schema';
 
 export default function DocumentsPage() {
     const { width } = useWindowDimensions();
@@ -54,7 +54,7 @@ export default function DocumentsPage() {
     };
 
     const filteredDocuments = documents.filter(doc => {
-        const typeMatch = selectedType === 'all' || doc.type === selectedType;
+        const typeMatch = selectedType === 'all' || doc.category === selectedType;
         const petMatch = selectedPetId === 'all' || doc.pet_id === selectedPetId;
         return typeMatch && petMatch;
     });
@@ -97,7 +97,7 @@ export default function DocumentsPage() {
                         for (const id of ids) {
                             const doc = documents.find(d => d.id === id);
                             if (doc) {
-                                const { error } = await deleteDocument(doc.id, doc.file_url);
+                                const { error } = await deleteDocument(doc.id, doc.file_path);
                                 if (error) failCount++;
                             }
                         }
@@ -149,8 +149,8 @@ export default function DocumentsPage() {
     };
 
     const handleDownload = (doc: any) => {
-        if (doc.file_url) {
-            Linking.openURL(doc.file_url);
+        if (doc.file_path) {
+            Linking.openURL(doc.file_path);
         }
     };
 
@@ -164,9 +164,9 @@ export default function DocumentsPage() {
                     text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
-                        const { error } = await deleteDocument(doc.id, doc.file_url);
+                        const { error } = await deleteDocument(doc.id, doc.file_path);
                         if (error) {
-                            Alert.alert(t('common.error'), error.message || t('documents.delete_error'));
+                            Alert.alert(t('common.error'), (error as any)?.message || t('documents.delete_error'));
                         } else {
                             fetchDocuments();
                         }
@@ -336,9 +336,9 @@ export default function DocumentsPage() {
                         ) : (
                             <View style={styles.documentGrid}>
                                 {filteredDocuments.map((doc: any) => {
-                                    const { icon, color } = getDocumentIcon(doc.type);
+                                    const { icon, color } = getDocumentIcon(doc.category);
                                     const isSelected = selectedIds.has(doc.id);
-                                    const sizeString = formatSize(doc.size_bytes);
+                                    const sizeString = formatSize(doc.file_size);
                                     const pet = pets.find(p => p.id === doc.pet_id);
                                     const petName = pet?.name || 'Unknown Pet';
 
@@ -365,7 +365,7 @@ export default function DocumentsPage() {
                                             </View>
                                             <View style={styles.documentInfo}>
                                                 <Text style={styles.documentName} numberOfLines={1}>
-                                                    {doc.file_name}
+                                                    {doc.name}
                                                 </Text>
                                                 <View style={styles.documentMeta}>
                                                     <Ionicons name="paw" size={12} color="#9CA3AF" />
@@ -408,7 +408,7 @@ export default function DocumentsPage() {
                 onClose={() => setActionModalVisible(false)}
                 document={selectedDocument}
                 onDelete={async (doc) => {
-                    await deleteDocument(doc.id, doc.file_url);
+                    await deleteDocument(doc.id, doc.file_path);
                     fetchDocuments();
                 }}
                 onView={(doc) => {

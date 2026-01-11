@@ -37,7 +37,7 @@ export default function PetAllergiesWidget({ allergies, onAdd, onEdit, onRemove 
                 </View>
                 {onAdd && (
                     <TouchableOpacity onPress={onAdd} style={styles.addButton}>
-                        <IconSymbol android_material_icon_name="add" size={20} color="#4F46E5" />
+                        <IconSymbol android_material_icon_name="add" size={20} color="#0284C7" />
                     </TouchableOpacity>
                 )}
             </View>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: '#F0F9FF',
         alignItems: 'center',
         justifyContent: 'center',
     },

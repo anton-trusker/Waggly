@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Database } from '@/types/db';
+// import { Database } from '@/types/db'; // Types might need update, defining local interface for now
 
-type Breed = Database['public']['Tables']['reference_breeds']['Row'];
+interface Breed {
+  id: string;
+  name: string;
+  // Common fields
+}
 
 export function useBreeds(species?: 'dog' | 'cat' | 'other', queryTerm?: string) {
   const [breeds, setBreeds] = useState<Breed[]>([]);
@@ -11,17 +15,23 @@ export function useBreeds(species?: 'dog' | 'cat' | 'other', queryTerm?: string)
 
   useEffect(() => {
     async function fetchBreeds() {
+      // If species is 'other' or undefined, we might not have a specific table or strategy yet.
+      // Current requirement: populate cat_breeds and dog_breeds.
+      if (!species || species === 'other') {
+        setBreeds([]);
+        setLoading(false);
+        return;
+      }
+
+      const tableName = species === 'dog' ? 'dog_breeds' : 'cat_breeds';
+
       try {
         setLoading(true);
         let query = supabase
-          .from('reference_breeds')
-          .select('*')
+          .from(tableName)
+          .select('id, name') // standardized fields
           .order('name');
 
-        if (species && species !== 'other') {
-          query = query.eq('species', species);
-        }
-        
         if (queryTerm) {
           query = query.ilike('name', `%${queryTerm}%`);
         }
@@ -44,11 +54,11 @@ export function useBreeds(species?: 'dog' | 'cat' | 'other', queryTerm?: string)
     fetchBreeds();
   }, [species, queryTerm]);
 
-  return { 
-    breeds, 
-    loading, 
+  return {
+    breeds,
+    loading,
     error,
     hasMore: false,
-    loadMore: () => {} 
+    loadMore: () => { }
   };
 }

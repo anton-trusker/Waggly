@@ -163,12 +163,12 @@ export default function MultiFileUpload({
 
                 <View style={styles.uploadButtons}>
                     <TouchableOpacity style={styles.uploadButton} onPress={handlePickDocument}>
-                        <IconSymbol android_material_icon_name="attach-file" size={20} color="#6366F1" />
+                        <IconSymbol android_material_icon_name="attach-file" size={20} color="#0EA5E9" />
                         <Text style={styles.uploadButtonText}>Browse Files</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.uploadButton} onPress={handlePickImage}>
-                        <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#6366F1" />
+                        <IconSymbol android_material_icon_name="add-a-photo" size={20} color="#0EA5E9" />
                         <Text style={styles.uploadButtonText}>Take Photo</Text>
                     </TouchableOpacity>
                 </View>
@@ -281,8 +281,8 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     dropZoneDragging: {
-        borderColor: '#6366F1',
-        backgroundColor: '#EEF2FF',
+        borderColor: '#0EA5E9',
+        backgroundColor: '#F0F9FF',
     },
     dropZoneError: {
         borderColor: '#EF4444',
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     uploadButtonText: {
         fontSize: 14,
         fontWeight: '500',
-        color: '#6366F1',
+        color: '#0EA5E9',
     },
     filesContainer: {
         marginTop: 16,
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     },
     progressFill: {
         height: '100%',
-        backgroundColor: '#6366F1',
+        backgroundColor: '#0EA5E9',
     },
     removeButton: {
         padding: 4,
