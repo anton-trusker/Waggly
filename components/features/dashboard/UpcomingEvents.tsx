@@ -23,15 +23,15 @@ export function UpcomingEvents() {
   // Filter events for the selected pet and only show upcoming events
   const upcomingEvents = events
     .filter(event => {
-      const eventDate = dayjs(event.date);
+      const eventDate = dayjs(event.dueDate);
       const isUpcoming = eventDate.isSame(dayjs(), 'day') || eventDate.isAfter(dayjs(), 'day');
       const isForSelectedPet = selectedPet ? event.petId === selectedPet.id : true; // If no pet selected, show all
       return isUpcoming && isForSelectedPet;
     })
-    .sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
+    .sort((a, b) => dayjs(a.dueDate).diff(dayjs(b.dueDate)));
 
   const handleEventPress = (eventId: string) => {
-    router.push(`/(tabs)/calendar/event-detail?id=${eventId}`);
+    router.push(`/(tabs)/calendar/event-detail?id=${eventId}` as any);
   };
 
   return (
@@ -49,21 +49,23 @@ export function UpcomingEvents() {
         </View>
       ) : (
         <FlashList
-          data={upcomingEvents.slice(0, 3)} // Show top 3 upcoming events
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <EventCard
-              id={item.id}
-              type={item.type as EventType}
-              title={item.title}
-              date={item.date}
-              time={item.time}
-              petName={pets.find(p => p.id === item.petId)?.name || 'Unknown Pet'}
-              onPress={handleEventPress}
-            />
-          )}
-          scrollEnabled={false} // Disable scrolling as we only show a few items
-          estimatedItemSize={100}
+          {...({
+            data: upcomingEvents.slice(0, 3),
+            keyExtractor: (item: any) => item.id,
+            renderItem: ({ item }: any) => (
+              <EventCard
+                id={item.id}
+                type={item.type as EventType}
+                title={item.title}
+                date={item.dueDate}
+                time={item.time}
+                petName={pets.find(p => p.id === item.petId)?.name || 'Unknown Pet'}
+                onPress={handleEventPress}
+              />
+            ),
+            scrollEnabled: false,
+            estimatedItemSize: 100,
+          } as any)}
         />
       )}
     </View>

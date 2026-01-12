@@ -6,13 +6,17 @@ export type User = {
   created_at?: string;
 };
 
-export type Profile = Database['public']['Tables']['profiles']['Row'] & { gender?: 'male' | 'female' | 'non_binary' | 'prefer_not_to_say' | null };
+export type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  gender?: string | null;
+  full_name?: string;
+};
 export type Pet = Database['public']['Tables']['pets']['Row'] & {
   registry_provider?: string | null;
   blood_type?: string;
   address_json?: any; // JSONB
   role?: 'owner' | 'co-owner' | 'viewer';
   height?: number | null;
+  weight_unit?: string | null;
   microchip_implantation_date?: string | null;
   sterilization_date?: string | null;
   // New Physical Attributes
@@ -22,6 +26,8 @@ export type Pet = Database['public']['Tables']['pets']['Row'] & {
   eye_color?: string | null;
   distinguishing_marks?: string | null;
   tattoo_id?: string | null;
+  gallery?: string[] | null;
+  image_url?: string | null;
 };
 export type Veterinarian = Database['public']['Tables']['veterinarians']['Row'] & {
   type?: 'clinic' | 'emergency' | 'specialist';
@@ -56,22 +62,9 @@ export type BehaviorTag = Database['public']['Tables']['behavior_tags']['Row'];
 export type MedicalHistory = Database['public']['Tables']['medical_history']['Row'];
 export type Food = Database['public']['Tables']['food']['Row'];
 // export type Treatment = Database['public']['Tables']['treatments']['Row'];
-export type Treatment = {
-  id: string;
-  pet_id: string;
-  treatment_name: string; // Mapped from name
-  category?: string;
-  start_date: string;
-  end_date?: string | null;
-  dosage?: string | null;
-  frequency?: string | null;
-  notes?: string | null; // Mapped from instructions
-  is_active: boolean; // Mapped from is_ongoing
-  created_at?: string;
-  updated_at?: string;
-};
+export type Treatment = Database['public']['Tables']['treatments']['Row'];
 export type Vaccination = Database['public']['Tables']['vaccinations']['Row'];
-export type WeightEntry = Database['public']['Tables']['weight_logs']['Row'];
+export type WeightEntry = Database['public']['Tables']['weight_entries']['Row'];
 export type Event = Database['public']['Tables']['events']['Row'];
 export type Notification = Database['public']['Tables']['notifications']['Row'];
 export type Document = Database['public']['Tables']['documents']['Row'];

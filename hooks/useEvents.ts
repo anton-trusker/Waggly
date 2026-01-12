@@ -22,6 +22,7 @@ export type CalendarEvent = {
   color: string;
   relatedId?: string;
   location?: string;
+  time?: string;
 };
 
 export type EventFilters = {

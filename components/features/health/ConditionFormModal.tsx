@@ -18,7 +18,7 @@ interface ConditionFormModalProps {
 
 interface ConditionFormData {
     name: string;
-    status: 'active' | 'resolved' | 'recurring';
+    status: 'active' | 'resolved' | 'managed' | 'unknown';
     diagnosed_date: string;
     resolved_date: string;
     notes: string;
@@ -27,7 +27,7 @@ interface ConditionFormData {
 }
 
 const SEVERITY_LEVELS = ['mild', 'moderate', 'severe'];
-const STATUS_OPTIONS = ['active', 'resolved', 'recurring'];
+const STATUS_OPTIONS = ['active', 'resolved', 'managed', 'unknown'];
 
 export default function ConditionFormModal({ visible, onClose, petId: initialPetId, existingCondition, onSuccess }: ConditionFormModalProps) {
     const { theme } = useAppTheme();
@@ -51,7 +51,7 @@ export default function ConditionFormModal({ visible, onClose, petId: initialPet
         }
     }, [visible, initialPetId, existingCondition, pets]);
 
-    const initialData: ConditionFormData = useMemo(() => {
+    const initialData = useMemo(() => {
         if (existingCondition) {
             return {
                 name: existingCondition.name,
@@ -126,7 +126,7 @@ export default function ConditionFormModal({ visible, onClose, petId: initialPet
     };
 
     return (
-        <FormModal
+        <FormModal<ConditionFormData>
             visible={visible}
             onClose={onClose}
             title={existingCondition ? "Edit Condition" : "Add Condition"}

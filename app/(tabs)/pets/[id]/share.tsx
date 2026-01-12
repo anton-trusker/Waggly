@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         marginBottom: 32,
         gap: 10,
-        ...designSystem.shadows.medium,
+        ...designSystem.shadows.md,
     },
     newButtonText: {
         color: '#fff',
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         padding: 20,
         borderWidth: 1,
         borderColor: '#E5E7EB',
-        ...designSystem.shadows.small,
+        ...designSystem.shadows.sm,
     },
     cardHeader: {
         flexDirection: 'row',

@@ -1,19 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { designSystem } from '@/constants/designSystem';
 import { useLocale } from '@/hooks/useLocale';
 
 interface AuthHeroPanelProps {
     title?: string;
     subtitle?: string;
-    imageUrl?: string;
+    imageSource?: any;
 }
 
 const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
     title,
     subtitle,
-    imageUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCKmzQafI0lwQLzWGSp53vEZNjNuyJyB9LYgChbPGhna-8OG4YM1_7pzMqgt2onupgVxvi-9eiOQ_xu3ZX59JGdpX8QVklYPchWxP0WSOLJJ76tbs9NFXTkBi_XfhhDSJt6ejzhqwS879Xl1EMkr7Msuh1-NN5aJyebTXKbPGnZo6aER73ilwh0bHteBY7Y1xbOb0YF0iTbNEDjW3rXwSzupC67bwCYOylhCpqFzoPjJLwbTdZUGbuTPAe2J42-astBgnw7sWaoQPQ'
+    imageSource = require('@/assets/images/auth-hero.png')
 }) => {
     const { t } = useLocale();
     const displayTitle = title || t('auth.hero_title');
@@ -21,14 +21,21 @@ const AuthHeroPanel: React.FC<AuthHeroPanelProps> = ({
 
     return (
         <View style={styles.container}>
-            <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+            <Image
+                source={imageSource}
+                style={styles.image}
+                resizeMode="cover"
+            />
             <LinearGradient
-                colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.3)", "transparent"] as any}
+                colors={["rgba(0,0,0,0.8)", "rgba(0,0,0,0.2)", "transparent"] as any}
                 start={{ x: 0.5, y: 1 }}
                 end={{ x: 0.5, y: 0 }}
                 style={styles.overlay}
             />
             <View style={styles.contentBottom}>
+                <View style={styles.badge}>
+                    <Text style={styles.badgeText}>Waggli Premium Pet Care</Text>
+                </View>
                 <Text style={styles.title}>{displayTitle}</Text>
                 <Text style={styles.subtitle}>{displaySubtitle}</Text>
             </View>
@@ -41,6 +48,7 @@ const styles = StyleSheet.create({
         flex: 1,
         position: 'relative',
         backgroundColor: '#111827',
+        overflow: 'hidden',
     },
     image: {
         position: 'absolute',
@@ -50,7 +58,6 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: '100%',
         height: '100%',
-        opacity: 0.8,
     },
     overlay: {
         position: 'absolute',
@@ -63,19 +70,40 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 48,
         right: 48,
-        bottom: 48,
+        bottom: 64,
+    },
+    badge: {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+        letterSpacing: 0.5,
+        textTransform: 'uppercase',
     },
     title: {
-        fontSize: 40,
-        fontWeight: '700',
+        fontSize: 48,
+        fontWeight: '800',
         color: '#fff',
-        marginBottom: 12,
-        lineHeight: 48,
+        marginBottom: 16,
+        lineHeight: 56,
+        letterSpacing: -1,
+        fontFamily: Platform.OS === 'web' ? 'Plus Jakarta Sans' : undefined,
     },
     subtitle: {
         fontSize: 18,
-        color: 'rgba(255,255,255,0.85)',
+        color: 'rgba(255,255,255,0.9)',
         lineHeight: 28,
+        maxWidth: 500,
+        fontWeight: '500',
     },
 });
 

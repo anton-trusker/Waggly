@@ -14,6 +14,7 @@ interface DatePickerProps {
     mode?: 'date' | 'time' | 'datetime';
     maximumDate?: Date;
     minimumDate?: Date;
+    placeholder?: string;
 }
 
 export const DatePicker = ({
@@ -26,6 +27,7 @@ export const DatePicker = ({
     mode = 'date',
     maximumDate,
     minimumDate,
+    placeholder = 'Select date',
 }: DatePickerProps) => {
     const [show, setShow] = useState(false);
 
@@ -69,7 +71,7 @@ export const DatePicker = ({
                     !value && styles.placeholderText,
                     disabled && styles.textDisabled
                 ]}>
-                    {value ? formattedValue : 'Select date'}
+                    {value ? formattedValue : placeholder}
                 </Text>
                 <IconSymbol
                     android_material_icon_name="calendar-today"

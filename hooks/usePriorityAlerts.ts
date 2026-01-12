@@ -82,28 +82,28 @@ export const usePriorityAlerts = (daysThreshold: number = 30) => {
                 // Check for upcoming treatments
                 const { data: treatments } = await supabase
                     .from('treatments')
-                    .select('id, pet_id, treatment_type, next_appointment_date')
+                    .select('id, pet_id, treatment_name, next_due_date')
                     .in('pet_id', petIds)
-                    .not('next_appointment_date', 'is', null)
-                    .lte('next_appointment_date', thresholdDate.toISOString().split('T')[0])
-                    .gte('next_appointment_date', today.toISOString().split('T')[0]);
+                    .not('next_due_date', 'is', null)
+                    .lte('next_due_date', thresholdDate.toISOString().split('T')[0])
+                    .gte('next_due_date', today.toISOString().split('T')[0]);
 
                 if (treatments) {
                     treatments.forEach(treatment => {
                         const pet = pets.find(p => p.id === treatment.pet_id);
-                        if (!pet || !treatment.next_appointment_date) return;
+                        if (!pet || !treatment.next_due_date) return;
 
-                        const dueDate = new Date(treatment.next_appointment_date);
+                        const dueDate = new Date(treatment.next_due_date);
                         const daysRemaining = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
                         allAlerts.push({
                             id: treatment.id,
                             type: 'treatment',
-                            title: `${treatment.treatment_type} Scheduled`,
+                            title: `${treatment.treatment_name} Scheduled`,
                             description: `${pet.name}'s treatment appointment`,
                             petId: pet.id,
                             petName: pet.name,
-                            dueDate: treatment.next_appointment_date,
+                            dueDate: treatment.next_due_date,
                             daysRemaining,
                             severity: daysRemaining <= 7 ? 'high' : 'medium',
                             actionLabel: 'View',

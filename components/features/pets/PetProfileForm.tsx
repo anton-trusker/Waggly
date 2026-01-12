@@ -33,11 +33,11 @@ type Props = {
 
 export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
   const [name, setName] = useState(pet.name || '');
-  const [species, setSpecies] = useState<'dog' | 'cat' | 'other'>(pet.species || 'dog');
+  const [species, setSpecies] = useState<'dog' | 'cat' | 'other'>((pet.species as any) || 'dog');
   const [breed, setBreed] = useState(pet.breed || '');
-  const [gender, setGender] = useState<'male' | 'female' | ''>(pet.gender || '');
+  const [gender, setGender] = useState<'male' | 'female' | ''>((pet.gender as any) || '');
   const [dateOfBirth, setDateOfBirth] = useState(pet.date_of_birth || '');
-  const [size, setSize] = useState<'small' | 'medium' | 'large' | ''>(pet.size || '');
+  const [size, setSize] = useState<'small' | 'medium' | 'large' | ''>((pet.size as any) || '');
   const [weight, setWeight] = useState(pet.weight ? String(pet.weight) : '');
   const [colorText, setColorText] = useState(pet.color || '');
   const [microchipNumber, setMicrochipNumber] = useState(pet.microchip_number || '');

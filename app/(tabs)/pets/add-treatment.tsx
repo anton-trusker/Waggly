@@ -16,6 +16,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePets } from '@/hooks/usePets';
 import { supabase } from '@/lib/supabase';
+import { useTreatments } from '@/hooks/useTreatments';
 
 // Design System
 import { designSystem } from '@/constants/designSystem';
@@ -44,6 +45,7 @@ export default function AddTreatmentScreen() {
 
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
   const [loading, setLoading] = useState(false);
+  const { addTreatment } = useTreatments(selectedPetId);
 
   useEffect(() => {
     if (initialPetId) setSelectedPetId(initialPetId);
@@ -92,33 +94,18 @@ export default function AddTreatmentScreen() {
       const formattedStartDate = data.startDate.toISOString();
       const formattedEndDate = data.endDate?.toISOString() || null;
 
-      // 1. Create Treatment
-      const { data: treatmentData, error } = await supabase.from('treatments').insert({
-        pet_id: selectedPetId,
-        medication_name: med?.brandName || 'Unknown',
+      const { error } = await addTreatment({
+        treatment_name: med?.brandName || 'Unknown',
         dosage: data.dosage,
-        frequency: data.frequency || null,
+        frequency: data.frequency,
         start_date: formattedStartDate,
         end_date: formattedEndDate,
-        instructions: data.instructions || null,
-        // prescribing_vet: null 
-      }).select().single();
-
-      if (error) throw error;
-
-      // 2. Create Event
-      await supabase.from('events').insert({
-        user_id: user.id,
-        pet_id: selectedPetId,
-        type: 'treatment',
-        title: `Meds: ${med?.brandName}`,
-        start_time: formattedStartDate,
-        end_time: formattedEndDate || formattedStartDate,
-        description: `${data.dosage} - ${data.frequency}`,
-        related_id: treatmentData.id
+        notes: data.instructions,
+        is_active: true,
       });
 
-      Alert.alert('Success', 'Treatment saved!', [{ text: 'OK', onPress: () => router.back() }]);
+      if (error) throw error;
+      router.back();
 
     } catch (e: any) {
       console.error(e);

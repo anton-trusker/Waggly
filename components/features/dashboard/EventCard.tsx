@@ -30,9 +30,9 @@ const eventTypeColors: Record<EventType, string> = {
   vaccination: designSystem.colors.success[500],
   treatment: designSystem.colors.warning[500],
   vet: designSystem.colors.error[500],
-  grooming: getColor('secondary.paw'),
-  walking: designSystem.colors.secondary.leaf,
-  other: designSystem.colors.secondary.sun,
+  grooming: designSystem.colors.primary[500],
+  walking: designSystem.colors.secondary[500],
+  other: designSystem.colors.warning[500],
 };
 
 export function EventCard({ id, type, title, date, time, petName, onPress }: EventCardProps) {

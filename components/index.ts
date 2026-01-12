@@ -1,29 +1,24 @@
 // Paw_AI Design System - Central Export
 // Import all components from one place
 
-// Base Components
+// Export basic layout components from Tamagui
 export {
-    Button,
     Card,
     Input,
-    Badge,
-    Avatar,
-    Divider,
     XStack,
     YStack,
     ZStack,
     Stack,
-    type ButtonProps,
     type CardProps,
     type InputProps,
-    type BadgeProps,
-    type AvatarProps,
-    type DividerProps,
     type XStackProps,
     type YStackProps,
     type ZStackProps,
     type StackProps,
-} from './base';
+} from 'tamagui';
+
+// Export Button from the design system primitives
+export { Button, type ButtonProps } from './design-system/primitives/Button';
 
 // Form Components
 export {

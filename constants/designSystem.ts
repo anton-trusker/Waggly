@@ -6,7 +6,7 @@ if (typeof window !== 'undefined' && (window as any).__DESIGN_SYSTEM__) {
 }
 
 // Define the design system with all required properties
-export const designSystem = Object.freeze({
+export const designSystem = {
   colors: {
     // Primary Colors - Sky Blue (Ocean Gradient start)
     primary: {
@@ -440,11 +440,11 @@ export const designSystem = Object.freeze({
   },
 
 
-  // Responsive Breakpoints
+  // Responsive Breakpoints (Updated to match PRD)
   breakpoints: {
-    mobile: 640,
-    tablet: 768,
-    desktop: 1024,
+    mobile: 768,
+    tablet: 1200,
+    desktop: 1200, // Matching PRD desktop breakpoint
     wide: 1440,
   },
 
@@ -474,7 +474,7 @@ export const designSystem = Object.freeze({
       borderRadius: 16,
     },
   },
-});
+} as const;
 
 // Helper function to get spacing values
 export const getSpacing = (index: number): number => {

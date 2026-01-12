@@ -158,7 +158,7 @@ export default function VaccinationForm({
                             contentContainerStyle={styles.scrollContent}
                             showsVerticalScrollIndicator={false}
                         >
-                            <FormField
+                            <FormField<VaccinationFormData>
                                 control={control}
                                 name="vaccineName"
                                 label="Vaccine Name"
@@ -166,7 +166,7 @@ export default function VaccinationForm({
                                 required
                             />
 
-                            <FormSelect
+                            <FormSelect<VaccinationFormData>
                                 control={control}
                                 name="category"
                                 label="Category"
@@ -176,7 +176,7 @@ export default function VaccinationForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormDatePicker
+                                    <FormDatePicker<VaccinationFormData>
                                         control={control}
                                         name="dateGiven"
                                         label="Date Given"
@@ -185,7 +185,7 @@ export default function VaccinationForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormDatePicker
+                                    <FormDatePicker<VaccinationFormData>
                                         control={control}
                                         name="nextDueDate"
                                         label="Next Due Date"
@@ -194,7 +194,7 @@ export default function VaccinationForm({
                                 </View>
                             </View>
 
-                            <FormField
+                            <FormField<VaccinationFormData>
                                 control={control}
                                 name="administeringVet"
                                 label="Veterinarian"
@@ -218,7 +218,7 @@ export default function VaccinationForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<VaccinationFormData>
                                         control={control}
                                         name="manufacturer"
                                         label="Manufacturer"
@@ -226,7 +226,7 @@ export default function VaccinationForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<VaccinationFormData>
                                         control={control}
                                         name="lotNumber"
                                         label="Lot Number"
@@ -235,7 +235,7 @@ export default function VaccinationForm({
                                 </View>
                             </View>
 
-                            <FormSelect
+                            <FormSelect<VaccinationFormData>
                                 control={control}
                                 name="route"
                                 label="Administration Route"
@@ -263,7 +263,7 @@ export default function VaccinationForm({
                                 )}
                             />
 
-                            <FormField
+                            <FormField<VaccinationFormData>
                                 control={control}
                                 name="notes"
                                 label="Notes"

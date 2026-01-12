@@ -23,6 +23,7 @@ export interface PublicPetProfile {
     gender: string;
     weight: number;
     avatar_url: string;
+    photo_url?: string;
     chip_id?: string;
   };
   owner: {
@@ -55,9 +56,9 @@ export function usePublicShare() {
         .rpc('get_public_pet_details', { share_token: token });
 
       if (error) throw error;
-      if (data && data.error) throw new Error(data.error);
+      if (data && (data as any).error) throw new Error((data as any).error);
 
-      return data as PublicPetProfile;
+      return data as unknown as PublicPetProfile;
     } catch (e: any) {
       setError(e.message);
       return null;

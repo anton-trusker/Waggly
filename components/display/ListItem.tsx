@@ -1,5 +1,4 @@
-import { XStack, YStack, Text } from 'tamagui';
-import { Divider } from '../base/Divider';
+import { XStack, YStack, Text, Separator } from 'tamagui';
 import { ReactNode } from 'react';
 
 export interface ListItemProps {
@@ -62,7 +61,7 @@ export function ListItem({
                 )}
             </XStack>
 
-            {showDivider && <Divider marginLeft="$14" />}
+            {showDivider && <Separator marginLeft="$14" />}
         </>
     );
 }

@@ -153,11 +153,11 @@ export default function AddEventScreen() {
           />
 
           <LocationAutocomplete
-            onLocationSelect={(details) => {
+            onPlaceSelected={(details) => {
               setLocation(details.address);
               setLocationDetails(details);
             }}
-            initialValue={location}
+            value={location}
             placeholder="Location (Optional)"
           />
         </View>

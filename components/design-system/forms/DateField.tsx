@@ -2,14 +2,10 @@ import React from 'react';
 import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import { DatePicker } from '../primitives/DatePicker';
 
-interface DateFieldProps<T extends FieldValues> {
+interface DateFieldProps<T extends FieldValues> extends Omit<React.ComponentProps<typeof DatePicker>, 'value' | 'onChange' | 'error'> {
     control: Control<T>;
     name: Path<T>;
     rules?: RegisterOptions<T>;
-    label?: string;
-    required?: boolean;
-    maximumDate?: Date;
-    minimumDate?: Date;
 }
 
 export const DateField = <T extends FieldValues>({

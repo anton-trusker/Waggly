@@ -45,7 +45,7 @@ export default function PetDocuments({ petId }: Props) {
 
   const filteredDocuments = useMemo(() => {
     if (filter === 'all') return documents;
-    return documents.filter(doc => doc.type === filter);
+    return documents.filter(doc => (doc as any).category === filter);
   }, [documents, filter]);
 
   return (
@@ -98,20 +98,20 @@ export default function PetDocuments({ petId }: Props) {
               >
                 <View style={styles.iconBox}>
                   <IconSymbol
-                    ios_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'doc.fill'}
-                    android_material_icon_name={doc.mime_type?.startsWith('image/') ? 'photo' : 'description'}
+                    ios_icon_name={doc.file_type?.startsWith('image/') ? 'photo' : 'doc'}
+                    android_material_icon_name={doc.file_type?.startsWith('image/') ? 'image' : 'description'}
                     size={24}
                     color={colors.primary}
                   />
                 </View>
                 <View style={styles.content}>
-                  <Text style={styles.name}>{doc.file_name}</Text>
+                  <Text style={styles.name}>{doc.name}</Text>
                   <Text style={styles.meta}>
-                    {doc.type} • {new Date(doc.created_at).toLocaleDateString()}
+                    {(doc as any).category} • {new Date(doc.created_at).toLocaleDateString()}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => handleDelete(doc.id, doc.file_url)} style={styles.delBtn}>
-                  <IconSymbol name="trash" size={20} color={colors.error} />
+                  <IconSymbol ios_icon_name="trash" android_material_icon_name="delete" size={20} color={colors.error} />
                 </TouchableOpacity>
               </TouchableOpacity>
             ))}
@@ -123,7 +123,7 @@ export default function PetDocuments({ petId }: Props) {
           </View>
 
           <TouchableOpacity style={styles.addButton} onPress={() => setShowUpload(true)}>
-            <IconSymbol name="plus" size={20} color="#fff" />
+            <IconSymbol ios_icon_name="plus" android_material_icon_name="add" size={20} color="#fff" />
             <Text style={styles.addText}>Upload Document</Text>
           </TouchableOpacity>
         </>

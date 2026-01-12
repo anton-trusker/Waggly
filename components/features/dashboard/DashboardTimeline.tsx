@@ -68,8 +68,8 @@ export default function DashboardTimeline() {
                 return {
                     icon: 'article',
                     iosIcon: 'doc.text.fill',
-                    color: designSystem.colors.secondary.paw,
-                    bg: designSystem.colors.secondary.pawLight,
+                    color: designSystem.colors.secondary[500],
+                    bg: designSystem.colors.secondary[50],
                     borderColor: designSystem.colors.background.secondary
                 };
             default:
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     time: {
-        ...designSystem.typography.caption,
+        ...designSystem.typography.label.small,
         color: designSystem.colors.text.tertiary,
     },
     descriptionRow: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
         color: designSystem.colors.text.primary,
     },
     docSize: {
-        ...designSystem.typography.caption,
+        ...designSystem.typography.label.small,
         fontSize: 10,
     },
     footerBtn: {

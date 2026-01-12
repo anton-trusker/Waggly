@@ -131,7 +131,7 @@ export default function ConditionForm({
 
                     {/* Form Content */}
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.formContent}>
-                        <FormField
+                        <FormField<ConditionFormData>
                             control={control}
                             name="conditionName"
                             label="Condition Name"
@@ -142,7 +142,7 @@ export default function ConditionForm({
 
                         <View style={styles.row}>
                             <View style={styles.halfWidth}>
-                                <FormSelect
+                                <FormSelect<ConditionFormData>
                                     control={control}
                                     name="status"
                                     label="Status"
@@ -151,7 +151,7 @@ export default function ConditionForm({
                                 />
                             </View>
                             <View style={styles.halfWidth}>
-                                <FormDatePicker
+                                <FormDatePicker<ConditionFormData>
                                     control={control}
                                     name="diagnosedDate"
                                     label="Date Diagnosed"
@@ -159,7 +159,7 @@ export default function ConditionForm({
                             </View>
                         </View>
 
-                        <FormField
+                        <FormField<ConditionFormData>
                             control={control}
                             name="notes"
                             label="Notes / Treatment Plan"

@@ -35,7 +35,7 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
     const handleDelete = (doc: Document) => {
         Alert.alert(
             "Delete Document",
-            `Are you sure you want to delete "${doc.name}"?`,
+            `Are you sure you want to delete "${doc.file_name}"?`,
             [
                 { text: "Cancel", style: "cancel" },
                 {
@@ -96,16 +96,16 @@ export default function DocumentsTabDesktop({ petId }: DocumentsTabProps) {
                 ) : (
                     <View style={styles.grid}>
                         {documents.map((doc) => {
-                            const { icon, color } = getDocumentIcon(doc.type);
+                            const { icon, color } = getDocumentIcon((doc as any).category || 'other');
                             return (
                                 <View key={doc.id} style={styles.card}>
                                     <View style={[styles.iconBox, { backgroundColor: color + '20' }]}>
                                         <Ionicons name={icon as any} size={24} color={color} />
                                     </View>
                                     <View style={styles.fileInfo}>
-                                        <Text style={styles.fileName} numberOfLines={1}>{doc.name}</Text>
+                                        <Text style={styles.fileName} numberOfLines={1}>{doc.file_name}</Text>
                                         <Text style={styles.fileMeta}>
-                                            {formatSize(doc.size_bytes)} • {new Date(doc.created_at).toLocaleDateString()}
+                                            {new Date(doc.created_at).toLocaleDateString()}
                                         </Text>
                                     </View>
                                     <TouchableOpacity

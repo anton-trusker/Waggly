@@ -17,7 +17,8 @@ let posthogInstance: PostHog | null = null;
 
 export const getPostHog = async () => {
     if (!posthogInstance) {
-        posthogInstance = await PostHog.init(POSTHOG_API_KEY, {
+        // @ts-ignore - Some versions of posthog-react-native have different init patterns
+        posthogInstance = await PostHog.init?.(POSTHOG_API_KEY, {
             host: POSTHOG_HOST,
         });
     }

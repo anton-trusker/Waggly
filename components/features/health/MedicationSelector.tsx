@@ -32,14 +32,14 @@ export default function MedicationSelector({
         if (!searchQuery) return medications;
         const query = searchQuery.toLowerCase();
         return medications.filter(
-            m => m.medication_name.toLowerCase().includes(query) ||
+            m => (m.medication_name || m.name || '').toLowerCase().includes(query) ||
                 (m.active_ingredient && m.active_ingredient.toLowerCase().includes(query))
         );
     }, [medications, searchQuery]);
 
     const handleSelect = (med: RefMedication) => {
         onSelect(med);
-        setSearchQuery(med.medication_name);
+        setSearchQuery(med.medication_name || med.name || '');
         setShowDropdown(false);
         setUseCustom(false);
     };
@@ -118,28 +118,30 @@ export default function MedicationSelector({
                         </View>
                     ) : filteredMedications.length > 0 ? (
                         <FlashList
-                            data={filteredMedications}
-                            keyExtractor={item => item.id}
-                            style={styles.list}
-                            estimatedItemSize={60}
-                            keyboardShouldPersistTaps="handled"
-                            renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    style={styles.listItem}
-                                    onPress={() => handleSelect(item)}
-                                >
-                                    <View style={styles.itemContent}>
-                                        <Text style={styles.itemName}>{item.medication_name}</Text>
-                                        {item.active_ingredient && (
-                                            <Text style={styles.itemMeta}>({item.active_ingredient})</Text>
-                                        )}
-                                        {item.category && (
-                                            <Text style={styles.itemCategory}>{item.category}</Text>
-                                        )}
-                                    </View>
-                                    <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-                                </TouchableOpacity>
-                            )}
+                            {...({
+                                data: filteredMedications,
+                                keyExtractor: (item: any) => item.id,
+                                style: styles.list,
+                                estimatedItemSize: 60,
+                                keyboardShouldPersistTaps: "handled",
+                                renderItem: ({ item }: any) => (
+                                    <TouchableOpacity
+                                        style={styles.listItem}
+                                        onPress={() => handleSelect(item)}
+                                    >
+                                        <View style={styles.itemContent}>
+                                            <Text style={styles.itemName}>{item.medication_name || item.name}</Text>
+                                            {item.active_ingredient && (
+                                                <Text style={styles.itemMeta}>({item.active_ingredient})</Text>
+                                            )}
+                                            {item.category && (
+                                                <Text style={styles.itemCategory}>{item.category}</Text>
+                                            )}
+                                        </View>
+                                        <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+                                    </TouchableOpacity>
+                                ),
+                            } as any)}
                         />
                     ) : (
                         <View style={styles.emptyContainer}>

@@ -149,7 +149,7 @@ export default function AllergyForm({
                             contentContainerStyle={styles.scrollContent}
                             showsVerticalScrollIndicator={false}
                         >
-                            <FormSelect
+                            <FormSelect<AllergyFormData>
                                 control={control}
                                 name="type"
                                 label="Allergy Type"
@@ -157,7 +157,7 @@ export default function AllergyForm({
                                 required
                             />
 
-                            <FormField
+                            <FormField<AllergyFormData>
                                 control={control}
                                 name="allergen"
                                 label="Allergen"
@@ -165,7 +165,7 @@ export default function AllergyForm({
                                 required
                             />
 
-                            <FormSelect
+                            <FormSelect<AllergyFormData>
                                 control={control}
                                 name="severity"
                                 label="Severity"
@@ -173,7 +173,7 @@ export default function AllergyForm({
                                 required
                             />
 
-                            <FormField
+                            <FormField<AllergyFormData>
                                 control={control}
                                 name="reactionDescription"
                                 label="Reaction Details"
@@ -182,7 +182,7 @@ export default function AllergyForm({
                                 rows={3}
                             />
 
-                            <FormField
+                            <FormField<AllergyFormData>
                                 control={control}
                                 name="notes"
                                 label="Notes"

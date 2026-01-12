@@ -33,14 +33,14 @@ export default function VaccineSelector({
         if (!searchQuery) return vaccines;
         const query = searchQuery.toLowerCase();
         return vaccines.filter(
-            v => v.vaccine_name.toLowerCase().includes(query) ||
+            v => (v.vaccine_name || v.name || '').toLowerCase().includes(query) ||
                 v.abbreviation?.toLowerCase().includes(query)
         );
     }, [vaccines, searchQuery]);
 
     const handleSelect = (vaccine: RefVaccine) => {
         onSelect(vaccine);
-        setSearchQuery(vaccine.vaccine_name);
+        setSearchQuery(vaccine.vaccine_name || vaccine.name || '');
         setShowDropdown(false);
         setUseCustom(false);
     };
@@ -136,39 +136,41 @@ export default function VaccineSelector({
                         </View>
                     ) : filteredVaccines.length > 0 ? (
                         <FlashList
-                            data={filteredVaccines}
-                            keyExtractor={item => item.id}
-                            style={styles.list}
-                            keyboardShouldPersistTaps="handled"
-                            estimatedItemSize={68}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    style={styles.listItem}
-                                    onPress={() => handleSelect(item)}
-                                >
-                                    <View style={styles.itemContent}>
-                                        <View style={styles.itemHeader}>
-                                            <Text style={styles.itemName}>{item.vaccine_name}</Text>
-                                            {item.abbreviation && (
-                                                <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
-                                            )}
+                            {...({
+                                data: filteredVaccines,
+                                keyExtractor: (item: any) => item.id,
+                                style: styles.list,
+                                keyboardShouldPersistTaps: "handled",
+                                estimatedItemSize: 68,
+                                renderItem: ({ item }: any) => (
+                                    <TouchableOpacity
+                                        style={styles.listItem}
+                                        onPress={() => handleSelect(item)}
+                                    >
+                                        <View style={styles.itemContent}>
+                                            <View style={styles.itemHeader}>
+                                                <Text style={styles.itemName}>{item.vaccine_name || item.name}</Text>
+                                                {item.abbreviation && (
+                                                    <Text style={styles.itemAbbr}>({item.abbreviation})</Text>
+                                                )}
+                                            </View>
+                                            <View style={styles.itemMeta}>
+                                                {item.vaccine_type && (
+                                                    <View style={[styles.typeBadgeSmall, { backgroundColor: getTypeBadgeColor(item.vaccine_type) + '20' }]}>
+                                                        <Text style={[styles.typeBadgeTextSmall, { color: getTypeBadgeColor(item.vaccine_type) }]}>
+                                                            {getTypeBadgeText(item.vaccine_type)}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                                {item.booster_interval && (
+                                                    <Text style={styles.itemInterval}>Every {item.booster_interval}</Text>
+                                                )}
+                                            </View>
                                         </View>
-                                        <View style={styles.itemMeta}>
-                                            {item.vaccine_type && (
-                                                <View style={[styles.typeBadgeSmall, { backgroundColor: getTypeBadgeColor(item.vaccine_type) + '20' }]}>
-                                                    <Text style={[styles.typeBadgeTextSmall, { color: getTypeBadgeColor(item.vaccine_type) }]}>
-                                                        {getTypeBadgeText(item.vaccine_type)}
-                                                    </Text>
-                                                </View>
-                                            )}
-                                            {item.booster_interval && (
-                                                <Text style={styles.itemInterval}>Every {item.booster_interval}</Text>
-                                            )}
-                                        </View>
-                                    </View>
-                                    <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-                                </TouchableOpacity>
-                            )}
+                                        <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+                                    </TouchableOpacity>
+                                ),
+                            } as any)}
                         />
                     ) : (
                         <View style={styles.emptyContainer}>

@@ -145,7 +145,7 @@ export default function EmergencyContactForm({
                             contentContainerStyle={styles.scrollContent}
                             showsVerticalScrollIndicator={false}
                         >
-                            <FormSelect
+                            <FormSelect<EmergencyContactFormData>
                                 control={control}
                                 name="contactType"
                                 label="Contact Type"
@@ -153,7 +153,7 @@ export default function EmergencyContactForm({
                                 required
                             />
 
-                            <FormField
+                            <FormField<EmergencyContactFormData>
                                 control={control}
                                 name="name"
                                 label="Name / Clinic Name"
@@ -161,14 +161,14 @@ export default function EmergencyContactForm({
                                 required
                             />
 
-                            <FormField
+                            <FormField<EmergencyContactFormData>
                                 control={control}
                                 name="relationship"
                                 label="Relationship"
                                 placeholder="e.g. Neighbor, Sitter"
                             />
 
-                            <FormField
+                            <FormField<EmergencyContactFormData>
                                 control={control}
                                 name="phone"
                                 label="Phone Number"
@@ -177,7 +177,7 @@ export default function EmergencyContactForm({
                                 keyboardType="phone-pad"
                             />
 
-                            <FormField
+                            <FormField<EmergencyContactFormData>
                                 control={control}
                                 name="email"
                                 label="Email"

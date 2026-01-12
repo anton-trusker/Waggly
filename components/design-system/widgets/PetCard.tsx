@@ -3,29 +3,33 @@ import { View, Text, StyleSheet, Image, ViewStyle } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 import { EntityCard } from './EntityCard';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Pet } from '@/types/v2/schema'; // Ensure this path is correct
+import { Pet as PetV2 } from '@/types/v2/schema';
+import { Pet as PetLegacy } from '@/types/index';
 
 // If Pet is not exported from schema.ts, we define a compatible subset interface here
 // based on what we see in usage
 interface PetSummary {
     id: string;
     name: string;
-    breed?: string;
+    breed?: string | null;
     image_url?: string | null;
-    date_of_birth?: string; // ISO string
-    gender?: 'male' | 'female';
-    weight?: number;
-    weight_unit?: string;
+    photo_url?: string | null;
+    avatar_url?: string | null;
+    date_of_birth?: string | null;
+    gender?: 'male' | 'female' | null;
+    weight?: number | null;
+    weight_current?: number | null;
+    weight_unit?: string | null;
 }
 
 interface PetCardProps {
-    pet: PetSummary | Pet; // Accept either standard Pet or our summary
+    pet: PetSummary | PetV2 | PetLegacy; // Accept either standard Pet (Legacy or V2) or our summary
     variant?: 'detailed' | 'compact' | 'minimal';
     onPress?: () => void;
     style?: ViewStyle;
 }
 
-const getAge = (dobString?: string) => {
+const getAge = (dobString?: string | null) => {
     if (!dobString) return '';
     const dob = new Date(dobString);
     const now = new Date();
@@ -40,7 +44,7 @@ const getAge = (dobString?: string) => {
 
 export const PetCard = ({ pet, variant = 'detailed', onPress, style }: PetCardProps) => {
     const defaultImage = 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'; // Placeholder
-    const imageSource = { uri: pet.image_url || defaultImage };
+    const imageSource = { uri: (pet as any).image_url || (pet as any).photo_url || (pet as any).avatar_url || defaultImage };
 
     if (variant === 'minimal') {
         return (
@@ -92,9 +96,9 @@ export const PetCard = ({ pet, variant = 'detailed', onPress, style }: PetCardPr
                         <View style={styles.statChip}>
                             <Text style={styles.statLabel}>{getAge(pet.date_of_birth)}</Text>
                         </View>
-                        {pet.weight && (
+                        {((pet as any).weight || (pet as any).weight_current) && (
                             <View style={styles.statChip}>
-                                <Text style={styles.statLabel}>{pet.weight} {pet.weight_unit || 'kg'}</Text>
+                                <Text style={styles.statLabel}>{(pet as any).weight || (pet as any).weight_current} {pet.weight_unit || 'kg'}</Text>
                             </View>
                         )}
                     </View>

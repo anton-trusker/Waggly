@@ -23,8 +23,8 @@ const PetCardDesktop: React.FC<PetCardDesktopProps> = ({ pet, onPress }) => {
     };
 
     const getAge = () => {
-        if (!pet.birth_date) return 'Unknown';
-        const dob = new Date(pet.birth_date);
+        if (!pet.date_of_birth) return 'Unknown';
+        const dob = new Date(pet.date_of_birth);
         const today = new Date();
         const years = today.getFullYear() - dob.getFullYear();
         const months = today.getMonth() - dob.getMonth();

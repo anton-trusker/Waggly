@@ -683,12 +683,12 @@ export const EmergencyContactSchema = z.object({
 // TYPE GUARDS
 // ========================================
 
-export function isVaccination(event: MedicalEvent): event is Vaccination {
-    return event.eventType === MedicalEventType.VACCINATION;
+export function isVaccination(event: any): event is Vaccination {
+    return event.eventType === MedicalEventType.VACCINATION && event.vaccineName;
 }
 
-export function isSurgery(event: MedicalEvent): event is Surgery {
-    return event.eventType === MedicalEventType.SURGERY;
+export function isSurgery(event: any): event is Surgery {
+    return event.eventType === MedicalEventType.SURGERY && event.surgeryType;
 }
 
 export function isCriticalRisk(risk: HealthRisk): boolean {

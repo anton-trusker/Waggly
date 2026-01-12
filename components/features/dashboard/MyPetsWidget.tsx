@@ -92,7 +92,7 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                         <View
                             key={item.id}
                             style={{
-                                width: `calc(${100 / columns}% - ${cardGap - (cardGap / columns)}px)`,
+                                width: isMobile ? '100%' : cardWidth,
                                 marginBottom: cardGap
                             }}
                         >
@@ -166,6 +166,7 @@ export default function MyPetsWidget({ pets, loading = false, events = [] }: MyP
                         setSelectedPetForShare(null);
                     }}
                     petId={selectedPetForShare.id}
+                    petName={selectedPetForShare.name}
                 />
             )}
         </View>

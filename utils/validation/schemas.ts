@@ -8,13 +8,9 @@ export const petBasicInfoSchema = z.object({
     name: z.string()
         .min(1, 'Pet name is required')
         .max(50, 'Name must be less than 50 characters'),
-    species: z.enum(['dog', 'cat', 'bird', 'rabbit', 'reptile', 'other'], {
-        errorMap: () => ({ message: 'Please select a species' }),
-    }),
+    species: z.enum(['dog', 'cat', 'bird', 'rabbit', 'reptile', 'other']),
     breed: z.string().optional(),
-    gender: z.enum(['male', 'female'], {
-        errorMap: () => ({ message: 'Please select a gender' }),
-    }),
+    gender: z.enum(['male', 'female']),
     dateOfBirth: z.date().optional(),
     weight: z.number()
         .positive('Weight must be positive')
@@ -40,9 +36,7 @@ export const medicationSchema = z.object({
         .max(50, 'Dosage must be less than 50 characters'),
     frequency: z.string()
         .min(1, 'Frequency is required'),
-    startDate: z.date({
-        required_error: 'Start date is required',
-    }),
+    startDate: z.date(),
     endDate: z.date().optional(),
     prescribedBy: z.string().optional(),
     notes: z.string().optional(),
@@ -67,12 +61,8 @@ export const vaccinationSchema = z.object({
     name: z.string()
         .min(1, 'Vaccination name is required')
         .max(100, 'Name must be less than 100 characters'),
-    type: z.enum(['core', 'non_core', 'optional'], {
-        errorMap: () => ({ message: 'Please select a type' }),
-    }),
-    date: z.date({
-        required_error: 'Vaccination date is required',
-    }),
+    type: z.enum(['core', 'non_core', 'optional']),
+    date: z.date(),
     nextDueDate: z.date().optional(),
     veterinarian: z.string().optional(),
     clinicName: z.string().optional(),
@@ -99,12 +89,8 @@ export const appointmentSchema = z.object({
     title: z.string()
         .min(1, 'Title is required')
         .max(100, 'Title must be less than 100 characters'),
-    type: z.enum(['vet_appointment', 'grooming', 'training', 'medication', 'other'], {
-        errorMap: () => ({ message: 'Please select an appointment type' }),
-    }),
-    date: z.date({
-        required_error: 'Date is required',
-    }),
+    type: z.enum(['vet_appointment', 'grooming', 'training', 'medication', 'other']),
+    date: z.date(),
     time: z.string()
         .min(1, 'Time is required')
         .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format (HH:MM)'),
@@ -128,9 +114,7 @@ export type Appointment = z.infer<typeof appointmentSchema>;
 // ========================================
 
 export const healthRecordSchema = z.object({
-    date: z.date({
-        required_error: 'Date is required',
-    }),
+    date: z.date(),
     weight: z.number().positive('Weight must be positive').optional(),
     temperature: z.number()
         .min(95, 'Temperature too low')
@@ -156,9 +140,7 @@ export const documentSchema = z.object({
     name: z.string()
         .min(1, 'Document name is required')
         .max(100, 'Name must be less than 100 characters'),
-    category: z.enum(['medical', 'vaccination', 'insurance', 'adoption', 'other'], {
-        errorMap: () => ({ message: 'Please select a category' }),
-    }),
+    category: z.enum(['medical', 'vaccination', 'insurance', 'adoption', 'other']),
     date: z.date().optional(),
     expiryDate: z.date().optional(),
     notes: z.string().optional(),

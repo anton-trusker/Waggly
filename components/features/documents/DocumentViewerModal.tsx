@@ -61,12 +61,12 @@ export default function DocumentViewerModal({ visible, onClose, document }: Docu
                         ) : (
                             <View style={styles.previewPlaceholder}>
                                 <Ionicons
-                                    name={document.type?.includes('pdf') ? "document-text" : "document-outline"}
+                                    name={document.file_type?.includes('pdf') ? "document-text" : "document-outline"}
                                     size={64}
                                     color="#fff"
                                 />
                                 <Text style={styles.previewText}>
-                                    {document.type?.includes('pdf')
+                                    {document.file_type?.includes('pdf')
                                         ? "PDF Preview not supported inside the app."
                                         : "Preview not available for this file type."}
                                 </Text>

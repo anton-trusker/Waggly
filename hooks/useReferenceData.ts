@@ -5,17 +5,20 @@ import { supabase } from '@/lib/supabase';
 export interface RefVaccine {
   id: string;
   species?: string; // Derived or filtered
-  vaccine_name: string; // Mapped from brand_name
+  name: string; // Mapped from brand_name
   abbreviation: string | null; // Not in new table?
   vaccine_type: string | null; // Mapped from core_non_core or type
   typical_schedule: string | null; // Not in new table
   booster_interval: string | null; // Mapped from duration?
   description: string | null;
+  category?: string | null; // Added for compatibility
+  validity_months?: number; // Added for compatibility
+  vaccine_name?: string; // Mapped from brand_name for compatibility
 }
 
 export interface RefMedication {
   id: string;
-  medication_name: string; // Mapped from brand_name
+  name: string; // Mapped from brand_name
   brand_names: string[] | null; // Not array in new table, just brand_name
   active_ingredient: string | null; // Mapped from generic_name
   category: string | null; // Mapped from type?
@@ -23,6 +26,9 @@ export interface RefMedication {
   common_uses: string | null; // from disease_treatment?
   side_effects: string[] | null; // from common_side_effects (string in new table)
   contraindications: string | null;
+  default_frequency?: string; // Added for compatibility
+  validity_days?: number; // Added for compatibility
+  medication_name?: string; // Mapped from brand_name for compatibility
 }
 
 // ... other interfaces kept as is if not used ...
@@ -74,12 +80,15 @@ export function useVaccines(species?: string) {
       const mapped: RefVaccine[] = (data || []).map((row: any) => ({
         id: row.id,
         species: row.pet_type,
-        vaccine_name: row.brand_name,
+        name: row.brand_name,
         abbreviation: null,
         vaccine_type: row.core_non_core ? row.core_non_core.toLowerCase() : (row.vaccine_category || null), // map 'Core' -> 'core'
         typical_schedule: null,
         booster_interval: row.duration,
-        description: row.description
+        description: row.description,
+        category: row.core_non_core ? row.core_non_core.toLowerCase() : null,
+        validity_months: row.duration ? 12 : undefined, // Mock for now, parse duration later
+        vaccine_name: row.brand_name
       }));
 
       setVaccines(mapped);
@@ -109,7 +118,7 @@ export function useMedications(petType?: string) { // Added petType optional fil
     setError(null);
     try {
       let query = supabase
-        .from('reference_medications')
+        .from('medications' as any)
         .select('*')
         .order('brand_name');
 
@@ -124,14 +133,17 @@ export function useMedications(petType?: string) { // Added petType optional fil
 
       const mapped: RefMedication[] = (data || []).map((row: any) => ({
         id: row.id,
-        medication_name: row.brand_name,
+        name: row.brand_name,
         brand_names: null,
         active_ingredient: row.generic_name,
         category: row.type,
         typical_dosage_range: row.dosage ? `${row.dosage} ${row.dosage_unit || ''}` : null,
         common_uses: row.disease_treatment,
         side_effects: row.common_side_effects ? [row.common_side_effects] : null,
-        contraindications: null
+        contraindications: null,
+        default_frequency: 'Once daily', // Mock
+        validity_days: 30, // Mock
+        medication_name: row.brand_name
       }));
 
       setMedications(mapped);
@@ -172,6 +184,22 @@ export function useAllergens() {
 
   // Kept as is/empty
   return { allergens, loading, error, refetch: () => { } };
+}
+
+export function useReferenceData() {
+  const { vaccines } = useVaccines();
+  const { medications } = useMedications();
+  const { symptoms } = useSymptoms();
+  const { allergens } = useAllergens();
+
+  return {
+    vaccinations: vaccines,
+    treatments: medications,
+    symptoms,
+    allergens,
+    loading: false, // simplified
+    error: null
+  };
 }
 
 

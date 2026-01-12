@@ -1,29 +1,35 @@
-import { Text as RNText, TextProps, StyleSheet } from 'react-native';
+import { Text as RNText, TextProps, StyleSheet, TextStyle } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 
-type Variant = keyof typeof designSystem.typography.display | keyof typeof designSystem.typography.title | keyof typeof designSystem.typography.body | keyof typeof designSystem.typography.label;
+type Variant =
+    | keyof typeof designSystem.typography.display
+    | keyof typeof designSystem.typography.headline
+    | keyof typeof designSystem.typography.title
+    | keyof typeof designSystem.typography.body
+    | keyof typeof designSystem.typography.label;
 
 interface Props extends TextProps {
     variant?: Variant;
     color?: string;
-    weight?: '400' | '500' | '600' | '700';
+    weight?: TextStyle['fontWeight'];
     align?: 'left' | 'center' | 'right';
     size?: number;
 }
 
-const getTypographyStyle = (variant: Variant) => {
+const getTypographyStyle = (variant: Variant): TextStyle => {
     // Flatten the nested typography object to find the style
-    const allStyles = {
+    const allStyles: Record<string, any> = {
         ...designSystem.typography.display,
+        ...designSystem.typography.headline,
         ...designSystem.typography.title,
         ...designSystem.typography.body,
         ...designSystem.typography.label,
     };
-    return (allStyles as any)[variant] || designSystem.typography.body.medium;
+    return allStyles[variant] || designSystem.typography.body.medium;
 };
 
 export const Text = ({
-    variant = 'medium', // Default to body.medium equivalent if possible, or just a safe default
+    variant,
     color = designSystem.colors.text.primary,
     weight,
     align,
@@ -31,22 +37,16 @@ export const Text = ({
     size,
     ...props
 }: Props) => {
-    // Map simple variant names if needed, or directly use designSystem keys
-    // For now, let's assume usage like variant="large" implies body.large
-
-    // A better approach might be specific props like `typography="title.large"` but let's keep it simple for now
-    // Using direct style injection from designSystem if the user passes the full object? 
-    // No, let's restrict to keys.
-
-    // Simplified lookup for this iteration:
-    // We'll trust the user to pass a valid style object or we default.
-    // Actually, let's just wrap RNText and allow overriding styles easily, 
-    // but provide shortcuts for colors and weights.
+    const typographyStyle = variant ? getTypographyStyle(variant) : {};
 
     return (
         <RNText
             style={[
-                { color, textAlign: align, fontWeight: weight as any, fontSize: size },
+                typographyStyle,
+                { color },
+                align ? { textAlign: align } : null,
+                weight ? { fontWeight: weight } : null,
+                size ? { fontSize: size } : null,
                 style
             ]}
             {...props}

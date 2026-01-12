@@ -169,7 +169,7 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
                                 onPress={() => setFilter(opt.key)}
                             >
                                 <IconSymbol
-                                    name={opt.icon as any}
+                                    ios_icon_name={opt.icon as any}
                                     android_material_icon_name={opt.materialIcon as any}
                                     size={16}
                                     color={isActive ? '#fff' : theme.colors.text.secondary}
@@ -191,7 +191,7 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
                 <View style={styles.timelineContent}>
                     {filteredEvents.length === 0 ? (
                         <View style={styles.emptyState}>
-                            <IconSymbol name="clock" android_material_icon_name="history" size={48} color={theme.colors.gray[300]} />
+                            <IconSymbol ios_icon_name="clock" android_material_icon_name="history" size={48} color={theme.colors.neutral[300]} />
                             <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>No History Yet</Text>
                             <Text style={[styles.emptyDesc, { color: theme.colors.text.tertiary }]}>
                                 Events like vaccinations, visits, and weight logs will appear here
@@ -207,7 +207,7 @@ export default function HistoryTab({ petId }: HistoryTabProps) {
 
                                 {/* Event dot */}
                                 <View style={[styles.eventDot, { backgroundColor: event.color }]}>
-                                    <IconSymbol name={event.icon as any} android_material_icon_name={event.materialIcon as any} size={14} color="#fff" />
+                                    <IconSymbol ios_icon_name={event.icon as any} android_material_icon_name={event.materialIcon as any} size={14} color="#fff" />
                                 </View>
 
                                 {/* Event card */}

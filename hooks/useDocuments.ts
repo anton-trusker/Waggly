@@ -71,7 +71,7 @@ export function useDocuments(petId?: string) {
     }
   }, [user, petId]);
 
-  const uploadDocument = async (uri: string, type: Document['type'], fileName: string, metadata?: any, mimeType?: string, targetPetId?: string) => {
+  const uploadDocument = async (uri: string, category: DocumentCategory, fileName: string, metadata?: any, mimeType?: string, targetPetId?: string) => {
     if (!user) return { error: { message: 'No user logged in' } };
 
     // Use targetPetId if provided, otherwise fail if hook was initialized without petId
@@ -118,7 +118,7 @@ export function useDocuments(petId?: string) {
         .from('documents') as any)
         .insert({
           pet_id: finalPetId,
-          category: type, // V2 uses 'category' not 'type'
+          category: category, // V2 uses 'category' not 'type'
           name: fileName,
           file_path: publicUrl,
           file_type: mimeType || null,
@@ -131,7 +131,7 @@ export function useDocuments(petId?: string) {
 
       posthog.capture('document_uploaded', {
         pet_id: finalPetId,
-        document_type: type,
+        document_type: category,
         file_name: fileName,
       });
 

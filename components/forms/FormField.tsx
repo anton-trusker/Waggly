@@ -27,8 +27,7 @@ export default function FormField<T extends FieldValues>({
     rows = 4,
     ...textInputProps
 }: FormFieldProps<T>) {
-    const { theme } = useAppTheme();
-    const isDark = theme === 'dark';
+    const { isDark } = useAppTheme();
     const [isSecure, setIsSecure] = useState(type === 'password');
 
     return (

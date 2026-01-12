@@ -10,6 +10,7 @@ interface GenericFormModalProps {
     primaryActionLabel?: string;
     onPrimaryAction?: () => void;
     loading?: boolean;
+    primaryActionDisabled?: boolean;
     secondaryActionLabel?: string;
     onSecondaryAction?: () => void;
     width?: number;
@@ -23,6 +24,7 @@ export default function GenericFormModal({
     primaryActionLabel = 'Save',
     onPrimaryAction,
     loading = false,
+    primaryActionDisabled = false,
     secondaryActionLabel = 'Cancel',
     onSecondaryAction,
     width = 700,
@@ -82,9 +84,9 @@ export default function GenericFormModal({
 
                         {onPrimaryAction && (
                             <TouchableOpacity
-                                style={[styles.primaryButton, loading && styles.primaryButtonDisabled] as any}
+                                style={[styles.primaryButton, (loading || primaryActionDisabled) && styles.primaryButtonDisabled] as any}
                                 onPress={onPrimaryAction}
-                                disabled={loading}
+                                disabled={loading || primaryActionDisabled}
                             >
                                 {loading ? (
                                     <View style={styles.loadingState}>

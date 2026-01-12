@@ -79,7 +79,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
         frequency: existingMedication?.frequency || 'Once daily',
         start_date: existingMedication?.start_date || new Date().toISOString().split('T')[0],
         end_date: existingMedication?.end_date || '',
-        is_active: existingMedication ? (existingMedication.status === 'active') : true,
+        is_active: existingMedication ? existingMedication.is_ongoing : true,
         notes: existingMedication?.instructions || '', // V2 'instructions' -> 'notes'.
     };
 
@@ -103,7 +103,7 @@ export default function MedicationFormModal({ visible, onClose, petId: initialPe
             start_date: data.start_date,
             end_date: data.end_date || null,
             instructions: data.notes || null,
-            status: data.is_active ? 'active' : 'completed',
+            is_ongoing: data.is_active,
         };
 
         try {

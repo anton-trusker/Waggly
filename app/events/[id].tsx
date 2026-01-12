@@ -37,7 +37,7 @@ export default function EventDetailsScreen() {
 
             console.log('🔍 Fetching event details for:', { type, actualId, extra });
 
-            let data = null;
+            let data: any = null;
             let fetchError = null;
 
             switch (type) {
@@ -77,12 +77,12 @@ export default function EventDetailsScreen() {
                 case 'birthday':
                     const pet = pets.find(p => p.id === actualId);
                     if (pet) {
-                        const age = parseInt(extra) - new Date(pet.date_of_birth).getFullYear();
+                        const age = parseInt(extra) - new Date(pet.date_of_birth || new Date()).getFullYear();
                         data = {
                             title: t('calendar.birthday_title', { name: pet.name }),
                             pet_id: pet.id,
                             pet_name: pet.name,
-                            date: `${extra}-${format(new Date(pet.date_of_birth), 'MM-dd')}`,
+                            date: `${extra}-${format(new Date(pet.date_of_birth || new Date()), 'MM-dd')}`,
                             displayType: 'other',
                             notes: t('calendar.birthday_notes', { age })
                         };
@@ -153,7 +153,7 @@ export default function EventDetailsScreen() {
         vaccination: { ios: 'syringe', android: 'vaccines', color: designSystem.colors.success[500] },
         treatment: { ios: 'pill', android: 'medication', color: designSystem.colors.warning[500] },
         vet: { ios: 'medical.bag', android: 'medical_services', color: designSystem.colors.primary[500] },
-        grooming: { ios: 'scissors', android: 'content_cut', color: designSystem.colors.secondary.leaf },
+        grooming: { ios: 'scissors', android: 'content_cut', color: designSystem.colors.secondary[500] },
         walking: { ios: 'figure.walk', android: 'directions_walk', color: designSystem.colors.primary[400] },
         other: { ios: 'calendar', android: 'event', color: designSystem.colors.neutral[500] },
     };
@@ -185,7 +185,7 @@ export default function EventDetailsScreen() {
                     <Text style={styles.title}>{title}</Text>
                     <View style={[styles.badge, { backgroundColor: `${config.color} 15` }]}>
                         <Text style={[styles.badgeText, { color: config.color }]}>
-                            {t(`calendar.event_types.${eventData.displayType} `)}
+                            {t(`calendar.event_types.${eventData.displayType}`)}
                         </Text>
                     </View>
                 </View>

@@ -26,7 +26,7 @@ const EVENT_TYPE_CONFIG: Record<string, { icon: string; color: string; labelKey:
     vaccination: { icon: 'syringe', color: designSystem.colors.success[500], labelKey: 'vaccination' },
     treatment: { icon: 'pill', color: designSystem.colors.warning[500], labelKey: 'treatment' },
     vet: { icon: 'medical-bag', color: designSystem.colors.primary[500], labelKey: 'vet' },
-    grooming: { icon: 'cut', color: designSystem.colors.secondary.leaf, labelKey: 'grooming' },
+    grooming: { icon: 'cut', color: designSystem.colors.secondary[500], labelKey: 'grooming' },
     walking: { icon: 'walk', color: designSystem.colors.primary[400], labelKey: 'walking' },
     other: { icon: 'calendar', color: designSystem.colors.neutral[500], labelKey: 'other' },
 };

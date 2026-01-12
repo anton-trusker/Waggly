@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Pet, Veterinarian } from '@/types';
-import UpcomingCarePanel from '@/components/desktop/dashboard/UpcomingCarePanel';
-import ActivityFeedTimeline from '@/components/desktop/dashboard/ActivityFeedTimeline';
+import UpcomingCarePanel from '@/components/features/dashboard/UpcomingCarePanel';
+import ActivityFeedTimeline from '@/components/features/dashboard/ActivityFeedTimeline';
 
 interface OverviewTabDesktopProps {
     pet: Pet;

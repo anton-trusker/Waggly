@@ -49,14 +49,14 @@ export default function HealthWizardScreen() {
   const [vaccineCategory, setVaccineCategory] = useState<'core' | 'non-core'>('core');
   const [doseNumber, setDoseNumber] = useState('');
   const [vaccineRefId, setVaccineRefId] = useState<string | null>(null);
-  
+
   const [treatmentName, setTreatmentName] = useState('');
   const [treatmentCategory, setTreatmentCategory] = useState('');
   const [medication, setMedication] = useState('');
   const [dosage, setDosage] = useState('');
   const [frequency, setFrequency] = useState('');
   const [treatmentRefId, setTreatmentRefId] = useState<string | null>(null);
-  
+
   const [visitReason, setVisitReason] = useState('');
   const [clinicName, setClinicName] = useState('');
   const [vetName, setVetName] = useState('');
@@ -66,6 +66,13 @@ export default function HealthWizardScreen() {
   const [nextDate, setNextDate] = useState('');
   const [notes, setNotes] = useState('');
   const [attachedFile, setAttachedFile] = useState<string | null>(null);
+
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Prefill logic
   const handleSelectVaccine = (name: string) => {
@@ -118,7 +125,7 @@ export default function HealthWizardScreen() {
     setIsSubmitting(true);
     try {
       let result;
-      
+
       if (type === 'vaccination') {
         result = await addVaccination({
           vaccine_name: vaccineName,
@@ -128,13 +135,11 @@ export default function HealthWizardScreen() {
           dose_number: doseNumber ? parseInt(doseNumber) : undefined,
           notes: notes || undefined,
           administering_vet: vetName || undefined,
-          reference_vaccination_id: vaccineRefId || undefined,
         });
       } else if (type === 'treatment') {
         result = await addTreatment({
           treatment_name: treatmentName,
           category: treatmentCategory || 'General',
-          medication: medication || undefined,
           dosage: dosage || undefined,
           frequency: frequency || undefined,
           start_date: date,
@@ -142,7 +147,6 @@ export default function HealthWizardScreen() {
           notes: notes || undefined,
           vet: vetName || undefined,
           is_active: true,
-          reference_treatment_id: treatmentRefId || undefined,
         });
       } else {
         result = await addVisit({
@@ -180,7 +184,7 @@ export default function HealthWizardScreen() {
   const renderStep1 = () => (
     <View style={styles.stepContainer}>
       <Text style={styles.stepTitle}>What would you like to add?</Text>
-      
+
       <TouchableOpacity
         style={[styles.typeCard, type === 'vaccination' && styles.typeCardActive] as any}
         onPress={() => setType('vaccination')}
@@ -199,7 +203,7 @@ export default function HealthWizardScreen() {
           <Text style={[styles.typeTitle, type === 'vaccination' && styles.activeText]}>Vaccination</Text>
           <Text style={styles.typeDesc}>Log a new vaccine dose</Text>
         </View>
-        {type === 'vaccination' && <IconSymbol name="checkmark" size={20} color={colors.primary} />}
+        {type === 'vaccination' && <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={20} color={colors.primary} />}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -220,7 +224,7 @@ export default function HealthWizardScreen() {
           <Text style={[styles.typeTitle, type === 'treatment' && styles.activeText]}>Treatment</Text>
           <Text style={styles.typeDesc}>Medications, flea/tick, deworming</Text>
         </View>
-        {type === 'treatment' && <IconSymbol name="checkmark" size={20} color={colors.primary} />}
+        {type === 'treatment' && <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={20} color={colors.primary} />}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -241,7 +245,7 @@ export default function HealthWizardScreen() {
           <Text style={[styles.typeTitle, type === 'visit' && styles.activeText]}>Medical Visit</Text>
           <Text style={styles.typeDesc}>Check-ups, consultations, surgeries</Text>
         </View>
-        {type === 'visit' && <IconSymbol name="checkmark" size={20} color={colors.primary} />}
+        {type === 'visit' && <IconSymbol ios_icon_name="checkmark" android_material_icon_name="check" size={20} color={colors.primary} />}
       </TouchableOpacity>
     </View>
   );
@@ -249,7 +253,7 @@ export default function HealthWizardScreen() {
   const renderStep2 = () => (
     <View style={styles.stepContainer}>
       <Text style={styles.stepTitle}>Enter Details</Text>
-      
+
       {type === 'vaccination' && (
         <>
           <View style={styles.inputContainer}>
@@ -358,7 +362,7 @@ export default function HealthWizardScreen() {
   const renderStep3 = () => (
     <View style={styles.stepContainer}>
       <Text style={styles.stepTitle}>Attachments & Reminders</Text>
-      
+
       <DocumentUpload
         label="Upload Certificate / Prescription"
         onSelect={(uri, mime, name, size) => {

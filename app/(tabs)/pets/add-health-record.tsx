@@ -198,6 +198,7 @@ export default function AddHealthRecordScreen() {
                             <DateField control={control} name="date" label="Date" />
 
                             <MeasurementWidget
+                                type="weight"
                                 label="Weight"
                                 value={watch('weight')}
                                 onChange={(val) => setValue('weight', val)}

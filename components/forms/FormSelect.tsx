@@ -29,8 +29,7 @@ export default function FormSelect<T extends FieldValues>({
     options,
     searchable = false, // NEW
 }: FormSelectProps<T>) {
-    const { theme } = useAppTheme();
-    const isDark = theme === 'dark';
+    const { isDark } = useAppTheme();
     const [showModal, setShowModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // NEW
 

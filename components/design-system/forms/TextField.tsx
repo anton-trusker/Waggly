@@ -3,15 +3,11 @@ import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-h
 import { Input } from '../primitives/Input';
 
 // Define the props for our controlled input
-interface TextFieldProps<T extends FieldValues> {
+// Define the props for our controlled input
+interface TextFieldProps<T extends FieldValues> extends Omit<React.ComponentProps<typeof Input>, 'value' | 'onChangeText' | 'onBlur' | 'error'> {
     control: Control<T>;
     name: Path<T>;
     rules?: RegisterOptions<T>;
-    label?: string;
-    placeholder?: string;
-    secureTextEntry?: boolean;
-    required?: boolean;
-    // ... other Input props we want to expose
 }
 
 export const TextField = <T extends FieldValues>({

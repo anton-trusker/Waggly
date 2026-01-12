@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     locationText: {
-        ...designSystem.typography.caption,
+        ...designSystem.typography.label.small,
         color: designSystem.colors.text.tertiary,
     },
     emptyState: {

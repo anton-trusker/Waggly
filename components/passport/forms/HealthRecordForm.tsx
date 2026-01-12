@@ -170,7 +170,7 @@ export default function HealthRecordForm({
                             showsVerticalScrollIndicator={false}
                         >
                             <Text style={styles.sectionTitle}>General Info</Text>
-                            <FormDatePicker
+                            <FormDatePicker<HealthRecordFormData>
                                 control={control}
                                 name="date"
                                 label="Measurement Date"
@@ -179,7 +179,7 @@ export default function HealthRecordForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<HealthRecordFormData>
                                         control={control}
                                         name="weight"
                                         label="Weight"
@@ -188,7 +188,7 @@ export default function HealthRecordForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="weightUnit"
                                         label="Unit"
@@ -200,7 +200,7 @@ export default function HealthRecordForm({
                             <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Vital Signs</Text>
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<HealthRecordFormData>
                                         control={control}
                                         name="temperature"
                                         label="Temperature"
@@ -209,7 +209,7 @@ export default function HealthRecordForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="temperatureUnit"
                                         label="Unit"
@@ -220,7 +220,7 @@ export default function HealthRecordForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<HealthRecordFormData>
                                         control={control}
                                         name="heartRate"
                                         label="Heart Rate"
@@ -229,7 +229,7 @@ export default function HealthRecordForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<HealthRecordFormData>
                                         control={control}
                                         name="respiratoryRate"
                                         label="Resp Rate"
@@ -239,7 +239,7 @@ export default function HealthRecordForm({
                                 </View>
                             </View>
 
-                            <FormField
+                            <FormField<HealthRecordFormData>
                                 control={control}
                                 name="bodyConditionScore"
                                 label="BCS (1-9)"
@@ -250,7 +250,7 @@ export default function HealthRecordForm({
                             <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Wellness Indicators</Text>
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="activityLevel"
                                         label="Activity"
@@ -258,7 +258,7 @@ export default function HealthRecordForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="energyLevel"
                                         label="Energy"
@@ -269,7 +269,7 @@ export default function HealthRecordForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="appetiteLevel"
                                         label="Appetite"
@@ -277,7 +277,7 @@ export default function HealthRecordForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormSelect
+                                    <FormSelect<HealthRecordFormData>
                                         control={control}
                                         name="coatCondition"
                                         label="Coat"
@@ -286,14 +286,14 @@ export default function HealthRecordForm({
                                 </View>
                             </View>
 
-                            <FormSelect
+                            <FormSelect<HealthRecordFormData>
                                 control={control}
                                 name="stoolQuality"
                                 label="Stool Quality"
                                 options={STOOL_OPTIONS}
                             />
 
-                            <FormField
+                            <FormField<HealthRecordFormData>
                                 control={control}
                                 name="notes"
                                 label="Notes"

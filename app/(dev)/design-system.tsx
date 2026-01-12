@@ -89,7 +89,7 @@ export default function DesignSystemGallery() {
                             <ComponentBlock title="Primary Palette">
                                 <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                                     {[500, 600, 700].map(shade => (
-                                        <View key={shade} style={{ width: 60, height: 60, backgroundColor: designSystem.colors.primary[shade as any], borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                                        <View key={shade} style={{ width: 60, height: 60, backgroundColor: (designSystem.colors.primary as any)[shade], borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
                                             <Text style={{ color: 'white', fontSize: 10 }}>{shade}</Text>
                                         </View>
                                     ))}

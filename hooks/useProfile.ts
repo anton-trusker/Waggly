@@ -71,7 +71,7 @@ export function useProfile() {
 
       if (!error) {
         posthog.capture('user_profile_created', {
-          full_name: values.full_name,
+          full_name: values.full_name ?? null,
         });
         await fetchProfile();
       }

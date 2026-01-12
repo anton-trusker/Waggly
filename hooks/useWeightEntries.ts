@@ -2,10 +2,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/db';
+import { getPostHog } from '@/lib/posthog';
 
-type WeightEntry = Database['public']['Tables']['weight_logs']['Row'];
-type WeightEntryInsert = Database['public']['Tables']['weight_logs']['Insert'];
-type WeightEntryUpdate = Database['public']['Tables']['weight_logs']['Update'];
+type WeightEntry = Database['public']['Tables']['weight_entries']['Row'];
+type WeightEntryInsert = Database['public']['Tables']['weight_entries']['Insert'];
+type WeightEntryUpdate = Database['public']['Tables']['weight_entries']['Update'];
 
 type WeightEntryInsertPayload = {
   weight: number;
@@ -34,7 +35,7 @@ export function useWeightEntries(petId: string | null) {
 
     try {
       const { data, error } = await supabase
-        .from('weight_logs')
+        .from('weight_entries')
         .select('*')
         .eq('pet_id', petId)
         .order('date', { ascending: false });
@@ -67,7 +68,7 @@ export function useWeightEntries(petId: string | null) {
         created_at: new Date().toISOString(),
       };
       const { data, error } = await (supabase
-        .from('weight_logs') as any)
+        .from('weight_entries') as any)
         .insert([payload as WeightEntryInsert])
         .select()
         .single();
@@ -77,10 +78,10 @@ export function useWeightEntries(petId: string | null) {
         return { error };
       }
 
-      posthog.capture('weight_entry_created', {
+      getPostHog().then(ph => ph?.capture('weight_entry_created', {
         pet_id: petId,
         weight: data.weight,
-      });
+      })).catch(() => { });
 
       await fetchWeightEntries();
       return { data, error: null };
@@ -94,7 +95,7 @@ export function useWeightEntries(petId: string | null) {
     try {
       const payload: WeightEntryUpdate = weightData;
       const { data, error } = await (supabase
-        .from('weight_logs') as any)
+        .from('weight_entries') as any)
         .update(payload as WeightEntryUpdate)
         .eq('id', entryId)
         .select()
@@ -105,10 +106,10 @@ export function useWeightEntries(petId: string | null) {
         return { error };
       }
 
-      posthog.capture('weight_entry_updated', {
+      getPostHog().then(ph => ph?.capture('weight_entry_updated', {
         pet_id: petId,
         entry_id: entryId,
-      });
+      })).catch(() => { });
 
       await fetchWeightEntries();
       return { data, error: null };
@@ -121,7 +122,7 @@ export function useWeightEntries(petId: string | null) {
   const deleteWeightEntry = async (entryId: string) => {
     try {
       const { error } = await supabase
-        .from('weight_logs')
+        .from('weight_entries')
         .delete()
         .eq('id', entryId);
 
@@ -130,10 +131,10 @@ export function useWeightEntries(petId: string | null) {
         return { error };
       }
 
-      posthog.capture('weight_entry_deleted', {
+      getPostHog().then(ph => ph?.capture('weight_entry_deleted', {
         pet_id: petId,
         entry_id: entryId,
-      });
+      })).catch(() => { });
 
       await fetchWeightEntries();
       return { error: null };

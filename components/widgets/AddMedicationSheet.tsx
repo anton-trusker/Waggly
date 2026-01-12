@@ -5,7 +5,7 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { medicationSchema, Medication } from '@/utils/validation/schemas';
 import { FormField, FormDatePicker } from '@/components/forms';
 import BottomSheet from '@/components/navigation/BottomSheet';
-import { Button } from '@/components/base';
+import { Button } from '@/components/design-system/primitives/Button';
 import { designSystem } from '@/constants/designSystem';
 import { supabase } from '@/lib/supabase';
 
@@ -86,9 +86,7 @@ export default function AddMedicationSheet({ petId, onSuccess }: AddMedicationSh
     return (
         <>
             {/* Trigger Button - In real app, this would be in parent component */}
-            <Button onPress={open}>
-                Add Medication
-            </Button>
+            <Button onPress={open} title="Add Medication" />
 
             {/* Bottom Sheet Form */}
             <BottomSheet
@@ -168,18 +166,19 @@ export default function AddMedicationSheet({ petId, onSuccess }: AddMedicationSh
                         <Button
                             onPress={handleSubmit(onSubmit)}
                             disabled={isSubmitting}
+                            loading={isSubmitting}
+                            title="Add Medication"
+                            fullWidth
                             style={styles.submitButton}
-                        >
-                            {isSubmitting ? 'Adding...' : 'Add Medication'}
-                        </Button>
+                        />
 
                         <Button
                             onPress={handleClose}
                             variant="outline"
+                            title="Cancel"
+                            fullWidth
                             style={styles.cancelButton}
-                        >
-                            Cancel
-                        </Button>
+                        />
                     </View>
 
                     {/* Bottom spacing for keyboard */}

@@ -23,9 +23,9 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
 
     const { behaviorTags, loading: behaviorLoading } = usePetBehavior(pet?.id);
     const { events } = useEvents();
-    const { activities } = useActivityFeed(pet?.id || '');
+    const { activities } = useActivityFeed(10, pet?.id || '');
     const { weightEntries } = useWeightEntries(pet?.id || null);
-    const { medications } = useMedications(pet?.id || null);
+    const { medications } = useMedications(pet?.id || '');
     const { vaccinations } = useVaccinations(pet?.id || null);
 
     // Calculate metrics
@@ -40,12 +40,12 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
     const recentActivityCount = useMemo(() => {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        return activities.filter(a => new Date(a.created_at) > oneWeekAgo).length;
+        return activities.filter(a => new Date(a.timestamp) > oneWeekAgo).length;
     }, [activities]);
 
-    const latestActivity = activities.length > 0 ? activities[0].action_description : undefined;
+    const latestActivity = activities.length > 0 ? activities[0].description : undefined;
 
-    const activeMedications = medications.filter(m => m.is_active).length;
+    const activeMedications = medications.filter(m => !m.end_date || new Date(m.end_date) > new Date()).length;
 
     const vaccinationsUpToDate = useMemo(() => {
         const now = new Date();
@@ -54,7 +54,7 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
 
     const weightTrend = useMemo(() => {
         if (weightEntries.length < 2) return {
-            current: weightEntries[0]?.weight ? `${weightEntries[0].weight} ${weightEntries[0].weight_unit || 'kg'}` : undefined,
+            current: weightEntries[0]?.weight ? `${weightEntries[0].weight} ${pet?.weight_unit || 'kg'}` : undefined,
             trend: 'stable' as const,
             changePercent: 0
         };
@@ -65,7 +65,7 @@ export default function PetStatusRow({ pet }: PetStatusRowProps) {
         const changePercent = (change / previous.weight) * 100;
 
         return {
-            current: `${latest.weight} ${latest.weight_unit || 'kg'}`,
+            current: `${latest.weight} ${pet?.weight_unit || 'kg'}`,
             trend: change > 0.5 ? 'up' as const : change < -0.5 ? 'down' as const : 'stable' as const,
             changePercent
         };

@@ -113,8 +113,7 @@ export default function RecordDetailScreen() {
               <Text style={styles.cardTitle}>Treatment</Text>
               <Text style={styles.item}>Name: {treatment.treatment_name}</Text>
               <Text style={styles.item}>Category: {treatment.category}</Text>
-              <Text style={styles.item}>Medication: {treatment.medication ?? '—'}</Text>
-              <Text style={styles.item}>Dosage: {treatment.dosage ?? '—'}</Text>
+              <Text style={styles.item}>Dosage: {treatment.dosage_value ? `${treatment.dosage_value} ${treatment.dosage_unit ?? ''}` : (treatment.dosage ?? '—')}</Text>
               <Text style={styles.item}>Frequency: {treatment.frequency ?? '—'}</Text>
               <Text style={styles.item}>Start: {treatment.start_date ? new Date(treatment.start_date).toLocaleDateString() : '—'}</Text>
               <Text style={styles.item}>End: {treatment.end_date ? new Date(treatment.end_date).toLocaleDateString() : '—'}</Text>

@@ -79,6 +79,7 @@ export default function PetsListPage() {
             setSelectedPetForShare(null);
           }}
           petId={selectedPetForShare.id}
+          petName={selectedPetForShare.name}
         />
       )}
 

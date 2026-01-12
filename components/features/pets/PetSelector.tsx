@@ -42,7 +42,7 @@ export default function PetSelector({ selectedPetId, onSelectPet }: PetSelectorP
                     <Ionicons name="paw" size={32} color={isSelected ? '#FFFFFF' : theme.colors.text.tertiary} />
                   )}
                   {isSelected && (
-                    <View style={[styles.checkmark, { backgroundColor: theme.colors.status.success, borderColor: theme.colors.background.card }]}>
+                    <View style={[styles.checkmark, { backgroundColor: theme.colors.status.success[500], borderColor: theme.colors.background.secondary }]}>
                       <Ionicons name="checkmark" size={12} color="white" />
                     </View>
                   )}

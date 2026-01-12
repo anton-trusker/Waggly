@@ -17,7 +17,7 @@ export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 export type VaccinationStatus = 'pending' | 'completed' | 'overdue' | 'scheduled';
 
 export type ProviderCategory = 'veterinarian' | 'groomer' | 'insurance' | 'trainer' | 'sitter/walker' | 'boarding';
-export type DocumentCategory = 'medical_record' | 'prescription' | 'lab_result' | 'contract' | 'invoice' | 'photo' | 'passport' | 'other';
+export type DocumentCategory = 'medical_record' | 'medical' | 'prescription' | 'lab_result' | 'contract' | 'invoice' | 'photo' | 'passport' | 'vaccination' | 'insurance' | 'other';
 
 // Tables
 
@@ -51,6 +51,7 @@ export interface Pet {
     registration_id: string | null;
     avatar_url: string | null;
     photo_url: string | null; // Alias for avatar_url for backward compatibility
+    image_url?: string | null; // Alias for photo_url
     description: string | null;
     is_spayed_neutered: boolean;
     is_deceased: boolean;
@@ -159,10 +160,13 @@ export interface Document {
     owner_id: string;
     pet_id: string | null;
     name: string;
+    file_name?: string;
     category: DocumentCategory;
     file_path: string;
+    file_url?: string;
     file_type: string | null;
     file_size: number | null;
+    size_bytes?: number;
     is_favorite: boolean;
     created_at: string;
     updated_at: string;
@@ -202,6 +206,7 @@ export interface ActivityLog {
     description: string | null;
     metadata: Json | null;
     created_at: string;
+    timestamp?: string; // Support for legacy field name
 }
 
 export interface BehaviorTag {

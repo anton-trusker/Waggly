@@ -28,7 +28,7 @@ export default function PublicShareScreen() {
       if (error) throw error;
       if (result && (result as any).error) throw new Error((result as any).error);
 
-      setData(result as PublicPetProfile);
+      setData(result as any as PublicPetProfile);
     } catch (err: any) {
       setError(err.message || 'Failed to load pet details');
     } finally {

@@ -36,7 +36,7 @@ export default function Breadcrumbs() {
             }
 
             // Handle known segments
-            if (segment === 'add') label = 'Add New';
+            if ((segment as string) === 'add') label = 'Add New';
 
             // Handle "pets" segment specifically if needed, but Title Case "Pets" is fine.
 

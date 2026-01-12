@@ -9,7 +9,7 @@ export function IconSymbol({
   style,
   weight = "regular",
 }: {
-  ios_icon_name: SymbolViewProps["name"];
+  ios_icon_name: SymbolViewProps["name"] | string;
   android_material_icon_name: any;
   size?: number;
   color: string;

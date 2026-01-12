@@ -1,26 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
   Alert,
-  useWindowDimensions,
   Image
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { designSystem } from '@/constants/designSystem';
-import Input from '@/components/ui/Input';
-import { EnhancedButton } from '@/components/ui/EnhancedButton';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { Input } from '@/components/design-system/primitives/Input';
+import { Button } from '@/components/design-system/primitives/Button';
 import { supabase } from '@/lib/supabase';
-import AuthHeroPanel from '@/components/desktop/auth/AuthHeroPanel';
 import { useLocale } from '@/hooks/useLocale';
-import { AuthTabs } from '@/components/auth/AuthTabs';
+import { AuthHeroLayout } from '@/components/features/auth/AuthHeroLayout';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
@@ -28,9 +24,33 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
-  const { width } = useWindowDimensions();
-  const isDesktop = width >= 1024; // Changed from 768 to hide hero on tablet
   const { t } = useLocale();
+
+  // Simple password strength calculator
+  const passwordStrength = useMemo(() => {
+    if (!password) return 0;
+    let strength = 0;
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    return strength;
+  }, [password]);
+
+  const strengthColor = useMemo(() => {
+    if (passwordStrength <= 1) return designSystem.colors.error[500];
+    if (passwordStrength === 2) return '#EAB308'; // Yellow
+    if (passwordStrength === 3) return '#84CC16'; // Lime
+    return designSystem.colors.success[500];
+  }, [passwordStrength]);
+
+  const strengthLabel = useMemo(() => {
+    if (!password) return '';
+    if (passwordStrength <= 1) return t('auth.strength_weak') || 'Weak';
+    if (passwordStrength === 2) return t('auth.strength_fair') || 'Fair';
+    if (passwordStrength === 3) return t('auth.strength_good') || 'Good';
+    return t('auth.strength_strong') || 'Strong';
+  }, [passwordStrength, password]);
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
@@ -48,14 +68,10 @@ export default function SignupScreen() {
 
     if (error) {
       console.error('Signup error:', error);
-      // More detailed error message
       let message = error.message;
       if (message === 'Database error saving new user') {
         message = 'Account created but profile setup failed. Please contact support.';
-      } else if (error.code === 'unexpected_failure') { // Check if specific code property exists (it might not on AuthError, but good to try)
-        message = `${error.message} (Code: ${error.code})`;
       }
-
       Alert.alert(t('auth.signup_failed'), message);
     } else {
       Alert.alert('Success', t('auth.verify_email') || 'Please check your email to verify your account.');
@@ -84,269 +100,163 @@ export default function SignupScreen() {
   };
 
   const handleAppleSignup = async () => {
-    // Hidden per request
-    return;
-    /*
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        }
-      });
-      //...
-    } catch (error) {...}
-    */
+    Alert.alert('Apple Sign Up', 'Apple registration coming soon.');
   };
 
-  // Common Header (Logo + Name)
-  const renderLogo = () => (
-    <View style={styles.header}>
-      <View style={styles.logoContainer}>
-        <Image source={require('@/assets/images/icons/logo.png')} style={styles.logo} resizeMode="contain" />
-      </View>
-      <Text style={styles.appName}>Waggli</Text>
-    </View>
-  );
+  return (
+    <AuthHeroLayout
+      title={t('auth.signup_title')}
+      subtitle={t('auth.signup_subtitle')}
+    >
+      <View style={styles.formContent}>
+        <View style={styles.inputs}>
+          <Input
+            label={t('auth.email_label')}
+            placeholder={t('auth.email_placeholder')}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-  const renderFormContent = () => (
-    <View style={[styles.formContainer, isDesktop && styles.formContainerDesktop]}>
-      {/* Title on Top of Card */}
-      <Text style={styles.cardTitle}>{t('auth.signup_title') || 'Create Account'}</Text>
-
-      <AuthTabs activeTab="signup" />
-
-      <View style={styles.inputs}>
-        <Input
-          label={t('auth.email_label')}
-          placeholder={t('auth.email_placeholder')}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          containerStyle={{ marginBottom: 12 }}
-        />
-
-        <Input
-          label={t('auth.password_label')}
-          placeholder={t('auth.password_placeholder')}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          isPassword
-          containerStyle={{ marginBottom: 12 }}
-        />
-
-        <Input
-          label={t('auth.confirm_password_label')}
-          placeholder={t('auth.password_placeholder')}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-          isPassword
-        />
-      </View>
-
-      <EnhancedButton
-        title={t('auth.create_account')}
-        onPress={handleSignup}
-        loading={loading}
-        fullWidth
-        style={styles.signUpButton}
-      />
-
-      <View style={styles.divider}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>{t('auth.or_continue')}</Text>
-        <View style={styles.line} />
-      </View>
-
-      <View style={styles.socialButtons}>
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={handleGoogleSignup}
-          activeOpacity={0.7}
-        >
-          <View style={styles.googleIcon}>
-            <Text style={styles.googleIconText}>G</Text>
+          <View>
+            <Input
+              label={t('auth.password_label')}
+              placeholder={t('auth.password_placeholder')}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            {password.length > 0 && (
+              <View style={styles.strengthContainer}>
+                <View style={styles.strengthBarBackground}>
+                  <View
+                    style={[
+                      styles.strengthBarFill,
+                      {
+                        width: `${(passwordStrength / 4) * 100}%`,
+                        backgroundColor: strengthColor
+                      }
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.strengthText, { color: strengthColor }]}>
+                  {strengthLabel}
+                </Text>
+              </View>
+            )}
           </View>
-          <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
-        </TouchableOpacity>
 
-        {/* Hidden Apple
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={handleAppleSignup}
-        >
-          <IconSymbol android_material_icon_name="apple" size={20} color={designSystem.colors.text.primary} />
-          <Text style={styles.socialButtonText}>Apple</Text>
-        </TouchableOpacity>
-        */}
-      </View>
-    </View>
-  );
-
-  if (isDesktop) {
-    return (
-      <View style={styles.desktopContainer}>
-        {/* Left Side - Hero Panel (50%) */}
-        <View style={styles.desktopHeroContainer}>
-          <AuthHeroPanel
-            title={t('auth.hero_signup_title')}
-            subtitle={t('auth.hero_signup_subtitle')}
+          <Input
+            label={t('auth.confirm_password_label')}
+            placeholder={t('auth.password_placeholder')}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
           />
         </View>
 
-        {/* Right Side - Form (50%) */}
-        <View style={styles.desktopFormPanel}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-            <ScrollView
-              contentContainerStyle={styles.desktopScrollContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {renderLogo()}
-              {renderFormContent()}
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
-        <LoadingOverlay visible={loading} />
-      </View>
-    );
-  }
+        <Button
+          title={t('auth.create_account')}
+          onPress={handleSignup}
+          loading={loading}
+          fullWidth
+          size="lg"
+          style={styles.actionButton}
+        />
 
-  // Mobile
-  return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          {/* Logo OUTSIDE the form card on mobile */}
-          {renderLogo()}
-          {renderFormContent()}
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <LoadingOverlay visible={loading} />
-    </View>
+        <View style={styles.loginSection}>
+          <Text style={styles.alreadyAccountText}>{t('auth.already_have_account')} </Text>
+          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+            <Text style={styles.linkText}>{t('auth.login_link')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.divider}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>{t('auth.or_continue')}</Text>
+          <View style={styles.line} />
+        </View>
+
+        <View style={styles.socialButtons}>
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={handleGoogleSignup}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
+              style={styles.socialIcon}
+            />
+            <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
+          </TouchableOpacity>
+
+          {Platform.OS !== 'android' && (
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={handleAppleSignup}
+              activeOpacity={0.7}
+            >
+              <View style={styles.appleIconPlaceholder}>
+                <Ionicons name="logo-apple" size={20} color="#000" />
+              </View>
+              <Text style={styles.socialButtonText}>{t('auth.apple')}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </AuthHeroLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  // Desktop Layout
-  desktopContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-  },
-  desktopHeroContainer: {
-    flex: 1,
-    display: 'flex',
-  },
-  desktopFormPanel: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  desktopScrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
+  formContent: {
     width: '100%',
-    alignItems: 'center',
-    maxWidth: 520,
-    alignSelf: 'center',
   },
-
-  // Mobile Layout
-  container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    alignItems: 'center',
-  },
-
-  // Common Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-    gap: 12,
-  },
-  logoContainer: {
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  appName: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#111827',
-    letterSpacing: -0.5,
-  },
-
-  // Typography
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontFamily: Platform.OS === 'web' ? 'Plus Jakarta Sans' : undefined,
-  },
-
-  // Form Container
-  formContainer: {
-    width: '100%',
-    maxWidth: 440,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  formContainerDesktop: {
-    width: '100%',
-    maxWidth: 440,
-    padding: 0,
-    shadowColor: 'transparent',
-    shadowOpacity: 0,
-    elevation: 0,
-    borderWidth: 0,
-    backgroundColor: 'transparent',
-  },
-
-  // Inputs
   inputs: {
-    gap: 8, // Reduced from 12
-    marginBottom: 20, // Reduced from 24
+    gap: 16,
+    marginBottom: 24,
   },
-
-  signUpButton: {
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#6366F1',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+  strengthContainer: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-
-  // Divider
+  strengthBarBackground: {
+    flex: 1,
+    height: 4,
+    backgroundColor: designSystem.colors.background.tertiary,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  strengthBarFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  strengthText: {
+    fontSize: 12,
+    fontWeight: '600',
+    width: 50,
+    textAlign: 'right',
+  },
+  actionButton: {
+    marginTop: 8,
+  },
+  loginSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  alreadyAccountText: {
+    fontSize: 14,
+    color: designSystem.colors.text.secondary,
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: designSystem.colors.primary[600],
+  },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -355,48 +265,43 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: designSystem.colors.border.secondary,
   },
   orText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: designSystem.colors.text.tertiary,
     paddingHorizontal: 16,
     fontWeight: '500',
   },
-
-  // Social Buttons
   socialButtons: {
     flexDirection: 'row',
-    gap: 16,
+    gap: 12,
   },
   socialButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 48,
+    height: 52,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#fff',
+    borderColor: designSystem.colors.border.primary,
+    backgroundColor: designSystem.colors.background.primary,
     gap: 10,
   },
-  socialButtonText: {
-    fontSize: 15,
-    color: '#374151',
-    fontWeight: '600',
-  },
-  googleIcon: {
+  socialIcon: {
     width: 20,
     height: 20,
-    borderRadius: 10,
-    backgroundColor: '#DB4437',
+  },
+  appleIconPlaceholder: {
+    width: 20,
+    height: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  googleIconText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  socialButtonText: {
+    fontSize: 15,
+    color: designSystem.colors.text.primary,
+    fontWeight: '600',
   },
 });

@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePostHog } from 'posthog-react-native';
 import { supabase } from '@/lib/supabase';
 import { Database } from '@/types/db';
 
@@ -8,6 +9,7 @@ type VeterinarianInsert = Database['public']['Tables']['veterinarians']['Insert'
 type VeterinarianUpdate = Database['public']['Tables']['veterinarians']['Update'];
 
 export function useVeterinarians(petId: string | null) {
+  const posthog = usePostHog();
   const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
   const [loading, setLoading] = useState(true);
 

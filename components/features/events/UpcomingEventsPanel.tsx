@@ -19,7 +19,7 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
   // The design shows a list without visible filters, but filters are good UX. Let's keep them if they fit or just show list.
   // The design doesn't explicitly show filters, just a list. I'll stick to a list for now to match the "timeline" look closely.
 
-  const { events, loading, error, refresh } = useEvents({
+  const { events, loading, refreshEvents: refresh } = useEvents({
     petIds: petId ? [petId] : [],
     startDate: new Date().toISOString().slice(0, 10),
     endDate: undefined,
@@ -45,10 +45,6 @@ export default function UpcomingEventsPanel({ petId, showAll = false }: Upcoming
     timelineLine: { backgroundColor: colors.neutral[200] },
   };
 
-  if (error) {
-    // keeping simplistic error view for now
-    return null;
-  }
 
   if (loading && events.length === 0) {
     return <ActivityIndicator size="small" color={colors.primary[500]} />;

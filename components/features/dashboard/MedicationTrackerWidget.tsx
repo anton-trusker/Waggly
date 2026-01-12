@@ -107,7 +107,7 @@ export default function MedicationTrackerWidget({
                                 key={med.id}
                                 style={[
                                     styles.medicationCard,
-                                    isOverdue(med.next_dose_date) && styles.medicationCardOverdue,
+                                    isOverdue(med.next_due_date || undefined) && styles.medicationCardOverdue,
                                 ] as any}
                                 onPress={() => onMedicationPress?.(med)}
                                 activeOpacity={0.7}
@@ -129,15 +129,15 @@ export default function MedicationTrackerWidget({
                                         <Ionicons
                                             name="time-outline"
                                             size={14}
-                                            color={isOverdue(med.next_dose_date) ? '#EF4444' : '#6B7280'}
+                                            color={isOverdue(med.next_due_date || undefined) ? '#EF4444' : '#6B7280'}
                                         />
                                         <Text
                                             style={[
                                                 styles.nextDoseText,
-                                                isOverdue(med.next_dose_date) && styles.nextDoseTextOverdue,
+                                                isOverdue(med.next_due_date || undefined) && styles.nextDoseTextOverdue,
                                             ] as any}
                                         >
-                                            Next dose: {formatNextDose(med.next_dose_date)}
+                                            Next dose: {formatNextDose(med.next_due_date || undefined)}
                                         </Text>
                                     </View>
 
@@ -150,7 +150,7 @@ export default function MedicationTrackerWidget({
                                     </TouchableOpacity>
                                 </View>
 
-                                {isOverdue(med.next_dose_date) && (
+                                {isOverdue(med.next_due_date || undefined) && (
                                     <View style={styles.overdueStrip}>
                                         <Ionicons name="warning" size={12} color="#fff" />
                                         <Text style={styles.overdueStripText}>Overdue</Text>

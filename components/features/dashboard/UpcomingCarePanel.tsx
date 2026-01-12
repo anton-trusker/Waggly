@@ -63,8 +63,8 @@ const UpcomingCarePanel: React.FC<UpcomingCarePanelProps> = ({ petId }) => {
 
     const getEventColor = (type?: string) => {
         if (['vet', 'vaccination', 'medication'].includes(type || '')) return theme.colors.primary[500];
-        if (['grooming'].includes(type || '')) return theme.colors.secondary.leaf;
-        if (['training', 'walking'].includes(type || '')) return theme.colors.secondary.sunDark;
+        if (['grooming'].includes(type || '')) return theme.colors.secondary[500];
+        if (['training', 'walking'].includes(type || '')) return theme.colors.warning[600];
         return theme.colors.primary[400];
     };
 

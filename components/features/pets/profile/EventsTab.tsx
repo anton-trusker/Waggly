@@ -17,8 +17,8 @@ export default function EventsTab({ petId }: EventsTabProps) {
     const { theme } = useAppTheme();
     const { events } = useEvents({ petIds: petId ? [petId] : [] });
 
-    const upcomingEvents = events?.filter(e => new Date(e.date) > new Date()) || [];
-    const pastEvents = events?.filter(e => new Date(e.date) <= new Date()) || [];
+    const upcomingEvents = events?.filter(e => new Date(e.dueDate) > new Date()) || [];
+    const pastEvents = events?.filter(e => new Date(e.dueDate) <= new Date()) || [];
 
     const getEventIcon = (type?: string) => {
         switch (type) {
@@ -83,12 +83,12 @@ export default function EventsTab({ petId }: EventsTabProps) {
                 {upcomingEvents.length > 0 && (
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <IconSymbol name="calendar" android_material_icon_name="schedule" size={24} color={theme.colors.primary[500]} />
+                            <IconSymbol ios_icon_name="calendar" android_material_icon_name="schedule" size={24} color={theme.colors.primary[500]} />
                             <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Upcoming Events</Text>
                         </View>
                         <View style={styles.list}>
                             {upcomingEvents.map((event) => {
-                                const daysUntil = Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                                const daysUntil = Math.ceil((new Date(event.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
                                 const colors = getEventColor(event.type);
 
                                 return (
@@ -106,7 +106,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                         <View style={styles.cardContent}>
                                             <View style={[styles.iconContainer, { backgroundColor: colors.bg }]}>
                                                 <IconSymbol
-                                                    name={getEventIcon(event.type) as any}
+                                                    ios_icon_name={getEventIcon(event.type) as any}
                                                     android_material_icon_name={getMaterialIcon(event.type) as any}
                                                     size={24}
                                                     color={colors.text}
@@ -120,7 +120,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                                     </Text>
                                                 </View>
                                                 <Text style={[styles.cardMeta, { color: theme.colors.text.secondary }]}>
-                                                    {formatDate(event.date)} • {event.time || 'All day'}
+                                                    {formatDate(event.dueDate)} • {event.time || 'All day'}
                                                 </Text>
                                                 {event.location && (
                                                     <Text style={[styles.cardLocation, { color: theme.colors.text.tertiary }]}>{event.location}</Text>
@@ -141,7 +141,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                 {pastEvents.length > 0 && (
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <IconSymbol name="clock" android_material_icon_name="history" size={24} color={theme.colors.primary[500]} />
+                            <IconSymbol ios_icon_name="clock" android_material_icon_name="history" size={24} color={theme.colors.primary[500]} />
                             <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Past Events</Text>
                         </View>
                         <View style={styles.list}>
@@ -162,7 +162,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                         <View style={styles.cardContent}>
                                             <View style={[styles.iconContainer, { backgroundColor: colors.bg }]}>
                                                 <IconSymbol
-                                                    name={getEventIcon(event.type) as any}
+                                                    ios_icon_name={getEventIcon(event.type) as any}
                                                     android_material_icon_name={getMaterialIcon(event.type) as any}
                                                     size={24}
                                                     color={colors.text}
@@ -172,7 +172,7 @@ export default function EventsTab({ petId }: EventsTabProps) {
                                                 <View style={styles.cardHeader}>
                                                     <Text style={[styles.cardTitle, { color: theme.colors.text.primary }]}>{event.title}</Text>
                                                     <Text style={[styles.daysUntil, { color: theme.colors.text.tertiary }]}>
-                                                        {formatDate(event.date)}
+                                                        {formatDate(event.dueDate)}
                                                     </Text>
                                                 </View>
                                                 <Text style={[styles.cardMeta, { color: theme.colors.text.secondary }]}>
@@ -193,14 +193,14 @@ export default function EventsTab({ petId }: EventsTabProps) {
                 {/* Empty State */}
                 {(!events || events.length === 0) && (
                     <View style={[styles.emptyState, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.secondary }]}>
-                        <IconSymbol name="calendar" android_material_icon_name="event" size={48} color={theme.colors.text.tertiary} />
+                        <IconSymbol ios_icon_name="calendar" android_material_icon_name="event" size={48} color={theme.colors.text.tertiary} />
                         <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>No events yet</Text>
                         <Text style={[styles.emptyDesc, { color: theme.colors.text.secondary }]}>Add events to track your pet's care schedule</Text>
                         <TouchableOpacity
                             onPress={() => router.push(`/(tabs)/pets/events/new?petId=${petId}` as any)}
                             style={[styles.addButton, { backgroundColor: theme.colors.primary[500], marginTop: 16 }] as any}
                         >
-                            <IconSymbol name="plus" android_material_icon_name="add" size={16} color="#fff" />
+                            <IconSymbol ios_icon_name="plus" android_material_icon_name="add" size={16} color="#fff" />
                             <Text style={styles.addButtonText}>Add First Event</Text>
                         </TouchableOpacity>
                     </View>

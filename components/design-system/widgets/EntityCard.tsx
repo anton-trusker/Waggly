@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, ViewStyle, TouchableOpacity, Platform, StyleProp } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 
 interface EntityCardProps {
     children: React.ReactNode;
     onPress?: () => void;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
     variant?: 'elevated' | 'outlined' | 'flat';
 }
 

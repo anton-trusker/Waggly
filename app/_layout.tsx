@@ -73,7 +73,7 @@ function RootLayoutNav() {
             if (updateError) throw updateError;
 
             Alert.alert('Success', 'You have successfully joined as a co-owner!');
-            router.push('/(tabs)/profile/co-owners');
+            router.push('/(tabs)/profile');
 
           } catch (err: any) {
             Alert.alert('Error', 'Failed to accept invite: ' + err.message);
@@ -98,7 +98,7 @@ function RootLayoutNav() {
   useEffect(() => {
     if (!isMounted || loading) return; // Don't navigate before mount or while loading session
 
-    const inAuthGroup = segments[0] === '(auth)' || (segments[0] === 'web' && segments[1] === 'auth');
+    const inAuthGroup = segments[0] === '(auth)';
     const isPublicRoute = segments[0] === 'pet' && segments[1] === 'shared';
 
     // If logged in and still in auth pages, go to home

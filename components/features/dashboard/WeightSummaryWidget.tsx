@@ -14,8 +14,8 @@ export default function WeightSummaryWidget() {
     return (
         <View style={[styles.container, { borderColor: theme.colors.border.primary, backgroundColor: theme.colors.background.secondary }]}>
             <View style={styles.header}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.colors.secondary.mint }]}>
-                    <IconSymbol android_material_icon_name="monitor-weight" ios_icon_name="scalemass" size={20} color={theme.colors.secondary.leaf} />
+                <View style={[styles.iconContainer, { backgroundColor: theme.colors.secondary[200] }]}>
+                    <IconSymbol android_material_icon_name="monitor-weight" ios_icon_name="scalemass" size={20} color={theme.colors.secondary[700]} />
                 </View>
                 <Text style={[styles.title, { color: theme.colors.text.primary }]}>Latest Weight</Text>
             </View>

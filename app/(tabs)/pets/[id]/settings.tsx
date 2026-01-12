@@ -41,14 +41,14 @@ export default function SettingsTab() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background.default }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background.primary }]}>
 
       {/* Management Section */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.management')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowManageAccess(true)}
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>
@@ -88,7 +88,7 @@ export default function SettingsTab() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.privacy')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowPrivacy(true)} // Open modal (mock for now)
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>
@@ -109,7 +109,7 @@ export default function SettingsTab() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text.secondary }]}>{t('pet_profile.settings.sections.notifications')}</Text>
 
         <TouchableOpacity
-          style={[styles.settingItem, { backgroundColor: theme.colors.background.card, borderColor: theme.colors.border.primary }] as any}
+          style={[styles.settingItem, { backgroundColor: theme.colors.background.secondary, borderColor: theme.colors.border.primary }] as any}
           onPress={() => setShowNotifications(true)} // Open modal (mock for now)
         >
           <View style={[styles.settingIcon, { backgroundColor: theme.colors.background.tertiary }]}>

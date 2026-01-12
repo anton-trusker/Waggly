@@ -6,7 +6,7 @@ import { BlurView } from 'expo-blur';
 interface HealthEventSelectorModalProps {
     visible: boolean;
     onClose: () => void;
-    onSelect: (type: 'vaccine' | 'medication' | 'visit') => void;
+    onSelect: (type: 'vaccination' | 'visit' | 'treatment' | 'weight' | 'medication') => void;
 }
 
 export default function HealthEventSelectorModal({ visible, onClose, onSelect }: HealthEventSelectorModalProps) {
@@ -18,15 +18,15 @@ export default function HealthEventSelectorModal({ visible, onClose, onSelect }:
             onRequestClose={onClose}
         >
             <Pressable style={styles.overlay} onPress={onClose}>
-                <Pressable style={styles.content} onPress={(e) => e.stopPPropagation && e.stopPropagation()}>
+                <Pressable style={styles.content} onPress={(e) => e.stopPropagation && e.stopPropagation()}>
                     <Text style={styles.title}>Add Health Record</Text>
 
                     <TouchableOpacity
                         style={styles.option}
-                        onPress={() => onSelect('vaccine')}
+                        onPress={() => onSelect('vaccination')}
                     >
                         <View style={[styles.iconContainer, { backgroundColor: '#EFF6FF' }]}>
-                            <Text style={styles.icon}>💉</Text>
+                            <Text style={styles.iconEmoji}>💉</Text>
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.optionTitle}>Vaccination</Text>
@@ -40,7 +40,7 @@ export default function HealthEventSelectorModal({ visible, onClose, onSelect }:
                         onPress={() => onSelect('medication')}
                     >
                         <View style={[styles.iconContainer, { backgroundColor: '#FEF2F2' }]}>
-                            <Text style={styles.icon}>💊</Text>
+                            <Text style={styles.iconEmoji}>💊</Text>
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.optionTitle}>Medication</Text>
@@ -54,11 +54,25 @@ export default function HealthEventSelectorModal({ visible, onClose, onSelect }:
                         onPress={() => onSelect('visit')}
                     >
                         <View style={[styles.iconContainer, { backgroundColor: '#F0FDF4' }]}>
-                            <Text style={styles.icon}>🏥</Text>
+                            <Text style={styles.iconEmoji}>🏥</Text>
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.optionTitle}>Vet Visit</Text>
                             <Text style={styles.optionDescription}>Record a checkup or consultation</Text>
+                        </View>
+                        <Text style={styles.arrow}>›</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => onSelect('weight')}
+                    >
+                        <View style={[styles.iconContainer, { backgroundColor: '#F5F3FF' }]}>
+                            <Text style={styles.iconEmoji}>⚖️</Text>
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.optionTitle}>Weight</Text>
+                            <Text style={styles.optionDescription}>Record current weight</Text>
                         </View>
                         <Text style={styles.arrow}>›</Text>
                     </TouchableOpacity>
@@ -76,8 +90,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     content: {
-        width: '100%',
-        maxWidth: 500,
+        width: '90%',
+        maxWidth: 400,
         backgroundColor: '#fff',
         borderRadius: 20,
         padding: 24,
@@ -87,51 +101,46 @@ const styles = StyleSheet.create({
         shadowRadius: 20,
         elevation: 5,
     },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
     title: {
         fontSize: 20,
         fontWeight: '700',
         color: '#111827',
+        marginBottom: 16,
     },
-    closeButton: {
-        padding: 4,
-    },
-    subtitle: {
-        fontSize: 14,
-        color: '#6B7280',
-        marginBottom: 24,
-    },
-    grid: {
+    option: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 16,
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
     },
-    card: {
-        width: '47%', // roughly half - gap
-        backgroundColor: '#F9FAFB',
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-        borderRadius: 12,
-        padding: 24,
+    iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 12,
+        marginRight: 16,
     },
-    icon: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        alignItems: 'center',
-        justifyContent: 'center',
+    iconEmoji: {
+        fontSize: 24,
     },
-    label: {
+    textContainer: {
+        flex: 1,
+    },
+    optionTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#374151',
+        color: '#111827',
+    },
+    optionDescription: {
+        fontSize: 14,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    arrow: {
+        fontSize: 24,
+        color: '#9CA3AF',
+        marginLeft: 8,
     },
 });

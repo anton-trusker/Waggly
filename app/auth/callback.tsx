@@ -12,7 +12,7 @@ export default function AuthCallback() {
       try {
         // Get the current session to check if user is authenticated
         const { data: { session }, error } = await supabase.auth.getSession();
-        
+
         if (error) {
           console.error('Error getting session:', error);
           router.replace('/(auth)/login');
@@ -33,7 +33,7 @@ export default function AuthCallback() {
             router.replace('/(tabs)/(home)');
           } else {
             // User needs to complete profile setup
-            router.replace('/(onboarding)/language-selection');
+            router.replace('/(tabs)/(home)');
           }
         } else {
           // No session found, redirect to login

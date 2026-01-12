@@ -11,7 +11,7 @@ interface AuthContextType {
   profile: any | null; // Added profile state
   refreshProfile: () => Promise<void>; // Added refresh function
   signUp: (email: string, password: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
 }
@@ -126,7 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe?: boolean) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -136,7 +136,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!error) {
-      posthog.capture('user_signed_in', { email });
+      posthog.capture('user_signed_in', { email, remember_me: rememberMe });
+      // Store remember_me preference if needed, although Supabase persists by default
+      if (typeof localStorage !== 'undefined') {
+        if (rememberMe) {
+          localStorage.setItem('remember_me', 'true');
+        } else {
+          localStorage.removeItem('remember_me');
+        }
+      }
     }
 
     return { error };

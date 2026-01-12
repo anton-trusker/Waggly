@@ -148,7 +148,7 @@ export default function MedicationForm({
                             contentContainerStyle={styles.scrollContent}
                             showsVerticalScrollIndicator={false}
                         >
-                            <FormField
+                            <FormField<TreatmentFormData>
                                 control={control}
                                 name="treatmentName"
                                 label="Medication Name"
@@ -156,7 +156,7 @@ export default function MedicationForm({
                                 required
                             />
 
-                            <FormSelect
+                            <FormSelect<TreatmentFormData>
                                 control={control}
                                 name="category"
                                 label="Category"
@@ -166,7 +166,7 @@ export default function MedicationForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormDatePicker
+                                    <FormDatePicker<TreatmentFormData>
                                         control={control}
                                         name="startDate"
                                         label="Start Date"
@@ -174,7 +174,7 @@ export default function MedicationForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormDatePicker
+                                    <FormDatePicker<TreatmentFormData>
                                         control={control}
                                         name="endDate"
                                         label="End Date"
@@ -185,7 +185,7 @@ export default function MedicationForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<TreatmentFormData>
                                         control={control}
                                         name="dosage"
                                         label="Dosage"
@@ -194,7 +194,7 @@ export default function MedicationForm({
                                     />
                                 </View>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<TreatmentFormData>
                                         control={control}
                                         name="frequency"
                                         label="Frequency"
@@ -204,7 +204,7 @@ export default function MedicationForm({
                                 </View>
                             </View>
 
-                            <FormField
+                            <FormField<TreatmentFormData>
                                 control={control}
                                 name="timeOfDay"
                                 label="Time of Day"
@@ -213,7 +213,7 @@ export default function MedicationForm({
 
                             <View style={styles.row}>
                                 <View style={styles.halfWidth}>
-                                    <FormField
+                                    <FormField<TreatmentFormData>
                                         control={control}
                                         name="prescribedBy"
                                         label="Prescribed By"
@@ -258,7 +258,7 @@ export default function MedicationForm({
                                 )}
                             />
 
-                            <FormField
+                            <FormField<TreatmentFormData>
                                 control={control}
                                 name="notes"
                                 label="Notes"
