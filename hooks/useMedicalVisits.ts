@@ -2,21 +2,38 @@ import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MedicalVisit } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePostHog } from 'posthog-react-native';
 
-export function useMedicalVisits(petId: string) {
+export function useMedicalVisits(petId: string | null = null) {
   const [visits, setVisits] = useState<MedicalVisit[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const posthog = usePostHog();
 
   const fetchVisits = useCallback(async () => {
-    if (!user || !petId) return;
+    if (!user) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('medical_visits')
-        .select('*')
-        .eq('pet_id', petId)
-        .order('date', { ascending: false });
+      let query = supabase.from('medical_visits').select('*');
+
+      if (petId) {
+        query = query.eq('pet_id', petId);
+      } else {
+        const { data: userPets } = await supabase
+          .from('pets')
+          .select('id')
+          .eq('user_id', user.id);
+
+        if (userPets && userPets.length > 0) {
+          query = query.in('pet_id', userPets.map(p => p.id));
+        } else {
+          setVisits([]);
+          setLoading(false);
+          return;
+        }
+      }
+
+      const { data, error } = await query.order('date', { ascending: false });
 
       if (error) throw error;
       setVisits(data || []);

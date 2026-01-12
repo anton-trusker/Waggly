@@ -1,5 +1,5 @@
 import { YStack, Label, Text } from 'tamagui';
-import { Input } from '../base/Input';
+import { Input } from '../design-system/primitives/Input';
 import { ComponentProps } from 'react';
 
 export interface TextInputProps extends ComponentProps<typeof Input> {

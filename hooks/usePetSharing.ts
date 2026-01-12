@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSTHOG_API_KEY, POSTHOG_HOST } from '@/lib/posthog';
+import { usePostHog } from 'posthog-react-native';
 
 export interface PetShareToken {
     id: string;
@@ -40,6 +41,7 @@ export interface SharedPetData {
 export function usePetSharing(petId?: string) {
     const [tokens, setTokens] = useState<ShareToken[]>([]);
     const [loading, setLoading] = useState(false);
+    const posthog = usePostHog();
 
     // Fetch all share tokens for a pet
     const fetchTokens = useCallback(async () => {
@@ -102,23 +104,10 @@ export function usePetSharing(petId?: string) {
             }
 
             // Track shared event
-            try {
-                if (typeof window === 'undefined') {
-                    // Only try to import posthog-react-native on native
-                    // @ts-ignore
-                    const { default: PostHog } = await import('posthog-react-native');
-                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                    if (ph) {
-                        ph.capture('pet_shared', {
-                            pet_id: petId,
-                            permission_level: permissionLevel,
-                            platform: 'native'
-                        });
-                    }
-                }
-            } catch (e) {
-                console.warn('PostHog tracking failed', e);
-            }
+            posthog.capture('pet_shared', {
+                pet_id: petId,
+                permission_level: permissionLevel,
+            });
 
             await fetchTokens(); // Refresh list
             return { data, error: null };
@@ -173,21 +162,10 @@ export function usePetSharing(petId?: string) {
             }
 
             // Track revocation
-            try {
-                if (typeof window === 'undefined') {
-                    // @ts-ignore
-                    const { default: PostHog } = await import('posthog-react-native');
-                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                    if (ph) {
-                        ph.capture('pet_share_revoked', {
-                            token_id: tokenId,
-                            pet_id: petId
-                        });
-                    }
-                }
-            } catch (e) {
-                console.warn('PostHog tracking failed', e);
-            }
+            posthog.capture('pet_share_revoked', {
+                token_id: tokenId,
+                pet_id: petId
+            });
 
             await fetchTokens(); // Refresh list
             return { error: null };
@@ -211,21 +189,10 @@ export function usePetSharing(petId?: string) {
             }
 
             // Track deletion
-            try {
-                if (typeof window === 'undefined') {
-                    // @ts-ignore
-                    const { default: PostHog } = await import('posthog-react-native');
-                    const ph = await PostHog.init(POSTHOG_API_KEY, { host: POSTHOG_HOST });
-                    if (ph) {
-                        ph.capture('pet_share_deleted', {
-                            token_id: tokenId,
-                            pet_id: petId
-                        });
-                    }
-                }
-            } catch (e) {
-                console.warn('PostHog tracking failed', e);
-            }
+            posthog.capture('pet_share_deleted', {
+                token_id: tokenId,
+                pet_id: petId
+            });
 
             await fetchTokens(); // Refresh list
             return { error: null };
@@ -239,22 +206,24 @@ export function usePetSharing(petId?: string) {
     const validateToken = async (token: string): Promise<{ data: SharedPetData | null, error: any }> => {
         try {
             // First, validate the token
-            const { data: tokenData, error: tokenError } = await supabase
+            const { data, error: tokenError } = await (supabase as any)
                 .from('pet_share_tokens')
                 .select('*')
                 .eq('token', token)
                 .eq('is_active', true)
                 .maybeSingle();
 
+            const tokenData = data as any;
+
             if (tokenError || !tokenData) {
                 return { data: null, error: tokenError || new Error('Invalid or expired token') };
             }
 
             // Update access count and timestamp
-            await supabase
+            await (supabase as any)
                 .from('pet_share_tokens')
                 .update({
-                    accessed_count: tokenData.accessed_count + 1,
+                    accessed_count: (tokenData.accessed_count || 0) + 1,
                     last_accessed_at: new Date().toISOString(),
                 })
                 .eq('id', tokenData.id);
@@ -270,13 +239,13 @@ export function usePetSharing(petId?: string) {
                 return { data: null, error: petError || new Error('Pet not found') };
             }
 
-            const sharedData: SharedPetData = petData;
+            const sharedData: SharedPetData = petData as any;
 
             // If advanced permission, fetch additional data
             if (tokenData.permission_level === 'advanced') {
                 // Fetch allergies
-                const { data: allergies } = await supabase
-                    .from('allergies')
+                const { data: allergies } = await (supabase
+                    .from('allergies') as any)
                     .select('*')
                     .eq('pet_id', tokenData.pet_id);
 
@@ -295,14 +264,14 @@ export function usePetSharing(petId?: string) {
                     .order('start_date', { ascending: false });
 
                 // Fetch conditions
-                const { data: conditions } = await supabase
-                    .from('conditions')
+                const { data: conditions } = await (supabase
+                    .from('conditions') as any)
                     .select('*')
                     .eq('pet_id', tokenData.pet_id);
 
                 // Fetch recent health metrics
-                const { data: health_metrics } = await supabase
-                    .from('health_metrics')
+                const { data: health_metrics } = await (supabase
+                    .from('health_metrics') as any)
                     .select('*')
                     .eq('pet_id', tokenData.pet_id)
                     .order('date', { ascending: false })

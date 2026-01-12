@@ -4,36 +4,34 @@ import { Calendar } from 'react-native-calendars';
 import { DateData, MarkedDates } from 'react-native-calendars/src/types';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { useEvents, Event } from '@/hooks/useEvents';
+import { useEvents, CalendarEvent } from '@/hooks/useEvents';
 import { usePets } from '@/hooks/usePets';
 
 interface AppointmentCalendarProps {
     petId?: string;
-    onDayPress?: (date: string, events: Event[]) => void;
+    onDayPress?: (date: string, events: CalendarEvent[]) => void;
 }
 
 export default function AppointmentCalendar({ petId, onDayPress }: AppointmentCalendarProps) {
     const { theme, isDark } = useAppTheme();
+    const { events } = useEvents();
 
     // Filter events by pet if petId provided
     const filteredEvents = useMemo(() => {
         if (petId) {
             return events.filter(e => e.petId === petId);
         }
-        if (selectedPet) {
-            return events.filter(e => e.petId === selectedPet.id);
-        }
         return events;
-    }, [events, petId, selectedPet]);
+    }, [events, petId]);
 
     // Convert events to marked dates
     const markedDates: MarkedDates = useMemo(() => {
         const marked: MarkedDates = {};
 
         filteredEvents.forEach(event => {
-            if (!event.date) return;
+            if (!event.dueDate) return;
 
-            const dateStr = event.date;
+            const dateStr = event.dueDate.split('T')[0];
 
             // Determine color based on event type
             let color = designSystem.colors.primary[500];
@@ -83,7 +81,10 @@ export default function AppointmentCalendar({ petId, onDayPress }: AppointmentCa
     }), [isDark]);
 
     const handleDayPress = (day: DateData) => {
-        const dayEvents = filteredEvents.filter(e => e.date === day.dateString);
+        const dayEvents = filteredEvents.filter(e => {
+            const dateStr = e.dueDate.split('T')[0];
+            return dateStr === day.dateString;
+        });
         onDayPress?.(day.dateString, dayEvents);
     };
 

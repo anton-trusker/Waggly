@@ -19,8 +19,8 @@ export interface Priority {
 }
 
 export function usePriorities() {
-    const { treatments, loading: treatmentsLoading } = useTreatments();
-    const { visits, loading: visitsLoading } = useMedicalVisits();
+    const { treatments, loading: treatmentsLoading } = useTreatments(null);
+    const { visits, loading: visitsLoading } = useMedicalVisits(null);
     const { alerts, loading: alertsLoading } = usePriorityAlerts(1); // Today only
     const { pets } = usePets();
 
@@ -29,21 +29,21 @@ export function usePriorities() {
         return pet?.name || 'Unknown Pet';
     };
 
-    const isToday = (dateString?: string) => {
+    const isToday = (dateString?: string | null) => {
         if (!dateString) return false;
         const date = new Date(dateString);
         const today = new Date();
         return date.toDateString() === today.toDateString();
     };
 
-    const isPast = (dateString?: string) => {
+    const isPast = (dateString?: string | null) => {
         if (!dateString) return false;
         const date = new Date(dateString);
         const now = new Date();
         return date < now;
     };
 
-    const getTimeUrgency = (dateString?: string): 'critical' | 'high' | 'medium' => {
+    const getTimeUrgency = (dateString?: string | null): 'critical' | 'high' | 'medium' => {
         if (!dateString) return 'medium';
         const date = new Date(dateString);
         const now = new Date();
@@ -55,7 +55,7 @@ export function usePriorities() {
         return 'medium';
     };
 
-    const formatTimeUntil = (dateString?: string): string => {
+    const formatTimeUntil = (dateString?: string | null): string => {
         if (!dateString) return '';
         const date = new Date(dateString);
         const now = new Date();
@@ -74,17 +74,17 @@ export function usePriorities() {
         // Add today's medications
         if (treatments && Array.isArray(treatments)) {
             treatments
-                .filter(m => m.is_active && isToday(m.next_dose_date))
+                .filter(m => m.is_active && isToday(m.next_due_date))
                 .forEach(m => {
                     result.push({
                         id: `med-${m.id}`,
                         type: 'medication',
                         petId: m.pet_id,
                         petName: getPetName(m.pet_id),
-                        title: `${getPetName(m.pet_id)}'s medication ${formatTimeUntil(m.next_dose_date)}`,
+                        title: `${getPetName(m.pet_id)}'s medication ${formatTimeUntil(m.next_due_date)}`,
                         description: m.treatment_name,
-                        dueTime: m.next_dose_date,
-                        urgency: getTimeUrgency(m.next_dose_date),
+                        dueTime: m.next_due_date || undefined,
+                        urgency: getTimeUrgency(m.next_due_date),
                         completed: false,
                         icon: 'medication',
                         color: '#0D9488'
@@ -95,16 +95,16 @@ export function usePriorities() {
         // Add today's appointments
         if (visits && Array.isArray(visits)) {
             visits
-                .filter(v => isToday(v.visit_date))
+                .filter(v => isToday(v.date))
                 .forEach(v => {
                     result.push({
                         id: `visit-${v.id}`,
                         type: 'appointment',
                         petId: v.pet_id,
                         petName: getPetName(v.pet_id),
-                        title: `${getPetName(v.pet_id)}'s appointment ${formatTimeUntil(v.visit_date)}`,
+                        title: `${getPetName(v.pet_id)}'s appointment ${formatTimeUntil(v.date)}`,
                         description: v.reason || 'Vet visit',
-                        dueTime: v.visit_date,
+                        dueTime: v.date,
                         urgency: 'high',
                         completed: false,
                         icon: 'medical-services',

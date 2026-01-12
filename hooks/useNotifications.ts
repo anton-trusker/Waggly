@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Notification } from '@/types';
+import { usePostHog } from 'posthog-react-native';
 
 export function useNotifications() {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const posthog = usePostHog();
 
   const fetchNotifications = useCallback(async () => {
     if (!user) return;

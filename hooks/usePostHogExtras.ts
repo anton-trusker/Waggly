@@ -1,4 +1,4 @@
-import { useFeatureFlagPayload, useFeatureFlagVariantKey, usePostHog } from 'posthog-react-native';
+import { usePostHog } from 'posthog-react-native';
 import { useMemo } from 'react';
 
 export interface RemoteBannerConfig {
@@ -18,8 +18,8 @@ export function usePostHogExtras() {
      * Expects a feature flag (e.g., 'app-banner') with a JSON payload matching RemoteBannerConfig.
      */
     const getBanner = (flagName: string): RemoteBannerConfig | null => {
-        const isEnabled = posthog.isFeatureEnabled(flagName);
-        const payload = useFeatureFlagPayload(flagName) as any;
+        const isEnabled = posthog.getFeatureFlag(flagName);
+        const payload = posthog.getFeatureFlagPayload(flagName) as any;
 
         if (!isEnabled || !payload) return null;
 
@@ -29,7 +29,7 @@ export function usePostHogExtras() {
             message: payload.message || '',
             type: payload.type || 'info',
             link: payload.link,
-            active: isEnabled,
+            active: !!isEnabled,
         };
     };
 

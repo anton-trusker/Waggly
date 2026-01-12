@@ -1,4 +1,4 @@
-import { Input } from '../base/Input';
+import { Input } from '../design-system/primitives/Input';
 import { XStack } from 'tamagui';
 import { ComponentProps } from 'react';
 

@@ -3,25 +3,43 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Treatment } from '@/types';
 import { usePostHog } from 'posthog-react-native';
+import { useAuth } from '@/contexts/AuthContext';
 
-export function useTreatments(petId: string | null) {
+export function useTreatments(petId: string | null = null) {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const posthog = usePostHog();
 
   const fetchTreatments = useCallback(async () => {
-    if (!petId) {
+    if (!user) {
       setTreatments([]);
       setLoading(false);
       return;
     }
 
     try {
-      const { data, error } = await supabase
-        .from('medications')
-        .select('*')
-        .eq('pet_id', petId)
-        .order('start_date', { ascending: false });
+      let query = supabase.from('medications').select('*');
+
+      if (petId) {
+        query = query.eq('pet_id', petId);
+      } else {
+        // If no petId, fetch for all of user's pets
+        const { data: userPets } = await supabase
+          .from('pets')
+          .select('id')
+          .eq('user_id', user.id);
+
+        if (userPets && userPets.length > 0) {
+          query = query.in('pet_id', userPets.map(p => p.id));
+        } else {
+          setTreatments([]);
+          setLoading(false);
+          return;
+        }
+      }
+
+      const { data, error } = await query.order('start_date', { ascending: false });
 
       if (error) {
         console.error('Error fetching treatments:', error);

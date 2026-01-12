@@ -42,13 +42,16 @@ export {
     ProgressBar,
     EmptyState,
     LoadingSpinner,
+    LoadingSpinner,
+    Badge,
     type ListItemProps,
     type StatProps,
     type ProgressBarProps,
     type EmptyStateProps,
     type LoadingSpinnerProps,
+    type BadgeProps,
 } from './display';
 
 // Re-export useful Tamagui primitives
-export { Text, H1, H2, H3, H4, H5, H6, Paragraph, Separator, ScrollView } from 'tamagui';
+export { Text, H1, H2, H3, H4, H5, H6, Paragraph, Separator, Separator as Divider, ScrollView } from 'tamagui';
 export type { TextProps, SeparatorProps, ScrollViewProps } from 'tamagui';
