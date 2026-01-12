@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, KeyboardAvoidingView } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { colors } from '@/styles/commonStyles';
-import AppHeader from '@/components/layout/AppHeader';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { usePets } from '@/hooks/usePets';
 import { useDocuments } from '@/hooks/useDocuments';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import BottomCTA from '@/components/ui/BottomCTA';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
+
+// Design System
+import { designSystem } from '@/constants/designSystem';
+import { TextField } from '@/components/design-system/forms/TextField';
+import { Button } from '@/components/design-system/primitives/Button';
+import AppHeader from '@/components/layout/AppHeader';
 
 const DOCUMENT_TYPES = [
     { id: 'vaccination', label: 'Vaccination', icon: 'medical' },
@@ -21,19 +23,34 @@ const DOCUMENT_TYPES = [
     { id: 'other', label: 'Other', icon: 'document-text' },
 ];
 
+interface DocumentFormData {
+    name: string;
+    type: string;
+    notes: string;
+    file: DocumentPicker.DocumentPickerAsset | null;
+}
+
 export default function AddDocumentsScreen() {
     const { petId: initialPetId } = useLocalSearchParams();
     const { pets } = usePets();
     const { uploadDocument } = useDocuments(initialPetId as string);
 
     const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
-    const [file, setFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
-    const [name, setName] = useState('');
-    const [type, setType] = useState('medical');
-    const [notes, setNotes] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Update selected pet if initialPetId changes
+    const methods = useForm<DocumentFormData>({
+        defaultValues: {
+            name: '',
+            type: 'medical',
+            notes: '',
+            file: null,
+        }
+    });
+
+    const { control, handleSubmit, setValue, watch } = methods;
+    const currentFile = watch('file');
+    const currentType = watch('type');
+
     useEffect(() => {
         if (initialPetId) setSelectedPetId(initialPetId as string);
     }, [initialPetId]);
@@ -48,9 +65,9 @@ export default function AddDocumentsScreen() {
             if (result.canceled) return;
 
             const asset = result.assets[0];
-            setFile(asset);
-            if (!name) {
-                setName(asset.name);
+            setValue('file', asset);
+            if (!watch('name')) {
+                setValue('name', asset.name);
             }
         } catch (error) {
             console.error('Error picking document:', error);
@@ -58,8 +75,8 @@ export default function AddDocumentsScreen() {
         }
     };
 
-    const handleSave = async () => {
-        if (!file || !name) {
+    const onSubmit = async (data: DocumentFormData) => {
+        if (!data.file || !data.name) {
             Alert.alert('Error', 'Please select a file and enter a name');
             return;
         }
@@ -72,11 +89,11 @@ export default function AddDocumentsScreen() {
 
         try {
             const { error } = await uploadDocument(
-                file.uri,
-                type as any,
-                name,
-                { size_bytes: file.size, notes },
-                file.mimeType,
+                data.file.uri,
+                data.type as any,
+                data.name,
+                { size_bytes: data.file.size, notes: data.notes },
+                data.file.mimeType,
                 selectedPetId
             );
 
@@ -96,8 +113,11 @@ export default function AddDocumentsScreen() {
     };
 
     return (
-        <View style={styles.container}>
-
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <AppHeader title="Add Document" showBack />
 
             <ScrollView contentContainerStyle={styles.content}>
                 {/* Pet Selector */}
@@ -107,7 +127,7 @@ export default function AddDocumentsScreen() {
                         {pets.map(pet => (
                             <TouchableOpacity
                                 key={pet.id}
-                                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
+                                style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
                                 onPress={() => setSelectedPetId(pet.id)}
                             >
                                 <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -116,108 +136,102 @@ export default function AddDocumentsScreen() {
                     </ScrollView>
                 </View>
 
-                {/* File Upload Area */}
-                <View style={styles.section}>
-                    <Text style={styles.label}>File</Text>
-                    {file ? (
-                        <View style={styles.filePreview}>
-                            <View style={styles.fileIcon}>
-                                <Ionicons name="document" size={24} color={colors.primary} />
-                            </View>
-                            <View style={styles.fileInfo}>
-                                <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
-                                <Text style={styles.fileSize}>
-                                    {file.size ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : 'Unknown size'}
-                                </Text>
-                            </View>
-                            <TouchableOpacity onPress={() => setFile(null)}>
-                                <Ionicons name="close-circle" size={20} color={colors.textSecondary} />
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <TouchableOpacity style={styles.uploadArea} onPress={handlePickFile}>
-                            <Ionicons name="cloud-upload-outline" size={32} color={colors.textSecondary} />
-                            <Text style={styles.uploadText}>Click to select a file</Text>
-                            <Text style={styles.uploadSubtext}>PDF, JPG, PNG up to 10MB</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-
-                {/* Form Fields */}
-                <View style={styles.formCard}>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Document Name</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={name}
-                            onChangeText={setName}
-                            placeholder="e.g. Vaccination Certificate"
-                            placeholderTextColor={colors.textSecondary}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Category</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
-                            {DOCUMENT_TYPES.map((docType) => (
-                                <TouchableOpacity
-                                    key={docType.id}
-                                    style={[
-                                        styles.typeOption,
-                                        type === docType.id && styles.typeOptionActive
-                                    ] as any}
-                                    onPress={() => setType(docType.id)}
-                                >
-                                    <Ionicons
-                                        name={docType.icon as any}
-                                        size={16}
-                                        color={type === docType.id ? colors.primary : colors.textSecondary}
-                                    />
-                                    <Text style={[
-                                        styles.typeText,
-                                        type === docType.id && styles.typeTextActive
-                                    ]}>
-                                        {docType.label}
+                <FormProvider {...methods}>
+                    {/* File Upload Area */}
+                    <View style={styles.section}>
+                        <Text style={styles.label}>File</Text>
+                        {currentFile ? (
+                            <View style={styles.filePreview}>
+                                <View style={styles.fileIcon}>
+                                    <Ionicons name="document" size={24} color={designSystem.colors.primary[500]} />
+                                </View>
+                                <View style={styles.fileInfo}>
+                                    <Text style={styles.fileName} numberOfLines={1}>{currentFile.name}</Text>
+                                    <Text style={styles.fileSize}>
+                                        {currentFile.size ? (currentFile.size / 1024 / 1024).toFixed(2) + ' MB' : 'Unknown size'}
                                     </Text>
+                                </View>
+                                <TouchableOpacity onPress={() => setValue('file', null)}>
+                                    <Ionicons name="close-circle" size={20} color={designSystem.colors.text.secondary} />
                                 </TouchableOpacity>
-                            ))}
-                        </ScrollView>
+                            </View>
+                        ) : (
+                            <TouchableOpacity style={styles.uploadArea} onPress={handlePickFile}>
+                                <Ionicons name="cloud-upload-outline" size={32} color={designSystem.colors.text.secondary} />
+                                <Text style={styles.uploadText}>Click to select a file</Text>
+                                <Text style={styles.uploadSubtext}>PDF, JPG, PNG up to 10MB</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.inputLabel}>Notes (Optional)</Text>
-                        <TextInput
-                            style={[styles.input, styles.textArea] as any}
-                            value={notes}
-                            onChangeText={setNotes}
+                    {/* Form Fields */}
+                    <View style={styles.formCard}>
+                        <TextField
+                            control={control}
+                            name="name"
+                            label="Document Name"
+                            placeholder="e.g. Vaccination Certificate"
+                            required
+                        />
+
+                        <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.inputLabel}>Category</Text>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
+                                {DOCUMENT_TYPES.map((docType) => (
+                                    <TouchableOpacity
+                                        key={docType.id}
+                                        style={[
+                                            styles.typeOption,
+                                            currentType === docType.id && styles.typeOptionActive
+                                        ]}
+                                        onPress={() => setValue('type', docType.id)}
+                                    >
+                                        <Ionicons
+                                            name={docType.icon as any}
+                                            size={16}
+                                            color={currentType === docType.id ? designSystem.colors.primary[600] : designSystem.colors.text.secondary}
+                                        />
+                                        <Text style={[
+                                            styles.typeText,
+                                            currentType === docType.id && styles.typeTextActive
+                                        ]}>
+                                            {docType.label}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+
+                        <TextField
+                            control={control}
+                            name="notes"
+                            label="Notes (Optional)"
                             placeholder="Add any details..."
-                            placeholderTextColor={colors.textSecondary}
                             multiline
                             numberOfLines={3}
                         />
+
+                        <View style={{ marginTop: 24 }}>
+                            <Button
+                                title={loading ? "Uploading..." : "Upload Document"}
+                                onPress={handleSubmit(onSubmit)}
+                                variant="primary"
+                                size="lg"
+                                loading={loading}
+                                disabled={!currentFile}
+                            />
+                        </View>
                     </View>
-                </View>
-
-                {/* Spacer for bottom button */}
-                <View style={{ height: 100 }} />
+                </FormProvider>
             </ScrollView>
-
-            <BottomCTA
-                onBack={() => router.back()}
-                onPrimary={handleSave}
-                primaryLabel="Upload Document"
-                disabled={loading}
-            />
-
-            <LoadingOverlay visible={loading} message="Uploading..." />
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.background,
+        backgroundColor: designSystem.colors.background.secondary,
     },
     content: {
         padding: 20,
@@ -229,7 +243,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: colors.textSecondary,
+        color: designSystem.colors.text.secondary,
         marginBottom: 10,
     },
     petRow: {
@@ -239,56 +253,56 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 20,
-        backgroundColor: colors.card,
+        backgroundColor: designSystem.colors.background.primary,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: designSystem.colors.neutral[200],
     },
     petChipSelected: {
-        backgroundColor: colors.primary,
-        borderColor: colors.primary,
+        backgroundColor: designSystem.colors.primary[50],
+        borderColor: designSystem.colors.primary[500],
     },
     petChipText: {
-        color: colors.text,
+        color: designSystem.colors.text.primary,
         fontWeight: '500',
     },
     petChipTextSelected: {
-        color: '#fff',
+        color: designSystem.colors.primary[700],
     },
     uploadArea: {
         height: 120,
         borderWidth: 2,
-        borderColor: colors.border,
+        borderColor: designSystem.colors.neutral[200],
         borderStyle: 'dashed',
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: colors.card,
+        backgroundColor: designSystem.colors.background.primary,
         gap: 8,
     },
     uploadText: {
         fontSize: 16,
         fontWeight: '500',
-        color: colors.text,
+        color: designSystem.colors.text.primary,
     },
     uploadSubtext: {
         fontSize: 12,
-        color: colors.textSecondary,
+        color: designSystem.colors.text.secondary,
     },
     filePreview: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
-        backgroundColor: colors.card,
+        backgroundColor: designSystem.colors.background.primary,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: designSystem.colors.neutral[200],
         gap: 12,
     },
     fileIcon: {
         width: 40,
         height: 40,
         borderRadius: 8,
-        backgroundColor: colors.iconBackgroundBlue,
+        backgroundColor: designSystem.colors.primary[50],
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -298,45 +312,23 @@ const styles = StyleSheet.create({
     fileName: {
         fontSize: 14,
         fontWeight: '500',
-        color: colors.text,
+        color: designSystem.colors.text.primary,
     },
     fileSize: {
         fontSize: 12,
-        color: colors.textSecondary,
+        color: designSystem.colors.text.secondary,
     },
     formCard: {
-        backgroundColor: colors.card,
+        backgroundColor: designSystem.colors.background.primary,
         borderRadius: 16,
         padding: 20,
-        marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    inputContainer: {
-        marginBottom: 20,
+        ...designSystem.shadows.sm,
     },
     inputLabel: {
         fontSize: 14,
         fontWeight: '600',
-        color: colors.textSecondary,
+        color: designSystem.colors.text.secondary,
         marginBottom: 8,
-    },
-    input: {
-        backgroundColor: colors.background,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 16,
-        color: colors.text,
-    },
-    textArea: {
-        height: 80,
-        textAlignVertical: 'top',
     },
     typeScroll: {
         flexDirection: 'row',
@@ -350,21 +342,21 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: designSystem.colors.neutral[200],
         marginRight: 8,
-        backgroundColor: colors.background,
+        backgroundColor: designSystem.colors.background.primary,
     },
     typeOptionActive: {
-        backgroundColor: colors.iconBackgroundBlue,
-        borderColor: colors.primary,
+        backgroundColor: designSystem.colors.primary[50],
+        borderColor: designSystem.colors.primary[500],
     },
     typeText: {
         fontSize: 13,
-        color: colors.textSecondary,
+        color: designSystem.colors.text.secondary,
         fontWeight: '500',
     },
     typeTextActive: {
-        color: colors.primary,
+        color: designSystem.colors.primary[700],
         fontWeight: '600',
     },
 });

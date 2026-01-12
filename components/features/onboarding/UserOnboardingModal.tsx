@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, TouchableOpacity, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Modal, ScrollView, useWindowDimensions, Platform } from 'react-native';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { designSystem } from '@/constants/designSystem';
-import { EnhancedButton } from '@/components/ui/EnhancedButton';
-import Input from '@/components/ui/Input';
-import { useLocale } from '@/hooks/useLocale';
-import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import CountrySelect from '@/components/ui/CountrySelect';
-import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
+
+// Design System
+import { TextField } from '@/components/design-system/forms/TextField';
+import { DateField } from '@/components/design-system/forms/DateField';
+import { SelectField } from '@/components/design-system/forms/SelectField';
+import { MediaWidget } from '@/components/design-system/widgets/MediaWidget';
+import { Button } from '@/components/design-system/primitives/Button';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import CountrySelect from '@/components/ui/CountrySelect'; // Keep for now if no replacement, or use SelectField with country data
 
 interface UserOnboardingModalProps {
   visible: boolean;
@@ -19,115 +22,87 @@ interface UserOnboardingModalProps {
 }
 
 const GENDERS = [
-  { value: 'male', label: 'Male', icon: 'male' },
-  { value: 'female', label: 'Female', icon: 'female' },
-  { value: 'non_binary', label: 'Non-binary', icon: 'transgender' },
-  { value: 'prefer_not_to_say', label: 'Prefer not to say', icon: 'lock-closed' },
-] as const;
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'non_binary', label: 'Non-binary' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+];
 
-// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
-const isoToDmy = (isoDate: string): string => {
-  if (!isoDate) return '';
-  const parts = isoDate.split('-');
-  if (parts.length !== 3) return isoDate;
-  const [year, month, day] = parts;
-  return `${day}-${month}-${year}`;
-};
-
-// Convert DD-MM-YYYY back to ISO
-const dmyToIso = (dmyDate: string): string => {
-  if (!dmyDate) return '';
-  const parts = dmyDate.split('-');
-  if (parts.length !== 3) return dmyDate;
-  const [day, month, year] = parts;
-  return `${year}-${month}-${day}`;
-};
+interface OnboardingFormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: Date; // DateField uses Date
+  countryCode: string;
+  photoUrl: string;
+}
 
 export default function UserOnboardingModal({ visible, onClose, onComplete }: UserOnboardingModalProps) {
   const { user } = useAuth();
-  const { setLocale } = useLocale();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
   const [loading, setLoading] = useState(false);
-
-  // Profile State
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [countryCode, setCountryCode] = useState('US'); // Default to US
-  const [languageCode, setLanguageCode] = useState('en'); // Default to English
-  const [phone, setPhone] = useState('');
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [gender, setGender] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const hasPrefilled = useRef(false);
 
-  // Auto-detect Country on mount
+  const methods = useForm<OnboardingFormData>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      phone: '',
+      gender: '',
+      countryCode: 'US',
+      photoUrl: ''
+    }
+  });
+
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = methods;
+
+  // Auto-detect Country
   useEffect(() => {
     (async () => {
       try {
         if (Platform.OS !== 'web') {
           const { status } = await Location.requestForegroundPermissionsAsync();
-          if (status !== 'granted') return;
-
-          const location = await Location.getCurrentPositionAsync({});
-          const address = await Location.reverseGeocodeAsync({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
-
-          if (address && address.length > 0 && address[0].isoCountryCode) {
-            setCountryCode(address[0].isoCountryCode);
+          if (status === 'granted') {
+            const location = await Location.getCurrentPositionAsync({});
+            const address = await Location.reverseGeocodeAsync({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            });
+            if (address && address.length > 0 && address[0].isoCountryCode) {
+              setValue('countryCode', address[0].isoCountryCode);
+            }
           }
         }
       } catch (error) {
         console.log('Error detecting location:', error);
       }
     })();
-  }, []);
+  }, [setValue]);
 
-  // Prefill from User Metadata
+  // Prefill
   useEffect(() => {
     if (user?.user_metadata && !hasPrefilled.current) {
       const { full_name, first_name, last_name, avatar_url } = user.user_metadata;
-
-      if (first_name) setFirstName(first_name);
-      if (last_name) setLastName(last_name);
-
-      // Fallback if split names aren't available but full_name is
+      if (first_name) setValue('firstName', first_name);
+      if (last_name) setValue('lastName', last_name);
       if (!first_name && !last_name && full_name) {
         const parts = full_name.split(' ');
-        if (parts.length > 0) setFirstName(parts[0]);
-        if (parts.length > 1) setLastName(parts.slice(1).join(' '));
+        if (parts.length > 0) setValue('firstName', parts[0]);
+        if (parts.length > 1) setValue('lastName', parts.slice(1).join(' '));
       }
-
-      // Prefill avatar if available and not already set
-      if (avatar_url && !photo) {
-        // We don't set 'photo' state directly with remote URL to avoid re-upload logic confusion
-      }
-
+      if (avatar_url) setValue('photoUrl', avatar_url);
       hasPrefilled.current = true;
     }
-  }, [user]);
-
-  const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setPhoto(result.assets[0].uri);
-    }
-  };
+  }, [user, setValue]);
 
   const uploadImage = async (uri: string) => {
     try {
+      if (uri.startsWith('http')) return uri; // Already remote
       const response = await fetch(uri);
       const blob = await response.blob();
-      const fileExt = uri.split('.').pop();
+      const fileExt = uri.split('.').pop() || 'jpg'; // default extension if missing
       const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
@@ -145,55 +120,36 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
     }
   };
 
-  const handleSave = async () => {
+  const onSubmit = async (data: OnboardingFormData) => {
     if (!user) return;
-
-    // Validation
-    const newErrors: { [key: string]: string } = {};
-    if (!firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!countryCode) newErrors.countryCode = 'Country is required';
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
     setLoading(true);
-
     try {
-      let photoUrl = user.user_metadata?.avatar_url;
-
-      if (photo) {
-        const uploadedUrl = await uploadImage(photo);
-        if (uploadedUrl) photoUrl = uploadedUrl;
+      let finalPhotoUrl = data.photoUrl;
+      if (finalPhotoUrl && !finalPhotoUrl.startsWith('http')) {
+        const uploaded = await uploadImage(finalPhotoUrl);
+        if (uploaded) finalPhotoUrl = uploaded;
       }
 
       const updates = {
-        first_name: firstName,
-        last_name: lastName,
-        phone: phone, // Store phone string directly
-        gender: gender || null,
-        date_of_birth: dateOfBirth || null,
-        country_code: countryCode,
-        language_code: languageCode,
-        photo_url: photoUrl,
-        onboarding_completed: true, // Mark as completed
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: data.phone,
+        gender: data.gender || null,
+        date_of_birth: data.dateOfBirth?.toISOString() || null,
+        country_code: data.countryCode,
+        photo_url: finalPhotoUrl,
+        onboarding_completed: true,
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id);
-
+      const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
       if (error) throw error;
 
       onComplete();
       onClose();
     } catch (error: any) {
-      console.error('Error saving profile:', error);
-      alert(`Failed to save profile: ${error.message || 'Please try again.'}`);
+      console.error('Save error:', error);
+      alert(`Failed to save profile: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -204,142 +160,84 @@ export default function UserOnboardingModal({ visible, onClose, onComplete }: Us
       <View style={styles.overlay}>
         <View style={[styles.container, isDesktop && styles.containerDesktop]}>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>Welcome to Waggli!</Text>
+              <Text style={styles.title}>Welcome to Waggly!</Text>
               <Text style={styles.subtitle}>Let's set up your profile to get started.</Text>
             </View>
 
-            {/* Avatar Picker */}
-            <View style={styles.avatarSection}>
-              <TouchableOpacity onPress={handleImagePick} style={styles.avatarContainer}>
-                {photo ? (
-                  <Image source={{ uri: photo }} style={styles.avatar} />
-                ) : user?.user_metadata?.avatar_url ? (
-                  <Image source={{ uri: user.user_metadata.avatar_url }} style={styles.avatar} />
-                ) : (
-                  <View style={styles.avatarPlaceholder}>
-                    <Ionicons name="camera" size={24} color={designSystem.colors.text.tertiary} />
-                    <Text style={styles.avatarText}>Add Photo</Text>
+            <FormProvider {...methods}>
+              {/* Avatar */}
+              <View style={styles.avatarSection}>
+                <MediaWidget
+                  value={watch('photoUrl')}
+                  onChange={(uri) => setValue('photoUrl', uri)}
+                  variant="avatar"
+                />
+              </View>
+
+              {/* Form */}
+              <View style={styles.form}>
+                <View style={[styles.row, width < 425 && styles.rowMobile]}>
+                  <View style={styles.inputWrapper}>
+                    <TextField control={control} name="firstName" label="First Name" placeholder="Jane" required />
                   </View>
-                )}
-              </TouchableOpacity>
-            </View>
-
-            {/* Form Fields */}
-            <View style={styles.form}>
-              <View style={[styles.row, width < 425 && styles.rowMobile]}>
-                <View style={[styles.inputWrapper, width < 425 && styles.inputWrapperMobile]}>
-                  <Input
-                    label="First Name"
-                    placeholder="Jane"
-                    value={firstName}
-                    onChangeText={(text) => {
-                      setFirstName(text);
-                      if (errors.firstName) setErrors({ ...errors, firstName: '' });
-                    }}
-                    error={errors.firstName}
-                    required
-                    containerStyle={{ backgroundColor: '#fff' }}
-                  />
-                </View>
-                <View style={[styles.rowSpacer, width < 425 && { width: 0, height: 12 }]} />
-                <View style={[styles.inputWrapper, width < 425 && styles.inputWrapperMobile]}>
-                  <Input
-                    label="Last Name"
-                    placeholder="Doe"
-                    value={lastName}
-                    onChangeText={(text) => {
-                      setLastName(text);
-                      if (errors.lastName) setErrors({ ...errors, lastName: '' });
-                    }}
-                    error={errors.lastName}
-                    required
-                    containerStyle={{ backgroundColor: '#fff' }}
-                  />
-                </View>
-              </View>
-
-              {/* Country and Phone */}
-              <View style={[styles.row, { marginTop: 16, zIndex: 20 }]}>
-                <View style={{ flex: 1 }}>
-                  <CountrySelect
-                    value={countryCode}
-                    onChange={(code) => {
-                      setCountryCode(code);
-                      if (errors.countryCode) setErrors({ ...errors, countryCode: '' });
-                    }}
-                    label="Country"
-                    error={errors.countryCode}
-                    containerStyle={{ backgroundColor: '#fff' }}
-                  />
-                </View>
-                <View style={{ width: 16 }} />
-                <View style={{ flex: 1 }}>
-                  <Input
-                    label="Phone (Optional)"
-                    placeholder="+1 555..."
-                    value={phone}
-                    onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                    containerStyle={{ backgroundColor: '#fff' }}
-                  />
-                </View>
-              </View>
-
-              {/* Gender and DOB */}
-              <View style={[styles.row, { marginTop: 16 }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.label}>Gender</Text>
-                  <View style={styles.genderContainer}>
-                    {GENDERS.map((g) => (
-                      <TouchableOpacity
-                        key={g.value}
-                        style={[
-                          styles.genderChip,
-                          gender === g.value && styles.genderChipActive,
-                          { paddingHorizontal: 10, justifyContent: 'center' }
-                        ] as any}
-                        onPress={() => setGender(g.value)}
-                      >
-                        <Ionicons
-                          name={g.icon as any}
-                          size={20}
-                          color={gender === g.value ? designSystem.colors.primary[500] : designSystem.colors.text.secondary}
-                        />
-                      </TouchableOpacity>
-                    ))}
+                  <View style={styles.rowSpacer} />
+                  <View style={styles.inputWrapper}>
+                    <TextField control={control} name="lastName" label="Last Name" placeholder="Doe" required />
                   </View>
-                  {gender ? (
-                    <Text style={[styles.genderText, { marginTop: 4, fontSize: 12 }]}>
-                      {GENDERS.find(g => g.value === gender)?.label}
-                    </Text>
-                  ) : null}
                 </View>
-                <View style={{ width: 16 }} />
-                <View style={{ flex: 1 }}>
-                  <EnhancedDatePicker
-                    label="Date of Birth"
-                    value={isoToDmy(dateOfBirth)}
-                    onChange={(dmyDate) => setDateOfBirth(dmyToIso(dmyDate))}
-                    placeholder="Select Date"
-                  />
+
+                <View style={[styles.row, { marginTop: 16 }]}>
+                  {/* Country Select - Manual wrapper since we don't have SelectField with country logic yet, 
+                             or we can just reuse the generic CountrySelect but wrapped in Controller?
+                             For simplicity/speed, using CountrySelect directly controlled.
+                         */}
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.label}>Country</Text>
+                    <CountrySelect
+                      value={watch('countryCode')}
+                      onChange={(code) => setValue('countryCode', code)}
+                      label="Country"
+                      // error={errors.countryCode?.message} 
+                      containerStyle={{ backgroundColor: designSystem.colors.background.primary }}
+                    />
+                  </View>
+                  <View style={{ width: 16 }} />
+                  <View style={{ flex: 1 }}>
+                    <TextField control={control} name="phone" label="Phone (Optional)" placeholder="+1 555..." keyboardType="phone-pad" />
+                  </View>
+                </View>
+
+                <View style={[styles.row, { marginTop: 16 }]}>
+                  <View style={{ flex: 1 }}>
+                    <SelectField
+                      control={control}
+                      name="gender"
+                      label="Gender"
+                      options={GENDERS}
+                      placeholder="Select Gender"
+                    />
+                  </View>
+                  <View style={{ width: 16 }} />
+                  <View style={{ flex: 1 }}>
+                    <DateField control={control} name="dateOfBirth" label="Date of Birth" />
+                  </View>
                 </View>
               </View>
 
-            </View>
+              {/* Actions */}
+              <View style={styles.footer}>
+                <Button
+                  title="Complete Setup"
+                  onPress={handleSubmit(onSubmit)}
+                  loading={loading}
+                  size="lg"
+                  fullWidth
+                />
+              </View>
 
-            {/* Actions */}
-            <View style={styles.footer}>
-              <EnhancedButton
-                title="Complete Setup"
-                onPress={handleSave}
-                loading={loading}
-                fullWidth
-              />
-            </View>
-
+            </FormProvider>
           </ScrollView>
         </View>
       </View>
@@ -358,14 +256,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#fff',
-    borderRadius: 0,
-    overflow: 'hidden',
   },
   containerDesktop: {
     maxWidth: 500,
-    maxHeight: 700,
+    maxHeight: 750,
     height: 'auto',
     borderRadius: 24,
+    overflow: 'hidden',
   },
   content: {
     padding: 24,
@@ -390,30 +287,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: designSystem.colors.neutral[100],
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: designSystem.colors.border.primary,
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-  },
-  avatarPlaceholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 12,
-    color: designSystem.colors.text.tertiary,
-    marginTop: 4,
-  },
   form: {
     marginBottom: 32,
   },
@@ -422,6 +295,7 @@ const styles = StyleSheet.create({
   },
   rowMobile: {
     flexDirection: 'column',
+    gap: 16,
   },
   rowSpacer: {
     width: 16,
@@ -429,42 +303,13 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flex: 1,
   },
-  inputWrapperMobile: {
-    flex: 0,
-    width: '100%',
-  },
   footer: {
     gap: 12,
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: designSystem.colors.text.primary,
-    marginBottom: 8,
-  },
-  genderContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  genderChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: designSystem.colors.border.primary,
-    gap: 6,
-  },
-  genderChipActive: {
-    backgroundColor: designSystem.colors.primary[50],
-    borderColor: designSystem.colors.primary[500],
-  },
-  genderText: {
-    fontSize: 14,
+    fontWeight: '600',
     color: designSystem.colors.text.secondary,
-    fontWeight: '500',
-  },
+    marginBottom: 8,
+  }
 });

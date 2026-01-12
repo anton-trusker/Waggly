@@ -22,12 +22,12 @@ import {
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import FormDatePicker from '@/components/forms/FormDatePicker';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+// import LoadingOverlay from '@/components/ui/LoadingOverlay'; // Removed
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface VaccinationFormProps {
     visible: boolean;
@@ -276,15 +276,16 @@ export default function VaccinationForm({
                             <View style={{ height: 100 }} />
                         </ScrollView>
 
-                        {/* Footer */}
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel={initialData ? 'Update Vaccination' : 'Add Vaccination'}
-                            disabled={submitting}
-                        />
+                        <View style={styles.footer}>
+                            <Button
+                                title={initialData ? 'Update Vaccination' : 'Add Vaccination'}
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
 
-                        {/* Loading Overlay */}
-                        <LoadingOverlay visible={submitting} message={initialData ? 'Updating...' : 'Adding...'} />
+
                     </View>
                 </View>
             </KeyboardAvoidingView>

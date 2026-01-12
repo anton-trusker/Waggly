@@ -13,8 +13,7 @@ import {
 import { colors } from '@/styles/commonStyles';
 import { designSystem } from '@/constants/designSystem'; // Added
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
-import BottomCTA from '@/components/ui/BottomCTA';
+import { Button } from '@/components/design-system/primitives/Button';
 
 export interface FormModalProps<T = any> {
     visible: boolean;
@@ -34,6 +33,7 @@ export interface FormModalProps<T = any> {
     forceLight?: boolean;
     headerRight?: ReactNode;
     hideFooter?: boolean; // Added
+    loading?: boolean;
 }
 
 export interface FormState<T> {
@@ -64,6 +64,7 @@ export default function FormModal<T = any>({
     forceLight = false,
     headerRight,
     hideFooter = false, // Default to showing footer
+    loading: externalLoading = false,
 }: FormModalProps<T>) {
     const { width } = useWindowDimensions();
 
@@ -78,7 +79,9 @@ export default function FormModal<T = any>({
 
     const [formData, setFormData] = useState<T>((initialData || {}) as T);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [loading, setLoading] = useState(false);
+    const [internalLoading, setInternalLoading] = useState(false);
+
+    const isLoading = externalLoading || internalLoading;
 
     // Sync formData with initialData when it changes or modal opens
     React.useEffect(() => {
@@ -147,7 +150,7 @@ export default function FormModal<T = any>({
     const reset = useCallback(() => {
         setFormData((initialData || {}) as T);
         setErrors({});
-        setLoading(false);
+        setInternalLoading(false);
     }, [initialData]);
 
     // Handle form submission
@@ -164,7 +167,7 @@ export default function FormModal<T = any>({
             }
         }
 
-        setLoading(true);
+        setInternalLoading(true);
         try {
             if (typeof onSubmit !== 'function') {
                 console.warn('FormModal: onSubmit prop is missing or not a function');
@@ -180,7 +183,7 @@ export default function FormModal<T = any>({
             const message = error?.message || errorMessage;
             Alert.alert('Error', message);
         } finally {
-            setLoading(false);
+            setInternalLoading(false);
         }
     }, [formData, validate, onSubmit, successMessage, errorMessage, reset, onSuccess, onClose]);
 
@@ -264,19 +267,29 @@ export default function FormModal<T = any>({
                             {!hideFooter && <View style={{ height: 100 }} />}
                         </ScrollView>
 
-                        {/* Bottom CTA */}
+                        {/* Footer */}
                         {!hideFooter && (
-                            <BottomCTA
-                                onBack={showBackButton ? onClose : undefined}
-                                onPrimary={handleSubmit}
-                                primaryLabel={submitLabel}
-                                disabled={loading}
-                                bottomOffset={Platform.OS === 'ios' ? 0 : 20}
-                            />
+                            <View style={[styles.footer, { paddingBottom: Math.max(20, Platform.OS === 'ios' ? 34 : 20) }]}>
+                                {showBackButton && (
+                                    <View style={{ marginRight: 12 }}>
+                                        <Button
+                                            variant="ghost"
+                                            onPress={onClose}
+                                            title="Cancel"
+                                            disabled={isLoading}
+                                        />
+                                    </View>
+                                )}
+                                <View style={{ flex: 1 }}>
+                                    <Button
+                                        title={submitLabel}
+                                        onPress={handleSubmit}
+                                        loading={isLoading}
+                                        fullWidth
+                                    />
+                                </View>
+                            </View>
                         )}
-
-                        {/* Loading Overlay */}
-                        <LoadingOverlay visible={loading} message="Saving..." />
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -303,6 +316,7 @@ const styles = {
         shadowRadius: 20,
         shadowOffset: { width: 0, height: 10 },
         elevation: 10,
+        overflow: 'hidden',
     },
     header: {
         flexDirection: 'row' as const,
@@ -340,6 +354,14 @@ const styles = {
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: 120,
+        paddingBottom: 20,
+    },
+    footer: {
+        flexDirection: 'row',
+        padding: 20,
+        borderTopWidth: 1,
+        borderTopColor: designSystem.colors.neutral[200],
+        backgroundColor: designSystem.colors.background.primary,
+        alignItems: 'center',
     },
 };

@@ -21,12 +21,12 @@ import {
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import FormDatePicker from '@/components/forms/FormDatePicker';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+// import LoadingOverlay from '@/components/ui/LoadingOverlay'; // Removed
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface MedicationFormProps {
     visible: boolean;
@@ -270,14 +270,16 @@ export default function MedicationForm({
                             <View style={{ height: 100 }} />
                         </ScrollView>
 
-                        {/* Footer */}
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel={initialData ? 'Update Medication' : 'Add Medication'}
-                            disabled={submitting}
-                        />
+                        <View style={styles.footer}>
+                            <Button
+                                title={initialData ? 'Update Medication' : 'Add Medication'}
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
 
-                        <LoadingOverlay visible={submitting} message={initialData ? 'Updating...' : 'Adding...'} />
+
                     </View>
                 </View>
             </KeyboardAvoidingView>

@@ -19,11 +19,10 @@ import {
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import FormDatePicker from '@/components/forms/FormDatePicker';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface ConditionFormProps {
     visible: boolean;
@@ -172,15 +171,13 @@ export default function ConditionForm({
 
                     {/* Footer */}
                     <View style={[styles.footer, { borderTopColor: designSystem.colors.border.primary }]}>
-                        <BottomCTA
-                            label={initialData ? "Update Condition" : "Add Condition"}
+                        <Button
+                            title={initialData ? "Update Condition" : "Add Condition"}
                             onPress={handleSubmit(onFormSubmit)}
                             loading={submitting}
-                            disabled={submitting}
+                            fullWidth
                         />
                     </View>
-
-                    {submitting && <LoadingOverlay message="Saving condition..." />}
                 </View>
             </KeyboardAvoidingView>
         </Modal>

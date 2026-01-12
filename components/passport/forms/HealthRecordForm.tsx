@@ -19,11 +19,10 @@ import {
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import FormDatePicker from '@/components/forms/FormDatePicker';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface HealthRecordFormProps {
     visible: boolean;
@@ -307,13 +306,14 @@ export default function HealthRecordForm({
                         </ScrollView>
 
                         {/* Footer */}
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel={initialData ? 'Update Record' : 'Save Record'}
-                            disabled={submitting}
-                        />
-
-                        <LoadingOverlay visible={submitting} message={initialData ? 'Updating...' : 'Saving...'} />
+                        <View style={{ padding: 20 }}>
+                            <Button
+                                title={initialData ? 'Update Record' : 'Save Record'}
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>

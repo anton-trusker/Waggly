@@ -20,12 +20,11 @@ import {
 } from '@/types/passport';
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import AddressAutocomplete from '@/components/ui/AddressAutocomplete';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface EmergencyContactFormProps {
     visible: boolean;
@@ -222,13 +221,14 @@ export default function EmergencyContactForm({
                         </ScrollView>
 
                         {/* Footer */}
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel={initialData ? 'Update Contact' : 'Add Contact'}
-                            disabled={submitting}
-                        />
-
-                        <LoadingOverlay visible={submitting} message={initialData ? 'Updating...' : 'Adding...'} />
+                        <View style={{ padding: 20 }}>
+                            <Button
+                                title={initialData ? 'Update Contact' : 'Add Contact'}
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>

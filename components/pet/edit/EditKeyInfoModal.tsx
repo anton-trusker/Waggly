@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useForm, FormProvider } from 'react-hook-form';
 import FormModal from '@/components/ui/FormModal';
 import { usePetV2, useUpdatePetV2 } from '@/hooks/domain/usePetV2';
-import { Pet } from '@/types/v2/schema';
 import { designSystem } from '@/constants/designSystem';
-import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
-import ModernSelect from '@/components/ui/ModernSelect';
+
+// Design System
+import { TextField } from '@/components/design-system/forms/TextField';
+import { SelectField } from '@/components/design-system/forms/SelectField';
+import { DateField } from '@/components/design-system/forms/DateField';
 
 interface EditKeyInfoModalProps {
     visible: boolean;
@@ -22,53 +25,44 @@ const BLOOD_TYPES = [
     { label: 'Unknown', value: 'Unknown' },
 ];
 
-// Convert ISO date to DD-MM-YYYY for EnhancedDatePicker
-const isoToDmy = (isoDate: string): string => {
-    if (!isoDate) return '';
-    const parts = isoDate.split('-');
-    if (parts.length !== 3) return isoDate;
-    const [year, month, day] = parts;
-    return `${day}-${month}-${year}`;
-};
-
-// Convert DD-MM-YYYY back to ISO
-const dmyToIso = (dmyDate: string): string => {
-    if (!dmyDate) return '';
-    const parts = dmyDate.split('-');
-    if (parts.length !== 3) return dmyDate;
-    const [day, month, year] = parts;
-    return `${year}-${month}-${day}`;
-};
-
 export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInfoModalProps) {
     const { data: pet } = usePetV2(petId);
     const { mutateAsync: updatePet, isPending: loading } = useUpdatePetV2();
 
-    const [formData, setFormData] = useState<Partial<Pet>>({});
+    const methods = useForm({
+        defaultValues: {
+            microchip_number: '',
+            species: '',
+            blood_type: '',
+            color: '',
+            date_of_birth: undefined as Date | undefined,
+        }
+    });
+
+    const { control, reset, handleSubmit } = methods;
 
     useEffect(() => {
         if (pet && visible) {
-            setFormData({
-                microchip_number: pet.microchip_number,
-                species: pet.species,
-                blood_type: pet.blood_type,
-                color: pet.color,
-                date_of_birth: pet.date_of_birth,
+            reset({
+                microchip_number: pet.microchip_number || '',
+                species: pet.species || '',
+                blood_type: pet.blood_type || '',
+                color: pet.color || '',
+                date_of_birth: pet.date_of_birth ? new Date(pet.date_of_birth) : undefined,
             });
         }
-    }, [pet, visible]);
+    }, [pet, visible, reset]);
 
-    const handleChange = (field: string, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    };
-
-    const handleSave = async () => {
+    const handleSave = async (data: any) => {
         if (!pet) return;
         try {
             await updatePet({
                 id: petId,
                 updates: {
-                    ...formData,
+                    ...data,
+                    // Convert Date object back to ISO string for DB if needed, or DateField handles standard JS Dates.
+                    // Schema usually expects string YYYY-MM-DD or ISO
+                    date_of_birth: data.date_of_birth?.toISOString(),
                     updated_at: new Date().toISOString(),
                 }
             });
@@ -84,62 +78,49 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
             onClose={onClose}
             title="Edit Key Info"
             submitLabel="Save Changes"
-            onSubmit={handleSave}
+            onSubmit={handleSubmit(handleSave)}
             loading={loading}
         >
             {() => (
-                <View style={styles.container}>
-                    {/* Microchip */}
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Microchip ID</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.microchip_number || ''}
-                            onChangeText={(v) => handleChange('microchip_number', v)}
+                <FormProvider {...methods}>
+                    <View style={styles.container}>
+                        <TextField
+                            control={control}
+                            name="microchip_number"
+                            label="Microchip ID"
                             placeholder="Enter microchip number"
-                            keyboardType="number-pad"
+                            keyboardType="numeric"
                         />
-                    </View>
 
-                    {/* Species */}
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Species</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.species || ''}
-                            onChangeText={(v) => handleChange('species', v)}
+                        <TextField
+                            control={control}
+                            name="species"
+                            label="Species"
                             placeholder="Dog, Cat..."
                         />
-                    </View>
 
-                    {/* Blood Type */}
-                    <ModernSelect
-                        label="Blood Type"
-                        value={formData.blood_type || ''}
-                        options={BLOOD_TYPES}
-                        onChange={(v) => handleChange('blood_type', v)}
-                        placeholder="Select type"
-                    />
+                        <SelectField
+                            control={control}
+                            name="blood_type"
+                            label="Blood Type"
+                            options={BLOOD_TYPES}
+                            placeholder="Select type"
+                        />
 
-                    {/* Color */}
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Color</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.color || ''}
-                            onChangeText={(v) => handleChange('color', v)}
+                        <TextField
+                            control={control}
+                            name="color"
+                            label="Color"
                             placeholder="e.g. Golden"
                         />
-                    </View>
 
-                    {/* Date of Birth */}
-                    <EnhancedDatePicker
-                        label="Date of Birth"
-                        value={isoToDmy(formData.date_of_birth || '')}
-                        onChange={(dmyDate) => handleChange('date_of_birth', dmyToIso(dmyDate))}
-                        placeholder="Select Date"
-                    />
-                </View>
+                        <DateField
+                            control={control}
+                            name="date_of_birth"
+                            label="Date of Birth"
+                        />
+                    </View>
+                </FormProvider>
             )}
         </FormModal>
     );
@@ -147,15 +128,6 @@ export default function EditKeyInfoModal({ visible, onClose, petId }: EditKeyInf
 
 const styles = StyleSheet.create({
     container: { gap: 16, paddingBottom: 24 },
-    formGroup: { gap: 8 },
-    label: {
-        ...designSystem.typography.label.small,
-        color: designSystem.colors.text.secondary,
-        fontWeight: '700'
-    },
-    input: {
-        borderWidth: 1, borderColor: designSystem.colors.neutral[200], borderRadius: 12,
-        paddingHorizontal: 16, paddingVertical: 12, fontSize: 16,
-        color: designSystem.colors.text.primary, backgroundColor: '#fff'
-    },
 });
+
+

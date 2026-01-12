@@ -1,30 +1,41 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
   TouchableWithoutFeedback,
-  TextInput,
+  Keyboard,
+  TouchableOpacity
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { colors } from '@/styles/commonStyles';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePets } from '@/hooks/usePets';
 import { supabase } from '@/lib/supabase';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+
+// Design System
+import { designSystem } from '@/constants/designSystem';
+import { TextField } from '@/components/design-system/forms/TextField';
+import { SelectField } from '@/components/design-system/forms/SelectField';
+import { DateField } from '@/components/design-system/forms/DateField';
+import { Button } from '@/components/design-system/primitives/Button';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
-import EnhancedSelection from '@/components/ui/EnhancedSelection';
 import AppHeader from '@/components/layout/AppHeader';
+
 import { MEDICINES } from '@/constants/medicines';
-import BottomCTA from '@/components/ui/BottomCTA';
+
+interface TreatmentFormData {
+  medicationId: string;
+  dosage: string;
+  frequency: string;
+  startDate: Date;
+  endDate?: Date;
+  instructions?: string;
+}
 
 export default function AddTreatmentScreen() {
   const { petId: initialPetId } = useLocalSearchParams<{ petId: string }>();
@@ -32,18 +43,7 @@ export default function AddTreatmentScreen() {
   const { pets } = usePets();
 
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
-  const [selectedMedId, setSelectedMedId] = useState<string>('');
-  const [dosage, setDosage] = useState('');
-  const [frequency, setFrequency] = useState('');
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState('');
-  const [instructions, setInstructions] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{
-    selectedMedId?: string;
-    dosage?: string;
-    startDate?: string;
-  }>({});
 
   useEffect(() => {
     if (initialPetId) setSelectedPetId(initialPetId);
@@ -53,117 +53,106 @@ export default function AddTreatmentScreen() {
 
   const medOptions = useMemo(() => {
     return MEDICINES.map(m => ({
-      id: m.id,
+      value: m.id,
       label: m.brandName,
-      subLabel: `${m.genericName} - ${m.type}`,
-      category: m.type
+      // Could show generic name if component supported subtitle, but label is fine
     }));
   }, []);
 
+  const methods = useForm<TreatmentFormData>({
+    defaultValues: {
+      startDate: new Date(),
+      dosage: '',
+      frequency: ''
+    }
+  });
+
+  const { control, handleSubmit, watch, setValue } = methods;
+  const medicationId = watch('medicationId');
+
   // Auto-fill details when med selected
   useEffect(() => {
-    if (selectedMedId) {
-      const med = MEDICINES.find(m => m.id === selectedMedId);
+    if (medicationId) {
+      const med = MEDICINES.find(m => m.id === medicationId);
       if (med) {
-        if (!dosage) setDosage(`${med.dosage} ${med.dosageUnit}`);
-        if (!frequency) setFrequency(med.frequency);
+        setValue('dosage', `${med.dosage} ${med.dosageUnit}`);
+        setValue('frequency', med.frequency);
       }
     }
-  }, [selectedMedId]);
+  }, [medicationId, setValue]);
 
-  const validate = useCallback(() => {
-    const nextErrors: typeof errors = {};
-    if (!selectedMedId) {
-      nextErrors.selectedMedId = 'Please select a medication';
-    }
-    if (!dosage.trim()) {
-      nextErrors.dosage = 'Please enter dosage';
-    }
-    if (!startDate) {
-      nextErrors.startDate = 'Please select a start date';
-    }
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  }, [selectedMedId, dosage, startDate]);
-
-  const handleAddTreatment = async () => {
-    if (!validate()) return;
-    if (!user) return;
-    if (!selectedPetId) {
-      Alert.alert('Error', 'Please select a pet');
-      return;
-    }
-
+  const onSubmit = async (data: TreatmentFormData) => {
+    if (!user || !selectedPetId) return;
     setLoading(true);
-    const med = MEDICINES.find(m => m.id === selectedMedId);
 
     try {
-      // Create treatment record
-      const { data: treatmentData, error: treatmentError } = await supabase
-        .from('treatments')
-        .insert([{
-          pet_id: selectedPetId,
-          medication_name: med?.brandName || 'Unknown Med',
-          dosage: dosage.trim(),
-          frequency: frequency || null,
-          start_date: startDate, // Format fix needed if API expects YYYY-MM-DD and date is DD-MM-YYYY
-          end_date: endDate || null,
-          instructions: instructions || null,
-          prescribing_vet: null,
-        }])
-        .select()
-        .single();
+      const med = MEDICINES.find(m => m.id === data.medicationId);
 
-      if (treatmentError) throw treatmentError;
+      // Format dates
+      const formattedStartDate = data.startDate.toISOString();
+      const formattedEndDate = data.endDate?.toISOString() || null;
 
-      // Create event
-      const { error: eventError } = await supabase
-        .from('events')
-        .insert([{
-          user_id: user.id,
-          pet_id: selectedPetId,
-          type: 'treatment',
-          title: `Meds: ${med?.brandName}`,
-          start_time: startDate,
-          end_time: endDate || startDate,
-          description: `${dosage} - ${frequency}`,
-          related_id: treatmentData.id,
-        }]);
+      // 1. Create Treatment
+      const { data: treatmentData, error } = await supabase.from('treatments').insert({
+        pet_id: selectedPetId,
+        medication_name: med?.brandName || 'Unknown',
+        dosage: data.dosage,
+        frequency: data.frequency || null,
+        start_date: formattedStartDate,
+        end_date: formattedEndDate,
+        instructions: data.instructions || null,
+        // prescribing_vet: null 
+      }).select().single();
 
-      if (eventError) throw eventError;
+      if (error) throw error;
 
-      Alert.alert('Success', 'Treatment added successfully!', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
-    } catch (error) {
-      console.error('Error adding treatment:', error);
-      Alert.alert('Error', 'Failed to add treatment. Please try again.');
+      // 2. Create Event
+      await supabase.from('events').insert({
+        user_id: user.id,
+        pet_id: selectedPetId,
+        type: 'treatment',
+        title: `Meds: ${med?.brandName}`,
+        start_time: formattedStartDate,
+        end_time: formattedEndDate || formattedStartDate,
+        description: `${data.dosage} - ${data.frequency}`,
+        related_id: treatmentData.id
+      });
+
+      Alert.alert('Success', 'Treatment saved!', [{ text: 'OK', onPress: () => router.back() }]);
+
+    } catch (e: any) {
+      console.error(e);
+      Alert.alert('Error', 'Failed to save treatment');
     } finally {
       setLoading(false);
     }
   };
+
+  const SectionHeader = ({ title, icon }: { title: string, icon: any }) => (
+    <View style={styles.sectionHeader}>
+      <IconSymbol android_material_icon_name={icon} ios_icon_name={icon} size={20} color={designSystem.colors.primary[500]} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+  );
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-
+      <AppHeader title="Add Medication" showBack />
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+
           {/* Pet Selector */}
-          <View style={styles.section}>
+          <View style={{ marginBottom: 24 }}>
             <Text style={styles.label}>For Pet</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
               {pets.map(pet => (
                 <TouchableOpacity
                   key={pet.id}
-                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
                   onPress={() => setSelectedPetId(pet.id)}
                 >
                   <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -172,104 +161,72 @@ export default function AddTreatmentScreen() {
             </ScrollView>
           </View>
 
-          <View style={styles.formCard}>
-            <View style={styles.sectionHeader}>
-              <IconSymbol ios_icon_name="pill.fill" android_material_icon_name="medication" size={20} color={colors.primary} />
-              <Text style={styles.sectionTitle}>Medication Details</Text>
-            </View>
+          <FormProvider {...methods}>
+            <View style={styles.card}>
+              <SectionHeader title="Medication Details" icon="medication" />
 
-            <EnhancedSelection
-              label="Medication"
-              value={selectedMedId}
-              options={medOptions}
-              onSelect={(opt) => setSelectedMedId(opt.id)}
-              placeholder="Search medication..."
-              error={errors.selectedMedId}
-              required
-              icon="pill.fill"
-            />
+              <SelectField
+                control={control}
+                name="medicationId"
+                label="Medication"
+                options={medOptions}
+                placeholder="Search/Select Medication"
+              />
 
-            <View style={styles.inputRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>Dosage</Text>
-                <TextInput
-                  style={styles.input}
-                  value={dosage}
-                  onChangeText={setDosage}
-                  placeholder="e.g. 1 tablet"
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>Frequency</Text>
-                <TextInput
-                  style={styles.input}
-                  value={frequency}
-                  onChangeText={setFrequency}
-                  placeholder="e.g. Daily"
-                />
-              </View>
-            </View>
-
-            <View style={styles.inputRow}>
-              <View style={styles.inputColumn}>
-                <EnhancedDatePicker
-                  label="Start Date"
-                  value={startDate}
-                  onChange={setStartDate}
-                  error={errors.startDate}
-                  required
-                  icon="calendar"
-                />
-              </View>
-              <View style={styles.inputColumn}>
-                <EnhancedDatePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={setEndDate}
-                  icon="calendar"
-                  placeholder="Optional"
-                />
-              </View>
-            </View>
-
-            <Text style={styles.inputLabel}>Instructions / Notes</Text>
-            <TextInput
-              style={[styles.input, styles.textArea] as any}
-              value={instructions}
-              onChangeText={setInstructions}
-              placeholder="Special instructions..."
-              multiline
-              numberOfLines={3}
-            />
-
-            {/* Info Box */}
-            {selectedMedId && (
-              <View style={styles.infoBox}>
-                <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={16} color={colors.primary} />
-                <View>
-                  <Text style={styles.infoTitle}>About this medication:</Text>
-                  <Text style={styles.infoText}>
-                    {MEDICINES.find(m => m.id === selectedMedId)?.description}
-                  </Text>
+              <View style={styles.row}>
+                <View style={styles.col}>
+                  <TextField control={control} name="dosage" label="Dosage" placeholder="e.g. 1 tablet" />
+                </View>
+                <View style={styles.col}>
+                  <TextField control={control} name="frequency" label="Frequency" placeholder="e.g. Daily" />
                 </View>
               </View>
-            )}
 
-          </View>
+              <View style={styles.row}>
+                <View style={styles.col}>
+                  <DateField control={control} name="startDate" label="Start Date" />
+                </View>
+                <View style={styles.col}>
+                  <DateField control={control} name="endDate" label="End Date" placeholder="Optional" />
+                </View>
+              </View>
 
-          {/* Spacer for bottom button */}
-          <View style={{ height: 100 }} />
+              <TextField
+                control={control}
+                name="instructions"
+                label="Instructions"
+                placeholder="Special instructions..."
+                multiline
+                numberOfLines={3}
+              />
+
+              {/* Info Box */}
+              {medicationId && (
+                <View style={styles.infoBox}>
+                  <IconSymbol ios_icon_name="info.circle" android_material_icon_name="info" size={16} color={designSystem.colors.primary[500]} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoTitle}>About this medication:</Text>
+                    <Text style={styles.infoText}>
+                      {MEDICINES.find(m => m.id === medicationId)?.description}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              <View style={{ marginTop: 24 }}>
+                <Button
+                  title={loading ? "Saving..." : "Save Treatment"}
+                  onPress={handleSubmit(onSubmit)}
+                  variant="primary"
+                  size="lg"
+                  loading={loading}
+                />
+              </View>
+            </View>
+          </FormProvider>
+
         </ScrollView>
       </TouchableWithoutFeedback>
-
-      <BottomCTA
-        onBack={() => router.back()}
-        onPrimary={handleAddTreatment}
-        primaryLabel="Save Treatment"
-        disabled={loading}
-      />
-
-      <LoadingOverlay visible={loading} message="Saving treatment..." />
     </KeyboardAvoidingView>
   );
 }
@@ -277,101 +234,59 @@ export default function AddTreatmentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: designSystem.colors.background.secondary,
   },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 100,
-  },
-  section: {
-    marginBottom: 20,
-  },
+  scrollView: { flex: 1 },
+  content: { padding: 20, paddingBottom: 100 },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: designSystem.colors.text.secondary,
     marginBottom: 10,
   },
-  petRow: {
-    gap: 10,
-  },
+  petRow: { gap: 10 },
   petChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: colors.card,
+    backgroundColor: designSystem.colors.background.primary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: designSystem.colors.neutral[200],
   },
   petChipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: designSystem.colors.primary[50],
+    borderColor: designSystem.colors.primary[500],
   },
   petChipText: {
-    color: colors.text,
+    color: designSystem.colors.text.primary,
     fontWeight: '500',
   },
   petChipTextSelected: {
-    color: '#fff',
+    color: designSystem.colors.primary[700],
   },
-  formCard: {
-    backgroundColor: colors.card,
+  card: {
+    backgroundColor: designSystem.colors.background.primary,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...designSystem.shadows.sm,
+    gap: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    gap: 8,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
-    marginLeft: 10,
+    color: designSystem.colors.text.primary,
   },
-  inputRow: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 16,
-  },
-  inputColumn: {
-    flex: 1,
-  },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.text,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-    marginBottom: 16,
-  },
+  row: { flexDirection: 'row', gap: 12 },
+  col: { flex: 1 },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: colors.iconBackgroundBlue,
+    backgroundColor: designSystem.colors.background.secondary,
     padding: 12,
     borderRadius: 8,
     gap: 10,
@@ -380,42 +295,14 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: designSystem.colors.primary[700],
     marginBottom: 4,
   },
   infoText: {
     fontSize: 12,
-    color: colors.primaryDark,
+    color: designSystem.colors.text.secondary,
     lineHeight: 18,
-    flex: 1,
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 80, // Raised to avoid tab bar
-    left: 20,
-    right: 20,
-    backgroundColor: 'transparent',
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
   },
 });
+
+

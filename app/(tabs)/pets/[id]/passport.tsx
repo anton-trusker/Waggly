@@ -18,7 +18,7 @@ import { useToast } from '@/contexts/ToastContext';
 import PassportHeader from '@/components/passport/PassportHeader';
 import PetIdentification from '@/components/passport/PetIdentification';
 import HealthDashboard from '@/components/passport/HealthDashboard';
-import VaccinationTable from '@/components/passport/VaccinationTable';
+import VaccinationTable from '@/components/passport/widgets/VaccinationTable';
 import TreatmentTable from '@/components/passport/TreatmentTable';
 import AllergyList from '@/components/passport/AllergyList';
 import EmergencyContactList from '@/components/passport/EmergencyContactList';

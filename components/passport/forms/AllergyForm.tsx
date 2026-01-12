@@ -20,11 +20,10 @@ import {
 } from '@/types/passport';
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Button } from '@/components/design-system/primitives/Button';
 
 interface AllergyFormProps {
     visible: boolean;
@@ -197,13 +196,14 @@ export default function AllergyForm({
                         </ScrollView>
 
                         {/* Footer */}
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel={initialData ? 'Update Allergy' : 'Add Allergy'}
-                            disabled={submitting}
-                        />
-
-                        <LoadingOverlay visible={submitting} message={initialData ? 'Updating...' : 'Adding...'} />
+                        <View style={{ padding: 20 }}>
+                            <Button
+                                title={initialData ? 'Update Allergy' : 'Add Allergy'}
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>

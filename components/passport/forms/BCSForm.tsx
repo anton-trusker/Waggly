@@ -14,8 +14,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { BlurView } from 'expo-blur';
 import { designSystem } from '@/constants/designSystem';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import BottomCTA from '@/components/ui/BottomCTA';
 import FormField from '@/components/forms/FormField';
+import { Button } from '@/components/design-system/primitives/Button';
 import { useForm } from 'react-hook-form';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { z } from 'zod';
@@ -185,11 +185,14 @@ export default function BCSForm({ visible, onClose, onSubmit }: BCSFormProps) {
                             <View style={{ height: 100 }} />
                         </ScrollView>
 
-                        <BottomCTA
-                            primaryLabel="Save Score"
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            disabled={submitting}
-                        />
+                        <View style={{ padding: 20 }}>
+                            <Button
+                                title="Save Score"
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>

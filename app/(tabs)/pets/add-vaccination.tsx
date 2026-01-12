@@ -1,32 +1,43 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
   TouchableWithoutFeedback,
-  TextInput,
+  Keyboard,
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { colors } from '@/styles/commonStyles';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePets } from '@/hooks/usePets';
 import { supabase } from '@/lib/supabase';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
+
+// Design System
+import { designSystem } from '@/constants/designSystem';
+import { TextField } from '@/components/design-system/forms/TextField';
+import { SelectField } from '@/components/design-system/forms/SelectField';
+import { DateField } from '@/components/design-system/forms/DateField';
+import { Button } from '@/components/design-system/primitives/Button';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import EnhancedDatePicker from '@/components/ui/EnhancedDatePicker';
-import EnhancedSelection from '@/components/ui/EnhancedSelection';
-import DocumentUploader from '@/components/ui/DocumentUploader';
 import AppHeader from '@/components/layout/AppHeader';
+
 import { VACCINES } from '@/constants/vaccines';
-import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
-import BottomCTA from '@/components/ui/BottomCTA';
+
+interface VaccinationFormData {
+  vaccineId: string;
+  dateGiven: Date;
+  nextDueDate?: Date;
+  location?: string;
+  practitioner?: string;
+  batchNumber?: string;
+  notes?: string;
+}
 
 export default function AddVaccinationScreen() {
   const { petId: initialPetId } = useLocalSearchParams<{ petId: string }>();
@@ -34,24 +45,7 @@ export default function AddVaccinationScreen() {
   const { pets } = usePets();
 
   const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId as string || (pets.length > 0 ? pets[0].id : null));
-  const [selectedVaccineId, setSelectedVaccineId] = useState<string>('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [nextDueDate, setNextDueDate] = useState('');
-
-  // New Fields
-  const [location, setLocation] = useState('');
-  const [locationDetails, setLocationDetails] = useState<{ lat: number, lng: number, placeId: string } | null>(null);
-  const [practitioner, setPractitioner] = useState('');
-  const [batchNumber, setBatchNumber] = useState('');
-  const [notes, setNotes] = useState('');
-  const [files, setFiles] = useState<any[]>([]);
-
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{
-    selectedVaccineId?: string;
-    date?: string;
-    location?: string;
-  }>({});
 
   useEffect(() => {
     if (initialPetId) setSelectedPetId(initialPetId);
@@ -62,11 +56,11 @@ export default function AddVaccinationScreen() {
   const vaccineOptions = useMemo(() => {
     if (!selectedPet) return [];
 
+    // Filter vaccines logic matches previous implementation
     const species = selectedPet.species?.toLowerCase();
     const isDog = species === 'dog';
     const isCat = species === 'cat';
 
-    // Filter vaccines by pet species
     const filtered = VACCINES.filter(v => {
       if (isDog && v.petType === 'Dog') return true;
       if (isCat && v.petType === 'Cat') return true;
@@ -75,144 +69,111 @@ export default function AddVaccinationScreen() {
     });
 
     return filtered.map(v => ({
-      id: v.id,
-      label: v.brandName,
-      subLabel: `${v.protectsAgainst} (${v.duration})`,
-      category: v.category
+      value: v.id,
+      label: v.brandName, // Could add extended details to label if Select supports it, but simple for now
     }));
   }, [selectedPet]);
 
+  const methods = useForm<VaccinationFormData>({
+    defaultValues: {
+      dateGiven: new Date(),
+    }
+  });
+
+  const { control, handleSubmit, watch, setValue } = methods;
+  const vaccineId = watch('vaccineId');
+  const dateGiven = watch('dateGiven');
+
   // Auto-calculate next due date
   useEffect(() => {
-    if (selectedVaccineId && date) {
-      const vaccine = VACCINES.find(v => v.id === selectedVaccineId);
+    if (vaccineId && dateGiven) {
+      const vaccine = VACCINES.find(v => v.id === vaccineId);
       if (vaccine) {
-        const adminDate = new Date(date.split('-').reverse().join('-')); // dd-mm-yyyy -> yyyy-mm-dd
-        if (!isNaN(adminDate.getTime())) {
-          const nextDate = new Date(adminDate);
-          if (vaccine.duration.includes('1 year')) {
-            nextDate.setFullYear(nextDate.getFullYear() + 1);
-          } else if (vaccine.duration.includes('3 years')) {
-            nextDate.setFullYear(nextDate.getFullYear() + 3);
-          } else if (vaccine.duration.includes('6 months')) {
-            nextDate.setMonth(nextDate.getMonth() + 6);
-          }
-
-          const day = nextDate.getDate().toString().padStart(2, '0');
-          const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
-          const year = nextDate.getFullYear();
-          setNextDueDate(`${day}-${month}-${year}`);
+        const nextDate = new Date(dateGiven);
+        if (vaccine.duration.includes('1 year')) {
+          nextDate.setFullYear(nextDate.getFullYear() + 1);
+        } else if (vaccine.duration.includes('3 years')) {
+          nextDate.setFullYear(nextDate.getFullYear() + 3);
+        } else if (vaccine.duration.includes('6 months')) {
+          nextDate.setMonth(nextDate.getMonth() + 6);
         }
+        setValue('nextDueDate', nextDate);
       }
     }
-  }, [selectedVaccineId, date]);
+  }, [vaccineId, dateGiven]);
 
-  const validate = useCallback(() => {
-    const nextErrors: typeof errors = {};
-    if (!selectedVaccineId) {
-      nextErrors.selectedVaccineId = 'Please select a vaccine';
-    }
-    if (!date) {
-      nextErrors.date = 'Please select a date';
-    }
-    // Location is optional but good to have validation logic ready if needed
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  }, [selectedVaccineId, date]);
-
-  const handleAddVaccination = async () => {
-    if (!validate()) return;
-    if (!user) return;
-    if (!selectedPetId) {
-      Alert.alert('Error', 'Please select a pet');
-      return;
-    }
-
+  const onSubmit = async (data: VaccinationFormData) => {
+    if (!user || !selectedPetId) return;
     setLoading(true);
-    const vaccine = VACCINES.find(v => v.id === selectedVaccineId);
 
     try {
-      // 1. Create vaccination record
-      const { data: vaccinationData, error: vaccinationError } = await supabase
-        .from('vaccinations')
-        .insert([{
-          pet_id: selectedPetId,
-          vaccine_name: vaccine?.brandName || 'Unknown Vaccine',
-          date_given: date,
-          next_due_date: nextDueDate || null,
-          manufacturer: vaccine?.brandName.split(' ')[0] || null,
-          lot_number: batchNumber || null,
-          notes: notes || null,
-          // location: location, // Need to add column to DB if not exists
-          // practitioner: practitioner // Need to add column to DB if not exists
-        }])
-        .select()
-        .single();
+      const vaccine = VACCINES.find(v => v.id === data.vaccineId);
 
-      if (vaccinationError) throw vaccinationError;
+      // Format dates for DB
+      const formattedDateGiven = data.dateGiven.toISOString(); // or .split('T')[0] if using DATE type
+      const formattedNextDue = data.nextDueDate?.toISOString() || null;
 
-      // 2. Upload Files
-      // Note: We need to implement file upload logic here or in DocumentUploader.
-      // For now we assume DocumentUploader returns local URIs and we upload them.
-      // Since this is a "Add" form, we usually upload after saving record to link them.
-      // Or we could upload to a temp folder.
-      // For simplicity in this turn, I'll skip actual upload implementation and just focus on UI as requested "Expand form fields...".
-      // But typically: 
-      /*
-      for (const file of files) {
-          const path = `${user.id}/vaccinations/${vaccinationData.id}/${file.name}`;
-          await uploadFile(path, file.uri);
-          await supabase.from('documents').insert({ ... })
-      }
-      */
+      // 1. Create Record
+      const { data: vacRecord, error } = await supabase.from('vaccinations').insert({
+        pet_id: selectedPetId,
+        vaccine_name: vaccine?.brandName || 'Unknown',
+        date_given: formattedDateGiven,
+        next_due_date: formattedNextDue,
+        manufacturer: vaccine?.brandName.split(' ')[0] || null,
+        lot_number: data.batchNumber || null,
+        notes: data.notes || null,
+        // practitioner: data.practitioner // if col exists
+        // location: data.location // if col exists
+      }).select().single();
 
-      // 3. Create event
-      const { error: eventError } = await supabase
-        .from('events')
-        .insert([{
-          user_id: user.id,
-          pet_id: selectedPetId,
-          type: 'vaccination',
-          title: `Vaccination: ${vaccine?.brandName}`,
-          start_time: date,
-          description: `Location: ${location}. Practitioner: ${practitioner}. Notes: ${notes}`,
-          related_id: vaccinationData.id,
-        }]);
+      if (error) throw error;
 
-      if (eventError) throw eventError;
+      // 2. Create Event
+      await supabase.from('events').insert({
+        user_id: user.id,
+        pet_id: selectedPetId,
+        type: 'vaccination',
+        title: `Vaccination: ${vaccine?.brandName}`,
+        start_time: formattedDateGiven,
+        description: `Given by ${data.practitioner || 'Vet'} at ${data.location || 'Clinic'}.`,
+        related_id: vacRecord.id
+      });
 
-      Alert.alert('Success', 'Vaccination added successfully!', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
-    } catch (error) {
-      console.error('Error adding vaccination:', error);
-      Alert.alert('Error', 'Failed to add vaccination. Please try again.');
+      Alert.alert('Success', 'Vaccination saved!', [{ text: 'OK', onPress: () => router.back() }]);
+
+    } catch (e: any) {
+      console.error(e);
+      Alert.alert('Error', 'Failed to save vaccination');
     } finally {
       setLoading(false);
     }
   };
+
+  const SectionHeader = ({ title, icon }: { title: string, icon: any }) => (
+    <View style={styles.sectionHeader}>
+      <IconSymbol android_material_icon_name={icon} ios_icon_name={icon} size={20} color={designSystem.colors.primary[500]} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+  );
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-
+      <AppHeader title="Add Vaccination" showBack />
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+
           {/* Pet Selector */}
-          <View style={styles.section}>
+          <View style={{ marginBottom: 24 }}>
             <Text style={styles.label}>For Pet</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.petRow}>
               {pets.map(pet => (
                 <TouchableOpacity
                   key={pet.id}
-                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected] as any}
+                  style={[styles.petChip, selectedPetId === pet.id && styles.petChipSelected]}
                   onPress={() => setSelectedPetId(pet.id)}
                 >
                   <Text style={[styles.petChipText, selectedPetId === pet.id && styles.petChipTextSelected]}>{pet.name}</Text>
@@ -221,112 +182,57 @@ export default function AddVaccinationScreen() {
             </ScrollView>
           </View>
 
-          <View style={styles.formCard}>
-            <View style={styles.sectionHeader}>
-              <IconSymbol ios_icon_name="cross.case.fill" android_material_icon_name="vaccines" size={20} color={colors.primary} />
-              <Text style={styles.sectionTitle}>Vaccination Details</Text>
-            </View>
+          <FormProvider {...methods}>
+            <View style={styles.card}>
+              <SectionHeader title="Vaccine Details" icon="vaccines" />
 
-            <EnhancedSelection
-              label="Vaccine"
-              value={selectedVaccineId}
-              options={vaccineOptions}
-              onSelect={(opt) => setSelectedVaccineId(opt.id)}
-              placeholder="Select a vaccine"
-              error={errors.selectedVaccineId}
-              required
-              icon="cross.case.fill"
-            />
+              <SelectField
+                control={control}
+                name="vaccineId"
+                label="Vaccine"
+                options={vaccineOptions}
+                placeholder="Select Vaccine"
+              />
 
-            <View style={styles.inputRow}>
-              <View style={styles.inputColumn}>
-                <EnhancedDatePicker
-                  label="Date Given"
-                  value={date}
-                  onChange={setDate}
-                  error={errors.date}
-                  required
-                  icon="calendar"
-                />
+              <View style={styles.row}>
+                <View style={styles.col}>
+                  <DateField control={control} name="dateGiven" label="Date Given" />
+                </View>
+                <View style={styles.col}>
+                  <DateField control={control} name="nextDueDate" label="Next Due" />
+                </View>
               </View>
-              <View style={styles.inputColumn}>
-                <EnhancedDatePicker
-                  label="Next Due"
-                  value={nextDueDate}
-                  onChange={setNextDueDate}
-                  icon="calendar"
-                />
-              </View>
-            </View>
 
-            <View style={styles.divider} />
-            <Text style={styles.subsectionTitle}>Administration Details</Text>
+              <View style={styles.divider} />
+              <Text style={styles.subTitle}>Administration</Text>
 
-            <View style={styles.inputRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>Clinic / Location</Text>
-                <TextInput
-                  style={styles.input}
-                  value={location}
-                  onChangeText={setLocation}
-                  placeholder="e.g. City Vet Clinic"
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>Practitioner</Text>
-                <TextInput
-                  style={styles.input}
-                  value={practitioner}
-                  onChangeText={setPractitioner}
-                  placeholder="e.g. Dr. Smith"
+              <TextField control={control} name="location" label="Clinic / Location" placeholder="e.g. City Vet" />
+              <TextField control={control} name="practitioner" label="Practitioner" placeholder="e.g. Dr. Smith" />
+              <TextField control={control} name="batchNumber" label="Batch / Lot #" placeholder="Optional" />
+
+              <TextField
+                control={control}
+                name="notes"
+                label="Notes"
+                placeholder="Any side effects or comments..."
+                multiline
+                numberOfLines={3}
+              />
+
+              <View style={{ marginTop: 24 }}>
+                <Button
+                  title={loading ? "Saving..." : "Save Vaccination"}
+                  onPress={handleSubmit(onSubmit)}
+                  variant="primary"
+                  size="lg"
+                  loading={loading}
                 />
               </View>
             </View>
+          </FormProvider>
 
-            <View style={styles.inputRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>Batch / Lot Number</Text>
-                <TextInput
-                  style={styles.input}
-                  value={batchNumber}
-                  onChangeText={setBatchNumber}
-                  placeholder="Optional"
-                />
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <DocumentUploader
-              files={files}
-              onFilesChange={setFiles}
-            />
-
-            <Text style={styles.inputLabel}>Additional Notes</Text>
-            <TextInput
-              style={[styles.input, styles.textArea] as any}
-              value={notes}
-              onChangeText={setNotes}
-              placeholder="Any reactions or specific notes..."
-              multiline
-              numberOfLines={3}
-            />
-
-          </View>
-
-          {/* Spacer for bottom button */}
-          <View style={{ height: 100 }} />
         </ScrollView>
       </TouchableWithoutFeedback>
-
-      <BottomCTA
-        onBack={() => router.back()}
-        onPrimary={handleAddVaccination}
-        primaryLabel="Save Vaccination"
-        disabled={loading}
-      />
-
-      <LoadingOverlay visible={loading} message="Saving vaccination..." />
     </KeyboardAvoidingView>
   );
 }
@@ -334,137 +240,61 @@ export default function AddVaccinationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: designSystem.colors.background.secondary,
   },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 100,
-  },
-  section: {
-    marginBottom: 20,
-  },
+  scrollView: { flex: 1 },
+  content: { padding: 20, paddingBottom: 100 },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: designSystem.colors.text.secondary,
     marginBottom: 10,
   },
-  petRow: {
-    gap: 10,
-  },
+  petRow: { gap: 10 },
   petChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: colors.card,
+    backgroundColor: designSystem.colors.background.primary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: designSystem.colors.neutral[200],
   },
   petChipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: designSystem.colors.primary[50], // Check primary color light
+    borderColor: designSystem.colors.primary[500],
   },
   petChipText: {
-    color: colors.text,
+    color: designSystem.colors.text.primary,
     fontWeight: '500',
   },
   petChipTextSelected: {
-    color: '#fff',
+    color: designSystem.colors.primary[700],
   },
-  formCard: {
-    backgroundColor: colors.card,
+  card: {
+    backgroundColor: designSystem.colors.background.primary,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...designSystem.shadows.sm,
+    gap: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    gap: 8,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
-    marginLeft: 10,
+    color: designSystem.colors.text.primary,
   },
-  subsectionTitle: {
+  row: { flexDirection: 'row', gap: 12 },
+  col: { flex: 1 },
+  divider: { height: 1, backgroundColor: designSystem.colors.neutral[100], marginVertical: 8 },
+  subTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-    marginTop: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: 16,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 16,
-  },
-  inputColumn: {
-    flex: 1,
-  },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textSecondary,
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 14, // Reduced size
-    color: colors.text,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-    marginBottom: 16,
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 80, // Raised to avoid tab bar
-    left: 20,
-    right: 20,
-    backgroundColor: 'transparent',
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+    color: designSystem.colors.text.primary,
+  }
 });
+

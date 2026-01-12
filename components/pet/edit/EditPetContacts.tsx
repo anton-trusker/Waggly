@@ -1,16 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Switch, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useFormContext } from 'react-hook-form';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { designSystem } from '@/constants/designSystem';
-import { supabase } from '@/lib/supabase';
-import { Veterinarian, EmergencyContact } from '@/types/index';
 
-interface EditPetContactsProps {
-    petId: string;
-    onSaveVet: (vet: Partial<Veterinarian>) => void;
-    onSaveEmergency: (contact: Partial<EmergencyContact>) => void;
-    errors?: Record<string, string>;
+import { TextField } from '@/components/design-system/forms/TextField';
+
+export default function EditPetContacts() {
+    const { control } = useFormContext();
+
+    const SectionHeader = ({ icon, title, color = designSystem.colors.primary[500] }: { icon: any, title: string, color?: string }) => (
+        <View style={styles.sectionHeader}>
+            <IconSymbol android_material_icon_name={icon} ios_icon_name={icon} size={18} color={color} />
+            <Text style={styles.sectionTitle}>{title}</Text>
+        </View>
+    );
+
+    return (
+        <View style={styles.container}>
+            {/* Primary Owner */}
+            <View style={styles.section}>
+                <SectionHeader icon="person" title="Primary Owner" />
+                <View style={styles.infoBox}>
+                    <Text style={styles.infoText}>Owner details are managed in Account Settings.</Text>
+                </View>
+            </View>
+
+            {/* Emergency Contact */}
+            <View style={styles.section}>
+                <SectionHeader icon="emergency" title="Emergency Contact" color={designSystem.colors.status.error[500]} />
+                <View style={styles.card}>
+                    <TextField
+                        control={control}
+                        name="ec_name"
+                        label="Contact Name"
+                        placeholder="Name"
+                    />
+                    <TextField
+                        control={control}
+                        name="ec_phone"
+                        label="Phone Number"
+                        placeholder="Phone"
+                        keyboardType="phone-pad"
+                    />
+                </View>
+            </View>
+
+            {/* Vet Clinic */}
+            <View style={styles.section}>
+                <SectionHeader icon="local-hospital" title="Veterinary Clinic" color={designSystem.colors.secondary[500]} />
+                <View style={styles.card}>
+                    <TextField
+                        control={control}
+                        name="vet_clinic_name"
+                        label="Clinic Name"
+                        placeholder="Clinic Name"
+                    />
+
+                    <View style={styles.row}>
+                        <View style={styles.col}>
+                            <TextField
+                                control={control}
+                                name="vet_name"
+                                label="Vet Name"
+                                placeholder="Dr. Name"
+                            />
+                        </View>
+                        <View style={styles.col}>
+                            <TextField
+                                control={control}
+                                name="vet_phone"
+                                label="Phone"
+                                placeholder="Phone"
+                                keyboardType="phone-pad"
+                            />
+                        </View>
+                    </View>
+
+                    <TextField
+                        control={control}
+                        name="vet_address"
+                        label="Address"
+                        placeholder="Clinic Address"
+                    />
+                </View>
+            </View>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: { gap: 24 },
+    section: { gap: 12 },
+    sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    sectionTitle: { fontSize: 12, fontWeight: '800', color: designSystem.colors.text.secondary, letterSpacing: 1, textTransform: 'uppercase' },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 16,
+        gap: 12,
+        borderWidth: 1,
+        borderColor: designSystem.colors.neutral[200],
+        ...designSystem.shadows.sm
+    },
+    row: { flexDirection: 'row', gap: 12 },
+    col: { flex: 1 },
+    infoBox: {
+        padding: 16, borderRadius: 12, backgroundColor: designSystem.colors.neutral[100],
+        alignItems: 'center'
+    },
+    infoText: { fontSize: 13, color: designSystem.colors.text.secondary },
+});
+
 
 export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, errors = {} }: EditPetContactsProps) {
     const [vet, setVet] = useState<Partial<Veterinarian>>({});
@@ -31,7 +132,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
                 .eq('pet_id', petId)
                 .eq('is_primary', true)
                 .single();
-            
+
             if (vetData) setVet(vetData);
 
             // Fetch Emergency Contact
@@ -40,7 +141,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
                 .select('*')
                 .eq('pet_id', petId)
                 .single();
-            
+
             if (ecData) {
                 setEmergency(ecData);
                 setEmergencyEnabled(true);
@@ -69,10 +170,10 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
         if (!enabled) {
             // If disabled, we might want to clear or mark for deletion logic upstream
             // For now, we just pass empty/null to indicate removal if needed
-            onSaveEmergency({ name: '' }); 
+            onSaveEmergency({ name: '' });
         } else {
-             // Restore or init
-             onSaveEmergency(emergency);
+            // Restore or init
+            onSaveEmergency(emergency);
         }
     };
 
@@ -82,7 +183,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
         <View style={styles.container}>
             {/* --- Primary Owner (Read Only for now) --- */}
             <View style={styles.section}>
-                 <View style={styles.sectionHeader}>
+                <View style={styles.sectionHeader}>
                     <IconSymbol ios_icon_name="person.fill" android_material_icon_name="person" size={20} color={designSystem.colors.primary[500]} />
                     <Text style={styles.sectionTitle}>PRIMARY OWNER INFORMATION</Text>
                 </View>
@@ -141,7 +242,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Clinic Name</Text>
                         <View style={styles.inputWithIcon}>
-                            <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={18} color={designSystem.colors.text.tertiary} style={styles.inputIcon}/>
+                            <IconSymbol ios_icon_name="magnifyingglass" android_material_icon_name="search" size={18} color={designSystem.colors.text.tertiary} style={styles.inputIcon} />
                             <TextInput
                                 style={styles.inputPadded}
                                 value={vet.clinic_name || ''}
@@ -150,7 +251,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
                             />
                         </View>
                     </View>
-                     <View style={styles.row}>
+                    <View style={styles.row}>
                         <View style={[styles.formGroup, { flex: 1 }]}>
                             <Text style={styles.label}>Vet Name</Text>
                             <TextInput
@@ -171,7 +272,7 @@ export default function EditPetContacts({ petId, onSaveVet, onSaveEmergency, err
                             />
                         </View>
                     </View>
-                     <View style={styles.formGroup}>
+                    <View style={styles.formGroup}>
                         <Text style={styles.label}>Address</Text>
                         <TextInput
                             style={styles.input}

@@ -16,11 +16,10 @@ import { z } from 'zod';
 import FormField from '@/components/forms/FormField';
 import FormSelect from '@/components/forms/FormSelect';
 import FormDatePicker from '@/components/forms/FormDatePicker';
-import BottomCTA from '@/components/ui/BottomCTA';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Button } from '@/components/design-system/primitives/Button';
 
 const NoteSchema = z.object({
     type: z.enum(['Behavioral', 'Special Care']),
@@ -162,13 +161,14 @@ export default function AddNoteForm({
                             <View style={{ height: 20 }} />
                         </ScrollView>
 
-                        <BottomCTA
-                            onPrimary={handleSubmit(onFormSubmit)}
-                            primaryLabel="Add Note"
-                            disabled={submitting}
-                        />
-
-                        <LoadingOverlay visible={submitting} message="Adding note..." />
+                        <View style={{ padding: 20 }}>
+                            <Button
+                                title="Add Note"
+                                onPress={handleSubmit(onFormSubmit)}
+                                loading={submitting}
+                                fullWidth
+                            />
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>

@@ -4,6 +4,11 @@ import { Pet, CoOwner, CoOwnerPermissions } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getPostHog } from '@/lib/posthog';
 
+/**
+ * @deprecated Use usePetV2 from '@/hooks/domain/usePetV2' for new code.
+ * This hook uses the legacy Pet schema from @/types and will be phased out.
+ * Consider migrating to usePetV2 which uses the newer schema from @/types/v2/schema.
+ */
 export function usePets() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
