@@ -1,9 +1,5 @@
-/**
- * FormInput - A consistently styled text input component for forms
- */
-import React, { useState } from 'react';
-import { View, Text, TextInput, TextInputProps, StyleSheet, ViewStyle } from 'react-native';
-import { formColors } from '@/styles/formStyles';
+import { ViewStyle } from 'react-native';
+import { Input } from '@/components/design-system/primitives/Input';
 
 interface FormInputProps extends TextInputProps {
     label?: string;
@@ -19,40 +15,17 @@ export default function FormInput({
     error,
     helpText,
     containerStyle,
-    style,
     ...props
 }: FormInputProps) {
-    const [isFocused, setIsFocused] = useState(false);
-
     return (
-        <View style={[styles.container, containerStyle]}>
-            {label && (
-                <Text style={styles.label}>
-                    {label}
-                    {required && <Text style={styles.required}> *</Text>}
-                </Text>
-            )}
-            <TextInput
-                style={[
-                    styles.input,
-                    isFocused && styles.inputFocused,
-                    error && styles.inputError,
-                    style,
-                ] as any}
-                placeholderTextColor={formColors.inputPlaceholder}
-                onFocus={(e) => {
-                    setIsFocused(true);
-                    props.onFocus?.(e);
-                }}
-                onBlur={(e) => {
-                    setIsFocused(false);
-                    props.onBlur?.(e);
-                }}
-                {...props}
-            />
-            {error && <Text style={styles.errorText}>{error}</Text>}
-            {helpText && !error && <Text style={styles.helpText}>{helpText}</Text>}
-        </View>
+        <Input
+            label={label}
+            required={required}
+            error={error}
+            helperText={helpText}
+            containerStyle={containerStyle}
+            {...props}
+        />
     );
 }
 

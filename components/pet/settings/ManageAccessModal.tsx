@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, ActivityIndicator, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, FlatList, Alert } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocale } from '@/hooks/useLocale';
 import { useCoOwners } from '@/hooks/useCoOwners';
 import GenericFormModal from '@/components/ui/GenericFormModal';
+import { Input } from '@/components/design-system/primitives/Input';
 
 interface ManageAccessModalProps {
     visible: boolean;
@@ -19,6 +20,7 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
     const { coOwners, fetchCoOwners, inviteCoOwner, removeCoOwner, loading } = useCoOwners();
 
     const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [inviting, setInviting] = useState(false);
 
     useEffect(() => {
@@ -29,16 +31,17 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
 
     const handleInvite = async () => {
         if (!email || !email.includes('@')) {
-            Alert.alert('Invalid Email', 'Please enter a valid email address.');
+            setEmailError('Please enter a valid email address.');
             return;
         }
 
+        setEmailError('');
         setInviting(true);
         const { error } = await inviteCoOwner(email, 'viewer', {}, petName);
         setInviting(false);
 
         if (error) {
-            Alert.alert('Error', 'Failed to send invite.');
+            setEmailError('Failed to send invite.');
         } else {
             setEmail('');
             Alert.alert('Success', 'Invitation sent successfully!');
@@ -97,18 +100,18 @@ export default function ManageAccessModal({ visible, onClose, petId, petName }: 
                 </Text>
 
                 <View style={styles.inviteRow}>
-                    <TextInput
-                        style={[styles.input, {
-                            backgroundColor: theme.colors.background.card,
-                            color: theme.colors.text.primary,
-                            borderColor: theme.colors.border.primary
-                        }] as any}
+                    <Input
                         placeholder="Enter email address"
-                        placeholderTextColor={theme.colors.text.tertiary}
                         value={email}
-                        onChangeText={setEmail}
+                        onChangeText={(text) => {
+                            setEmail(text);
+                            setEmailError('');
+                        }}
                         autoCapitalize="none"
                         keyboardType="email-address"
+                        leftIcon="mail"
+                        error={emailError}
+                        containerStyle={{ flex: 1 }}
                     />
                     <TouchableOpacity
                         style={[styles.inviteBtn, { backgroundColor: theme.colors.primary[500], opacity: inviting ? 0.7 : 1 }] as any}

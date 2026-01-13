@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { designSystem } from '@/constants/designSystem';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTranslation } from 'react-i18next';
+import { Input } from '@/components/design-system/primitives/Input';
 
 interface NameStepProps {
     initialFirstName: string;
@@ -46,28 +47,22 @@ export default function NameStep({ initialFirstName, initialLastName, onNext, on
                 </View>
 
                 <View style={styles.form}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{t('onboarding.first_name')}</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={t('onboarding.first_name_placeholder')}
-                            placeholderTextColor={designSystem.colors.text.tertiary}
-                            value={firstName}
-                            onChangeText={setFirstName}
-                            autoCapitalize="words"
-                        />
-                    </View>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{t('onboarding.last_name')}</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={t('onboarding.last_name_placeholder')}
-                            placeholderTextColor={designSystem.colors.text.tertiary}
-                            value={lastName}
-                            onChangeText={setLastName}
-                            autoCapitalize="words"
-                        />
-                    </View>
+                    <Input
+                        label={t('onboarding.first_name')}
+                        placeholder={t('onboarding.first_name_placeholder')}
+                        value={firstName}
+                        onChangeText={setFirstName}
+                        autoCapitalize="words"
+                        minHeight={56}
+                    />
+                    <Input
+                        label={t('onboarding.last_name')}
+                        placeholder={t('onboarding.last_name_placeholder')}
+                        value={lastName}
+                        onChangeText={setLastName}
+                        autoCapitalize="words"
+                        minHeight={56}
+                    />
                 </View>
             </ScrollView>
 

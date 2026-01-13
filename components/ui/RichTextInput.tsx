@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { formColors } from '@/styles/formStyles';
+import { Input } from '@/components/design-system/primitives/Input';
 
 interface RichTextInputProps {
   label: string;
@@ -18,18 +17,14 @@ export default function RichTextInput({
   minHeight = 100
 }: RichTextInputProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, { minHeight }] as any}
-        placeholder={placeholder}
-        placeholderTextColor={formColors.inputPlaceholder}
-        multiline
-        textAlignVertical="top"
-        value={value}
-        onChangeText={onChangeText}
-      />
-    </View>
+    <Input
+      label={label}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      minHeight={minHeight}
+      multiline
+    />
   );
 }
 

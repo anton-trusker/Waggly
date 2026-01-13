@@ -24,6 +24,8 @@ import { router } from 'expo-router';
 import { useBreeds } from '@/hooks/useBreeds';
 import DropdownSearchList from '@/components/ui/DropdownSearchList';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Input } from '@/components/design-system/primitives/Input';
+import { designSystem } from '@/constants/designSystem';
 
 type Props = {
   pet: Pet;
@@ -135,40 +137,25 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
     value: string,
     onChangeText: (text: string) => void,
     placeholder: string,
-    keyboardType?: 'default' | 'decimal-pad' | 'numeric',
+    keyboardType: 'default' | 'decimal-pad' | 'numeric' = 'default',
     error?: string,
     icon?: string,
     required?: boolean,
     multiline?: boolean
   ) => (
-    <View style={styles.inputContainer}>
-      <View style={styles.inputLabelContainer}>
-        {icon && <IconSymbol ios_icon_name={icon} android_material_icon_name={icon} size={16} color={colors.textSecondary} />}
-        <Text style={styles.inputLabel}>
-          {label}
-          {required && <Text style={styles.required}> *</Text>}
-        </Text>
-      </View>
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={[styles.input, multiline && styles.textArea] as any}
-          placeholder={placeholder}
-          placeholderTextColor={colors.textSecondary}
-          value={value}
-          onChangeText={onChangeText}
-          keyboardType={keyboardType}
-          editable={!loading}
-          multiline={multiline}
-          numberOfLines={multiline ? 4 : 1}
-        />
-        {icon && (
-          <View style={styles.inputIcon}>
-            <IconSymbol ios_icon_name={icon} android_material_icon_name={icon} size={20} color={colors.textSecondary} />
-          </View>
-        )}
-      </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </View>
+    <Input
+      label={label}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      keyboardType={keyboardType}
+      error={error}
+      leftIcon={icon}
+      required={required}
+      multiline={multiline}
+      numberOfLines={multiline ? 4 : 1}
+      editable={!loading}
+    />
   );
 
   const renderPickerField = (
@@ -254,36 +241,25 @@ export default function PetProfileForm({ pet, onSaved, onCancel }: Props) {
               'pawprint'
             )}
 
-            <View style={styles.inputContainer}>
-              <View style={styles.inputLabelContainer}>
-                <IconSymbol ios_icon_name="tag" android_material_icon_name="label" size={16} color={colors.textSecondary} />
-                <Text style={styles.inputLabel}>Breed</Text>
-              </View>
-              {species === 'dog' || species === 'cat' ? (
-                <DropdownSearchList
-                  items={breedList.map(b => b.name)}
-                  selected={breed}
-                  onSelect={setBreed}
-                  onQueryChange={setBreed}
-                  placeholder={`Search ${species} breeds`}
-                  loading={false}
-                />
-              ) : (
-                <View style={styles.inputWrapper}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter breed"
-                    placeholderTextColor={colors.textSecondary}
-                    value={breed}
-                    onChangeText={setBreed}
-                    editable={!loading}
-                  />
-                  <View style={styles.inputIcon}>
-                    <IconSymbol ios_icon_name="tag" android_material_icon_name="label" size={20} color={colors.textSecondary} />
-                  </View>
-                </View>
-              )}
-            </View>
+            {species === 'dog' || species === 'cat' ? (
+              <DropdownSearchList
+                items={breedList.map(b => b.name)}
+                selected={breed}
+                onSelect={setBreed}
+                onQueryChange={setBreed}
+                placeholder={`Search ${species} breeds`}
+                loading={false}
+              />
+            ) : (
+              <Input
+                label="Breed"
+                placeholder="Enter breed"
+                value={breed}
+                onChangeText={setBreed}
+                editable={!loading}
+                leftIcon="tag"
+              />
+            )}
 
             {renderPickerField(
               'Gender',

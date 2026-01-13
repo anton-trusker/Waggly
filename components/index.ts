@@ -4,21 +4,20 @@
 // Export basic layout components from Tamagui
 export {
     Card,
-    Input,
     XStack,
     YStack,
     ZStack,
     Stack,
     type CardProps,
-    type InputProps,
     type XStackProps,
     type YStackProps,
     type ZStackProps,
     type StackProps,
 } from 'tamagui';
 
-// Export Button from the design system primitives
+// Export primitives from our design system
 export { Button, type ButtonProps } from './design-system/primitives/Button';
+export { Input, type InputProps } from './design-system/primitives/Input';
 
 // Form Components
 export {

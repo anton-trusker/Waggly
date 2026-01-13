@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { designSystem } from '@/constants/designSystem';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -96,7 +96,7 @@ export default function FormSelect<T extends FieldValues>({
                                         <Text style={[styles.modalTitle, isDark && styles.modalTitleDark]}>
                                             {label}
                                         </Text>
-                                        <TouchableOpacity onPress={() => setShowModal(false)}>
+                                        <TouchableOpacity onPress={() => setShowModal(false)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                                             <IconSymbol
                                                 ios_icon_name="xmark"
                                                 android_material_icon_name="close"
@@ -106,18 +106,52 @@ export default function FormSelect<T extends FieldValues>({
                                         </TouchableOpacity>
                                     </View>
 
+                                    {searchable && (
+                                        <View style={[styles.searchContainer, isDark && styles.searchContainerDark]}>
+                                            <IconSymbol
+                                                ios_icon_name="magnifyingglass"
+                                                android_material_icon_name="search"
+                                                size={20}
+                                                color={designSystem.colors.text.tertiary}
+                                            />
+                                            <TextInput
+                                                style={[styles.searchInput, isDark && styles.searchInputDark]}
+                                                placeholder="Search..."
+                                                placeholderTextColor={designSystem.colors.text.tertiary}
+                                                value={searchQuery}
+                                                onChangeText={setSearchQuery}
+                                                autoFocus={Platform.OS === 'web'}
+                                            />
+                                            {searchQuery.length > 0 && (
+                                                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                                                    <IconSymbol
+                                                        ios_icon_name="xmark.circle.fill"
+                                                        android_material_icon_name="cancel"
+                                                        size={20}
+                                                        color={designSystem.colors.text.tertiary}
+                                                    />
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                    )}
+
                                     <FlatList
-                                        data={options}
+                                        data={options.filter(opt =>
+                                            opt.label.toLowerCase().includes(searchQuery.toLowerCase())
+                                        )}
                                         keyExtractor={(item) => item.value}
                                         renderItem={({ item }) => (
                                             <TouchableOpacity
                                                 style={[
                                                     styles.option,
+                                                    isDark && styles.optionDark,
                                                     item.value === value && styles.optionSelected,
+                                                    item.value === value && isDark && styles.optionSelectedDark,
                                                 ] as any}
                                                 onPress={() => {
                                                     onChange(item.value);
                                                     setShowModal(false);
+                                                    setSearchQuery('');
                                                 }}
                                             >
                                                 <Text style={[
@@ -136,6 +170,13 @@ export default function FormSelect<T extends FieldValues>({
                                                     />
                                                 )}
                                             </TouchableOpacity>
+                                        )}
+                                        ListEmptyComponent={() => (
+                                            <View style={styles.emptyContainer}>
+                                                <Text style={[styles.emptyText, isDark && styles.emptyTextDark]}>
+                                                    No results found
+                                                </Text>
+                                            </View>
                                         )}
                                     />
                                 </View>
@@ -179,7 +220,7 @@ const styles = StyleSheet.create({
         minHeight: 48,
     },
     buttonDark: {
-        backgroundColor: designSystem.colors.background.primary,
+        backgroundColor: designSystem.colors.neutral[900],
         borderColor: designSystem.colors.neutral[700],
     },
     buttonError: {
@@ -191,7 +232,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     buttonTextDark: {
-        color: designSystem.colors.text.primary,
+        color: designSystem.colors.neutral[0],
     },
     placeholder: {
         color: designSystem.colors.text.tertiary,
@@ -216,7 +257,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     modalContentDark: {
-        backgroundColor: designSystem.colors.background.secondary,
+        backgroundColor: designSystem.colors.neutral[900],
     },
     modalHeader: {
         flexDirection: 'row',
@@ -231,7 +272,7 @@ const styles = StyleSheet.create({
         color: designSystem.colors.text.primary,
     },
     modalTitleDark: {
-        color: designSystem.colors.text.primary,
+        color: designSystem.colors.neutral[0],
     },
     option: {
         flexDirection: 'row',
@@ -241,8 +282,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: designSystem.colors.neutral[100],
     },
+    optionDark: {
+        borderBottomColor: designSystem.colors.neutral[800],
+    },
     optionSelected: {
         backgroundColor: designSystem.colors.primary[50],
+    },
+    optionSelectedDark: {
+        backgroundColor: designSystem.colors.primary[900] + '40',
     },
     optionText: {
         ...designSystem.typography.body.large,
@@ -250,10 +297,42 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     optionTextDark: {
-        color: designSystem.colors.text.primary,
+        color: designSystem.colors.neutral[0],
     },
     optionTextSelected: {
         color: designSystem.colors.primary[600],
         fontWeight: '600',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: designSystem.spacing[4],
+        paddingVertical: designSystem.spacing[2],
+        borderBottomWidth: 1,
+        borderBottomColor: designSystem.colors.neutral[200],
+        gap: designSystem.spacing[2],
+    },
+    searchContainerDark: {
+        borderBottomColor: designSystem.colors.neutral[800],
+    },
+    searchInput: {
+        flex: 1,
+        height: 40,
+        ...designSystem.typography.body.medium,
+        color: designSystem.colors.text.primary,
+    },
+    searchInputDark: {
+        color: designSystem.colors.neutral[0],
+    },
+    emptyContainer: {
+        padding: designSystem.spacing[8],
+        alignItems: 'center',
+    },
+    emptyText: {
+        ...designSystem.typography.body.medium,
+        color: designSystem.colors.text.tertiary,
+    },
+    emptyTextDark: {
+        color: designSystem.colors.neutral[500],
     },
 });

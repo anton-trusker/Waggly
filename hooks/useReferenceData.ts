@@ -118,11 +118,13 @@ export function useMedications(petType?: string) { // Added petType optional fil
     setError(null);
     try {
       let query = supabase
-        .from('medications' as any)
+        .from('reference_medications' as any)
         .select('*')
         .order('brand_name');
 
       if (petType) {
+        // reference_medications uses 'dog', 'cat' in seed, or 'Dog', 'Cat'?
+        // Seed script 20260111120000 doesn't have data, check another one or assume normalized
         const normalizedSpecies = petType.charAt(0).toUpperCase() + petType.slice(1).toLowerCase();
         query = query.eq('pet_type', normalizedSpecies);
       }
