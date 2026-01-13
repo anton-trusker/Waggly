@@ -128,7 +128,7 @@
     "typescript": "~5.9.2",
     "update-notifier": "^6.0.2",
     "webpack-cli": "^6.0.1",
-    "workbox-cli": "^7.4.0"
+    "workbox-cli": "^2.1.3"
   },
   "resolutions": {
     "@expo/prebuild-config": "latest",

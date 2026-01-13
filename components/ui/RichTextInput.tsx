@@ -27,25 +27,3 @@ export default function RichTextInput({
     />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '500',
-    marginBottom: 6,
-    color: formColors.labelText,
-  },
-  input: {
-    width: '100%',
-    borderRadius: 10,
-    padding: 14,
-    fontSize: 15,
-    borderWidth: 1,
-    backgroundColor: formColors.inputBackground,
-    color: formColors.inputText,
-    borderColor: formColors.inputBorder,
-  }
-});
