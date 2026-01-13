@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+Iimport { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
 // Keeping interfaces compatible with UI components
