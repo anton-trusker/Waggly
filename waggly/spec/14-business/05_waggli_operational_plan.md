@@ -1,4 +1,4 @@
-# Waggly Operational Plan
+# Waggli Operational Plan
 **Building a Scalable, AI-Driven Organization**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Waggly operates as an **AI-Native Organization**. By leveraging AI for 80% of routine tasks—coding, customer support, localization, and content generation—we maintain a lean headcount while scaling to millions of users. This capital efficiency allows us to invest more in growth and features.
+Waggli operates as an **AI-Native Organization**. By leveraging AI for 80% of routine tasks—coding, customer support, localization, and content generation—we maintain a lean headcount while scaling to millions of users. This capital efficiency allows us to invest more in growth and features.
 
 ---
 
@@ -88,7 +88,7 @@ As we hit 80k users, we expand to:
     *   Local OCR models for offline capability.
 
 ### 5.3 Vet Pushback
-*   **Risk:** Vets viewing Waggly as "Doctor Google" (misinformation).
+*   **Risk:** Vets viewing Waggli as "Doctor Google" (misinformation).
 *   **Mitigation:**
     *   Clear Disclaimers: "Not medical advice."
     *   Pro-Vet Features: "Share with Vet" functionality builds trust.

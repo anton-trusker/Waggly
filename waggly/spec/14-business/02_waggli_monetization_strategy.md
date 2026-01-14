@@ -1,4 +1,4 @@
-# Waggly Monetization & Revenue Strategy
+# Waggli Monetization & Revenue Strategy
 **Comprehensive Guide to Subscription, Affiliate & Partnership Models**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Waggly creates a resilient, diversified revenue engine by layering **high-margin SaaS subscriptions** with **high-volume affiliate commissions**. This dual approach ensures immediate cash flow from day one (SaaS) while building a massive long-tail revenue stream via ecosystem partnerships (Affiliates/B2B).
+Waggli creates a resilient, diversified revenue engine by layering **high-margin SaaS subscriptions** with **high-volume affiliate commissions**. This dual approach ensures immediate cash flow from day one (SaaS) while building a massive long-tail revenue stream via ecosystem partnerships (Affiliates/B2B).
 
 **Revenue Composition Target (Year 3):**
 *   **Subscriptions:** 60%
@@ -20,7 +20,7 @@ Waggly creates a resilient, diversified revenue engine by layering **high-margin
 
 ## 2. Core Subscription Model (B2C SaaS)
 
-Waggly disrupts the market with an **"Unlimited Pets"** philosophy, monetizing *advanced features* rather than the number of animals.
+Waggli disrupts the market with an **"Unlimited Pets"** philosophy, monetizing *advanced features* rather than the number of animals.
 
 ### 2.1 Subscription Tiers
 
@@ -38,7 +38,7 @@ Waggly disrupts the market with an **"Unlimited Pets"** philosophy, monetizing *
 *   **Target:** The engaged pet parent.
 *   **Key Features:**
     *   **AI Document OCR:** Unlimited scanning of vet records.
-    *   **Natural Voice Entry:** "Waggly, add a reminder for Simparica every month."
+    *   **Natural Voice Entry:** "Waggli, add a reminder for Simparica every month."
     *   **Digital Passport Export:** PDF generation for travel/boarding.
     *   **Shared Access:** Invite 1 co-owner.
     *   **Ad-Free Experience.**
@@ -64,7 +64,7 @@ Waggly disrupts the market with an **"Unlimited Pets"** philosophy, monetizing *
 
 ## 3. The Affiliate Ecosystem (Secondary Revenue)
 
-We monetize "moments of need." Waggly does not show banner ads; we offer **contextual recommendations** based on health data.
+We monetize "moments of need." Waggli does not show banner ads; we offer **contextual recommendations** based on health data.
 
 ### 3.1 High-Priority Categories
 
@@ -92,7 +92,7 @@ We monetize "moments of need." Waggly does not show banner ads; we offer **conte
 ### 3.2 Implementation Strategy
 *   **Phase 1 (Affiliate Links):** Simple "Recommended Products" lists.
 *   **Phase 2 (Contextual Widgets):** Dynamic suggestions in the health timeline.
-*   **Phase 3 (Native Checkout):** "Buy on Waggly" (Drop-shipping/API integration).
+*   **Phase 3 (Native Checkout):** "Buy on Waggli" (Drop-shipping/API integration).
 
 ---
 
@@ -100,9 +100,9 @@ We monetize "moments of need." Waggly does not show banner ads; we offer **conte
 
 ### 4.1 Veterinary Software (B2B2C)
 *   **Model:** Integration fees or Revenue Share.
-*   **Concept:** Waggly acts as the "Patient Portal" for clinics using legacy software.
+*   **Concept:** Waggli acts as the "Patient Portal" for clinics using legacy software.
 *   **Partners:** Provet Cloud, Digitail.
-*   **Value:** Clinic gets fewer phone calls; Waggly gets verified medical data.
+*   **Value:** Clinic gets fewer phone calls; Waggli gets verified medical data.
 
 ### 4.2 Telehealth
 *   **Model:** Referral fee per consultation (€10-20).
@@ -145,4 +145,4 @@ We monetize "moments of need." Waggly does not show banner ads; we offer **conte
 
 1.  **Marketplace Transaction Fees:** 10-15% of booking value for Sitters/Walkers.
 2.  **Pet Data Insights:** Aggregated, anonymized health data sold to researchers/pharma (Ethical/Opt-in).
-3.  **Corporate Benefits:** "Waggly for Employees" B2B subscriptions.
+3.  **Corporate Benefits:** "Waggli for Employees" B2B subscriptions.

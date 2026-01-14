@@ -1,4 +1,4 @@
-# Waggly Go-To-Market (GTM) Strategy
+# Waggli Go-To-Market (GTM) Strategy
 **Winning the European Pet Care Market: Launch & Acquisition Plan**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Growth Strategy Overview
 
-Waggly avoids the "slow roll" mistake of traditional startups. Leveraging our **AI Automated Localization**, we will launch simultaneously in **4 High-Value Markets**: Netherlands, Germany, Belgium, and Austria.
+Waggli avoids the "slow roll" mistake of traditional startups. Leveraging our **AI Automated Localization**, we will launch simultaneously in **4 High-Value Markets**: Netherlands, Germany, Belgium, and Austria.
 
 **The "Blitz" Advantage:**
 *   4x Total Addressable Market (TAM) on Day 1 (26M households vs 5M).
@@ -48,10 +48,10 @@ Waggly avoids the "slow roll" mistake of traditional startups. Leveraging our **
 
 ### 3.2 Strategic Partnerships (30%)
 *   **Veterinary Clinics (The Trust Anchor):**
-    *   Provide clinics with "Waggly Onboarding Cards" (QR codes).
+    *   Provide clinics with "Waggli Onboarding Cards" (QR codes).
     *   *Value:* "Help your clients keep better records so you get accurate history."
 *   **Breeders & Shelters:**
-    *   "Digital Handover": Breeders transfer the puppy's digital file to the new owner via Waggly.
+    *   "Digital Handover": Breeders transfer the puppy's digital file to the new owner via Waggli.
     *   *Incentive:* Free Premium for the new owner (3 months).
 
 ### 3.3 Community & Viral (20%)
@@ -111,4 +111,4 @@ Waggly avoids the "slow roll" mistake of traditional startups. Leveraging our **
 
 ---
 
-**Waggly's GTM is built on efficiency: High-trust channels (Vets/Breeders) combined with high-reach digital targeting.**
+**Waggli's GTM is built on efficiency: High-trust channels (Vets/Breeders) combined with high-reach digital targeting.**

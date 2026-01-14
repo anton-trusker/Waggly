@@ -1,4 +1,4 @@
-# Waggly Comprehensive Business Plan
+# Waggli Comprehensive Business Plan
 **Europe's AI-First Digital Pet Passport Platform**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-**Waggly** is revolutionizing the €121 billion European pet care market by building the first **AI-Native Digital Pet Passport Platform**. Unlike traditional apps that require tedious manual data entry, Waggly leverages conversational AI, OCR, and voice recognition to create a zero-effort health management system. We connect the fragmented ecosystem of 91 million pet households, veterinarians, and service providers into a unified digital infrastructure.
+**Waggli** is revolutionizing the €121 billion European pet care market by building the first **AI-Native Digital Pet Passport Platform**. Unlike traditional apps that require tedious manual data entry, Waggli leverages conversational AI, OCR, and voice recognition to create a zero-effort health management system. We connect the fragmented ecosystem of 91 million pet households, veterinarians, and service providers into a unified digital infrastructure.
 
 **Our Unfair Advantage:**
 *   **AI-First Architecture:** Conversational interface eliminates the #1 cause of app churn—manual data entry.
@@ -59,7 +59,7 @@ The European pet care market presents a massive, recession-proof opportunity:
 *   **Marketplaces (Rover):** Transactional focus; no health data lock-in; commoditized services.
 *   **Veterinary Portals:** Clunky, clinic-tethered, poor UX.
 
-**Waggly's Differentiator:** We own the **health record** (the system of record), making us the operating system for the pet's life, not just a booking tool.
+**Waggli's Differentiator:** We own the **health record** (the system of record), making us the operating system for the pet's life, not just a booking tool.
 
 ---
 
@@ -76,16 +76,16 @@ A dog walker doesn't know the pet has arthritis. The kennel doesn't know vaccina
 
 ---
 
-## 5. The Solution: Waggly Platform
+## 5. The Solution: Waggli Platform
 
 ### 5.1 Core Product Pillars
-1.  **Conversational AI Assistant:** "Hey Waggly, Max just got his Rabies shot, here's a photo." The AI extracts date, batch, vet, and updates the record. Zero forms.
+1.  **Conversational AI Assistant:** "Hey Waggli, Max just got his Rabies shot, here's a photo." The AI extracts date, batch, vet, and updates the record. Zero forms.
 2.  **Digital Pet Passport:** A legally valid (future-state) digital twin of the pet's health history, shareable via QR code or secure link.
 3.  **Smart Notifications:** "Max is due for Deworming next week. Click to order." Predictive, not just reactive.
 4.  **Emergency Shield:** Physical QR tags on collars linked to the digital passport. One scan provides critical medical info and contacts to first responders.
 
 ### 5.2 Unique Selling Propositions (USPs)
-*   **Unlimited Pets:** Unlike competitors charging per pet, Waggly covers the whole "fur family" for one price.
+*   **Unlimited Pets:** Unlike competitors charging per pet, Waggli covers the whole "fur family" for one price.
 *   **AI Localization:** Instant, perfect translation of medical records across borders (crucial for EU travel).
 *   **Co-Owner Collaboration:** Real-time sync for couples and families managing pets together.
 
@@ -93,7 +93,7 @@ A dog walker doesn't know the pet has arthritis. The kennel doesn't know vaccina
 
 ## 6. Business Model Overview
 
-Waggly operates on a **hybrid SaaS + Marketplace** model, prioritizing recurring software revenue first.
+Waggli operates on a **hybrid SaaS + Marketplace** model, prioritizing recurring software revenue first.
 
 ### 6.1 Primary Revenue: B2C Subscriptions
 *   **Free Tier:** Basic records, unlimited pets (Lead Gen).
@@ -145,4 +145,4 @@ Leveraging our AI localization advantage, we launch Day 1 in **Netherlands, Germ
 
 ---
 
-**Waggly is not just an app; it is the digital infrastructure for the future of pet care.**
+**Waggli is not just an app; it is the digital infrastructure for the future of pet care.**

@@ -1,4 +1,4 @@
-# Waggly Product Roadmap & Implementation Strategy
+# Waggli Product Roadmap & Implementation Strategy
 **From MVP to Market Leadership: A Phased Execution Plan**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Roadmap Overview
 
-The Waggly product roadmap is designed for **velocity and value**. We prioritize the "System of Record" (Digital Passport) first to secure user data retention, then layer on "System of Engagement" (Community/Marketplace) features once we have the user base.
+The Waggli product roadmap is designed for **velocity and value**. We prioritize the "System of Record" (Digital Passport) first to secure user data retention, then layer on "System of Engagement" (Community/Marketplace) features once we have the user base.
 
 **Key Phases:**
 *   **Phase 1 (Months 1-6):** AI-First MVP (The "Hook").

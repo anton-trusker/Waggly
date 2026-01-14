@@ -1,4 +1,4 @@
-# Waggly Partnership & Ecosystem Strategy
+# Waggli Partnership & Ecosystem Strategy
 **Building the Connected Pet Care Network**
 
 **Version:** 1.0  
@@ -9,7 +9,7 @@
 
 ## 1. Strategy Overview
 
-Waggly cannot win alone. We become the "Operating System" for pet care by integrating with the existing giants: **Veterinarians, Insurers, and Retailers**. 
+Waggli cannot win alone. We become the "Operating System" for pet care by integrating with the existing giants: **Veterinarians, Insurers, and Retailers**. 
 
 **The Value Exchange:**
 *   **We give Partners:** Structured, verified data (adherence, health history) + access to engaged users.
@@ -23,11 +23,11 @@ Waggly cannot win alone. We become the "Operating System" for pet care by integr
 **Goal:** Become the preferred "Patient App" for independent clinics.
 
 **Pitch to Vets:**
-*   "Your clients lose their paper records. Give them Waggly so they show up to appointments prepared."
+*   "Your clients lose their paper records. Give them Waggli so they show up to appointments prepared."
 *   "We reduce your admin time by digitizing intake forms."
 
 **Integration Levels:**
-*   **Level 1 (Referral):** Vet displays Waggly QR code at reception.
+*   **Level 1 (Referral):** Vet displays Waggli QR code at reception.
     *   *Incentive:* Vet gets dashboard view of their patients' compliance.
 *   **Level 2 (Data Sync - Future):** API integration with PIMS (e.g., Boehringer Ingelheim, Covetrus).
     *   *Feature:* Auto-sync vaccines from Clinic -> App.
@@ -35,7 +35,7 @@ Waggly cannot win alone. We become the "Operating System" for pet care by integr
 ### 2.2 Telehealth Partners
 **Goal:** 24/7 care coverage without hiring internal vets.
 **Partners:** Airvet, FirstVet.
-**Model:** Integrated SDK. "Chat with a Vet" button inside Waggly routing to Partner. Revenue share (10-20%).
+**Model:** Integrated SDK. "Chat with a Vet" button inside Waggli routing to Partner. Revenue share (10-20%).
 
 ---
 
@@ -71,7 +71,7 @@ Waggly cannot win alone. We become the "Operating System" for pet care by integr
 **The Workflow:**
 1.  User scans Prescription for "Renal Diet Food."
 2.  AI recognizes product.
-3.  Waggly suggests: "Order Kidney Care Food from Zooplus - €45 (Save 10% with Waggly)."
+3.  Waggli suggests: "Order Kidney Care Food from Zooplus - €45 (Save 10% with Waggli)."
 4.  User clicks -> Buys.
 
 ### 4.2 Smart Device Ecosystem
@@ -80,7 +80,7 @@ Waggly cannot win alone. We become the "Operating System" for pet care by integr
 *   **SureFlap:** Microchip doors.
 
 **Integration:**
-*   Sync activity data into Waggly Health Score.
+*   Sync activity data into Waggli Health Score.
 *   Referral commission on hardware sales.
 
 ---
@@ -99,9 +99,9 @@ Waggly cannot win alone. We become the "Operating System" for pet care by integr
 
 ### Phase 3: API Integrations (Year 2+)
 *   **Focus:** Deep integration with Insurance APIs (Instant Quote) + Practice Management Software.
-*   **Tech:** Waggly Connect API.
+*   **Tech:** Waggli Connect API.
 *   **Goal:** Defensible data moat.
 
 ---
 
-**Summary: Waggly is the data bridge connecting the fragmented landscape of pet services.**
+**Summary: Waggli is the data bridge connecting the fragmented landscape of pet services.**
