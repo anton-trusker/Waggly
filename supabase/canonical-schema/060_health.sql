@@ -1,0 +1,9 @@
+-- Health domain
+-- Tables to implement:
+-- medical_visits, vaccinations, medications, treatments, allergies, conditions
+-- health_metrics, weight_logs, body_condition_scores, dental_records, wellness_logs
+-- health_scores, health_risks, health_recommendations
+-- Logic:
+-- vaccination status trigger from next_due_date
+-- calculate_health_score(p_pet_id) weighted by docs: preventive 30, vaccines 25, weight 20, completeness 15, wellness 10
+-- Compatibility note: weight_entries and weight_history should be views over weight_logs during app transition.

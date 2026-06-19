@@ -1,0 +1,6 @@
+-- Sharing domain
+-- Tables to implement:
+-- co_owners: pet collaboration, role, status, permissions
+-- public_shares: token-hash based public/professional links
+-- share_access_logs: access audit trail
+-- Compatibility note: retire share_links and pet_share_tokens after app migration, or expose views temporarily.

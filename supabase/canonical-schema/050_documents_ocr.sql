@@ -1,0 +1,6 @@
+-- Documents and OCR domain
+-- Tables to implement:
+-- documents: storage metadata, category, pet_id, uploaded_by, privacy, OCR state
+-- document_links: links documents to visits, vaccinations, meds, passports, providers
+-- ocr_jobs: queue/status/provider/cost/confidence/raw text
+-- ocr_extracted_fields: extracted structured facts pending confirmation

@@ -1,0 +1,6 @@
+-- Seed reference data:
+-- species
+-- reference_breeds from documentation/documents/all_dog_breeds_comprehensive.csv and all_cat_breeds_comprehensive.csv
+-- reference_vaccinations from pet_vaccinations_complete.csv
+-- common medications/treatments/allergens/symptoms
+-- default roles, plans, feature flags, languages

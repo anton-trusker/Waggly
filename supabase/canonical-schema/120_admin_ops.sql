@@ -1,0 +1,7 @@
+-- Admin and operations
+-- Tables to implement:
+-- audit_logs, activity_logs, feature_flags, settings, content, translations, mail_queue
+-- Logic:
+-- audit all admin/provider/public-share sensitive actions
+-- feature flags by country, role, plan, beta cohort
+-- mail_queue service-role only

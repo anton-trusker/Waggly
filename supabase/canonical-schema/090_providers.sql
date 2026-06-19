@@ -1,0 +1,8 @@
+-- Provider ecosystem
+-- Tables to implement:
+-- providers, provider_services, provider_verifications, provider_team_members
+-- provider_dashboard_settings, bookings, booking_series, conversations, messages
+-- Logic:
+-- provider verification workflow
+-- subscription-gated provider tools
+-- scoped professional access to pet/passport/document data

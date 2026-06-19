@@ -1,0 +1,8 @@
+-- AI domain
+-- Tables to implement:
+-- ai_conversations, ai_messages, ai_extractions, ai_recommendations
+-- health_predictions, breed_risk_assessments, ai_usage_logs
+-- Logic:
+-- NLP entry creates pending extracted fields
+-- OCR extraction can create health records after user confirmation
+-- usage logs feed subscription limits and cost control

@@ -1,0 +1,6 @@
+-- Storage buckets and policies:
+-- avatars: public read, owner write
+-- user-photos: public read, owner write
+-- pet-photos: public read, pet owner/co-owner write
+-- pet-documents: private, pet owner/co-owner/provider-grant read
+-- provider-documents: private, provider/admin read

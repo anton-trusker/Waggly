@@ -1,0 +1,6 @@
+-- Calendar, reminders, notifications
+-- Tables to implement:
+-- events with recurrence_rule, event_reminders, notifications, notification_preferences
+-- Logic:
+-- generate reminders from vaccinations, medications, treatments, visits, travel plans
+-- support push/email/SMS/weekly digest

@@ -1,0 +1,8 @@
+-- Passport and travel domain
+-- Tables to implement:
+-- pet_passports, passport_versions, passport_exports
+-- travel_requirements, travel_plans, travel_compliance_checks
+-- Logic:
+-- generate stable passport_id
+-- generate QR/public token through public_shares
+-- compliance checks by destination country/species/vaccine validity

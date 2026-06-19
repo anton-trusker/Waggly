@@ -1,0 +1,7 @@
+-- Monetization domain
+-- Tables to implement:
+-- plans, subscriptions, entitlements, usage_counters, invoices
+-- affiliate_partners, affiliate_attributions
+-- Logic:
+-- Stripe customer/subscription mapping
+-- enforce pet/document/AI/provider quotas through entitlements

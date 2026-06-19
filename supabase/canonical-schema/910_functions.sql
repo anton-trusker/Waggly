@@ -1,0 +1,9 @@
+-- Functions/RPCs to implement after tables are final:
+-- handle_new_user()
+-- generate_passport_id(p_pet_id)
+-- calculate_health_score(p_pet_id)
+-- get_public_pet_details(share_token)
+-- create_public_share(...)
+-- revoke_public_share(...)
+-- generate_due_notifications()
+-- search_documents(...)
